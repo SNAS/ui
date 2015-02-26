@@ -18,14 +18,44 @@ module.exports = function (grunt) {
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
-    dist: 'dist'
+    dist: 'dist',
+    war_dist: 'dist_war'
   };
+
+  grunt.loadNpmTasks('grunt-war');
 
   // Define the configuration for all the tasks
   grunt.initConfig({
 
     // Project settings
     yeoman: appConfig,
+
+      /*
+       * Build a WAR (web archive) without Maven or the JVM installed.
+       */
+      war: {
+        target: {
+          options: {
+            war_dist_folder: '<%= yeoman.war_dist %>',
+            war_name: 'bmpUI',
+            webxml_welcome: 'index.html',
+            webxml_display_name: 'BMP UI',
+            webxml_mime_mapping: [ 
+                      { 
+                          extension: 'woff', 
+                          mime_type: 'application/font-woff' 
+                      } ]
+          },
+          files: [
+            {
+              expand: true,
+              cwd: '<%= yeoman.dist %>',
+              src: ['**'],
+              dest: ''
+            }
+          ]
+        }
+      },
 
     // Watches files for changes and runs tasks based on the changed files
     watch: {
