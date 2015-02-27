@@ -2,13 +2,13 @@
 
 /**
  * @ngdoc function
- * @name bmpUiApp.controller:AboutCtrl
+ * @name bmpUiApp.controller:MainCtrl
  * @description
- * # AboutCtrl
+ * # MainCtrl
  * Controller of the bmpUiApp
  */
 angular.module('bmpUiApp')
-  .controller('AboutCtrl', function ($scope) {
+  .controller('DashboardController', function ($scope) {
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
