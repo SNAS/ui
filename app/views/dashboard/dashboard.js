@@ -2,16 +2,17 @@
 
 /**
  * @ngdoc function
- * @name bmpUiApp.controller:MainCtrl
+ * @name bmpUiApp.controller:DashboardController
  * @description
- * # MainCtrl
- * Controller of the bmpUiApp
+ * # DashboardController
+ * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
   .controller('DashboardController', function ($scope) {
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
-      'Karma'
+      'Karma',
+      'Badgers'
     ];
   });
