@@ -1,0 +1,645 @@
+{% extends "base.html" %}
+
+{% block Whois %}
+<li class="active">{% endblock %}
+
+    {% block mainsection %}
+    <div id="page-wrapper">
+        <!-- /.row -->
+
+
+        <div class="row">
+            <!-- /.col-lg-12 -->
+        </div>
+
+        <!----------------------------------------------- WHOIS DATA SECTION------------------------------------------------------>
+        <div class="row" style="margin-top: 15px">
+            <div class="col-lg-12">
+                <div class="panel panel-success" style="display:none" id="whois_panel">
+                    <div class="panel-heading">
+                        <h3 align="middle"><img style="display:none" src="/static/assets/question-48.png" height="50"
+                                                width="50" class="icon"/> WHOIS</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <!-- Form for quering routes -->
+                        <div class="form-inline">
+                            <div class="input-append">
+                                <label>Anything You Want to Search:</label>
+                                <input class="form-control" placeholder="cisco" style="width:200px;" id="search_content">
+                                <button class="btn btn-default" id="search_submit">Get it!</button>
+
+                                <h3 style="display:none;" id="whois_wrong">This content doesn't exist</h3>
+
+                                <!--<div style="display:none; margin: 50px;" id="progress_bar"-->
+                                     <!--class="progress progress-striped active">-->
+                                    <!--<div class="progress-bar progress-bar-success" role="progressbar"-->
+                                         <!--aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"-->
+                                         <!--style="width: 100%;">-->
+                                        <!--<span class="sr-only">Loading...</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ./Form for querying routes -->
+
+                    <!--<div style="display:none; margin: 50px;" id="progress_bar_whois"-->
+                    <!--class="progress progress-striped active">-->
+                    <!--<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">-->
+                    <!--<span class="sr-only">Loading...</span>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--<div id="whois_table_panel" style="display:none">-->
+                        <!--<div class="panel-success" id="whois_table_panel">-->
+                        <!--</div>-->
+                        <div class="panel-success">
+                            <div class="table-responsive" id="whois_table_container">
+                                <table class="table table-striped table-bordered table-hover cursor" id="whois_table"
+                                       style="width:100%;" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>ASN</th>
+                                        <th>Transit</th>
+                                        <th>Origin</th>
+                                        <th>AS Name</th>
+                                        <th>ORG Name</th>
+                                        <th>Country</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--------------------./MAIN SECTION--------------------------->
+
+
+    <!-------------------------------------------------- AS Table Modal ----------------------------------------------->
+    <div class="modal fade" id="whois_modal" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="overflow-x: auto; overflow-y: auto;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title" id="whois_modal_label"></h3>
+                </div>
+                <div class="modal-body" id="whois_modal_body">
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-------------------------------------------------- ./AS Table Modal --------------------------------------------->
+
+
+    </div>
+    <!-- /#page-wrapper -->
+    {% endblock %}
+
+    {% block javascripts %}
+    <script src="/static/js/bootstrap-progressbar.js"></script>
+
+    <!-- HighCharts -->
+    <script src="/static/Highcharts-4.0.4/js/highcharts.js"></script>
+    <script src="/static/Highcharts-4.0.4/js/highcharts-3d.js"></script>
+    <script src="/static/Highcharts-4.0.4/js/modules/exporting.js"></script>
+    <script src="/static/Highcharts-4.0.4/js/modules/data.js"></script>
+    <script src="/static/Highcharts-4.0.4/js/modules/drilldown.js"></script>
+    <!-- /.HighCharts -->
+
+    <link rel="stylesheet" href="/static/next/next-topology/css/next-topology.css"/>
+    <script type="text/javascript" src="/static/next/next/js/next.js"></script>
+    <script type="text/javascript" src="/static/next/next-topology/js/next-topology.js"></script>
+
+    <script>
+
+        // datatable variable for Upstream and Downstream tables
+        var whoistable;
+
+        //whois dictionary
+        var whois;
+
+        // keys of whois dictionary
+        var whois_keys;
+
+        //whois data
+        var whois_all;
+
+        var wrong_data=true;
+
+        $(document).ready(function () {
+            $("#whois_panel").show(500);
+            $("#whois_wrong").hide(100);
+            $("#whois_table_container").hide(500);
+
+         //   $("#progress_bar").show(500);
+
+            var req_whois = "http://odl-dev.openbmp.org:8001/db_rest/v1/whois/asn?where=w.as_name like '%cisco%' or w.org_name like '%cisco%'";
+
+            whoistable = $('#whois_table').DataTable({
+                "ajax": {
+                    "url": req_whois,
+                    "dataSrc": function (json) {
+                        if (!jQuery.isEmptyObject(json)) {
+                            if (json.w.size != 0) {
+                                whois_all = json.w.data;
+                                wrong_data = false;
+
+                             //   $("#progress_bar").hide(500);
+
+                            } else {
+                                $("#whois_wrong").show(500);
+                            }
+                        } else {
+                            $("#whois_wrong").show(500);
+                        }
+
+                        return whois_all;
+                    }
+                },
+                "fnInitComplete": function () {
+                    if (!wrong_data) {
+                  //      $("#progress_bar_whois").hide(500);
+                        $("#whois_table_container").show(500);
+
+                        // Click on row in Peers table
+                        $('#whois_table_container tbody').on('click', 'tr', function () {
+                            var asn = $('td', this).eq(0).text();
+                            console.log(asn);
+
+                            var found = 0;
+                            var w = 0;
+                            while ((!found) && (w < whois_all.length)) {
+                                if (whois_all[w].asn == asn) {
+                                    found = 1;
+                                }
+                                w++;
+                            }
+                            w--;
+
+                            var more = "http://odl-dev.openbmp.org:8001/db_rest/v1/whois/asn/" + asn;
+                            var more_info;
+
+                            jQuery.ajax({
+                                url: more,
+                                success: function (result) {
+                                    more_info = result.gen_whois_asn.data[0];
+                                },
+                                async: false
+                            });
+
+                            console.log("more info: " + more_info);
+
+                            console.log("Whois: " + whois_all[w]);
+
+                            $("#whois_modal_label").text("AS" + whois_all[w].asn);
+
+                            var info = '<h4>' + ' PREFIXES: ' + '</h4>' + '<pre>';
+
+                            // prefixes
+                            info += '# of Transit IPv4 prefixes: \t' + whois_all[w].transit_v4_prefixes + '\n';
+                            info += '# of Transit IPv6 prefixes: \t' + whois_all[w].transit_v6_prefixes + '\n';
+                            info += '# of Origin IPv4 prefixes: \t' + whois_all[w].origin_v4_prefixes + '\n';
+                            info += '# of Origin IPv6 prefixes: \t' + whois_all[w].origin_v6_prefixes + '\n';
+
+                            info += '</pre>';
+
+                            info += '<h4>' + ' DATA: ' + '</h4>';
+
+                            // raw data from whois
+
+                            /*if ((typeof more_info.as_name != 'undefined')&&(more_info.as_name != null)) {
+                             info += '<p>' + 'AS NAME: ' + more_info.as_name + '</p>';
+                             }
+
+                             if ((typeof more_info.org_id != 'undefined')&&(more_info.org_id != null)) {
+                             info += '<p>' + 'Organisation ID: ' + more_info.org_id + '</p>';
+                             }
+
+                             if ((typeof more_info.org_name != 'undefined')&&(more_info.org_name != null)) {
+                             info += '<p>' + 'Organisation: ' + more_info.org_name + '</p>';
+                             }
+
+                             if ((typeof more_info.remarks != 'undefined')&&(more_info.remarks != null)) {
+                             info += '<p>' + 'Remarks: ' + more_info.remarks + '</p>';
+                             }
+
+                             if ((typeof more_info.address != 'undefined')&&(more_info.address != null)) {
+                             info += '<p>' + 'Adress: ' + more_info.address + '</p>';
+                             }
+
+                             if ((typeof more_info.city != 'undefined')&&(more_info.city != null)) {
+                             info += '<p>' + 'City: ' + more_info.city + '</p>';
+                             }
+
+                             if ((typeof more_info.state_prov != 'undefined')&&(more_info.state_prov != null)) {
+                             info += '<p>' + 'State/Province: ' + more_info.state_prov + '</p>';
+                             }
+
+                             if ((typeof more_info.postal_code != 'undefined')&&(more_info.postal_code != null)) {
+                             info += '<p>' + 'Postal code: ' + more_info.postal_code + '</p>';
+                             }
+
+                             if ((typeof more_info.country != 'undefined')&&(more_info.country != null)) {
+                             info += '<p>' + 'Country: ' + more_info.country + '</p>';
+                             }
+
+                             if ((typeof more_info.timestamp != 'undefined')&&(more_info.timestamp != null)) {
+                             info += '<p>' + 'Timestamp: ' + more_info.timestamp + '</p>';
+                             }*/
+
+                            if ((typeof more_info.raw_output != 'undefined') && (more_info.raw_output != null)) {
+                                info += '<pre>' + 'Raw whois: ' + more_info.raw_output + '</pre>';
+                            }
+
+                            $("#whois_modal_body").html(info);
+
+                            console.log(info);
+
+                            $('#whois_modal').modal('show');
+                        });
+                    }
+                },
+                "columns": [
+                    {
+                        "data": "asn",
+                        "defaultContent": "unknown",
+                        "sWidth": "100px"
+                    },
+                    {
+                        "data": "isTransit",
+                        "defaultContent": "unknown",
+                        "sWidth": "70px"
+                    },
+                    {
+                        "data": "isOrigin",
+                        "defaultContent": "unknown",
+                        "sWidth": "70px"
+                    },
+                    {
+                        "data": "as_name",
+                        "defaultContent": "unknown",
+                        "sWidth": "200px"
+                    },
+                    {
+                        "data": "org_name",
+                        "defaultContent": "unknown",
+                        "sWidth": "200px"
+                    },
+                    {
+                        "data": "country",
+                        "defaultContent": "unknown",
+                        "sWidth": "200px"
+                    }
+                ],
+
+                "columnDefs": [
+                    {
+                        "render": function (data, type, row) {
+
+                            return (row.isTransit === "1") ? '<span class="glyphicon glyphicon-plus"> yes</span>' : '<span class="glyphicon glyphicon-minus"> no</span>';
+                        },
+                        "targets": 1
+                    },
+                    {
+                        "render": function (data, type, row) {
+
+                            return (row.isOrigin === "1") ? '<span class="glyphicon glyphicon-plus"> yes</span>' : '<span class="glyphicon glyphicon-minus"> no</span>';
+                        },
+                        "targets": 2
+                    }
+                ],
+
+                "bJQueryUI": true,
+                "deferRender": true,
+                "scrollCollapse": true,
+                "paging": true,
+                "info": true,
+                "autoWidth": true
+            });
+        });
+
+
+        //Get it! button pressed
+        $("#search_submit").click(function () {
+
+            var search_content = $('#search_content').val();
+            var wrong_data=true;
+
+            console.log("Whois pressed!");
+
+            counter = 0;
+
+            $("#whois_panel").show(500);
+            $("#whois_wrong").hide(100);
+            $("#whois_table_container").hide(500);
+
+            if ($.fn.dataTable.isDataTable('#whois_table')) {
+                whoistable.destroy();
+            }
+
+            if (!isNaN(search_content)) {
+                // if(/^\d+$/g.test(search_content)) {
+                var req_whois = "http://odl-dev.openbmp.org:8001/db_rest/v1/whois/asn/" + search_content;
+
+                whoistable = $('#whois_table').DataTable({
+                    "ajax": {
+                        "url": req_whois,
+                        "dataSrc": function (json) {
+                            if (!jQuery.isEmptyObject(json)) {
+                                if (json.gen_whois_asn.size != 0) {
+                                    whois_all = json.gen_whois_asn.data;
+                                    wrong_data = false;
+
+                                } else {
+                                    $("#whois_wrong").show(500);
+                                }
+                            } else {
+                                $("#whois_wrong").show(500);
+                            }
+
+                            return whois_all;
+                        }
+                    },
+                    "fnInitComplete": function () {
+                        if (!wrong_data) {
+                            $("#whois_table_container").show(500);
+
+                            // Click on row in Peers table
+                            $('#whois_table_container tbody').on('click', 'tr', function () {
+                                var asn = $('td', this).eq(0).text();
+                                console.log(asn);
+
+                                var found = 0;
+                                var w = 0;
+                                while ((!found) && (w < whois_all.length)) {
+                                    if (whois_all[w].asn == asn) {
+                                        found = 1;
+                                    }
+                                    w++;
+                                }
+                                w--;
+
+                                var more = "http://odl-dev.openbmp.org:8001/db_rest/v1/whois/asn/" + asn;
+                                var more_info;
+
+                                jQuery.ajax({
+                                    url: more,
+                                    success: function (result) {
+                                        more_info = result.gen_whois_asn.data[0];
+                                    },
+                                    async: false
+                                });
+
+                                console.log("more info: " + more_info);
+
+                                console.log("Whois: " + whois_all[w]);
+
+                                $("#whois_modal_label").text("AS" + whois_all[w].asn);
+
+                                var info = '<h4>' + ' PREFIXES: ' + '</h4>' + '<pre>';
+
+                                // prefixes
+                                info += '# of Transit IPv4 prefixes: \t' + whois_all[w].transit_v4_prefixes + '\n';
+                                info += '# of Transit IPv6 prefixes: \t' + whois_all[w].transit_v6_prefixes + '\n';
+                                info += '# of Origin IPv4 prefixes: \t' + whois_all[w].origin_v4_prefixes + '\n';
+                                info += '# of Origin IPv6 prefixes: \t' + whois_all[w].origin_v6_prefixes + '\n';
+
+                                info += '</pre>';
+
+                                info += '<h4>' + ' DATA: ' + '</h4>';
+
+                                if ((typeof more_info.raw_output != 'undefined') && (more_info.raw_output != null)) {
+                                    info += '<pre>' + 'Raw whois: ' + more_info.raw_output + '</pre>';
+                                }
+
+                                $("#whois_modal_body").html(info);
+
+                                console.log(info);
+
+                                $('#whois_modal').modal('show');
+                            });
+                        }
+                    },
+                    "columns": [
+                        {
+                            "data": "asn",
+                            "defaultContent": "unknown",
+                            "sWidth": "100px"
+                        },
+                        {
+                            "data": "isTransit",
+                            "defaultContent": "unknown",
+                            "sWidth": "70px"
+                        },
+                        {
+                            "data": "isOrigin",
+                            "defaultContent": "unknown",
+                            "sWidth": "70px"
+                        },
+                        {
+                            "data": "as_name",
+                            "defaultContent": "unknown",
+                            "sWidth": "200px"
+                        },
+                        {
+                            "data": "org_name",
+                            "defaultContent": "unknown",
+                            "sWidth": "200px"
+                        },
+                        {
+                            "data": "country",
+                            "defaultContent": "unknown",
+                            "sWidth": "200px"
+                        }
+                    ],
+
+                    "columnDefs": [
+                        {
+                            "render": function (data, type, row) {
+
+                                return (row.isTransit === "1") ? '<span class="glyphicon glyphicon-plus"> yes</span>' : '<span class="glyphicon glyphicon-minus"> no</span>';
+                            },
+                            "targets": 1
+                        },
+                        {
+                            "render": function (data, type, row) {
+
+                                return (row.isOrigin === "1") ? '<span class="glyphicon glyphicon-plus"> yes</span>' : '<span class="glyphicon glyphicon-minus"> no</span>';
+                            },
+                            "targets": 2
+                        }
+                    ],
+
+                    "bJQueryUI": true,
+                    "deferRender": true,
+                    "scrollCollapse": true,
+                    "paging": true,
+                    "info": true,
+                    "autoWidth": true
+                });
+            }
+
+            else {
+                req_whois = "http://odl-dev.openbmp.org:8001/db_rest/v1/whois/asn?where=w.as_name like '%" + search_content + "%' or w.org_name like '%" + search_content + "%'";
+
+                whoistable = $('#whois_table').DataTable({
+                    "ajax": {
+                        "url": req_whois,
+                        "dataSrc": function (json) {
+                            if (!jQuery.isEmptyObject(json)) {
+                                if (json.w.size != 0) {
+                                    whois_all = json.w.data;
+                                    wrong_data = false;
+
+                                } else {
+                                    $("#whois_wrong").show(500);
+                                }
+                            } else {
+                                $("#whois_wrong").show(500);
+                            }
+
+                            return whois_all;
+                        }
+                    },
+                    "fnInitComplete": function () {
+                        if (!wrong_data) {
+                            $("#whois_table_container").show(500);
+
+                            // Click on row in Peers table
+                            $('#whois_table_container tbody').on('click', 'tr', function () {
+                                var asn = $('td', this).eq(0).text();
+                                console.log(asn);
+
+                                var found = 0;
+                                var w = 0;
+                                while ((!found) && (w < whois_all.length)) {
+                                    if (whois_all[w].asn == asn) {
+                                        found = 1;
+                                    }
+                                    w++;
+                                }
+                                w--;
+
+                                var more = "http://odl-dev.openbmp.org:8001/db_rest/v1/whois/asn/" + asn;
+                                var more_info;
+
+                                jQuery.ajax({
+                                    url: more,
+                                    success: function (result) {
+                                        more_info = result.gen_whois_asn.data[0];
+                                    },
+                                    async: false
+                                });
+
+                                console.log("more info: " + more_info);
+
+                                console.log("Whois: " + whois_all[w]);
+
+                                $("#whois_modal_label").text("AS" + whois_all[w].asn);
+
+                                var info = '<h4>' + ' PREFIXES: ' + '</h4>' + '<pre>';
+
+                                // prefixes
+                                info += '# of Transit IPv4 prefixes: \t' + whois_all[w].transit_v4_prefixes + '\n';
+                                info += '# of Transit IPv6 prefixes: \t' + whois_all[w].transit_v6_prefixes + '\n';
+                                info += '# of Origin IPv4 prefixes: \t' + whois_all[w].origin_v4_prefixes + '\n';
+                                info += '# of Origin IPv6 prefixes: \t' + whois_all[w].origin_v6_prefixes + '\n';
+
+                                info += '</pre>';
+
+                                info += '<h4>' + ' DATA: ' + '</h4>';
+
+                                if ((typeof more_info.raw_output != 'undefined') && (more_info.
+                                                raw_output
+
+                                        != null)) {
+                                    info += '<pre>' + 'Raw whois: ' + more_info.
+                                            raw_output + '</pre>';
+                                }
+
+                                $("#whois_modal_body").html(info);
+
+                                console.log(info);
+
+                                $('#whois_modal').modal('show');
+                            });
+                        }
+                    },
+                    "columns": [
+                        {
+                            "data": "asn",
+                            "defaultContent": "unknown",
+                            "sWidth": "100px"
+                        },
+                        {
+                            "data": "isTransit",
+                            "defaultContent": "unknown",
+                            "sWidth": "70px"
+                        },
+                        {
+                            "data": "isOrigin",
+                            "defaultContent": "unknown",
+                            "sWidth": "70px"
+                        },
+                        {
+                            "data": "as_name",
+                            "defaultContent": "unknown",
+                            "sWidth": "200px"
+                        },
+                        {
+                            "data": "org_name",
+                            "defaultContent": "unknown",
+                            "sWidth": "200px"
+                        },
+                        {
+                            "data": "country",
+                            "defaultContent": "unknown",
+                            "sWidth": "200px"
+                        }
+                    ],
+
+                    "columnDefs": [
+                        {
+                            "render": function (data, type, row) {
+
+                                return (row.isTransit === "1") ? '<span class="glyphicon glyphicon-plus"> yes</span>' : '<span class="glyphicon glyphicon-minus"> no</span>';
+                            },
+                            "targets": 1
+                        },
+                        {
+                            "render": function (data, type, row) {
+
+                                return (row.isOrigin === "1") ? '<span class="glyphicon glyphicon-plus"> yes</span>' : '<span class="glyphicon glyphicon-minus"> no</span>';
+                            },
+                            "targets": 2
+                        }
+                    ],
+
+                    "bJQueryUI": true,
+                    "deferRender": true,
+                    "scrollCollapse": true,
+                    "paging": true,
+                    "info": true,
+                    "autoWidth": true
+                });
+            }
+
+        });
+
+    </script>
+
+
+    {% endblock %}
+
+    {% block styles %}
+
+    {% endblock %}
