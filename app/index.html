@@ -17,29 +17,70 @@
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
+    
+    <div id="wrapper" class="toggled">
 
-    <!-- Add your site or application content here -->
-
-    <div class="container">
-      <!-- HEADER -->
-      <div class="header">
-        <ul class="nav nav-pills pull-right">
-          <li class="active"><a ng-href="#">Home</a></li>
-          <li><a ng-href="#/about">BGP Tings</a></li>
-          <li><a ng-href="#">Dank Metrics</a></li>
+      <!-- SIDEBAR -->
+      <div class="sidebar" id="sidebar">
+        <h4>DASHBOARDS</h4>
+        <ul class="nav sidebar-nav">
+          <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+          <li><a href="#">Reports</a></li>
+          <li><a href="#">Analytics</a></li>
+          <li><a href="#">Export</a></li>
         </ul>
-        <h3 class="text-muted">bmpUi</h3>
+        <h4>DETAILS</h4>
+        <ul class="nav sidebar-nav">
+          <li><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+          <li><a href="#">Reports</a></li>
+          <li><a href="#">Analytics</a></li>
+          <li><a href="#">Export</a></li>
+        </ul>
+        <h4>ADMINISTRATION</h4>
+        <ul class="nav sidebar-nav">
+          <li><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+          <li><a href="#">Reports</a></li>
+          <li><a href="#">Analytics</a></li>
+          <li><a href="#">Export</a></li>
+        </ul>
       </div>
-      <!-- END HEADER -->
-      <div ng-view=""></div>
+      <!-- END SIDEBAR -->
 
-      <!-- FOOTER -->
-      <div class="footer">
-        <p><span class="glyphicon glyphicon-heart"></span> from Harry</p>
+      <!-- CONTENT -->
+      <div class="main">
+
+        <!-- HEADER -->
+        <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <button type="button" href="#menu-toggle" id="menu-toggle" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">CISCO ROUTING ANALYTICS</a>
+            </div>
+          </div>
+        </nav>
+        <!-- END HEADER -->
+
+         <!-- MAIN -->
+        <div class="container-fluid">
+          <div ng-view=""></div>
+
+          <!-- FOOTER -->
+          <div class="footer">
+            <!-- <p><span class="glyphicon glyphicon-heart"></span> from Harry</p> -->
+          </div>
+          <!-- END FOOTER -->
+        
+        </div>
+        <!-- END MAIN -->
+
       </div>
-      <!-- END FOOTER -->
+      <!-- END CONTENT -->
     </div>
-
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
@@ -87,5 +128,12 @@
         <script src="views/app.js"></script>
         <script src="views/dashboard/dashboard.js"></script>
         <!-- endbuild -->
+
+    <script>      
+      $("#menu-toggle").click(function(e) {
+          e.preventDefault();
+          $("#wrapper").toggleClass("toggled");
+      });
+    </script>
 </body>
 </html>
