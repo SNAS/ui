@@ -52,5 +52,5 @@ angular.module('bmpUiApp')
       //return amount1;
       $scope.routers[i].peers = api_call("http://demo.openbmp.org:8001/db_rest/v1/peer/localip/"+$scope.routers[i].RouterIP).v_peers.size;
     }
-    
+
   });

@@ -2,10 +2,10 @@
 
 /**
  * @ngdoc function
- * @name bmpUiApp.controller:WorldWatchController
+ * @name bmpUiApp.controller:DashboardController
  * @description
- * # WorldWatchController
- * Controller of the Login page
+ * # DashboardController
+ * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
   .controller('WorldWatchController', function ($scope) {

@@ -1,0 +1,75 @@
+<script>      
+  $("#menu-toggle").click(function(e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+      $(this).toggleClass("menu-close");
+  });
+</script>
+
+<div id="wrapper" class="toggled">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <span class="sidebar-icon glyphicon glyphicon-dashboard"></span>
+    <h4>DASHBOARDS</h4>
+    <ul class="nav sidebar-nav">
+      <li><a href="#">World Watch</a></li>
+  </ul>
+  <span class="sidebar-icon glyphicon glyphicon-list-alt"></span>
+  <h4>DETAILS</h4>
+  <ul class="nav sidebar-nav">
+      <li><a href="#">Peer Analysis</a></li>
+      <li><a href="#">AS Analysis</a></li>
+      <li><a href="#">Aggregation Analysis</a></li>
+      <li><a href="#">Prefix Analysis</a></li>
+      <li><a href="#">Who is</a></li>
+  </ul>
+  <span class="sidebar-icon glyphicon glyphicon-wrench"></span>
+  <h4>ADMINISTRATION</h4>
+  <ul class="nav sidebar-nav">
+      <li class="active"><a href="#">Collection Server<span class="sr-only">(current)</span></a></li>          
+      <li><a href="#">Preferences</a></li>
+  </ul>
+</div>
+<!-- END SIDEBAR -->
+
+<!-- CONTENT -->
+<div class="main">
+
+    <!-- HEADER -->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" href="#menu-toggle" id="menu-toggle" class="navbar-toggle">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar" id="bar-one"></span>
+            <span class="icon-bar" id="bar-two"></span>
+            <span class="icon-bar" id="bar-three"></span>
+        </button>
+        <a class="navbar-brand" href="#">CISCO ROUTING ANALYTICS</a>
+    </div>
+    <div class="navbar-right account">
+      <span class="text-light">Hello, Demo</span>
+      <br>
+      <a class="text-light" href="#">Log out</a>
+  </div>
+</div>
+</nav>
+<!-- END HEADER -->
+
+<!-- MAIN -->
+<div class="container-fluid">
+  <div ui-view></div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <!-- <p><span class="glyphicon glyphicon-heart"></span> from Harry</p> -->
+</div>
+<!-- END FOOTER -->
+
+</div>
+<!-- END MAIN -->
+
+</div>
+<!-- END CONTENT -->
+</div>
