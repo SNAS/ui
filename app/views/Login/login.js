@@ -10,4 +10,13 @@
 angular.module('bmpUiApp')
   .controller('LoginController', function ($scope) {
 
+    $scope.login = function() {
+      if ($scope.username == "demo" && $scope.password == "demo") {
+        alert("Logged in.");
+        //redirect to the dashboard state.
+      }else{
+        alert("No login");
+      }
+    };
+
   });
