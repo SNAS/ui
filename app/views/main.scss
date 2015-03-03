@@ -15,6 +15,19 @@
  * terms of the license you have entered into with Cisco.
  *
  */
+ //===================================================================================
+// Variables
+//===================================================================================
+$brand-primary: 							#3491df;
+$text-light:								#fff;
+
+$navbar-default-toggle-hover-bg:			darken($brand-primary, 10%);
+$navbar-default-toggle-icon-bar-bg:       	#fff;
+$navbar-default-toggle-border-color:       	#fff;
+$navbar-default-color:             			#fff;
+$navbar-default-link-color:  				#fff;
+$navbar-default-bg:                			#3491df;
+
 //=================================================================================
 // Imports
 //=================================================================================
@@ -23,12 +36,15 @@
 @import "bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
 // endbower
 
+@import "compass/css3";
+
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;
   color: #000;
   padding: 0.2em 0;
 }
+
 //===================================================================================
 // Header, Footer & Sidebar
 //===================================================================================
@@ -44,10 +60,23 @@
 	}
 }
 
+.text-light{
+	color: $text-light;
+}
+
+.navbar{
+	border: 0;
+	border-radius: 0;
+
+	.account{
+		text-align: right;
+		margin-top: 3px;
+	}
+}
+
 .navbar-toggle{
 	display: block;
 	float: left;
-	margin-left: 15px
 }
 
 .sidebar-nav > li{
@@ -58,15 +87,12 @@
 .nav>li>a {
 	position: relative;
 	display: block;
-	padding: 10px 35px;
+	padding: 10px 20px 10px 60px;
 }
 
 #wrapper {
 	padding-left: 0;
-	-webkit-transition: all 0.5s ease;
-	-moz-transition: all 0.5s ease;
-	-o-transition: all 0.5s ease;
-	transition: all 0.5s ease;
+	@include single-transition(all, 0.5s, ease);
 
 	&.toggled {
 		padding-left: 250px;
@@ -88,10 +114,7 @@
 	overflow-x: hidden;
 	background-color: #f5f5f5;
 	border-right: 1px solid #eee;
-	-webkit-transition: all 0.5s ease;
-	-moz-transition: all 0.5s ease;
-	-o-transition: all 0.5s ease;
-	transition: all 0.5s ease;
+	@include single-transition(all, 0.5s, ease);
 
 	h4{
 		margin-left: 15px;
