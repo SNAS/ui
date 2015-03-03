@@ -17,7 +17,7 @@
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-    
+
     <div id="wrapper" class="toggled">
 
       <!-- SIDEBAR -->
@@ -39,7 +39,7 @@
         <span class="sidebar-icon glyphicon glyphicon-wrench"></span>
         <h4>ADMINISTRATION</h4>
         <ul class="nav sidebar-nav">
-          <li class="active"><a href="#">Collection Server<span class="sr-only">(current)</span></a></li>          
+          <li class="active"><a href="#">Collection Server<span class="sr-only">(current)</span></a></li>
           <li><a href="#">Preferences</a></li>
         </ul>
       </div>
@@ -131,9 +131,21 @@
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="views/app.js"></script>
         <script src="views/dashboard/dashboard.js"></script>
+        <script src="views/login/login.js"></script>
+
+        <script src="views/aggregation-analysis/aggregation-analysis.js"></script>
+        <script src="views/analysis/analysis.js"></script>
+        <script src="views/instabilityreport/instabilityreport.js"></script>
+        <script src="views/peeranalysis/peeranalysis.js"></script>
+        <script src="views/prefixanalysis/prefixanalysis.js"></script>
+        <script src="views/sigma/sigma.js"></script>
+        <script src="views/t1/t1.js"></script>
+        <!--This should probs be a directive-->
+        <script src="views/topology/topology.js"></script>
+        <script src="views/whois/whois.js"></script>
         <!-- endbuild -->
 
-    <script>      
+    <script>
       $("#menu-toggle").click(function(e) {
           e.preventDefault();
           $("#wrapper").toggleClass("toggled");
