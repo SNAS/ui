@@ -1,0 +1,93 @@
+<div class="main">
+  <!-------------------BMP SERVER-------------------->
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 align="middle"><img src="./images/server01.png" height="50" width="50"/> BMP Server</h3>
+    </div>
+
+    <div class="panel-body main_widget">
+      <div class="list-group">
+
+        <a href="#" class="list-group-item">
+          <i class="fa fa-tasks fa-fw"></i> Host
+          <span class="pull-right text-muted small"><em>db1.openbmp.org</em></span>
+        </a>
+
+        <a href="#" class="list-group-item">
+          <i class="fa fa-database fa-fw"></i> Database
+          <span class="pull-right text-muted small"><em>172.12.14.18</em></span>
+        </a>
+
+        <a href="#" class="list-group-item">
+          <i class="fa fa-bolt fa-fw"></i> Status
+          <span class="pull-right text-muted small"><em>running</em></span>
+        </a>
+        <a href="#" class="list-group-item">
+          <i class="fa fa-twitter fa-fw"></i> Active BMP Routers
+          <span class="pull-right text-muted small"><em id="activerouter">{{ active_routers }}</em></span>
+        </a>
+        <a href="#" class="list-group-item">
+          <i class="fa fa-upload fa-fw"></i> Collector
+            <span class="pull-right text-muted small"><em id="collectorstatus">Up</em><span>
+        </a>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button type="button" class="btn btn-info" id="structure_button">Topology</button>
+    </div>
+  </div>
+
+  <!------------------BMP ROUTERS---------------->
+  <div>
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+        <h3 align="middle"><img src="/images/server01.png" height="50" width="50"/> BMP
+          Routers</h3>
+      </div>
+      <div class="panel-body main_widget">
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div class="tab-pane fade in active" id="routertable">
+            <div class="table-responsive">
+              <table class="table table-striped table-bordered table-hover" id="bmprouterstable">
+                <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Name</th>
+                  <th>IP Address</th>
+                  <th>Peers</th>
+                </tr>
+                <tr ng-repeat="row in routers">
+                  <!--<td ng-repeat="item in row | filter:">{{ item }}</td>-->
+
+                  <td>{{ row.status}}</td>
+                  <td>{{ row.RouterName }}</td>
+                  <td>{{ row.RouterIP }}</td>
+                  <td>{{ row.peers}}</td>
+
+                </tr>
+                </thead>
+
+              </table>
+            </div>
+            <!-- /.table-responsive -->
+          </div>
+          <div class="tab-pane fade" id="routertablechart">
+            <div id="router-report"
+                 style="min-width: 500px; max-width: 500px; height: 480px; margin: 0 auto"></div>
+          </div>
+        </div>
+      </div>
+      <!-- /.panel-body -->
+      <div class="panel-footer">
+        <button type="button" class="btn btn-warning" data-toggle="tab" data-target="#routertable">
+          Table
+        </button>
+        <button type="button" class="btn btn-warning" data-target="#routertablechart" data-toggle="tab">
+          Chart
+        </button>
+      </div>
+    </div>
+    <!-- /.panel-body -->
+  </div>
+</div>

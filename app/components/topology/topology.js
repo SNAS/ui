@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name bmpUiApp.controller:T1Controller
+ * @name bmpUiApp.controller:LoginController
  * @description
- * # T1Controller
+ * # LoginController
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('T1Controller', function ($scope) {
+  .controller('TopologyController', function ($scope) {
 
   });
