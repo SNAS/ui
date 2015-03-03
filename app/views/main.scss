@@ -48,16 +48,25 @@ $navbar-default-bg:                			#3491df;
 //===================================================================================
 // Header, Footer & Sidebar
 //===================================================================================
-@media (min-width: 768px) {
-	#wrapper {
-		padding-left: 250px;
-	}
-	.sidebar {
-		width: 250px;
-	}
-	#wrapper.toggled {
-		padding-left: 0;
-	}
+.container-fluid > .navbar-header{
+	margin-right: 0;
+	margin-left: 0;
+}
+
+.navbar-header {
+	float: left;
+}
+
+#wrapper {
+	padding-left: 250px;
+}
+
+.sidebar {
+	width: 250px;
+}
+
+#wrapper.toggled {
+	padding-left: 0;
 }
 
 .text-light{
@@ -117,7 +126,7 @@ $navbar-default-bg:                			#3491df;
 	@include single-transition(all, 0.5s, ease);
 
 	h4{
-		margin-left: 15px;
+		margin-left: 35px;
 		color: gray; 
 	}
 }
@@ -127,12 +136,29 @@ $navbar-default-bg:                			#3491df;
 	background-color: #428bca;
 }
 
+.sidebar-icon{
+	float: left;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
 .sidebar-nav{
 	width: 250px;
 	padding: 0;
 	list-style: none;
-	margin-bottom: 20px;
 }
+
+@include keyframes(close-menu) {
+  25% {
+    @include transform2d(scale(100%,50%));
+  }
+}
+
+.menu-close #bar-three{
+	@include animation(close-menu 3s infinite);
+}
+
+
 
 //=============================================================
 // Sections
