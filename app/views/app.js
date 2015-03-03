@@ -76,7 +76,8 @@
 			 	})
 
 		 	.state('app.admin', {
-		 		abstract: true
+		 		abstract: true,
+        template: '<div ui-view></div>'
 		 	})
 			 	.state('app.admin.collectionServer', {
 			 		url: '/collection-server',
