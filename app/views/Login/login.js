@@ -5,18 +5,16 @@
  * @name bmpUiApp.controller:LoginController
  * @description
  * # LoginController
- * Controller of the Login page
+ * Simple user login
  */
 angular.module('bmpUiApp')
-  .controller('LoginController', function ($scope) {
-
-    $scope.login = function() {
-      if ($scope.username == "demo" && $scope.password == "demo") {
-        alert("Logged in.");
-        //redirect to the dashboard state.
-      }else{
-        alert("No login");
-      }
-    };
-
-  });
+    .controller('LoginController', function ($rootScope, $scope, $state) {
+        $scope.login = function(){
+            if($scope.username === 'demo' && $scope.password === 'demo'){
+                $rootScope.currentUser = $scope.username;
+                $state.transitionTo('app.admin.collectionServer');
+            } else {
+                $scope.error = 'Incorrect username or password';
+            }
+        };
+    });
