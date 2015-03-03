@@ -18,7 +18,7 @@ angular.module('bmpUiApp')
         success: function (result) {
           res = result;
         },
-        async: true
+        async: false
       });
      return res;
     }
