@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
-  .controller('DashboardController', function ($scope) {
+  .controller('WorldWatchController', function ($scope) {
 
      function api_call(apiurl) {
        var res;
