@@ -32,7 +32,7 @@
 	 	})
 	 	.state('app', {
 	 		abstract: true,
-	 		templateUrl: 'views/main/main.html',
+	 		templateUrl: 'views/container/containerDirective.html',
 	 		data: {
 	 			requireLogin: true
 	 		}
@@ -92,10 +92,10 @@
 			 		controller: 'PreferencesController'
 			 	});
 }])
-.run(function ($rootScope, $state) {
+.run(function ($rootScope, $state, $cookies) {
 	$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
 	    var requireLogin = toState.data.requireLogin;
-	    if (requireLogin && typeof $rootScope.currentUser === 'undefined') {
+	    if (requireLogin && typeof $cookies.username === 'undefined') {
 	    	event.preventDefault();
 	    	$state.transitionTo('login');
     	}

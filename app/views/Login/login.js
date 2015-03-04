@@ -8,13 +8,13 @@
  * Simple user login
  */
 angular.module('bmpUiApp')
-    .controller('LoginController', function ($rootScope, $scope, $state) {
+    .controller('LoginController', ['$scope', '$cookies', '$state', function ($scope, $cookies, $state) {
         $scope.login = function(){
             if($scope.username === 'demo' && $scope.password === 'demo'){
-                $rootScope.currentUser = $scope.username;
+                $cookies.username = $scope.username;
                 $state.transitionTo('app.admin.collectionServer');
             } else {
                 $scope.error = 'Incorrect username or password';
             }
         };
-    });
+    }]);
