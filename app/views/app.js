@@ -18,7 +18,9 @@
  	'ngTouch',
  	'ui.router'
  	])
- .config(['$stateProvider', function ($stateProvider) {
+ .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+ 	$urlRouterProvider.otherwise("/login");
+
  	$stateProvider
 	 	.state('login', {
 	 		url: '/login',
