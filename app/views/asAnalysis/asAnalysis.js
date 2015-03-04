@@ -5,7 +5,7 @@
  * @name bmpUiApp.controller:AnalysisController
  * @description
  * # AnalysisController
- * Controller of the Login page
+ * Controller of the login page
  */
 angular.module('bmpUiApp')
   .controller('AnalysisController', function ($scope) {
