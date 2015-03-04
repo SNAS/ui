@@ -72,7 +72,7 @@
 			 		controller: 'PrefixAnalysisController'
 			 	})
 			 	.state('app.details.whoIs', {
-			 		url: '/pwho-is',
+			 		url: '/who-is',
 			 		templateUrl: 'views/whoIs/whoIs.html',
 			 		controller: 'WhoIsController'
 			 	})
