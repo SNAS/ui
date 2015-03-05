@@ -3,15 +3,9 @@
 
     <ui-gmap-google-map center='map.center' zoom='map.zoom' options='options'>
 
-        <ui-gmap-marker coords="marker.coords" options="marker.options" events="marker.events" idkey="marker.id">
+        <ui-gmap-marker ng-repeat="marker in markers" coords="marker.coords" events="marker.events" idkey="marker.id">
         </ui-gmap-marker>
 
     </ui-gmap-google-map>
-
-    <br>
-    <h2>BMP Routers</h2>
-    <ul>
-        <li ng-repeat="router in desired"><a ng-click="select(router)">{{router.name}}: {{router.lat}}, {{router.lng}}</a></li>
-    </ul>
 
 </div>
