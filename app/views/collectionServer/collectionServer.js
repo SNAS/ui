@@ -8,7 +8,7 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('CollectionServerController', function ($scope) {
+  .controller('CollectionServerController', ['$scope','$http', function ($scope, $http) {
 
     function api_call(apiurl) {
       var res;
@@ -21,36 +21,88 @@ angular.module('bmpUiApp')
         async: false
       });
       return res;
+
+      //$http.get(apiurl).
+      //  then(function(result){
+      //    console.dir(result.data);
+      //    res = result.data;
+      //  });
+      //return res;
     }
 
     $scope.active_routers = api_call("http://odl-dev.openbmp.org:8001/db_rest/v1/routers/status/up").routers.size;
-
     $scope.routers = api_call("http://odl-dev.openbmp.org:8001/db_rest/v1/routers").routers.data;
 
+    //Loop through routers selecting and altering relevant data.
+    $scope.bmpRouterGrid = [];
     for(var i = 0; i < $scope.routers.length; i++) {
+      var item = {};
+
+      item.routerName = $scope.routers[i].RouterName;
+      item.routerIp = $scope.routers[i].RouterIP
+      item.peers = $scope.routers[i].peers
+
       if ($scope.routers[i].isConnected == 1) {
-        $scope.routers[i].status = "Up";
+        item.status = "Up";
       }
       else {
-        $scope.routers[i].status = "Down";
+        item.status = "Down";
       }
-      //DOESNT WORK OUT ALL OF THE PEERS
-      //EXISTING CODE DOES
-      //var h = 0;
-      //var arr1 = [];
-      //var amount1 = 0;
-      //while (h < peers.length) {
-      //  if (peers[h].RouterIP == row.RouterIP) {
-      //    amount1++;
-      //    arr1.push(peers[h]);
-      //  }
-      //  h++;
-      //}
-      //console.log(peers);
-      //console.log("DEBUG:" + amount1 + arr1);
-      //router_peer_distribution[row.RouterIP] = arr1;
-      //return amount1;
-      $scope.routers[i].peers = api_call("http://demo.openbmp.org:8001/db_rest/v1/peer/localip/"+$scope.routers[i].RouterIP).v_peers.size;
+      item.peers = api_call("http://demo.openbmp.org:8001/db_rest/v1/peer?where=routerip=%27" + $scope.routers[i].RouterIP + "%27").v_peers.size;
+
+      $scope.bmpRouterGrid.push(item);
+    }
+    $scope.bmpRouterGridOptions = { data: 'bmpRouterGrid' };
+    //console.dir($scope.bmpRouterGridOptions);
+
+    //"isUp": "1",
+    //"isBMPConnected": "1",
+    //"isPeerIPv4": "1",
+
+    var peersData = api_call("http://odl-dev.openbmp.org:8001/db_rest/v1/peer");
+    //[ Up-ColDwn, Dwn-ColDwn, Up, Dwn ]
+    var ips = [[0,0,0,0], //ipv4
+               [0,0,0,0]]; //ipv6
+
+    for(var i =0;i<peersData.v_peers.size;i++){
+
+      var item = peersData.v_peers.data[i];
+
+      var whichIp = 1;
+      if(item.isPeerIPv4 == 1){
+        whichIp = 0;
+      }
+
+      if(item.isBMPConnected == 0){
+        //Count Down-collected up || down
+        if(item.isUp == 1){
+          //Up
+          ips[whichIp][0]++;
+        }else{
+          //Down
+          ips[whichIp][1]++;
+        }
+      }
+      //count up and downs
+      if(item.isUp == 1){
+        //Up
+        ips[whichIp][2]++;
+      }else{
+        //Down
+        ips[whichIp][3]++;
+      }
     }
 
-  });
+    //build data for the Peers table
+    var keys = ["Up-ColDwn", "Dwn-ColDwn", "Up", "Dwn"];
+    $scope.bgpPeersGrid = [];
+    for(var i = 0; i < ips[0].length; i++){
+      item={};
+      item[""] = keys[i];
+      item.IPv4 = ips[0][i];
+      item.IPv6 = ips[1][i];
+      item.Total = ips[0][i] + ips[1][i];
+      $scope.bgpPeersGrid.push(item);
+    }
+    $scope.bgpPeersGridOptions = { data: 'bgpPeersGrid' };
+  }]);

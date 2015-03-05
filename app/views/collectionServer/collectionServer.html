@@ -47,31 +47,10 @@
       <div class="panel-body main_widget">
         <!-- Tab panes -->
         <div class="tab-content">
-          <div class="tab-pane fade in active" id="routertable">
-            <div class="table-responsive">
-              <table class="table table-striped table-bordered table-hover" id="bmprouterstable">
-                <thead>
-                <tr>
-                  <th>Status</th>
-                  <th>Name</th>
-                  <th>IP Address</th>
-                  <th>Peers</th>
-                </tr>
-                <tr ng-repeat="row in routers">
-                  <!--<td ng-repeat="item in row | filter:">{{ item }}</td>-->
 
-                  <td>{{ row.status}}</td>
-                  <td>{{ row.RouterName }}</td>
-                  <td>{{ row.RouterIP }}</td>
-                  <td>{{ row.peers}}</td>
+          <!--Angular Table added here-->
+          <div class="gridStyle" ng-grid="bmpRouterGridOptions"></div>
 
-                </tr>
-                </thead>
-
-              </table>
-            </div>
-            <!-- /.table-responsive -->
-          </div>
           <div class="tab-pane fade" id="routertablechart">
             <div id="router-report"
                  style="min-width: 500px; max-width: 500px; height: 480px; margin: 0 auto"></div>
@@ -90,4 +69,37 @@
     </div>
     <!-- /.panel-body -->
   </div>
+
+  <!------------------------PEERS---------------->
+  <div>
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        <h3 align="middle"><img src="/images/server01.png" height="50" width="50"/> BGP Peers</h3>
+      </div>
+      <div class="panel-body main_widget">
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+          <!--Angular Table added here-->
+          <div class="gridStyle" ng-grid="bgpPeersGridOptions"></div>
+
+          <div class="tab-pane fade" id="peertablechart">
+            <div id="peer-report"
+                 style="min-width: 350px; height: 400px; margin: 0 auto"></div>
+          </div>
+        </div>
+        <!-- /.table-responsive -->
+      </div>
+      <!-- /.panel-body -->
+      <div class="panel-footer">
+        <button type="button" class="btn btn-success" data-toggle="tab"
+                data-target="#peertable">Table
+        </button>
+        <button type="button" class="btn btn-success"
+                data-target="#peertablechart" data-toggle="tab">Chart
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>

@@ -16,7 +16,9 @@
  	'ngRoute',
  	'ngSanitize',
  	'ngTouch',
- 	'ui.router'
+ 	'ui.router',
+  'ngGrid'
+
  	])
  .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
  	$urlRouterProvider.otherwise("/login");
