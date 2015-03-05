@@ -16,7 +16,8 @@
  	'ngRoute',
  	'ngSanitize',
  	'ngTouch',
- 	'ui.router'
+ 	'ui.router',
+ 	'uiGmapgoogle-maps'
  	])
  .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
  	$urlRouterProvider.otherwise("/login");
