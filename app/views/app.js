@@ -18,7 +18,7 @@
  	'ngTouch',
  	'ui.router',
   'ngGrid'
-
+ 	'uiGmapgoogle-maps'
  	])
  .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
  	$urlRouterProvider.otherwise("/login");
@@ -34,70 +34,57 @@
 	 	})
 	 	.state('app', {
 	 		abstract: true,
-	 		templateUrl: 'views/main/main.html',
+	 		templateUrl: 'views/container/container.html',
 	 		data: {
 	 			requireLogin: true
 	 		}
 	 	})
-		 	.state('app.dashboards', {
-		 		abstract: true,
-		 		template: '<div ui-view></div>'
+		 	.state('app.worldWatch', {
+		 		url: '/world-watch',
+		 		templateUrl: 'views/worldWatch/worldWatch.html',
+		 		controller: 'WorldWatchController'
 		 	})
-			 	.state('app.dashboards.worldWatch', {
-			 		url: '/world-watch',
-			 		templateUrl: 'views/worldWatch/worldWatch.html',
-			 		controller: 'WorldWatchController'
-			 	})
+		 	.state('app.peerAnalysis', {
+		 		url: '/peer-analysis',
+		 		templateUrl: 'views/peerAnalysis/peerAnalysis.html',
+		 		controller: 'PeerAnalysisController'
+		 	})
+		 	.state('app.asAnalysis', {
+		 		url: '/as-analysis',
+		 		templateUrl: 'views/asAnalysis/asAnalysis.html',
+		 		controller: 'ASAnalysisController'
+		 	})
+		 	.state('app.aggregationAnalysis', {
+		 		url: '/aggregation-analysis',
+		 		templateUrl: 'views/aggregationAnalysis/aggregationAnalysis.html',
+		 		controller: 'AggregationAnalysisController'
+		 	})
+		 	.state('app.prefixAnalysis', {
+		 		url: '/prefix-analysis',
+		 		templateUrl: 'views/prefixAnalysis/prefixAnalysis.html',
+		 		controller: 'PrefixAnalysisController'
+		 	})
+		 	.state('app.whoIs', {
+		 		url: '/pwho-is',
+		 		templateUrl: 'views/whoIs/whoIs.html',
+		 		controller: 'WhoIsController'
+		 	})
+		 	.state('app.collectionServer', {
+		 		url: '/collection-server',
+		 		templateUrl: 'views/collectionServer/collectionServer.html',
+		 		controller: 'CollectionServerController'
 
-			.state('app.details', {
-		 		abstract: true,
-		 		template: '<div ui-view></div>'
 		 	})
-			 	.state('app.details.peerAnalysis', {
-			 		url: '/peer-analysis',
-			 		templateUrl: 'views/peerAnalysis/peerAnalysis.html',
-			 		controller: 'PeerAnalysisController'
-			 	})
-			 	.state('app.details.asAnalysis', {
-			 		url: '/as-analysis',
-			 		templateUrl: 'views/asAnalysis/asAnalysis.html',
-			 		controller: 'ASAnalysisController'
-			 	})
-			 	.state('app.details.aggregationAnalysis', {
-			 		url: '/aggregation-analysis',
-			 		templateUrl: 'views/aggregationAnalysis/aggregationAnalysis.html',
-			 		controller: 'AggregationAnalysisController'
-			 	})
-			 	.state('app.details.prefixAnalysis', {
-			 		url: '/prefix-analysis',
-			 		templateUrl: 'views/prefixAnalysis/prefixAnalysis.html',
-			 		controller: 'PrefixAnalysisController'
-			 	})
-			 	.state('app.details.whoIs', {
-			 		url: '/pwho-is',
-			 		templateUrl: 'views/whoIs/whoIs.html',
-			 		controller: 'WhoIsController'
-			 	})
-
-		 	.state('app.admin', {
-		 		abstract: true,
-        template: '<div ui-view></div>'
-		 	})
-			 	.state('app.admin.collectionServer', {
-			 		url: '/collection-server',
-			 		templateUrl: 'views/collectionServer/collectionServer.html',
-			 		controller: 'CollectionServerController'
-			 	})
-			 	.state('app.admin.preferences', {
-			 		url: '/preferences',
-			 		templateUrl: 'views/preferences/preferences.html',
-			 		controller: 'PreferencesController'
-			 	});
+		 	.state('app.preferences', {
+		 		url: '/preferences',
+		 		templateUrl: 'views/preferences/preferences.html',
+		 		controller: 'PreferencesController'
+		 	});
 }])
-.run(function ($rootScope, $state) {
+.run(function ($rootScope, $state, $cookies) {
 	$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
 	    var requireLogin = toState.data.requireLogin;
-	    if (requireLogin && typeof $rootScope.currentUser === 'undefined') {
+	    if (requireLogin && typeof $cookies.username === 'undefined') {
 	    	event.preventDefault();
 	    	$state.transitionTo('login');
     	}

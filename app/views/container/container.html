@@ -1,34 +1,26 @@
-<script>      
-  $("#menu-toggle").click(function(e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-      $(this).toggleClass("menu-close");
-  });
-</script>
-
-<div id="wrapper" class="toggled">
+<div id="wrapper" class="toggled" ng-controller="MainController">
 
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
     <span class="sidebar-icon glyphicon glyphicon-dashboard"></span>
     <h4>DASHBOARDS</h4>
     <ul class="nav sidebar-nav">
-      <li><a href="#">World Watch</a></li>
+      <li active-item><a ui-sref="app.worldWatch">World Watch</a></li>
   </ul>
   <span class="sidebar-icon glyphicon glyphicon-list-alt"></span>
   <h4>DETAILS</h4>
   <ul class="nav sidebar-nav">
-      <li><a href="#">Peer Analysis</a></li>
-      <li><a href="#">AS Analysis</a></li>
-      <li><a href="#">Aggregation Analysis</a></li>
-      <li><a href="#">Prefix Analysis</a></li>
-      <li><a href="#">Who is</a></li>
+      <li active-item><a ui-sref="app.peerAnalysis">Peer Analysis</a></li>
+      <li active-item><a ui-sref="app.asAnalysis">AS Analysis</a></li>
+      <li active-item><a ui-sref="app.aggregationAnalysis">Aggregation Analysis</a></li>
+      <li active-item><a ui-sref="app.prefixAnalysis">Prefix Analysis</a></li>
+      <li active-item><a ui-sref="app.whoIs">Who is</a></li>
   </ul>
   <span class="sidebar-icon glyphicon glyphicon-wrench"></span>
   <h4>ADMINISTRATION</h4>
   <ul class="nav sidebar-nav">
-      <li class="active"><a href="#">Collection Server<span class="sr-only">(current)</span></a></li>          
-      <li><a href="#">Preferences</a></li>
+      <li active-item><a ui-sref="app.collectionServer">Collection Server</a></li>
+      <li active-item><a ui-sref="app.preferences">Preferences</a></li>
   </ul>
 </div>
 <!-- END SIDEBAR -->
@@ -49,9 +41,9 @@
         <a class="navbar-brand" href="#">CISCO ROUTING ANALYTICS</a>
     </div>
     <div class="navbar-right account">
-      <span class="text-light">Hello, Demo</span>
+      <span class="text-light">Hello, {{username}}</span>
       <br>
-      <a class="text-light" href="#">Log out</a>
+      <a class="text-light" ng-click="logout()" href="#">Log out</a>
   </div>
 </div>
 </nav>
@@ -72,4 +64,13 @@
 
 </div>
 <!-- END CONTENT -->
+
+<script>
+  $("#menu-toggle").click(function(e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+      $(this).toggleClass("menu-close");
+  });
+</script>
+
 </div>
