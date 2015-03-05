@@ -17,7 +17,7 @@
  	'ngSanitize',
  	'ngTouch',
  	'ui.router',
-  'ngGrid'
+  'ngGrid',
  	'uiGmapgoogle-maps'
  	])
  .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {

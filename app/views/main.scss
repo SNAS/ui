@@ -49,14 +49,14 @@ $navbar-default-bg:                			#3491df;
 // Sections
 //===================================================================================
 @import "aggregationAnalysis/aggregationAnalysis";
-@import "analysis/analysis";
+@import "asAnalysis/asAnalysis";
 @import "collectionServer/collectionServer";
 @import "instabilityReport/instabilityReport";
 @import "login/login";
-@import "main/main";
 @import "peerAnalysis/peerAnalysis";
 @import "preferences/preferences";
 @import "prefixAnalysis/prefixAnalysis";
 @import "whoIs/whoIs";
 @import "container/container";
 @import "worldWatch/worldWatch";
+

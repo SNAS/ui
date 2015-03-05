@@ -14,7 +14,7 @@
     "angular-touch": "1.2.16",
     "angular-route": "1.2.16",
     "angular-ui-router": "~0.2.13",
-    "ng-grid": "~2.0.14"
+    "ng-grid": "~2.0.14",
     "angular-google-maps": "~2.0.13"
   },
   "devDependencies": {
