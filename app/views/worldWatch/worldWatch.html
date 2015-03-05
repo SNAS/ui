@@ -3,8 +3,11 @@
 
     <ui-gmap-google-map center='map.center' zoom='map.zoom' options='options'>
 
-        <ui-gmap-marker ng-repeat="marker in markers" coords="marker.coords" events="marker.events" idkey="marker.id">
-        </ui-gmap-marker>
+        <ui-gmap-markers models="markers" coords="'self'" icon="'icon'">
+            <ui-gmap-windows show="'show'">
+                <div ng-non-bindable>{{id}}</div>
+            </ui-gmap-windows>
+        </ui-gmap-markers>
 
     </ui-gmap-google-map>
 

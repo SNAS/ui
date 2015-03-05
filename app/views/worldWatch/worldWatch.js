@@ -14,20 +14,10 @@ angular.module('bmpUiApp')
         $scope.options = {
             scrollwheel: false, 
             streetViewControl: false,
-            zoomControl: false,
             panControl: false,
             mapTypeControl: false
         };
 
-        /* Examplar http get code
-        $http.get("http://odl-dev.openbmp.org:8001/db_rest/v1/routers").
-            success(function(data, status, headers, config) {                
-                $scope.BMPRouters = data.routers.data;
-            }.
-            error(function(data, status, headers, config) {
-                console.log('failed', status);
-            });
-        */
         getRouters();
 
         function getRouters() {
@@ -49,10 +39,10 @@ angular.module('bmpUiApp')
                     if(data.loc != undefined){
                         $scope.markers.push({
                             id: value.RouterName,
-                            coords: {
-                                latitude: data.loc.split(',')[0],
-                                longitude: data.loc.split(',')[1]
-                            }
+                            latitude: data.loc.split(',')[0],
+                            longitude: data.loc.split(',')[1],
+                            show: false,
+                            icon: '../images/marker.png'
                         });
                     }
                 }).
@@ -60,5 +50,5 @@ angular.module('bmpUiApp')
                     console.log(error.message);
                 })
             })
-        }
+        }      
     });
