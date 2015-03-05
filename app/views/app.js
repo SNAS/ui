@@ -72,6 +72,7 @@
 		 		url: '/collection-server',
 		 		templateUrl: 'views/collectionServer/collectionServer.html',
 		 		controller: 'CollectionServerController'
+
 		 	})
 		 	.state('app.preferences', {
 		 		url: '/preferences',
