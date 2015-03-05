@@ -18,7 +18,8 @@
  	'ngTouch',
  	'ui.router',
   'ngGrid',
- 	'uiGmapgoogle-maps'
+ 	'uiGmapgoogle-maps',
+  'nvd3'
  	])
  .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
  	$urlRouterProvider.otherwise("/login");
