@@ -18,6 +18,15 @@ angular.module('bmpUiApp')
             mapTypeControl: false
         };
 
+        /* Examplar http get code
+        $http.get("http://odl-dev.openbmp.org:8001/db_rest/v1/routers").
+            success(function(data, status, headers, config) {                
+                $scope.BMPRouters = data.routers.data;
+            }.
+            error(function(data, status, headers, config) {
+                console.log('failed', status);
+            });
+        */
 
         $scope.desired = [];
         $http.get("http://odl-dev.openbmp.org:8001/db_rest/v1/routers").
@@ -33,7 +42,6 @@ angular.module('bmpUiApp')
                             if(data.loc != undefined){
                                 $scope.desired[num].lat = data.loc.split(',')[0];
                                 $scope.desired[num].lng = data.loc.split(',')[1];
-                                // $scope.desired.push({'lat': data.loc.split(',')[0], 'lng': data.loc.split(',')[1]});
                             }
                             num ++;
                         }).
