@@ -7,9 +7,6 @@
 // use this if you want to recursively match all subfolders:
 // 'test/spec/**/*.js'
 
-/* jshint ignore:start */
-// All code below will be ignored by JSHint.
-
 module.exports = function (grunt) {
 
   // Load grunt tasks automatically
@@ -74,7 +71,7 @@ module.exports = function (grunt) {
       },
       jsTest: {
         files: ['test/spec/{,*/}*.js'],
-        tasks: ['newer:jshint:test', 'karma']
+        tasks: ['karma']
       },
       compass: {
         files: ['<%= yeoman.app %>/views/{,*/}*.{scss,sass}'],
@@ -139,25 +136,6 @@ module.exports = function (grunt) {
           open: true,
           base: '<%= yeoman.dist %>'
         }
-      }
-    },
-
-    // Make sure code styles are up to par and there are no obvious mistakes
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        reporter: require('jshint-stylish')
-      },
-      all: {
-        src: [
-          '<%= yeoman.app %>/**/*.js'
-        ]
-      },
-      test: {
-        options: {
-          jshintrc: 'test/.jshintrc'
-        },
-        src: ['test/spec/{,*/}*.js']
       }
     },
 
@@ -468,10 +446,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('default', [
-    'newer:jshint',
     'test',
     'build'
   ]);
 };
-
-/* jshint ignore:end */
