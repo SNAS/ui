@@ -34,7 +34,7 @@ angular.module('bmpUiApp')
           }).
           error(function (error) {
             console.log(error.message);
-          });        
+          });
       }
     };
 
@@ -43,9 +43,9 @@ angular.module('bmpUiApp')
       var ips = [[0, 0, 0, 0], //ipv4
                  [0, 0, 0, 0]]; //ipv6
 
-      for (var i = 0; i < peersData.v_peers.size; i++) {
+      for (var i = 0; i < $scope.peersData.v_peers.size; i++) {
 
-        var item = peersData.v_peers.data[i];
+        var item = $scope.peersData.v_peers.data[i];
 
         var whichIp = 1;
         if (item.isPeerIPv4 == 1) {
@@ -94,15 +94,15 @@ angular.module('bmpUiApp')
         console.log(error.message);
       });
 
-    //var peersData;
-    //apiFactory.getPeers().
-    //  success(function (result){
-    //    peersData = result.v_peers.data;
-    //    createBgpPeersGrid();
-    //  }).
-    //  error(function (error){
-    //    console.log(error.message);
-    //  });
+
+    apiFactory.getPeers().
+      success(function (result){
+        $scope.peersData = result;
+        createBgpPeersGrid();
+      }).
+      error(function (error){
+        console.log(error.message);
+      });
 
     $scope.bmpRouterGridOptions = {data: 'bmpRouterGrid'};
     $scope.bgpPeersGridOptions = {data: 'bgpPeersGrid'};
