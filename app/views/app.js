@@ -17,8 +17,8 @@
  	'ngSanitize',
  	'ngTouch',
  	'ui.router',
-  'nvd3',
-  'ui.grid',
+  	'nvd3',
+  	'ui.grid',
  	'uiGmapgoogle-maps'
  	])
  .config(function ($stateProvider, $urlRouterProvider, uiGmapGoogleMapApiProvider) {
@@ -72,7 +72,7 @@
 		 		controller: 'PrefixAnalysisController'
 		 	})
 		 	.state('app.whoIs', {
-		 		url: '/pwho-is',
+		 		url: '/who-is',
 		 		templateUrl: 'views/whoIs/whoIs.html',
 		 		controller: 'WhoIsController'
 		 	})
