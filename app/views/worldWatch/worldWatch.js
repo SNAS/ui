@@ -16,6 +16,7 @@ angular.module('bmpUiApp')
                 latitude: 40.1451, 
                 longitude: -99.6680 
             }, 
+            show: false,
             zoom: 3,
             control: {}
         };
