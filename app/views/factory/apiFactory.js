@@ -21,5 +21,17 @@ angular.module('bmpUiApp')
         return $http.get("http://ipinfo.io/" + ip + '/geo');
     };
 
+    apiFactory.getRouterStatus = function () {
+      return $http.get(urlBase + "routers/status/up");
+    };
+
+    apiFactory.getPeers = function () {
+      return $http.get(urlBase + "peer");
+    };
+
+    apiFactory.getPeersByIp = function (ip) {
+      return $http.get(urlBase + "peer?where=routerip=%27" + ip + "%27");
+    };
+
     return apiFactory;
 });
