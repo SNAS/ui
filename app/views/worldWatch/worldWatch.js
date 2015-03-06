@@ -9,7 +9,21 @@
  */
 angular.module('bmpUiApp')
     .controller('WorldWatchController', function ($scope, $http, apiFactory) {
-        $scope.map = {center: {latitude: 40.1451, longitude: -99.6680 }, zoom: 3 };
+        $scope.map = {
+            center: {
+                latitude: 40.1451, 
+                longitude: -99.6680 
+            }, 
+            zoom: 3,
+            control: {},
+            events: {
+                click: function (map) {
+                    $scope.$apply(function () {
+                        google.maps.event.trigger(map, "resize");
+                    });
+                }
+            } 
+        };
         //Map control options
         $scope.options = {
             scrollwheel: false, 
