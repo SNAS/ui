@@ -33,7 +33,7 @@
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
-          <button type="button" href="#menu-toggle" id="menu-toggle" class="navbar-toggle">
+        <button type="button" ng-click="toggleMenu()" id="menu-toggle" class="navbar-toggle">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar" id="bar-one"></span>
             <span class="icon-bar" id="bar-two"></span>
@@ -65,13 +65,5 @@
 
 </div>
 <!-- END CONTENT -->
-
-<script>
-  $("#menu-toggle").click(function(e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-      $(this).toggleClass("menu-close");
-  });
-</script>
 
 </div>

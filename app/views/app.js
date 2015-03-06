@@ -21,7 +21,7 @@
   	'nvd3',
  	'uiGmapgoogle-maps'
  	])
- .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+ .config(function ($stateProvider, $urlRouterProvider, uiGmapGoogleMapApiProvider) {
  	$urlRouterProvider.otherwise("/login");
 
  	$stateProvider
@@ -86,7 +86,13 @@
 		 		templateUrl: 'views/preferences/preferences.html',
 		 		controller: 'PreferencesController'
 		 	});
-}])
+
+	uiGmapGoogleMapApiProvider.configure({
+        //    key: 'your api key',
+        v: '3.17',
+        libraries: 'weather,geometry,visualization'
+    });
+})
 .run(function ($rootScope, $state, $cookies) {
 	$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
 	    var requireLogin = toState.data.requireLogin;

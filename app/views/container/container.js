@@ -8,13 +8,19 @@
  * Simple user login
  */
 angular.module('bmpUiApp')
-    .controller('MainController', function ($location, $scope, $cookies, $state) {
+    .controller('MainController', function ($rootScope, $scope, $cookies, $state) {
         $scope.username = $cookies.username;
 
         $scope.logout = function (){
             delete $cookies.username;
             $state.transitionTo('login');
         };
+
+        $scope.toggleMenu = function(){
+            $("#wrapper").toggleClass("toggled");
+            $("#menu-toggle").toggleClass("menu-close");
+            $rootScope.$broadcast('menu-toggle');
+        }
     })
 
     .directive('activeItem', function ($location) {

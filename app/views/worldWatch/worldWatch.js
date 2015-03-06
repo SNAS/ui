@@ -8,22 +8,18 @@
  * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
-    .controller('WorldWatchController', function ($scope, $http, apiFactory) {
+    .controller('WorldWatchController', function ($scope, $http, $timeout, apiFactory, uiGmapGoogleMapApi) {
+        window.SCOPE = $scope;
+
         $scope.map = {
             center: {
                 latitude: 40.1451, 
                 longitude: -99.6680 
             }, 
             zoom: 3,
-            control: {},
-            events: {
-                click: function (map) {
-                    $scope.$apply(function () {
-                        google.maps.event.trigger(map, "resize");
-                    });
-                }
-            } 
+            control: {}
         };
+
         //Map control options
         $scope.options = {
             scrollwheel: false, 
@@ -31,6 +27,14 @@ angular.module('bmpUiApp')
             panControl: false,
             mapTypeControl: false
         };
+
+        $scope.$watch($scope.map.control, function() {
+            $scope.mapObject = $scope.map.control.getGMap();
+
+            $scope.$on('menu-toggle', function(thing, args) {
+                $timeout( function(){ google.maps.event.trigger($scope.mapObject, "resize"); }, 500);
+            });   
+       });
 
         getRouters();
 
