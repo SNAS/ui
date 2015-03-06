@@ -8,30 +8,33 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('SummaryController', ['$scope','apiFactory', function ($scope, apiFactory) {
+  .controller('SummaryController', ['$scope','apiFactory', '$http', function ($scope, apiFactory, $http) {
 
     var createBmpRouterGrid = function() {
       $scope.bmpRouterGrid = [];
-      for (var i = 0; i < $scope.routers.size; i++) {
-        $scope.bmpRouterGrid.push({});
 
-        $scope.bmpRouterGrid[i].routerName = $scope.routers[i].RouterName;
-        $scope.bmpRouterGrid[i].routerIp = $scope.routers[i].RouterIP;
-        $scope.bmpRouterGrid[i].peers = 0;
-
-        if ($scope.routers[i].isConnected == 1) {
-          $scope.bmpRouterGrid[i].status = "Up";
-        }else {
-          $scope.bmpRouterGrid[i].status = "Down";
-        }
-
+      for (var i = 0; i < $scope.routers.length; i++) {
+        //grab our peers
         apiFactory.getPeersByIp($scope.routers[i].RouterIP).
           success(function (result) {
-            $scope.bmpRouterGrid[i].peers = result.v_peers.size;
+            //use the current size to match routers array asynchronously
+            var size = $scope.bmpRouterGrid.length;
+            var status = $scope.routers[size].isConnected;
+            if (status == 1)
+              status = "Up";
+            else
+              status = "Down";
+            //push all elements together
+            $scope.bmpRouterGrid.push({
+              'routerName': $scope.routers[size].RouterName,
+              'routerIp': $scope.routers[size].RouterIP,
+              'peers':  result.v_peers.size,
+              'status': status
+            });
           }).
           error(function (error) {
             console.log(error.message);
-          });
+          });        
       }
     };
 

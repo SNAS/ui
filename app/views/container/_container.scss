@@ -39,6 +39,8 @@
 .navbar-toggle{
     display: block;
     float: left;
+
+
 }
 
 .sidebar-nav > li{
@@ -101,12 +103,66 @@
     list-style: none;
 }
 
-@include keyframes(close-menu) {
-  25% {
-    @include transform2d(scale(100%,50%));
+@include keyframes(close-menu-top) {
+  0% {
+    @include transform2d(rotate(0deg));
+  }
+  100% {
+    @include transform2d(rotate(-25deg));
+    width: 10px;
+    margin-bottom: -4px;
+    margin-top: 4px;
   }
 }
 
-.menu-close #bar-three{
-    @include animation(close-menu 3s infinite);
+@include keyframes(close-menu-bottom) {
+  0% {
+    @include transform2d(rotate(0deg));
+  }
+  100% {
+    @include transform2d(rotate(25deg));
+    width: 10px;
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+}
+
+@include keyframes(close-menu-top-rev) {
+  0% {
+    @include transform2d(rotate(-25deg));
+    width: 10px;
+    margin-bottom: -4px;
+    margin-top: 4px;
+  }
+  100% {
+    @include transform2d(rotate(0deg));
+  }
+}
+
+@include keyframes(close-menu-bottom-rev) {
+  0% {
+    @include transform2d(rotate(25deg));
+    width: 10px;
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+  100% {    
+    @include transform2d(rotate(0deg));
+  }
+}
+
+.navbar-toggle #bar-one{
+    @include animation(close-menu-top 0.3s forwards);
+}
+
+.navbar-toggle #bar-three{
+    @include animation(close-menu-bottom 0.3s forwards);
+}
+
+.navbar-toggle.menu-close #bar-one{
+    @include animation(close-menu-top-rev 0.3s forwards);
+}
+
+.navbar-toggle.menu-close #bar-three{
+    @include animation(close-menu-bottom-rev 0.3s forwards);
 }
