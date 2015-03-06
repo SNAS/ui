@@ -36,6 +36,7 @@
 	 	.state('app', {
 	 		abstract: true,
 	 		templateUrl: 'views/container/container.html',
+	 		controller: 'MainController',
 	 		data: {
 	 			requireLogin: true
 	 		}
