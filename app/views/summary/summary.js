@@ -76,12 +76,16 @@ angular.module('bmpUiApp')
       var keys = ["Up, BMP Down", "Dwn, BMP Down", "Up", "Down"];
       $scope.bgpPeersGrid = [];
       for (var i = 0; i < ips[0].length; i++) {
-        item = {};
-        item[""] = keys[i];
-        item.IPv4 = ips[0][i];
-        item.IPv6 = ips[1][i];
-        item.Total = ips[0][i] + ips[1][i];
-        $scope.bgpPeersGrid.push(item);
+        //item[""] = keys[i];
+        //item.IPv4 = ips[0][i];
+        //item.IPv6 = ips[1][i];
+        //item.Total = ips[0][i] + ips[1][i];
+        $scope.bgpPeersGrid.push({
+          " ": keys[i],
+          "ipv4": ips[0][i],
+          "ipv6": ips[1][i],
+          "Total": ips[0][i] + ips[1][i]
+        });
       }
     };
 
