@@ -1,26 +1,32 @@
-<div id="wrapper" class="toggled" ng-controller="MainController">
+<div id="wrapper" class="toggled">
 
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
     <span class="sidebar-icon glyphicon glyphicon-dashboard"></span>
     <h4>DASHBOARDS</h4>
     <ul class="nav sidebar-nav">
-      <li active-item><a ui-sref="app.worldWatch">World Watch</a></li>
-      <li active-item><a ui-sref="app.summary">Summary</a></li>
+      <li active-item><a ui-sref="app.globalView">Global View</a></li>
+      <li active-item><a>Peer View</a></li>
+      <li active-item><a>AS View</a></li>
+      <li active-item><a>Looking Glass</a></li>
+      <li active-item><a ui-sref="app.whoIs">Who is</a></li>
+      <li active-item><a><span class="text-danger">!</span> Collector View</a></li>
+      <!-- <li active-item><a ui-sref="app.worldWatch">World Watch</a></li>
+      <li active-item><a ui-sref="app.summary">Summary</a></li> -->
   </ul>
   <span class="sidebar-icon glyphicon glyphicon-list-alt"></span>
   <h4>DETAILS</h4>
   <ul class="nav sidebar-nav">
       <li active-item><a ui-sref="app.peerAnalysis">Peer Analysis</a></li>
       <li active-item><a ui-sref="app.asAnalysis">AS Analysis</a></li>
-      <li active-item><a ui-sref="app.aggregationAnalysis">Aggregation Analysis</a></li>
+      <!-- <li active-item><a ui-sref="app.aggregationAnalysis">Aggregation Analysis</a></li> -->
       <li active-item><a ui-sref="app.prefixAnalysis">Prefix Analysis</a></li>
-      <li active-item><a ui-sref="app.whoIs">Who is</a></li>
   </ul>
   <span class="sidebar-icon glyphicon glyphicon-wrench"></span>
   <h4>ADMINISTRATION</h4>
   <ul class="nav sidebar-nav">
-      <li active-item><a ui-sref="app.collectionServer">Collection Server</a></li>
+      <li active-item><a ui-sref="app.collectionServer">Collector</a></li>
+      <li active-item><a>Database</a></li>
       <li active-item><a ui-sref="app.preferences">Preferences</a></li>
   </ul>
 </div>

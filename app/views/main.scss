@@ -52,16 +52,14 @@ a{
 //=============================================================
 // Sections
 //===================================================================================
-@import "aggregationAnalysis/aggregationAnalysis";
 @import "asAnalysis/asAnalysis";
 @import "collectionServer/collectionServer";
-@import "instabilityReport/instabilityReport";
 @import "login/login";
 @import "peerAnalysis/peerAnalysis";
 @import "preferences/preferences";
 @import "prefixAnalysis/prefixAnalysis";
 @import "whoIs/whoIs";
 @import "container/container";
-@import "worldWatch/worldWatch";
+@import "globalView/globalView";
 @import "summary/summary";
 

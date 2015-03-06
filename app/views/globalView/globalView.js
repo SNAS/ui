@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
-    .controller('WorldWatchController', function ($scope, $http, $timeout, apiFactory, uiGmapGoogleMapApi) {
+    .controller('GlobalViewController', function ($scope, $http, $timeout, apiFactory, uiGmapGoogleMapApi) {
         window.SCOPE = $scope;
 
         $scope.map = {
@@ -16,6 +16,7 @@ angular.module('bmpUiApp')
                 latitude: 40.1451, 
                 longitude: -99.6680 
             }, 
+            show: false,
             zoom: 3,
             control: {}
         };
