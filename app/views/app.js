@@ -40,16 +40,16 @@
 	 			requireLogin: true
 	 		}
 	 	})
-		 	.state('app.worldWatch', {
-		 		url: '/world-watch',
-		 		templateUrl: 'views/worldWatch/worldWatch.html',
-		 		controller: 'WorldWatchController'
+		 	.state('app.globalView', {
+		 		url: '/global-view',
+		 		templateUrl: 'views/globalView/globalView.html',
+		 		controller: 'GlobalViewController'
 		 	})
-      .state('app.summary', {
-        url: '/summary',
-        templateUrl: 'views/summary/summary.html',
-        controller: 'SummaryController'
-      })
+			.state('app.summary', {
+				url: '/summary',
+				templateUrl: 'views/summary/summary.html',
+				controller: 'SummaryController'
+			})
 		 	.state('app.peerAnalysis', {
 		 		url: '/peer-analysis',
 		 		templateUrl: 'views/peerAnalysis/peerAnalysis.html',

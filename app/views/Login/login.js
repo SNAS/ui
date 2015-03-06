@@ -12,7 +12,7 @@ angular.module('bmpUiApp')
         $scope.login = function(){
             if($scope.username === 'demo' && $scope.password === 'demo'){
                 $cookies.username = $scope.username;
-                $state.transitionTo('app.worldWatch');
+                $state.transitionTo('app.globalView');
             } else {
                 $scope.error = 'Incorrect username or password';
             }

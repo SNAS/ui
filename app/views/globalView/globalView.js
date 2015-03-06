@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
-    .controller('WorldWatchController', function ($scope, $http, $timeout, apiFactory, uiGmapGoogleMapApi) {
+    .controller('GlobalViewController', function ($scope, $http, $timeout, apiFactory, uiGmapGoogleMapApi) {
         window.SCOPE = $scope;
 
         $scope.map = {
