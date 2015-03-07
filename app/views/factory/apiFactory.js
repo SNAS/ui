@@ -33,5 +33,20 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer?where=routerip=%27" + ip + "%27");
     };
 
+    apiFactory.getWhoIsASN = function (asn) {
+      return $http.get(urlBase + "whois/asn/" + asn);
+    };
+
+    apiFactory.getWhoIsWhereASN = function (asn) {
+      return $http.get(urlBase + "whois/asn?where=w.asn=" + asn);
+    };
+
+    apiFactory.getWhoIsName = function (name) {
+      return $http.get(urlBase + "whois/asn?where=" +
+      "w.as_name%20like%20%27%" + name + "%%27%20"+
+      "or%20w.org_name%20like%20%27%" + name + "%%27"
+      );
+    };
+
     return apiFactory;
 });
