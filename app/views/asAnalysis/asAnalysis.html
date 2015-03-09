@@ -1,3 +1,61 @@
+<div class="row">
+  <!-- Diagram -->
+  <div class="col-lg-12">
+    <div class="panel panel-success sliding_panel" id="AS_Summary_Report_panel">
+      <div class="panel-heading">
+        <h3 align="middle"><img class="icon" src="images/survey-32.png"/> AS Summary Report</h3>
+      </div>
+      <div class="panel-body">
+        <!-- Nav tabs -->
+        <ul class="nav nav-pills">
+          <li><a href="#TOP_Transit_AS_tab" data-toggle="tab">TOP Transit AS</a>
+          </li>
+          <li><a href="#TOP_Originating_AS_tab" data-toggle="tab">TOP Originating AS</a>
+          </li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div class="tab-pane fade in active" id="TOP_Transit_AS_tab">
+            <h4>Top Transit ASes</h4>
+
+            <div class="col-lg-12">
+              <!--<div id="Top_Transit_ASes_chart_ipv4"-->
+                   <!--style="min-width: 60%; height: 400px; margin: 10 auto"></div>-->
+
+              <!--NVD3.js -->
+              <div ng-controller="ASAnalysisController">
+                <nvd3 options="options" data="transit_ipv4_data" config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+              </div>
+              <!-- /.NVD3.js -->
+            </div>
+
+            <!--<div class="col-lg-12">-->
+
+              <!--<div id="Top_Transit_ASes_chart_ipv6"-->
+                   <!--style="min-width: 60%; height: 400px; margin: 10 auto"></div>-->
+            <!--</div>-->
+          </div>
+          <div class="tab-pane fade" id="TOP_Originating_AS_tab">
+            <h4>Top Origin ASes</h4>
+
+            <div class="col-lg-12">
+              <div id="Top_Origin_ASes_chart_ipv4"
+                   style="min-width: 80%; height: 400px; margin: 10 auto"></div>
+            </div>
+
+            <div class="col-lg-12">
+              <div id="Top_Origin_ASes_chart_ipv6"
+                   style="min-width: 80%; height: 400px; margin: 10 auto"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /.Diagram -->
+</div>
+
+
 <div>
   <!------------------------------------------------- Prefixes & AS Summary --------------------------------------------->
     <div class="panel panel-success" id="as_analysis_panel">
@@ -6,21 +64,6 @@
                                 width="50" class="icon"/> AS Analysis</h3>
       </div>
       <div class="panel-body">
-
-        <!--NVD3.js -->
-        <div ng-controller="ASAnalysisController">
-          <nvd3-line-chart
-            data="exampleData"
-            showXAxis="true"
-            showtYAxis="true"
-            tooltips="true"
-            interactive="true">
-          </nvd3-line-chart>
-
-          <nvd3 options="options" data="data"></nvd3>
-
-        </div>
-        <!-- /.NVD3.js -->
 
         <div class="form-inline">
           <label>AS Number:</label>
