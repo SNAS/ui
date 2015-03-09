@@ -18,7 +18,7 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getRouterLocation = function (ip) {
-        return $http.get("http://ipinfo.io/" + ip + '/geo');
+        return $http.get(urlBase + "geoip/" + ip);
     };
 
     apiFactory.getRouterStatus = function () {

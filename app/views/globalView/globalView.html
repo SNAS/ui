@@ -1,9 +1,14 @@
-<div>
+<div class="relative">
+
     <h1 class="page-header">Global View</h1>
+
+    <div class="loading" ng-show="loading">
+        <span class="text-light">loading...</span>
+    </div>
 
     <ui-gmap-google-map center='map.center' zoom='map.zoom' options='options' control='map.control'>
 
-        <ui-gmap-markers models="markers" coords="'self'" icon="'icon'">
+        <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" events="events">
             <ui-gmap-windows show="'show'">
                 <div ng-non-bindable>{{id}}</div>
             </ui-gmap-windows>

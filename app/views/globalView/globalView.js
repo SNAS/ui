@@ -10,6 +10,7 @@
 angular.module('bmpUiApp')
     .controller('GlobalViewController', function ($scope, $http, $timeout, apiFactory, uiGmapGoogleMapApi) {
         window.SCOPE = $scope;
+        $scope.loading = true;
 
         $scope.map = {
             center: {
@@ -28,6 +29,15 @@ angular.module('bmpUiApp')
             panControl: false,
             mapTypeControl: false
         };
+
+        $scope.events = {
+            mouseover: function(marker, event, model, args){
+                model.show = true;
+            },
+            mouseout: function(marker, event, model, args){
+               $timeout( function(){ model.show = false }, 500);
+            }        
+        }
 
         $scope.$watch($scope.map.control, function() {
             $scope.mapObject = $scope.map.control.getGMap();
@@ -55,19 +65,21 @@ angular.module('bmpUiApp')
             angular.forEach($scope.BMPRouters, function (value, key){
                 apiFactory.getRouterLocation(value.RouterIP).
                 success(function (data){
-                    if(data.loc != undefined){
+                    data = data.v_geo_ip.data[0];
+                    if(data.latitude != undefined && data.longitude != undefined){
                         $scope.markers.push({
                             id: value.RouterName,
-                            latitude: data.loc.split(',')[0],
-                            longitude: data.loc.split(',')[1],
+                                latitude: data.latitude,
+                                longitude: data.longitude,
                             show: false,
                             icon: '../images/marker.png'
                         });
                     }
+                    $scope.loading = false;
                 }).
                 error(function (error){
                     console.log(error.message);
                 })
             })
-        }      
+        } 
     });
