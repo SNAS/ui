@@ -48,21 +48,5 @@ angular.module('bmpUiApp')
       );
     };
 
-    apiFactory.getTopTransitIpv4Data = function () {
-      return $http.get(urlBase + "as_stats/ipv4?topTransit=5");
-    };
-
-    apiFactory.getTopTransitIpv6Data = function () {
-      return $http.get(urlBase + "as_stats/ipv6?topTransit=5");
-    };
-
-    apiFactory.getTopOriginIpv4Data = function () {
-      return $http.get(urlBase + "as_stats/ipv4?topOrigin=5");
-    };
-
-    apiFactory.getTopOriginIpv6Data = function () {
-      return $http.get(urlBase + "as_stats/ipv6?topOrigin=5");
-    };
-
     return apiFactory;
 });
