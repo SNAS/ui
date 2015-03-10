@@ -41,16 +41,9 @@ angular.module('bmpUiApp')
     $scope.whoIsGridOptions.onRegisterApi = function (gridApi) {
       $scope.whoIsGridApi = gridApi;
     };
-
-    //$scope.$watch('asnOrName', debounce(function() {
-    //  $scope.selectedItem = $scope.typing;
-    //  $scope.$apply();
-    //}, 500));
-
+    
     //Loop through data selecting and altering relevant data.
-    $scope.searchValue = function(value) {
-      //$timeout( function(){
-      //}, 500);
+    var searchValue = function(value) {
       if(value == "" || value == " ")
         return;
       var numberRegex = /^\d+$/;
@@ -60,7 +53,6 @@ angular.module('bmpUiApp')
         apiFactory.getWhoIsName(value).
           success(function (result){
             $scope.whoIsGridOptions.data = $scope.whoIsData = result.w.data;
-            //createWhoIsDataGrid();
           }).
           error(function (error){
             console.log(error.message);
@@ -70,7 +62,6 @@ angular.module('bmpUiApp')
         apiFactory.getWhoIsWhereASN(value).
           success(function (result){
             $scope.whoIsGridOptions.data = $scope.whoIsData = result.w.data;
-            //createWhoIsDataGrid();
           }).
           error(function (error){
             console.log(error.message);
@@ -78,8 +69,19 @@ angular.module('bmpUiApp')
       }
     };
     //Init
-    $scope.searchValue("Cisco");
+    searchValue("Cisco");
     //$interval( function() {$scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);}, 0, 1);
+
+    //Waits a bit for user to contiune typing.
+    $scope.enterValue = function(value) {
+      $scope.currentValue = value;
+
+      $timeout( function() {
+        if(value == $scope.currentValue){
+          searchValue(value);
+        }
+      }, 500);
+    };
 
     //Not used
     var createWhoIsDataGrid = function () {
