@@ -8,7 +8,42 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('SummaryController', ['$scope','apiFactory', '$http', function ($scope, apiFactory, $http) {
+  .controller('SummaryController', ['$scope','apiFactory', '$http', '$timeout', function ($scope, apiFactory, $http, $timeout) {
+
+    //DEBUG
+    window.SCOPE = $scope;
+
+    //Redraw Tables when menu state changed
+    $scope.$on('menu-toggle', function(thing, args) {
+      $timeout( function(){
+        resize();
+      }, 550);
+    });
+
+    $scope.bmpRouterGridOptions = {};
+    $scope.bgpPeersGridOptions = {};
+
+    $scope.bmpRouterGridOptions.onRegisterApi = function (gridApi) {
+      $scope.bmpRouterGridApi = gridApi;
+    };
+
+    $scope.bgpPeersGridOptions.onRegisterApi = function (gridApi) {
+      $scope.bgpPeersGridApi = gridApi;
+    };
+
+    $scope.bmpRouterGridOptions.columnDefs = [
+      { name: 'routerName', displayName: 'Router Name' },
+      { name: 'routerIp', displayName: 'Router Ip' },
+      { name: 'peers', displayName: 'Peers' },
+      { name: 'status', displayName: 'Status' }
+    ];
+
+    $scope.bgpPeersGridOptions.columnDefs = [
+      { name: " ", displayName: '' },
+      { name: "ipv4", displayName: 'IPv4' },
+      { name: "ipv6", displayName: 'IPv6' },
+      { name: "Total", displayName: 'Total' }
+    ];
 
     var createBmpRouterGrid = function() {
       $scope.bmpRouterGrid = [];
@@ -36,6 +71,7 @@ angular.module('bmpUiApp')
             console.log(error.message);
           });
       }
+      $scope.bmpRouterGridOptions.data = $scope.bmpRouterGrid;
     };
 
     var createBgpPeersGrid = function() {
@@ -76,10 +112,6 @@ angular.module('bmpUiApp')
       var keys = ["Up, BMP Down", "Dwn, BMP Down", "Up", "Down"];
       $scope.bgpPeersGrid = [];
       for (var i = 0; i < ips[0].length; i++) {
-        //item[""] = keys[i];
-        //item.IPv4 = ips[0][i];
-        //item.IPv6 = ips[1][i];
-        //item.Total = ips[0][i] + ips[1][i];
         $scope.bgpPeersGrid.push({
           " ": keys[i],
           "ipv4": ips[0][i],
@@ -87,6 +119,7 @@ angular.module('bmpUiApp')
           "Total": ips[0][i] + ips[1][i]
         });
       }
+      $scope.bgpPeersGridOptions.data = $scope.bgpPeersGrid;
     };
 
     apiFactory.getRouters().
@@ -103,11 +136,15 @@ angular.module('bmpUiApp')
       success(function (result){
         $scope.peersData = result;
         createBgpPeersGrid();
+        $scope.bgpPeersGridOptions = 'bgpPeersGrid';
       }).
       error(function (error){
         console.log(error.message);
       });
 
-    $scope.bmpRouterGridOptions = {data: 'bmpRouterGrid'};
-    $scope.bgpPeersGridOptions = {data: 'bgpPeersGrid'};
+    var resize = function() {
+      $scope.bmpRouterGridApi.core.handleWindowResize();
+      $scope.bgpPeersGridApi.core.handleWindowResize();
+    };
+
   }]);

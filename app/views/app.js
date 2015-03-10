@@ -17,8 +17,9 @@
  	'ngSanitize',
  	'ngTouch',
  	'ui.router',
-  	'nvd3',
-  	'ui.grid',
+  'nvd3',
+  'ui.grid',
+  'ui.grid.selection',
  	'uiGmapgoogle-maps'
  	])
  .config(function ($stateProvider, $urlRouterProvider, uiGmapGoogleMapApiProvider) {

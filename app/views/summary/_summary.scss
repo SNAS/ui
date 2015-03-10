@@ -1,5 +1,17 @@
-.gridStyle {
+.routersGridStyle {
   border: 1px solid rgb(212,212,212);
   width: 100%;
-  height: 200px;
+  height: 227px;
+//  .ui-grid{
+//    height: auto;
+//  }
+  .ui-grid-viewport {
+    height: auto;
+  }
+}
+
+.peersGridStyle {
+  border: 1px solid rgb(212,212,212);
+  width: 100%;
+  height: 177px;
 }

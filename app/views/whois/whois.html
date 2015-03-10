@@ -2,8 +2,10 @@
   <!------------------WHO IS---------------->
   <h1>WHO IS</h1>
   <hr>
-  <input type="text" ng-change="searchValue(asnOrName)" ng-model="asnOrName" />
+  Search ASN or Name <input type="text" ng-change="searchValue(asnOrName)" ng-model="asnOrName" placeholder="Search ..." />
   <!--Angular Table added here-->
-  <div class="gridStyle" ui-grid="whoIsGridOptions"></div>
-  <br>
+  <div class="gridStyle" ui-grid-selection ui-grid="whoIsGridOptions"></div>
+  <h2>DETAILS</h2>
+  <hr>
+  {{ selectedItem }}
 </div>
