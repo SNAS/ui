@@ -13,7 +13,7 @@ angular.module('bmpUiApp')
  //   $scope.transit = true;
 
     /* Chart options */
-    $scope.options = {
+    $scope.ipv4Options = {
       chart: {
         type: 'discreteBarChart',
         height: 450,
@@ -26,17 +26,53 @@ angular.module('bmpUiApp')
         x: function(d){ return d.label; },
         y: function(d){ return d.value; },
         showValues: true,
+        staggerLabels:false,
+        color:["#9ec654"],
         valueFormat: function(d){
-          return d3.format(',.4f')(d);
+          return d3.format('d')(d);
         },
         transitionDuration: 500,
         xAxis: {
-          axisLabel: 'X Axis'
+          axisLabel: '',
+          rotateLabels:-45
         },
         yAxis: {
-          axisLabel: 'Y Axis',
-          axisLabelDistance: 30
+          axisLabel: '',
+          axisLabelDistance: 30,
+          tickFormat:d3.format('d')
         }
+      }
+    };
+
+    $scope.ipv6Options = {
+      chart: {
+        type: 'discreteBarChart',
+        height: 450,
+        margin : {
+          top: 20,
+          right: 20,
+          bottom: 60,
+          left: 55
+        },
+        x: function(d){ return d.label; },
+        y: function(d){ return d.value; },
+        showValues: true,
+        staggerLabels:false,
+        color:["#f7a031"],
+        valueFormat: function(d){
+          return d3.format('d')(d);
+        },
+        transitionDuration: 500,
+        xAxis: {
+          axisLabel: '',
+          rotateLabels:-45
+        },
+        yAxis: {
+          axisLabel: '',
+          axisLabelDistance: 30,
+          tickFormat:d3.format('d')
+        },
+        yDomain:[0,10]
       }
     };
 
@@ -96,6 +132,7 @@ angular.module('bmpUiApp')
 
       //create array with amount of prefixes
       for (var i = ip.length-1; i >=0; i--) {
+
         if(option == "transit_v4_prefixes" ) {
           prefixes = ip[i].transit_v4_prefixes;
         }else if(option == "transit_v6_prefixes" ) {
@@ -106,20 +143,22 @@ angular.module('bmpUiApp')
           prefixes = ip[i].origin_v6_prefixes;
         }
 
-        var st = "";
-        if (typeof ip[i].as_name != 'undefined') {
-          st += ip[i].as_name;
+        //var st = "";
+        //if (typeof ip[i].as_name != 'undefined') {
+        //  st += ip[i].as_name;
+        //}
+        //st += ' (AS' + ip[i].asn + ')';
+        if(prefixes != 0) {
+          values.push({
+            "label": ip[i].as_name,
+            "value": prefixes
+          });
         }
-        st += ' (AS' + ip[i].asn + ')';
-        values.push({
-          "label":st,
-          "value":prefixes
-        });
       }
       console.log(values);
 
       var chart_data=[{
-        key: "Cumulative Return",
+        title: "Cumulative Return",
         values: values
       }];
 

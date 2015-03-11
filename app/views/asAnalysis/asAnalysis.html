@@ -1,114 +1,122 @@
-<div class="row" ng-controller="ASAnalysisController">
-  <!-- Diagram -->
-  <div class="col-lg-12">
-    <div class="panel panel-success sliding_panel" id="AS_Summary_Report_panel">
-      <div class="panel-heading">
-        <h3 align="middle"><img class="icon" src="images/survey-32.png"/> AS Summary Report</h3>
+<!-- Diagram -->
+<div ng-controller="ASAnalysisController">
+  <h1 class="page-header">AS Summary Report</h1>
+  <!-- Nav tabs -->
+  <!--<button ng-click = "transit = true" ng-init = " transit = true ">TOP Transit AS</button>-->
+  <!--<button ng-click = "transit = false" >TOP Originating AS</button>-->
+  <!-- Tab panes -->
+  <div class="row">
+    <div class="col-lg-6">
+      <h3>Top Transit ASes</h3>
+      <!--<div class="col-lg-12">-->
+      <!--<div id="Top_Transit_ASes_chart_ipv4"-->
+      <!--style="min-width: 60%; height: 400px; margin: 10 auto"></div>-->
+      <h5 align="center">ipv4</h5>
+
+      <div class="panel panel-default">
+        <nvd3 options="ipv4Options" data="top_transit_ipv4_data"
+              config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
       </div>
-      <div class="panel-body">
-        <!-- Nav tabs -->
-          <button ng-click = "transit = true" ng-init = " transit = true ">TOP Transit AS</button>
-          <button ng-click = "transit = false" >TOP Originating AS</button>
-        <!-- Tab panes -->
-        <div>
-          <div ng-show = "transit">
-            <h4>Top Transit ASes</h4>
-            <!--<div class="col-lg-12">-->
-              <!--<div id="Top_Transit_ASes_chart_ipv4"-->
-                   <!--style="min-width: 60%; height: 400px; margin: 10 auto"></div>-->
-              <nvd3 options="options" data="top_transit_ipv4_data" config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
-              <nvd3 options="options" data="top_transit_ipv6_data" config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+      <h5 align="center">ipv6</h5>
+
+      <div class="panel panel-default">
+        <nvd3 options="ipv6Options" data="top_transit_ipv6_data"
+              config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <h3>Top Origin ASes</h3>
+      <h5 align="center">ipv4</h5>
+
+      <div class="panel panel-default">
+        <nvd3 options="ipv4Options" data="top_origin_ipv4_data"
+              config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+      </div>
+      <h5 align="center">ipv6</h5>
+
+      <div class="panel panel-dault">
+        <nvd3 options="ipv6Options" data="top_origin_ipv6_data"
+              config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.Diagram -->
+
+
+<div>
+  <!------------------------------------------------- Prefixes & AS Summary --------------------------------------------->
+  <h1 class="page-header"> AS Analysis</h1>
+
+  <div class="panel-body">
+
+    <div class="form-inline">
+      <label>AS Number:</label>
+
+      <div class="input-append">
+        <input class="form-control" placeholder="AS Number" style="width:200px;" id="as_number">
+        <button class="btn btn-default" id="as_submit">Get it!</button>
+        <p class="help-block">Example: 701</p>
+
+        <h3 style="display:none;" id="dem">This AS doesn't exist</h3>
+
+        <h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try
+          again! :)</h3>
+
+        <div style="display:none; margin: 50px;" id="progress_bar"
+             class="progress progress-striped active">
+          <div class="progress-bar progress-bar-success" role="progressbar"
+               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"
+               style="width: 100%;">
+            <span class="sr-only">Loading...</span>
           </div>
-          <div ng-hide = "transit">
-            <h4>Top Origin ASes</h4>
-            <nvd3 options="options" data="top_origin_ipv4_data" config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
-            <nvd3 options="options" data="top_origin_ipv6_data" config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+        </div>
+      </div>
+    </div>
+    <div id="analysis_tables" style="display:none">
+      <div class="panel-success" id="whois_data_container">
+      </div>
+      <div class="panel-success">
+        <div class="col-lg-6">
+          <h3 style="width: 20%; margin: 20px auto;">Upstream</h3>
+
+          <div class="table-responsive" id="upcontainer">
+            <table class="table table-striped table-bordered table-hover" id="upstream_table">
+              <thead>
+              <tr>
+                <th>AS #</th>
+                <th>Prefixes</th>
+              </tr>
+              </thead>
+            </table>
+            <h4 id="self_pref_up" style="display:none"></h4>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <h3 style="width: 20%; margin: 20px auto;">Downstream</h3>
+
+          <div class="table-responsive" id="downcontainer">
+            <table class="table table-striped table-bordered table-hover" id="downstream_table">
+              <thead>
+              <tr>
+                <th>AS #</th>
+                <th>Prefixes</th>
+              </tr>
+              </thead>
+            </table>
+            <h4 id="self_pref_down" style="display:none"></h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-12" style="margin-top: 15px">
+        <div class="panel panel-success">
+          <div class="panel-body">
+            <h3 style="margin: 20px auto;" id="topology_title"></h3>
+
+            <div id="AS_topology"></div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- /.Diagram -->
-</div>
-
-
-<div>
-  <!------------------------------------------------- Prefixes & AS Summary --------------------------------------------->
-    <div class="panel panel-success" id="as_analysis_panel">
-      <div class="panel-heading">
-        <h3 align="middle"><img src="images/search-48.png" height="50"
-                                width="50" class="icon"/> AS Analysis</h3>
-      </div>
-      <div class="panel-body">
-
-        <div class="form-inline">
-          <label>AS Number:</label>
-
-          <div class="input-append">
-            <input class="form-control" placeholder="AS Number" style="width:200px;" id="as_number">
-            <button class="btn btn-default" id="as_submit">Get it!</button>
-            <p class="help-block">Example: 701</p>
-
-            <h3 style="display:none;" id="dem">This AS doesn't exist</h3>
-
-            <h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try
-              again! :)</h3>
-
-            <div style="display:none; margin: 50px;" id="progress_bar"
-                 class="progress progress-striped active">
-              <div class="progress-bar progress-bar-success" role="progressbar"
-                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"
-                   style="width: 100%;">
-                <span class="sr-only">Loading...</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="analysis_tables" style="display:none">
-          <div class="panel-success" id="whois_data_container">
-          </div>
-          <div class="panel-success">
-            <div class="col-lg-6">
-              <h3 style="width: 20%; margin: 20px auto;">Upstream</h3>
-
-              <div class="table-responsive" id="upcontainer">
-                <table class="table table-striped table-bordered table-hover" id="upstream_table">
-                  <thead>
-                  <tr>
-                    <th>AS #</th>
-                    <th>Prefixes</th>
-                  </tr>
-                  </thead>
-                </table>
-                <h4 id="self_pref_up" style="display:none"></h4>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <h3 style="width: 20%; margin: 20px auto;">Downstream</h3>
-
-              <div class="table-responsive" id="downcontainer">
-                <table class="table table-striped table-bordered table-hover" id="downstream_table">
-                  <thead>
-                  <tr>
-                    <th>AS #</th>
-                    <th>Prefixes</th>
-                  </tr>
-                  </thead>
-                </table>
-                <h4 id="self_pref_down" style="display:none"></h4>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-12" style="margin-top: 15px">
-            <div class="panel panel-success">
-              <div class="panel-body">
-                <h3 style="margin: 20px auto;" id="topology_title"></h3>
-
-                <div id="AS_topology"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 </div>
