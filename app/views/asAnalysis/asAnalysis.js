@@ -20,7 +20,7 @@ angular.module('bmpUiApp')
         margin : {
           top: 20,
           right: 20,
-          bottom: 60,
+          bottom: 130,
           left: 55
         },
         x: function(d){ return d.label; },
@@ -39,8 +39,11 @@ angular.module('bmpUiApp')
         yAxis: {
           axisLabel: '',
           axisLabelDistance: 30,
-          tickFormat:d3.format('d')
-        }
+          tickFormat:function(d){
+            return d/1000+'k';
+          }
+        },
+        yDomain:[0,600000]
       }
     };
 
@@ -51,7 +54,7 @@ angular.module('bmpUiApp')
         margin : {
           top: 20,
           right: 20,
-          bottom: 60,
+          bottom: 130,
           left: 55
         },
         x: function(d){ return d.label; },
