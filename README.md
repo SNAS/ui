@@ -34,7 +34,7 @@ Build from source
 -----------------
 Some external dependancies are required, install the following only once.
 
-    gem install compass
+    sudo gem install compass
 
 Checkout the latest code using the following:
 
