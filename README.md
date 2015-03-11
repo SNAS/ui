@@ -45,6 +45,8 @@ Checkout the latest code using the following:
 > This is being ignored by **git**, so these files will not be committed back
 > to the git repo. 
 
+Run ``sudo npm install -g grunt-cli`` to install grunt CLI.  This should install **/usr/local/bin/grunt**
+
 Run ``npm install`` to install all the dependancies under **bmpUI**.  This will read the **package.json** file to install each dependancy.
 
 Install bower and it's dependancies using the following:
