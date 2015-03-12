@@ -41,7 +41,7 @@ angular.module('bmpUiApp')
     $scope.whoIsGridOptions.onRegisterApi = function (gridApi) {
       $scope.whoIsGridApi = gridApi;
     };
-    
+
     //Loop through data selecting and altering relevant data.
     var searchValue = function(value) {
       if(value == "" || value == " ")
@@ -52,7 +52,8 @@ angular.module('bmpUiApp')
         //  not a number do string search
         apiFactory.getWhoIsName(value).
           success(function (result){
-            $scope.whoIsGridOptions.data = $scope.whoIsData = result.w.data;
+            $scope.whoIsData = result.w.data;
+            createWhoIsDataGrid();
           }).
           error(function (error){
             console.log(error.message);
@@ -61,7 +62,8 @@ angular.module('bmpUiApp')
         // do a asn search
         apiFactory.getWhoIsWhereASN(value).
           success(function (result){
-            $scope.whoIsGridOptions.data = $scope.whoIsData = result.w.data;
+            $scope.whoIsData = result.w.data;
+            createWhoIsDataGrid();
           }).
           error(function (error){
             console.log(error.message);
@@ -87,10 +89,20 @@ angular.module('bmpUiApp')
     var createWhoIsDataGrid = function () {
       $scope.whoIsGrid = [];
       for(var i = 0; i <  $scope.whoIsData.length; i++) {
+        if($scope.whoIsData[i].isTransit == 1){
+          $scope.symbTransit = "✔";
+        }else{
+          $scope.symbTransit = "✘";
+        }
+        if($scope.whoIsData[i].isOrigin == 1){
+          $scope.symbOrigin = "✔";
+        }else{
+          $scope.symbOrigin = "✘";
+        }
         $scope.whoIsGrid.push({
             "asn":  $scope.whoIsData[i].asn,
-            "isTransit": $scope.whoIsData[i].isTransit,
-            "isOrigin": $scope.whoIsData[i].isOrigin,
+            "isTransit": $scope.symbTransit,
+            "isOrigin": $scope.symbOrigin,
             "as_name": $scope.whoIsData[i].as_name,
             "org_name": $scope.whoIsData[i].org_name,
             "country": $scope.whoIsData[i].country
@@ -105,6 +117,15 @@ angular.module('bmpUiApp')
     };
 
     $scope.changeSelected = function() {
-      $scope.selectedItem = $scope.whoIsGridApi.selection.getSelectedRows();
+      var values = $scope.whoIsGridApi.selection.getSelectedRows()[0];
+      console.dir(values);
+      var showValues = "";
+
+      angular.forEach(values, function(value, key) {
+        console.dir(value + ": " + key);
+        showValues+= "" + value + ": " + key;
+      });
+      $scope.selectedItem = showValues;
+      console.dir(showValues);
     };
   }]);
