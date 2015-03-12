@@ -34,7 +34,7 @@ Build from source
 -----------------
 Some external dependancies are required, install the following only once.
 
-    gem install compass
+    sudo gem install compass
 
 Checkout the latest code using the following:
 
@@ -44,6 +44,8 @@ Checkout the latest code using the following:
 > **npm** will install everything under the current working directory **bmpUI**.
 > This is being ignored by **git**, so these files will not be committed back
 > to the git repo. 
+
+Run ``sudo npm install -g grunt-cli`` to install grunt CLI.  This should install **/usr/local/bin/grunt**
 
 Run ``npm install`` to install all the dependancies under **bmpUI**.  This will read the **package.json** file to install each dependancy.
 
