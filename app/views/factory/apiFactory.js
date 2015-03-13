@@ -14,11 +14,11 @@ angular.module('bmpUiApp')
     var apiFactory = {};
 
     apiFactory.getRouters = function () {
-        return $http.get(urlBase + 'routers');
+      return $http.get(urlBase + 'routers');
     };
 
     apiFactory.getRouterLocation = function (ip) {
-        return $http.get(urlBase + "geoip/" + ip);
+      return $http.get(urlBase + "geoip/" + ip);
     };
 
     apiFactory.getRouterStatus = function () {
@@ -43,11 +43,12 @@ angular.module('bmpUiApp')
 
     apiFactory.getWhoIsName = function (name) {
       return $http.get(urlBase + "whois/asn?where=" +
-      "w.as_name%20like%20%27%" + name + "%%27%20"+
-      "or%20w.org_name%20like%20%27%" + name + "%%27"
+        "w.as_name%20like%20%27%" + name + "%%27%20" +
+        "or%20w.org_name%20like%20%27%" + name + "%%27"
       );
     };
 
+    //AS Analysis
     apiFactory.getTopTransitIpv4Data = function () {
       return $http.get(urlBase + "as_stats/ipv4?topTransit=5");
     };
@@ -62,6 +63,11 @@ angular.module('bmpUiApp')
 
     apiFactory.getTopOriginIpv6Data = function () {
       return $http.get(urlBase + "as_stats/ipv6?topOrigin=5");
+    };
+
+    //Peer Analysis
+    apiFactory.getPeerPrefix = function () {
+      return $http.get(urlBase + "peer/prefix");
     };
 
     return apiFactory;

@@ -1,3 +1,31 @@
-<div>
+<div ng-controller="PeerAnalysisController">
+<!------------------------------------------------- PEER TABLE----------------------------------------------------->
+  <h1 class="page-header">BGP Peers</h1>
+  <div id="peerTable" ui-grid="peerTableOptions"></div>
+  <!------------------------------------------------- ./PEER TABLE -------------------------------------------------->
 
+  <!------------------------------------------------- Prefix Trending per Peer--------------------------------------->
+  <h1 class="page-header">Prefix Trending per Peer</h1>
+  <div class="form-inline">
+    <div class="form-group">
+      <select class="form-control" id="peer_selector" style="width:400px;">
+      </select>
+      <select class="form-control" id="time_selector" style="width:150px;">
+        <option value="day">Last Day</option>
+        <option value="week">Last Week</option>
+      </select>
+    </div>
+    <button class="btn btn-default" id="peer_submit">Get History!</button>
+  </div>
+  <div id="preposthistory_error" style="display:none;">
+    <h3>No data in DB</h3>
+  </div>
+  <div id="preposthistory_container" style="display:none;">
+    <div id="preposthistory2" style="height: 400px;"></div>
+    <div id="preposthistory3" style="height: 400px;"></div>
+    <div id="preposthistory" style="height: 400px;"></div>
+  </div>
 </div>
+<!------------------------------------------------- ./Prefix Trending per Peer------------------------------------->
+
+<script class="jsbin" src="http://datatables.net/download/build/jquery.dataTables.nightly.js"></script>

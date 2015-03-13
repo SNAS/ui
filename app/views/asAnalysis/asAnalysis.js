@@ -8,9 +8,7 @@
  * Controller of the login page
  */
 angular.module('bmpUiApp')
-  .controller('ASAnalysisController',['$scope', '$http','apiFactory', function ($scope, $http, apiFactory) {
-
- //   $scope.transit = true;
+  .controller('ASAnalysisController',['$scope', 'apiFactory', function ($scope, apiFactory) {
 
     /* Chart options */
     $scope.ipv4Options = {
@@ -146,11 +144,6 @@ angular.module('bmpUiApp')
           prefixes = ip[i].origin_v6_prefixes;
         }
 
-        //var st = "";
-        //if (typeof ip[i].as_name != 'undefined') {
-        //  st += ip[i].as_name;
-        //}
-        //st += ' (AS' + ip[i].asn + ')';
         if(prefixes != 0) {
           values.push({
             "label": ip[i].as_name,
