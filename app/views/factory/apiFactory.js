@@ -72,5 +72,9 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer/prefix");
     };
 
+    apiFactory.getPeerHistory = function (peerIP, amount_of_entries){
+      return $http.get(urlBase + "peer/prefix/" + peerIP + '?last=' + amount_of_entries);
+    };
+
     return apiFactory;
 });

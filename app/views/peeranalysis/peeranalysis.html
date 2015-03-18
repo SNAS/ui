@@ -17,15 +17,8 @@
     </div>
     <button class="btn btn-default" id="peer_submit">Get History!</button>
   </div>
-  <div id="preposthistory_error" style="display:none;">
-    <h3>No data in DB</h3>
-  </div>
-  <div id="preposthistory_container" style="display:none;">
-    <div id="preposthistory2" style="height: 400px;"></div>
-    <div id="preposthistory3" style="height: 400px;"></div>
-    <div id="preposthistory" style="height: 400px;"></div>
+  <div id="preposthistory_container">
+    <nvd3 options="options" data="data"></nvd3>
   </div>
 </div>
 <!------------------------------------------------- ./Prefix Trending per Peer------------------------------------->
-
-<script class="jsbin" src="http://datatables.net/download/build/jquery.dataTables.nightly.js"></script>
