@@ -42,6 +42,11 @@ angular.module('bmpUiApp')
           }
         },
         yDomain:[0,600000]
+      },
+
+      "title": {
+        "enable": true,
+        "text": "ipv4"
       }
     };
 
@@ -74,6 +79,12 @@ angular.module('bmpUiApp')
           tickFormat:d3.format('d')
         },
         yDomain:[0,10]
+      },
+
+
+      "title": {
+        "enable": true,
+        "text": "ipv6"
       }
     };
 
