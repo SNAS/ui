@@ -1,6 +1,6 @@
 <div>
   <!------------------WHO IS---------------->
-  <h1>WHO IS</h1>
+  <h1>WHOIS</h1>
   <hr>
   Search ASN or Name
   <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
@@ -9,7 +9,7 @@
   <h2>DETAILS</h2>
   <hr>
   <div class="detailsPanel">
-    <pre>{{ selectedItem }}</pre>
+    <pre ng-bind-html="selectedItem"></pre>
   </div>
   <hr>
 </div>

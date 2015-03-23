@@ -75,6 +75,10 @@
     color: #f5f5f5;
     font-weight: normal;
   }
+
+  a:hover, a:focus{
+    background-color: #000 !important;
+  }
 }
 
 .sidebar-nav > .active > a, .sidebar-nav > .active > a:hover, .sidebar-nav > .active > a:focus {

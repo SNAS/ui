@@ -1,22 +1,11 @@
 <div ng-controller="PeerAnalysisController">
 <!------------------------------------------------- PEER TABLE----------------------------------------------------->
   <h1 class="page-header">BGP Peers</h1>
-  <div id="peerTable" ui-grid="peerTableOptions"></div>
+  <div id="peerTable" ui-grid="peerTableOptions" ui-grid-selection></div>
   <!------------------------------------------------- ./PEER TABLE -------------------------------------------------->
 
   <!------------------------------------------------- Prefix Trending per Peer--------------------------------------->
-  <h1 class="page-header">Prefix Trending per Peer</h1>
-  <div class="form-inline">
-    <div class="form-group">
-      <select class="form-control" id="peer_selector" style="width:400px;">
-      </select>
-      <select class="form-control" id="time_selector" style="width:150px;">
-        <option value="day">Last Day</option>
-        <option value="week">Last Week</option>
-      </select>
-    </div>
-    <button class="btn btn-default" id="peer_submit">Get History!</button>
-  </div>
+  <h1 class="page-header">Prefix Trending Per Peer</h1>
   <div id="preposthistory_container">
     <nvd3 options="options" data="data"></nvd3>
   </div>

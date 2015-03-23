@@ -11,6 +11,7 @@ angular.module('bmpUiApp')
     .factory('apiFactory', function ($http, $q) {
 
     var urlBase = 'http://odl-dev.openbmp.org:8001/db_rest/v1/';
+    var limit = "&limit=1000";
     var apiFactory = {};
 
     apiFactory.getRouters = function () {
@@ -44,7 +45,8 @@ angular.module('bmpUiApp')
     apiFactory.getWhoIsName = function (name) {
       return $http.get(urlBase + "whois/asn?where=" +
         "w.as_name%20like%20%27%" + name + "%%27%20" +
-        "or%20w.org_name%20like%20%27%" + name + "%%27"
+        "or%20w.org_name%20like%20%27%" + name + "%%27" +
+        limit
       );
     };
 
