@@ -20,6 +20,8 @@
   'nvd3',
   'ui.grid',
   'ui.grid.selection',
+  'bmp.components.routerCard',
+  'bgDirectives',
  	'uiGmapgoogle-maps'
  	])
  .config(function ($stateProvider, $urlRouterProvider, uiGmapGoogleMapApiProvider) {
@@ -34,6 +36,20 @@
 	 			requireLogin: false
 	 		}
 	 	})
+
+    //CARD TEST
+    .state('app.card', {
+      url: '/card',
+      templateUrl: 'views/cardTest/cardTest.html',
+      controller: 'CardController',
+      data: {
+        requireLogin: false
+      }
+    })
+    //END CARD TEST
+
+
+
 	 	.state('app', {
 	 		abstract: true,
 	 		templateUrl: 'views/container/container.html',

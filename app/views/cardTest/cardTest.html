@@ -1,0 +1,16 @@
+<div>
+  <!------------------WHO IS---------------->
+    <h1>WHOIS</h1>
+    <hr>
+    Search ASN or Name
+    <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
+    <!--Angular Table added here-->
+    <div class="gridStyle" ui-grid-selection ui-grid="whoIsGridOptions"></div>
+      <div ng-repeat="card in cards">
+        <div bmp-router-card
+             data="card"
+             removeCard="cardRemove(card)">
+        </div>
+      </div>
+  <hr>
+</div>

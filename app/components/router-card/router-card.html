@@ -1,0 +1,14 @@
+<div class="test">
+  <span class="glyphicon"  ng-class="{'glyphicon-plus': !cardExpand, 'glyphicon-minus': cardExpand}"
+         ng-click="changeCardState()">
+  </span>
+  <span class="glyphicon right glyphicon-remove" ng-click="removecard(data.asn)"></span>
+  <!--ROUTER CARD-->
+  <div class="content" ng-controller="RouterCardController">
+    BMP Router | {{data.asn}}
+    <div ng-show="cardExpand">
+      <!--REST OF THE TEMPLATE-->
+      {{ data }}
+    </div>
+  </div>
+</div>

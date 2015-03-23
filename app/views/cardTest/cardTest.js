@@ -8,7 +8,9 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('WhoIsController', ['$scope','apiFactory', '$http', '$timeout', '$interval', function ($scope, apiFactory, $http, $timeout, $interval) {
+  .controller('CardController', ['$scope','apiFactory', '$http', '$timeout', '$interval', function ($scope, apiFactory, $http, $timeout, $interval) {
+
+    $scope.cards = [];
 
     //DEBUG
     window.SCOPE = $scope;
@@ -107,56 +109,25 @@ angular.module('bmpUiApp')
       $scope.whoIsGridApi.core.handleWindowResize();
     };
 
+    //cardTest DELETE \w CLICK
+    $scope.cardRemove = function(card){
+      var index = $scope.cards.indexOf(card);
+      $scope.cards.splice(index,1);
+    };
+
+    var cardChange = function(values){
+      //card test
+      if($scope.cards.length > 2)
+        $scope.cards.shift();
+      if($scope.cards.indexOf(values.asn)==-1)
+        $scope.cards.push(values);
+    };
+
     //Decided to put the data into a table in the pre to align it
     $scope.changeSelected = function() {
-      var noShow = ["$$hashKey","symbOrigin","symbTransit"];
       var values = $scope.whoIsGridApi.selection.getSelectedRows()[0];
-      var showValues = '<table>';
 
-      angular.forEach(values, function(value, key) {
-        if(noShow.indexOf(key)== -1){ //doesnt show certain fields
-          if(key == "raw_output"){
-            //Process each raw output field
-            var raw_data = value.split("\n");
-            showValues+='<tr><td> </td></tr>'; //br from top
-
-            for(var i = 0; i < raw_data.length; i++){
-              showValues+='<tr>';
-              if(raw_data[i]=="") { //was a newline
-                showValues+= '<td> </td>';
-              }else{
-                var s = raw_data[i].split(": "); //split on :<space> cause of http:// links
-
-                showValues+=(
-                  '<td>'+
-                    s[0].trim()+': '+
-                  '</td>'+
-
-                  '<td>'+
-                    s[1].trim()+
-                  '</td>'
-                );
-              }
-              showValues+='</tr>';
-            }
-          }else{
-            showValues+= (
-              '<tr>'+
-                '<td>'+
-                   key + ': '+
-                '</td>'+
-
-                '<td>'+
-                  value+
-                '</td>'+
-              '</tr>'
-            );
-          }
-        }
-      });
-      showValues+='</table>';
-
-      $scope.selectedItem = showValues;
+      cardChange(values);
     };
 
     //Init table data
