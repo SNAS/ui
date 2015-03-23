@@ -8,7 +8,7 @@
  * Factory for API calls
  */
 angular.module('bmpUiApp')
-    .factory('apiFactory', function ($http) {
+    .factory('apiFactory', function ($http, $q) {
 
     var urlBase = 'http://odl-dev.openbmp.org:8001/db_rest/v1/';
     var apiFactory = {};

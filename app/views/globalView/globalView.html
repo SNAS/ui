@@ -8,12 +8,32 @@
 
     <ui-gmap-google-map center='map.center' zoom='map.zoom' options='options' control='map.control'>
 
-        <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" events="events">
-            <ui-gmap-windows show="'show'">
-                <div ng-non-bindable>{{id}}</div>
+        <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" events="markers.events">
+            <ui-gmap-windows show="'show'" closeClick="'clear'">
+                <div class="map-window" ng-non-bindable>
+                    {{id}}
+                    <br/><br/>
+                    <div>
+                        <small>IP Address:</small><br/>
+                        {{ip}}
+                    </div>
+                    <br/>
+                    <small>Peers: {{peers.length}}</small><br/>
+                    <small>Prefixes</small>
+                </div>                
             </ui-gmap-windows>
+        </ui-gmap-markers>
+
+        <ui-gmap-markers doCluster="true" models="peers" coords="'self'" icon="'icon'" events="peers.events">
+            <!-- <ui-gmap-windows show="'show'">
+                <div ng-non-bindable>{{id}}</div>
+            </ui-gmap-windows> -->
         </ui-gmap-markers>
 
     </ui-gmap-google-map>
 
+    <h2>{{chosenRouter.id}}</h2>
+    <div ng-show="selected">
+        TBD
+    </div>
 </div>

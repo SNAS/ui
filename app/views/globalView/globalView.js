@@ -8,9 +8,16 @@
  * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
-    .controller('GlobalViewController', function ($scope, $http, $timeout, apiFactory, uiGmapGoogleMapApi) {
+    .controller('GlobalViewController', function ($scope, $q, $http, $timeout, apiFactory, uiGmapGoogleMapApi) {
         window.SCOPE = $scope;
+
+        var peers;
+        $scope.chosenRouter;
         $scope.loading = true;
+        $scope.selected = false;
+
+        $scope.markers = [];
+        $scope.peers = [];
 
         $scope.map = {
             center: {
@@ -18,68 +25,261 @@ angular.module('bmpUiApp')
                 longitude: -99.6680 
             }, 
             show: false,
-            zoom: 3,
+            zoom: 1,
             control: {}
         };
+
+        var styleArray = [
+        {
+            "featureType": "administrative.province",
+            "elementType": "all",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "landscape",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "saturation": -100
+                },
+                {
+                    "lightness": 45
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        },
+        {
+            "featureType": "poi",
+            "elementType": "all",
+            "stylers": [
+                {
+                    "saturation": -100
+                },
+                {
+                    "lightness": 51
+                },
+                {
+                    "visibility": "simplified"
+                }
+            ]
+        },
+        {
+            "featureType": "road.highway",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "saturation": -100
+                },
+                {
+                    "visibility": "simplified"
+                }
+            ]
+        },
+        {
+            "featureType": "road.arterial",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "saturation": -100
+                },
+                {
+                    "lightness": 30
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        },
+        {
+            "featureType": "road.local",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "saturation": -100
+                },
+                {
+                    "lightness": 40
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        },
+        {
+            "featureType": "transit",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "saturation": -100
+                },
+                {
+                    "visibility": "simplified"
+                }
+            ]
+        },
+        {
+            "featureType": "water",
+            "elementType": "all",
+            "stylers": [
+                {
+                    "hue": "#ffff00"
+                },
+                {
+                    "lightness": 25
+                },
+                {
+                    "saturation": -97
+                }
+            ]
+        },
+        {
+            "featureType": "water",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "visibility": "on"
+                },
+                {
+                    "lightness": -25
+                },
+                {
+                    "saturation": -100
+                }
+            ]
+        }
+        ]
 
         //Map control options
         $scope.options = {
             scrollwheel: false, 
             streetViewControl: false,
             panControl: false,
-            mapTypeControl: false
+            mapTypeControl: false,
+            styles: styleArray
         };
 
-        $scope.events = {
-            mouseover: function(marker, event, model, args){
-                model.show = true;
-            },
-            mouseout: function(marker, event, model, args){
-               $timeout( function(){ model.show = false }, 500);
-            }        
+        $scope.markers.events = {
+            click: function(marker, event, model, args){
+                showRouter(marker);
+            } 
         }
 
-        $scope.$watch($scope.map.control, function() {
-            $scope.mapObject = $scope.map.control.getGMap();
+        $scope.peers.events = {
+            // click: function(marker, event, model, args){
+            //    showRouter(marker);
+            // } 
+        }
 
-            $scope.$on('menu-toggle', function(thing, args) {
-                $timeout( function(){ google.maps.event.trigger($scope.mapObject, "resize"); }, 500);
-            });   
-       });
+        function showRouter(marker){
+            $scope.selected = true;
 
-        getRouters();
+            for(var i = 0; i < $scope.markers.length; i++)
+                if($scope.markers[i].id === marker.key)
+                    $scope.chosenRouter = $scope.markers[i];
+                else
+                    $scope.markers[i].options.visible = false;
 
-        function getRouters() {
-            apiFactory.getRouters().
+            getChosenPeers();
+        }
+
+        function getChosenPeers(){
+            apiFactory.getPeersByIp($scope.chosenRouter.ip).
             success(function (result){
-                $scope.BMPRouters = result.routers.data;
-                getRouterLocations();
+                var data = result.v_peers.data;
+                var temp = [];
+                angular.forEach(data, function (value, key){                    
+                    temp.push(apiFactory.getRouterLocation(value.PeerIP));
+                });                  
+                $q.all(temp).then(function (requests){
+                    for(var i = 0; i < requests.length; i++)
+                    {
+                        var data = requests[i].data.v_geo_ip.data[0];
+                        $scope.peers.push({
+                            id: data.ip_start + ' - ' + data.ip_end, 
+                            latitude: data.latitude,
+                            longitude: data.longitude,
+                            show: false,
+                            icon: '../images/marker-small.png'
+                        });
+                    } 
+                    setBounds($scope.peers);                    
+                })
             }).
             error(function (error){
                 console.log(error.message);
             })
         }
 
-        $scope.markers = [];
-        function getRouterLocations() {
-            angular.forEach($scope.BMPRouters, function (value, key){
-                apiFactory.getRouterLocation(value.RouterIP).
-                success(function (data){
-                    data = data.v_geo_ip.data[0];
-                    if(data.latitude != undefined && data.longitude != undefined){
+        $scope.$watch($scope.map.control, function() {
+            $scope.mapObject = $scope.map.control.getGMap();
+            $scope.$on('menu-toggle', function(thing, args) {
+                $timeout( function(){ google.maps.event.trigger($scope.mapObject, "resize"); }, 500);
+            });   
+       });
+
+        var setBounds = function (array){
+            var bounds = new google.maps.LatLngBounds();
+            for (var i=0; i<array.length; i++) {
+              var latlng = new google.maps.LatLng(array[i].latitude, array[i].longitude);
+              bounds.extend(latlng);
+            }
+            if($scope.chosenRouter != undefined)
+                bounds.extend(new google.maps.LatLng($scope.chosenRouter.latitude, $scope.chosenRouter.longitude))
+            //$scope.mapObject.setCenter(bounds.getCenter());
+            $scope.mapObject.fitBounds(bounds);
+            if($scope.mapObject.getZoom()> 15){
+              $scope.mapObject.setZoom(15);
+            }   
+        }
+
+        getRouters();
+
+        function getRouters() {
+            var temp = [];
+            var markers = [];
+            apiFactory.getRouters().
+            success(function (result){
+
+                var data = result.routers.data;
+                var temp = [];
+                var namesWithIP = [];
+                angular.forEach(data, function (value, key){                    
+                    temp.push(apiFactory.getRouterLocation(value.RouterIP));
+                    namesWithIP.push({ip: value.RouterIP, name: value.RouterName});
+                });                  
+                $q.all(temp).then(function (requests){
+                    for(var i = 0; i < requests.length; i++)
+                    {
+                        var data = requests[i].data.v_geo_ip.data[0];
                         $scope.markers.push({
-                            id: value.RouterName,
-                                latitude: data.latitude,
-                                longitude: data.longitude,
-                            show: false,
-                            icon: '../images/marker.png'
+                            id: namesWithIP[i].name, 
+                            latitude: data.latitude,
+                            longitude: data.longitude,
+                            show: false, 
+                            icon: '../images/marker.png',
+                            ip: namesWithIP[i].ip,
+                            clear: function(){
+                                $scope.peers = [];
+                                $scope.chosenRouter = undefined;
+                                setBounds($scope.markers);    
+                            },
+                            options:{
+                                visible: true
+                            }
                         });
-                    }
-                    $scope.loading = false;
-                }).
-                error(function (error){
-                    console.log(error.message);
-                })
+                    } 
+                    $scope.loading = false; 
+                    setBounds($scope.markers);                    
+                })          
+            }).
+            error(function (error){
+                console.log(error.message);
             })
-        } 
+        }
     });
