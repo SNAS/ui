@@ -9,11 +9,16 @@
       <span ng-switch-when="router" ng-controller="RouterCardController" class="routerCard">
         <!--collasped view-->
         <div ng-hide="cardExpand" class="collapsed">
-          BMP Router | {{data.asn}} | {{data.as_name}} | {{data.org_name}}
+          BMP Router | {{data.id}} | {{data.ip}} |
+          <span ng-class="{'red': data.data.isConnected!='1', 'green': data.data.isConnected=='1'}">
+            {{ data.data.isConnected=='1'&& '&#11014;'||'&#11015;' }}
+          </span>
         </div>
 
         <!--expanded view-->
         <div ng-show="cardExpand">
+            BMP Up Time {{ upTime }}
+            <br>
             {{ data }}
             <!--router card-->
             <nvd3 options="options" data="datas"></nvd3>
@@ -26,7 +31,7 @@
               </tr>
               <tr>
                 <td>{{data.asn}}</td>
-                <td>{{data.as_name}}</td>
+                <td>{{data.RouterAS}}</td>
                 <td>{{data.org_name}}</td>
               </tr>
             </table>

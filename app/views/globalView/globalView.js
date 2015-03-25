@@ -320,6 +320,7 @@ angular.module('bmpUiApp')
           $scope.cards[1] = [];
         };
 
+        //Test function to be called from within marker popup
         $scope.test = function(){
           alert("clicked view detailsasdfadfdsf");
         };

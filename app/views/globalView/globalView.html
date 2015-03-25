@@ -44,14 +44,14 @@
       <div bmp-router-card
         data="cards[0]"
         removeCard="removeRouterCard()"
-        card-type="'router'">
+        card-type="router">
       </div>
     </div>
     <div ng-repeat="card in [].concat(cards[1]).reverse()">
       <div bmp-router-card
            data="card"
            removeCard="removePeerCard(card)"
-           card-type="'peer'">
+           card-type="peer">
       </div>
     </div>
     <!--end-->
