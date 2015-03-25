@@ -1,3 +1,31 @@
-.content{
-  display: inline;
+.cardArea {
+  border-style: solid;
+  border-width: 1px;
+  padding: 5px;
+  border-radius: 3px;
+  border-color: grey;
+  background-color: #EFEFEF;
+  margin: 2px auto;
+  .content {
+    display: inline;
+    .collapsed {
+      display: inline;
+    }
+    .peerCard{
+
+    }
+    .routerCard{
+      svg{
+        display: inline;
+      }
+      .tableSummary {
+        width: 100%;
+        td, th {
+          padding: 3px;
+          border-style: solid;
+          border-width: 1px;
+        }
+      }
+    }
+  }
 }

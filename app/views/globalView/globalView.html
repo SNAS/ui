@@ -20,7 +20,9 @@
                     <br/>
                     <small>Peers: {{peers.length}}</small><br/>
                     <small>Prefixes</small>
-                </div>                
+                    <!--<a onclick="SCOPE.test()">View Details</a>       Works-->
+                    <!--<a data-ng-click="test()">View Details</a>       Doesnt Work-->
+                </div>
             </ui-gmap-windows>
         </ui-gmap-markers>
 
@@ -36,4 +38,22 @@
     <div ng-show="selected">
         TBD
     </div>
+
+    <!--Router and Peers Cards-->
+    <div ng-if=" cards[0]!= '' ">
+      <div bmp-router-card
+        data="cards[0]"
+        removeCard="removeRouterCard()"
+        card-type="'router'">
+      </div>
+    </div>
+    <div ng-repeat="card in [].concat(cards[1]).reverse()">
+      <div bmp-router-card
+           data="card"
+           removeCard="removePeerCard(card)"
+           card-type="'peer'">
+      </div>
+    </div>
+    <!--end-->
+
 </div>

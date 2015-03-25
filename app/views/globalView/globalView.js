@@ -21,9 +21,9 @@ angular.module('bmpUiApp')
 
         $scope.map = {
             center: {
-                latitude: 40.1451, 
-                longitude: -99.6680 
-            }, 
+                latitude: 40.1451,
+                longitude: -99.6680
+            },
             show: false,
             zoom: 1,
             control: {}
@@ -153,11 +153,11 @@ angular.module('bmpUiApp')
                 }
             ]
         }
-        ]
+        ];
 
         //Map control options
         $scope.options = {
-            scrollwheel: false, 
+            scrollwheel: false,
             streetViewControl: false,
             panControl: false,
             mapTypeControl: false,
@@ -167,23 +167,27 @@ angular.module('bmpUiApp')
         $scope.markers.events = {
             click: function(marker, event, model, args){
                 showRouter(marker);
-            } 
-        }
+                clearPeersCard();
+                changeRouterCard(model);
+            }
+        };
 
         $scope.peers.events = {
-            // click: function(marker, event, model, args){
-            //    showRouter(marker);
-            // } 
-        }
+            click: function(marker, event, model, args) {
+              changePeerCard(model);
+            }
+        };
 
-        function showRouter(marker){
-            $scope.selected = true;
+        function showRouter(marker) {
+          $scope.selected = true;
 
-            for(var i = 0; i < $scope.markers.length; i++)
-                if($scope.markers[i].id === marker.key)
-                    $scope.chosenRouter = $scope.markers[i];
-                else
-                    $scope.markers[i].options.visible = false;
+          for (var i = 0; i < $scope.markers.length; i++)
+            if ($scope.markers[i].id === marker.key) {
+              $scope.chosenRouter = $scope.markers[i];
+              $scope.index = i;
+            }else {
+              $scope.markers[i].options.visible = false;
+            }
 
             getChosenPeers();
         }
@@ -193,22 +197,23 @@ angular.module('bmpUiApp')
             success(function (result){
                 var data = result.v_peers.data;
                 var temp = [];
-                angular.forEach(data, function (value, key){                    
+                angular.forEach(data, function (value, key){
                     temp.push(apiFactory.getRouterLocation(value.PeerIP));
-                });                  
+                });
                 $q.all(temp).then(function (requests){
                     for(var i = 0; i < requests.length; i++)
                     {
-                        var data = requests[i].data.v_geo_ip.data[0];
+                        var geodata = requests[i].data.v_geo_ip.data[0];
                         $scope.peers.push({
-                            id: data.ip_start + ' - ' + data.ip_end, 
-                            latitude: data.latitude,
-                            longitude: data.longitude,
+                            id: geodata.ip_start + ' - ' + data.ip_end,
+                            latitude: geodata.latitude,
+                            longitude: geodata.longitude,
                             show: false,
-                            icon: '../images/marker-small.png'
+                            icon: '../images/marker-small.png',
+                            data: data[i]
                         });
-                    } 
-                    setBounds($scope.peers);                    
+                    }
+                    setBounds($scope.peers);
                 })
             }).
             error(function (error){
@@ -220,7 +225,7 @@ angular.module('bmpUiApp')
             $scope.mapObject = $scope.map.control.getGMap();
             $scope.$on('menu-toggle', function(thing, args) {
                 $timeout( function(){ google.maps.event.trigger($scope.mapObject, "resize"); }, 500);
-            });   
+            });
        });
 
         var setBounds = function (array){
@@ -235,8 +240,8 @@ angular.module('bmpUiApp')
             $scope.mapObject.fitBounds(bounds);
             if($scope.mapObject.getZoom()> 15){
               $scope.mapObject.setZoom(15);
-            }   
-        }
+            }
+        };
 
         getRouters();
 
@@ -249,37 +254,73 @@ angular.module('bmpUiApp')
                 var data = result.routers.data;
                 var temp = [];
                 var namesWithIP = [];
-                angular.forEach(data, function (value, key){                    
+                angular.forEach(data, function (value, key){
                     temp.push(apiFactory.getRouterLocation(value.RouterIP));
                     namesWithIP.push({ip: value.RouterIP, name: value.RouterName});
-                });                  
+                });
                 $q.all(temp).then(function (requests){
                     for(var i = 0; i < requests.length; i++)
                     {
-                        var data = requests[i].data.v_geo_ip.data[0];
+                        var geodata = requests[i].data.v_geo_ip.data[0];
                         $scope.markers.push({
-                            id: namesWithIP[i].name, 
-                            latitude: data.latitude,
-                            longitude: data.longitude,
-                            show: false, 
+                            id: namesWithIP[i].name,
+                            latitude: geodata.latitude,
+                            longitude: geodata.longitude,
+                            show: false,
                             icon: '../images/marker.png',
                             ip: namesWithIP[i].ip,
+                            data: data[i],
                             clear: function(){
                                 $scope.peers = [];
                                 $scope.chosenRouter = undefined;
-                                setBounds($scope.markers);    
+                                setBounds($scope.markers);
                             },
                             options:{
                                 visible: true
                             }
                         });
-                    } 
-                    $scope.loading = false; 
-                    setBounds($scope.markers);                    
-                })          
+                    }
+                    $scope.loading = false;
+                    setBounds($scope.markers);
+                })
             }).
             error(function (error){
                 console.log(error.message);
             })
         }
-    });
+
+        $scope.cards = ["",[]];
+
+        //router card DELETE \w CLICK
+        $scope.removeRouterCard = function(){
+          $scope.cards[0] = "";
+        };
+
+        //peer card DELETE \w CLICK
+        $scope.removePeerCard = function (card) {
+          var index = $scope.cards.indexOf(card);
+          $scope.cards[1].splice(index, 1);
+        };
+
+        var changeRouterCard = function(value){
+          $scope.cards[0] = value;
+        };
+
+        var changePeerCard = function(value) {
+          if ($scope.cards[1].indexOf(value) == -1) {
+            $scope.cards[1].push(value);
+            if ($scope.cards[1].length > 3) {
+              $scope.cards[1].shift();
+            }
+          }
+        };
+
+        //For when router is changed
+        var clearPeersCard = function() {
+          $scope.cards[1] = [];
+        };
+
+        $scope.test = function(){
+          alert("clicked view detailsasdfadfdsf");
+        };
+  });
