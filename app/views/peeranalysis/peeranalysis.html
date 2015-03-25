@@ -1,13 +1,22 @@
 <div ng-controller="PeerAnalysisController">
-<!------------------------------------------------- PEER TABLE----------------------------------------------------->
+  <!------------------------------------------------- PEER TABLE----------------------------------------------------->
   <h1 class="page-header">BGP Peers</h1>
-  <div id="peerTable" ui-grid="peerTableOptions" ui-grid-selection></div>
+
+  <div id="peerTable" ui-grid="peerTableOptions" ui-grid-selection ui-grid-edit ui-grid-cellnav></div>
   <!------------------------------------------------- ./PEER TABLE -------------------------------------------------->
 
   <!------------------------------------------------- Prefix Trending per Peer--------------------------------------->
-  <h1 class="page-header">Prefix Trending Per Peer</h1>
-  <div id="preposthistory_container">
-    <nvd3 options="options" data="data"></nvd3>
-  </div>
+  <h3 class="page-header">Details of Peer :
+    <span ng-if="Status==1" style="color:green">"{{RouterName}}  {{PeerName}}"</span>
+    <span ng-if="Status==0" style="color:darkred">"{{RouterName}}  {{PeerName}}"</span>
+  </h3>
+  <pre><table>
+    <p ng-bind-html="detailsPanel"></p>
+  </table></pre>
+  <h3 class="page-header">Prefix Trending for Peer :
+    <span ng-if="Status==1" style="color:green">"{{RouterName}}  {{PeerName}}"</span>
+    <span ng-if="Status==0" style="color:darkred">"{{RouterName}}  {{PeerName}}"</span>
+  </h3>
+  <nvd3 options="options" data="data"></nvd3>
 </div>
 <!------------------------------------------------- ./Prefix Trending per Peer------------------------------------->
