@@ -22,9 +22,9 @@
   'ui.grid.selection',
   'bmp.components.routerCard',
   'bgDirectives',
- 	'uiGmapgoogle-maps'
+ 	'angular-mapbox'
  	])
- .config(function ($stateProvider, $urlRouterProvider, uiGmapGoogleMapApiProvider) {
+ .config(function ($stateProvider, $urlRouterProvider) {
  	$urlRouterProvider.otherwise("/login");
 
  	$stateProvider
@@ -104,12 +104,6 @@
 		 		templateUrl: 'views/preferences/preferences.html',
 		 		controller: 'PreferencesController'
 		 	});
-
-	uiGmapGoogleMapApiProvider.configure({
-        //    key: 'your api key',
-        v: '3.17',
-        libraries: 'weather,geometry,visualization'
-    });
 })
 .run(function ($rootScope, $state, $cookies) {
 	$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {

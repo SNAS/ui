@@ -8,175 +8,31 @@
  * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
-    .controller('GlobalViewController', function ($scope, $q, $http, $timeout, apiFactory, uiGmapGoogleMapApi) {
+    .controller('GlobalViewController', function ($scope, $q, $http, $timeout, apiFactory, mapboxService) {
         window.SCOPE = $scope;
+        //mine: 'pk.eyJ1IjoiaGFyam9uZXMiLCJhIjoibFNzSDV5OCJ9.TuozTWKZlJ4hwhxt2cA4CQ'
+        mapboxService.init({ accessToken: 'pk.eyJ1IjoibGljeWV1cyIsImEiOiJuZ1gtOWtjIn0.qaaGvywaJ_kCmwmlTSNyVw' });
 
-        var peers;
         $scope.chosenRouter;
         $scope.loading = true;
         $scope.selected = false;
 
-        $scope.markers = [];
+        $scope.routers = [];
         $scope.peers = [];
 
-        $scope.map = {
-            center: {
-                latitude: 40.1451, 
-                longitude: -99.6680 
-            }, 
-            show: false,
-            zoom: 1,
-            control: {}
-        };
+        // $scope.markers.events = {
+        //     click: function(marker, event, model, args){
+        //         showRouter(marker);
+        //     } 
+        // }
 
-        var styleArray = [
-        {
-            "featureType": "administrative.province",
-            "elementType": "all",
-            "stylers": [
-                {
-                    "visibility": "off"
-                }
-            ]
-        },
-        {
-            "featureType": "landscape",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "saturation": -100
-                },
-                {
-                    "lightness": 45
-                },
-                {
-                    "visibility": "on"
-                }
-            ]
-        },
-        {
-            "featureType": "poi",
-            "elementType": "all",
-            "stylers": [
-                {
-                    "saturation": -100
-                },
-                {
-                    "lightness": 51
-                },
-                {
-                    "visibility": "simplified"
-                }
-            ]
-        },
-        {
-            "featureType": "road.highway",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "saturation": -100
-                },
-                {
-                    "visibility": "simplified"
-                }
-            ]
-        },
-        {
-            "featureType": "road.arterial",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "saturation": -100
-                },
-                {
-                    "lightness": 30
-                },
-                {
-                    "visibility": "on"
-                }
-            ]
-        },
-        {
-            "featureType": "road.local",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "saturation": -100
-                },
-                {
-                    "lightness": 40
-                },
-                {
-                    "visibility": "on"
-                }
-            ]
-        },
-        {
-            "featureType": "transit",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "saturation": -100
-                },
-                {
-                    "visibility": "simplified"
-                }
-            ]
-        },
-        {
-            "featureType": "water",
-            "elementType": "all",
-            "stylers": [
-                {
-                    "hue": "#ffff00"
-                },
-                {
-                    "lightness": 25
-                },
-                {
-                    "saturation": -97
-                }
-            ]
-        },
-        {
-            "featureType": "water",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "visibility": "on"
-                },
-                {
-                    "lightness": -25
-                },
-                {
-                    "saturation": -100
-                }
-            ]
-        }
-        ]
+        $scope.$on('marker:open', function (e, data) {
+            console.log('ooft');
 
-        //Map control options
-        $scope.options = {
-            scrollwheel: false, 
-            streetViewControl: false,
-            panControl: false,
-            mapTypeControl: false,
-            styles: styleArray
-        };
+          });
 
-        $scope.markers.events = {
-            click: function(marker, event, model, args){
-                showRouter(marker);
-            } 
-        }
-
-        $scope.peers.events = {
-            // click: function(marker, event, model, args){
-            //    showRouter(marker);
-            // } 
-        }
-
-        function showRouter(marker){
+        $scope.showRouter = function(marker){
+            console.log('hello');
             $scope.selected = true;
 
             for(var i = 0; i < $scope.markers.length; i++)
@@ -216,27 +72,26 @@ angular.module('bmpUiApp')
             })
         }
 
-        $scope.$watch($scope.map.control, function() {
-            $scope.mapObject = $scope.map.control.getGMap();
-            $scope.$on('menu-toggle', function(thing, args) {
-                $timeout( function(){ google.maps.event.trigger($scope.mapObject, "resize"); }, 500);
-            });   
-       });
+       //  $scope.$watch($scope.map.control, function() {
+       //      $scope.mapObject = $scope.map.control.getGMap();
+       //      $scope.$on('menu-toggle', function(thing, args) {
+       //          $timeout( function(){ google.maps.event.trigger($scope.mapObject, "resize"); }, 500);
+       //      });   
+       // });
 
-        var setBounds = function (array){
-            var bounds = new google.maps.LatLngBounds();
-            for (var i=0; i<array.length; i++) {
-              var latlng = new google.maps.LatLng(array[i].latitude, array[i].longitude);
-              bounds.extend(latlng);
-            }
-            if($scope.chosenRouter != undefined)
-                bounds.extend(new google.maps.LatLng($scope.chosenRouter.latitude, $scope.chosenRouter.longitude))
-            //$scope.mapObject.setCenter(bounds.getCenter());
-            $scope.mapObject.fitBounds(bounds);
-            if($scope.mapObject.getZoom()> 15){
-              $scope.mapObject.setZoom(15);
-            }   
-        }
+        // var setBounds = function (array){
+        //     var bounds = new google.maps.LatLngBounds();
+        //     for (var i=0; i<array.length; i++) {
+        //       var latlng = new google.maps.LatLng(array[i].latitude, array[i].longitude);
+        //       bounds.extend(latlng);
+        //     }
+        //     if($scope.chosenRouter != undefined)
+        //         bounds.extend(new google.maps.LatLng($scope.chosenRouter.latitude, $scope.chosenRouter.longitude))
+        //     $scope.mapObject.fitBounds(bounds);
+        //     if($scope.mapObject.getZoom()> 15){
+        //       $scope.mapObject.setZoom(15);
+        //     }   
+        // }
 
         getRouters();
 
@@ -257,25 +112,15 @@ angular.module('bmpUiApp')
                     for(var i = 0; i < requests.length; i++)
                     {
                         var data = requests[i].data.v_geo_ip.data[0];
-                        $scope.markers.push({
+                        $scope.routers.push({
                             id: namesWithIP[i].name, 
-                            latitude: data.latitude,
-                            longitude: data.longitude,
-                            show: false, 
-                            icon: '../images/marker.png',
-                            ip: namesWithIP[i].ip,
-                            clear: function(){
-                                $scope.peers = [];
-                                $scope.chosenRouter = undefined;
-                                setBounds($scope.markers);    
-                            },
-                            options:{
-                                visible: true
-                            }
+                            lat: data.latitude,
+                            lng: data.longitude,
+                            ip: namesWithIP[i].ip
                         });
                     } 
                     $scope.loading = false; 
-                    setBounds($scope.markers);                    
+                    //setBounds($scope.markers);                    
                 })          
             }).
             error(function (error){

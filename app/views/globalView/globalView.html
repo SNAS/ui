@@ -2,11 +2,24 @@
 
     <h1 class="page-header">Global View</h1>
 
-    <div class="loading" ng-show="loading">
+    <mapbox map-id="licyeus.i9pkgkg8" scale-to-fit>
+        <marker ng-repeat="router in routers"
+                ng-click="showRouter(router)"
+                lat="{{router.lat}}"
+                lng="{{router.lng}}"
+                color="teal">
+          <h1>{{router.id}}</h1>
+          <p>{{router.ip}}</p>
+        </marker>
+    </mapbox>
+
+    <!-- <div class="loading" ng-show="loading">
         <span class="text-light">loading...</span>
     </div>
 
-    <ui-gmap-google-map center='map.center' zoom='map.zoom' options='options' control='map.control'>
+    <mapbox map-id="harjones.libmi20l" lat="47.603569" lng="-122.329453"></mapbox>
+ -->
+    <!--<ui-gmap-google-map center='map.center' zoom='map.zoom' options='options' control='map.control'>
 
         <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" events="markers.events">
             <ui-gmap-windows show="'show'" closeClick="'clear'">
@@ -25,15 +38,15 @@
         </ui-gmap-markers>
 
         <ui-gmap-markers doCluster="true" models="peers" coords="'self'" icon="'icon'" events="peers.events">
-            <!-- <ui-gmap-windows show="'show'">
+            <ui-gmap-windows show="'show'">
                 <div ng-non-bindable>{{id}}</div>
-            </ui-gmap-windows> -->
+            </ui-gmap-windows>
         </ui-gmap-markers>
 
-    </ui-gmap-google-map>
+    </ui-gmap-google-map>--><!-- 
 
     <h2>{{chosenRouter.id}}</h2>
     <div ng-show="selected">
         TBD
-    </div>
+    </div> -->
 </div>
