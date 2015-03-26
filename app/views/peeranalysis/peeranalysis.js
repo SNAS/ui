@@ -15,22 +15,22 @@ angular.module('bmpUiApp')
     // Table with peers
     $scope.peerTableOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: false,
+      enableRowHeaderSelection: true,
       multiSelect:false,
       noUnselect:true,
-    //  enableCellEditOnFocus:true,
-      //enableHighlighting:ture,
+      selectionRowHeaderWidth: 35,
+      rowHeight: 35,
 
       columnDefs: [
-        {field: 'Status', displayName: 'Status',width: '*',enableCellEdit: true},
-        {field: 'RouterName', displayName: 'RouterName',width: 200},
-        {field: 'PeerName', displayName: 'PeerName',width: 250 },
-        {field: 'PeerIP', displayName: 'PeerIP',width: 150},
-        {field: 'LocalASN', displayName: 'LocalASN',width: '*'},
-        {field: 'PeerASN', displayName: 'PeerASN',width: '*'},
-        {field: 'IPv', displayName: 'IPv',width: '*'},
-        {field: 'Pre_RIB', displayName: 'Pre-RIB',width: '*'},
-        {field: 'Post_RIB', displayName: 'Post-RIB',width: '*'}
+        {field: 'Status', displayName: 'Status',width:'8%'},
+        {field: 'RouterName', displayName: 'RouterName',width: '15%'},
+        {field: 'PeerName', displayName: 'PeerName',width:'22%' },
+        {field: 'PeerIP', displayName: 'PeerIP',width:'10%' },
+        {field: 'LocalASN', displayName: 'LocalASN',width:'8%'},
+        {field: 'PeerASN', displayName: 'PeerASN',width: '8%'},
+        {field: 'IPv', displayName: 'IPv',width:'4%'},
+        {field: 'Pre_RIB', displayName: 'Pre-RIB',width: '10%'},
+        {field: 'Post_RIB', displayName: 'Post-RIB',width: '10%'}
       ],
 
       rowTemplate :
@@ -65,7 +65,7 @@ angular.module('bmpUiApp')
               for (var i = 0; i < peers.length; i++) {
                 var prefix = getPrefix(i, peers, peer_prefix);
 
-                peers[i].Status = ((peers[i].isUp === "1") && (peers[i].isBMPConnected === "1")) ? "✔Up" : "✘Down";
+                peers[i].Status = ((peers[i].isUp === "1") && (peers[i].isBMPConnected === "1")) ? "Up" : "Down";
                 peers[i].IPv = (peers[i].isPeerIPv4 === "1") ? '4' : '6';
                 peers[i].Pre_RIB = (prefix == null ) ? 'null' : prefix.Pre_RIB;
                 peers[i].Post_RIB = (prefix == null ) ? 'null' : prefix.Post_RIB;
@@ -100,7 +100,7 @@ angular.module('bmpUiApp')
       $scope.data = [];
       $scope.RouterName = row.RouterName;
       $scope.PeerName = row.PeerName;
-      $scope.Status = (row.Status == "✔Up") ? 1 : 0;
+      $scope.Status = (row.Status == "Up") ? 1 : 0;
 
       //if (row.isBMPConnected == "1") {
       //   $scope.peerName += 'Connection to BMP:<p style="color:lawngreen">Connected</p>'
@@ -168,6 +168,8 @@ angular.module('bmpUiApp')
                 left: 100
               },
               color: ['#9ec654' ,'#f7a031'],
+              focusShowAxisY: true,
+              interactive:false,
 
               xAxis: {
                 axisLabel: 'Time',

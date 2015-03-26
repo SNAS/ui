@@ -20,6 +20,7 @@
   'nvd3',
   'ui.grid',
   'ui.grid.selection',
+  'ui.grid.autoResize',
   'bmp.components.routerCard',
   'bgDirectives',
  	'angular-mapbox'
