@@ -18,23 +18,19 @@ angular.module('bmpUiApp')
       enableRowHeaderSelection: false,
       multiSelect:false,
       noUnselect:true,
+    //  enableCellEditOnFocus:true,
+      //enableHighlighting:ture,
 
       columnDefs: [
-        {field: 'Status'},
-        {field: 'RouterName'},
-        {field: 'PeerName'},
-        {field: 'PeerIP'},
-        {field: 'LocalASN'},
-        {field: 'PeerASN'},
-        {field: 'IPv'},
-        {
-          field: 'Pre_RIB',
-          displayName: 'Pre-RIB'
-        },
-        {
-          field: 'Post_RIB',
-          displayName: 'Post-RIB'
-        }
+        {field: 'Status', displayName: 'Status',width: '*',enableCellEdit: true},
+        {field: 'RouterName', displayName: 'RouterName',width: 200},
+        {field: 'PeerName', displayName: 'PeerName',width: 250 },
+        {field: 'PeerIP', displayName: 'PeerIP',width: 150},
+        {field: 'LocalASN', displayName: 'LocalASN',width: '*'},
+        {field: 'PeerASN', displayName: 'PeerASN',width: '*'},
+        {field: 'IPv', displayName: 'IPv',width: '*'},
+        {field: 'Pre_RIB', displayName: 'Pre-RIB',width: '*'},
+        {field: 'Post_RIB', displayName: 'Post-RIB',width: '*'}
       ],
 
       rowTemplate :
@@ -63,95 +59,24 @@ angular.module('bmpUiApp')
           apiFactory.getPeers().success(
             function (result) {
               peers = result.v_peers.data;
-              //keys = Object.keys(peers[0]);
               console.log(peers);
-              var data = [];
 
               // load peers in combo box
               for (var i = 0; i < peers.length; i++) {
-                var row = {};
                 var prefix = getPrefix(i, peers, peer_prefix);
 
-                row.Status = ((peers[i].isUp === "1") && (peers[i].isBMPConnected === "1")) ? "✔Up" : "✘Down";
-                row.RouterName = peers[i].RouterName;
-                row.PeerName = peers[i].PeerName;
-                row.PeerIP = peers[i].PeerIP;
-                row.LocalASN = peers[i].LocalASN;
-                row.PeerASN = peers[i].PeerASN;
-                row.IPv = (peers[i].isPeerIPv4 === "1") ? '4' : '6';
-                row.Pre_RIB = (prefix == null ) ? 'null' : prefix.Pre_RIB;
-                row.Post_RIB = (prefix == null ) ? 'null' : prefix.Post_RIB;
-
-                data.push(row);
+                peers[i].Status = ((peers[i].isUp === "1") && (peers[i].isBMPConnected === "1")) ? "✔Up" : "✘Down";
+                peers[i].IPv = (peers[i].isPeerIPv4 === "1") ? '4' : '6';
+                peers[i].Pre_RIB = (prefix == null ) ? 'null' : prefix.Pre_RIB;
+                peers[i].Post_RIB = (prefix == null ) ? 'null' : prefix.Post_RIB;
               }
 
-              $scope.peerTableOptions.data = data;
+              $scope.peerTableOptions.data = peers;
 
               $timeout(function () {
                 $scope.gridApi.selection.selectRow($scope.peerTableOptions.data[0]);
                 $scope.changeSelected();
               });
-              // Click on row in Peers table
-              // $('#peertable tbody').on('click', 'tr', function () {
-              //   var  keys;
-              //   var peername = $('td', this).eq(2).text();
-              //   var routername = $('td', this).eq(1).text();
-              //   console.log(peername + " & " + routername);
-              //   var found = 0;
-              //   var i = 0;
-              //   while ((!found) && (i < peers.length)) {
-              //     if ((peers[i].PeerName === peername) && (peers[i].RouterName === routername)) {
-              //       found = 1;
-              //     }
-              //     i++;
-              //   }
-              //   i--;
-              //
-              //   /*for(var t=0; t<peers.length; t++) {
-              //    console.log(peers[t].isUp + " -> " + peers[t].PeerName);
-              //    }*/
-              //
-              //   console.log(peers[i].isBMPConnected);
-              //   console.log(peers[i].isUp);
-              //
-              //   $("#peer_modal_table").html('<thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>');
-              //
-              //   var status = '<table><col width="160"><col width="100"><tr><th>';
-              //
-              //   if ((peers[i].isUp == "1") && (peers[i].isBMPConnected == "1")) {
-              //     $("#peer_modal_label").html('<span style="color:green">' + peername + '</span>');
-              //   } else {
-              //     $("#peer_modal_label").html('<span style="color:darkred">' + peername + '</span>');
-              //     console.log("red");
-              //   }
-              //
-              //   if (peers[i].isBMPConnected == "1") {
-              //     status += 'Connection to BMP:</th><th class="text-left"><span style="color:lawngreen">Connected</span></th></tr><tr><th>'
-              //   } else {
-              //     status += 'Connection to BMP:</th><th class="text-left"><span style="color:darkred">Disconnected</span></th></tr><tr><th>'
-              //   }
-              //
-              //   if (peers[i].isUp == "1") {
-              //     status += 'Status:</th><th class="text-left"><span style="color:lawngreen">UP</span></th></tr>'
-              //   } else {
-              //     status += 'Status:</th><th class="text-left"><span style="color:darkred">Down</span></th></tr>'
-              //   }
-              //   status += '</table>'
-              //
-              //
-              //   $("#peer_modal_status").html(status);
-              //
-              //   for (var j = 0; j < keys.length; j++) {
-              //     $('#peer_modal_table').append(
-              //       '<tr>' +
-              //       '<td>' + keys[j] + '</td>' +
-              //       '<td class="text-left">' + peers[i][keys[j]] + '</td>' +
-              //       '</tr>'
-              //     );
-              //   }
-              //
-              //   $('#peer_modal').modal('show');
-              // });
 
             }
           ).
@@ -165,9 +90,47 @@ angular.module('bmpUiApp')
     //gridApi.selection.on.rowSelectionChanged($scope,function(){
     //});
 
+    // Click on row in Peers table
     $scope.changeSelected = function() {
       var row = $scope.gridApi.selection.getSelectedGridRows()[0].entity;
+      var detailsPanel = '<thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>';
       var amount_of_entries = 1000;
+      var noShow = ["$$hashKey","Status","IPv"];
+
+      $scope.data = [];
+      $scope.RouterName = row.RouterName;
+      $scope.PeerName = row.PeerName;
+      $scope.Status = (row.Status == "✔Up") ? 1 : 0;
+
+      //if (row.isBMPConnected == "1") {
+      //   $scope.peerName += 'Connection to BMP:<p style="color:lawngreen">Connected</p>'
+      //     } else {
+      //   $scope.peerName += 'Connection to BMP:<p style="color:darkred">Disconnected</p>'
+      //     }
+      //
+      //   if (row.isUp == "1") {
+      //      $scope.peerName += 'Status:<p style="color:lawngreen">UP</p>'
+      //   } else {
+      //      $scope.peerName += 'Status:<p style="color:darkred">Down</p>'
+      //   }
+
+      angular.forEach(row, function(value, key) {
+        if(noShow.indexOf(key)== -1) { //doesnt show certain fields
+          detailsPanel += (
+          '<tr>' +
+          '<td>' +
+          key + ': ' +
+          '</td>' +
+
+          '<td>' +
+          value +
+          '</td>' +
+          '</tr>'
+          );
+        }
+      });
+
+      $scope.detailsPanel = detailsPanel;
 
       apiFactory.getPeerHistory(row.PeerIP, amount_of_entries).success(
         function (result) {
@@ -270,5 +233,17 @@ angular.module('bmpUiApp')
         }
       );
     }
-    //});
+
+
+    function selectText(containerid) {
+      if (document.selection) {
+        var range = document.body.createTextRange();
+        range.moveToElementText(document.getElementById(containerid));
+        range.select();
+      } else if (window.getSelection) {
+        var range = document.createRange();
+        range.selectNode(document.getElementById(containerid));
+        window.getSelection().addRange(range);
+      }
+    }
   }]);

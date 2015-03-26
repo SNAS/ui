@@ -1,14 +1,116 @@
-<div class="test">
+<div class="cardArea">
   <span class="glyphicon"  ng-class="{'glyphicon-plus': !cardExpand, 'glyphicon-minus': cardExpand}"
          ng-click="changeCardState()">
   </span>
   <span class="glyphicon right glyphicon-remove" ng-click="removecard(data.asn)"></span>
-  <!--ROUTER CARD-->
-  <div class="content" ng-controller="RouterCardController">
-    BMP Router | {{data.asn}}
-    <div ng-show="cardExpand">
-      <!--REST OF THE TEMPLATE-->
-      {{ data }}
+
+  <span ng-switch="cardType">
+    <div class="content">
+      <span ng-switch-when="router" ng-controller="RouterCardController" class="routerCard">
+        <!--collasped view-->
+        <div ng-hide="cardExpand" class="collapsed">
+          BMP Router | {{data.id}} | {{data.ip}} |
+          <span ng-class="{'red': data.data.isConnected!='1', 'green': data.data.isConnected=='1'}">
+            {{ data.data.isConnected=='1'&& '&#11014;'||'&#11015;' }}
+          </span>
+        </div>
+
+        <!--expanded view-->
+        <div ng-show="cardExpand">
+          <!--router card-->
+          <!--{{ data }}-->
+          <h3>BMP Router</h3>
+          <span style="float: right;text-align: right;">
+            BMP Up Time
+            <span style="color: green;">
+              {{ upTime }}
+            </span>
+          </span>
+          <h4>{{ data.id }}</h4>
+          <br>
+            <table width="100%" style="text-align: center">
+              <tr>
+                <td>
+                  <table style="text-align: left; border-style: solid;border-width: 1px; width: 100%">
+                    <tr>
+                      <td>Type</td>
+                      <td>Router</td>
+                    </tr>
+                    <tr>
+                      <td>Location</td>
+                      <td>San Fran</td>
+                    </tr>
+                    <tr>
+                      <td>State</td>
+                      <td>CA</td>
+                    </tr>
+                    <tr>
+                      <td>Country</td>
+                      <td>US</td>
+                    </tr>
+                  </table>
+                </td>
+
+                <td>
+                <svg width="222" height="46" xmlns="http://www.w3.org/2000/svg" style="width: 230px;height: 100px;">
+                  <g>
+                    <g id="svg_link">
+                      <line x1="22" y1="21.5" x2="200" y2="21.5" style="stroke:rgb(255,0,0);stroke-width:2" />
+                    </g>
+                    <g id="svg_router">
+                      <ellipse ry="21.5" rx="22" id="svg_12" cy="23.5" cx="23" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#ff007f"/>
+                      <path id="svg_2" d="m1.8348,21.35545l10.1537,-0.0532l-0.0235,-4.2805l6.8049,6.48255l-6.23725,6.259l-0.2215,-4.08485l-10.25378,-0.04355l-0.22258,-4.27945l0.00001,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#ffaaff"/>
+                      <path id="svg_3" d="m20.4888,43.7042l0.14675,-9.92205l-4.37965,-0.06185l6.7668,-6.5205l6.27975,6.2183l-4.18345,0.1355l-0.2477,10.0179l-4.3825,0.1327l0,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#d4aaff"/>
+                      <path id="svg_4" d="m43.66705,25.3543l-10.1537,0.0513l0.02265,4.28045l-6.8036,-6.4838l6.23845,-6.25785l0.2207,4.0849l10.2538,0.0455l0.2217,4.2795l0,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#d4aaff"/>
+                      <path id="svg_6" d="m25.21665,3.56318l-0.03195,9.92302l4.3801,0.01345l-6.69095,6.59485l-6.3513,-6.1485l4.1816,-0.1817l0.1318,-10.02001l4.3807,-0.18111l0,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#ffaaff"/>
+                    </g>
+                    <g id="svg_peer">
+                      <ellipse id="svg_12" ry="21.5" rx="22" cy="23.5" cx="200" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#ff007f"/>
+                    </g>
+                  </g>
+                </svg>
+                </td>
+
+                <td>
+
+                <div style="display: inline">
+                  <nvd3 options="options" data="datas"></nvd3>
+                  <nvd3 options="options" data="datas"></nvd3>
+                </div>
+              </td>
+              </tr>
+            </table>
+            <table class="tableSummary">
+              <tr>
+                <th>AS Number</th>
+                <th>AS Name</th>
+                <th>Organization Name</th>
+              </tr>
+              <tr>
+                <td>{{data.data.RouterAS}}</td>
+                <td>{{data.data.RouterName}}</td>
+                <td>{{data.id}}</td>
+              </tr>
+            </table>
+          <!--end router card-->
+        </div>
+        <br>
+      </span>
+
+      <span ng-switch-when="peer" ng-controller="PeerCardController" class="peerCard">
+        <!--peer card-->
+          <!--collasped view-->
+          <div ng-hide="cardExpand" class="collapsed">
+            BMP Peer | {{data.asn}} | {{data.as_name}} | {{data.org_name}}
+          </div>
+
+          <!--expanded view-->
+          <div ng-show="cardExpand">
+            <!--router card-->
+            {{ data }}
+          </div>
+        <!--end peer card-->
+      </span>
     </div>
-  </div>
+  </span>
 </div>

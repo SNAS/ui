@@ -115,12 +115,12 @@ angular.module('bmpUiApp')
       $scope.cards.splice(index,1);
     };
 
-    var cardChange = function(values){
-      //card test
-      if($scope.cards.length > 2)
-        $scope.cards.shift();
-      if($scope.cards.indexOf(values.asn)==-1)
-        $scope.cards.push(values);
+    var cardChange = function(value) {
+      if ($scope.cards.indexOf(value) == -1) {
+        $scope.cards.push(value);
+        if ($scope.cards.length > 3)
+          $scope.cards.shift();
+      }
     };
 
     //Decided to put the data into a table in the pre to align it

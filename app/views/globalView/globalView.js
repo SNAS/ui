@@ -35,11 +35,13 @@ angular.module('bmpUiApp')
             console.log('hello');
             $scope.selected = true;
 
-            for(var i = 0; i < $scope.markers.length; i++)
-                if($scope.markers[i].id === marker.key)
-                    $scope.chosenRouter = $scope.markers[i];
-                else
-                    $scope.markers[i].options.visible = false;
+          for (var i = 0; i < $scope.markers.length; i++)
+            if ($scope.markers[i].id === marker.key) {
+              $scope.chosenRouter = $scope.markers[i];
+              $scope.index = i;
+            }else {
+              $scope.markers[i].options.visible = false;
+            }
 
             getChosenPeers();
         }
@@ -49,22 +51,23 @@ angular.module('bmpUiApp')
             success(function (result){
                 var data = result.v_peers.data;
                 var temp = [];
-                angular.forEach(data, function (value, key){                    
+                angular.forEach(data, function (value, key){
                     temp.push(apiFactory.getRouterLocation(value.PeerIP));
-                });                  
+                });
                 $q.all(temp).then(function (requests){
                     for(var i = 0; i < requests.length; i++)
                     {
-                        var data = requests[i].data.v_geo_ip.data[0];
+                        var geodata = requests[i].data.v_geo_ip.data[0];
                         $scope.peers.push({
-                            id: data.ip_start + ' - ' + data.ip_end, 
-                            latitude: data.latitude,
-                            longitude: data.longitude,
+                            id: geodata.ip_start + ' - ' + data.ip_end,
+                            latitude: geodata.latitude,
+                            longitude: geodata.longitude,
                             show: false,
-                            icon: '../images/marker-small.png'
+                            icon: '../images/marker-small.png',
+                            data: data[i]
                         });
-                    } 
-                    setBounds($scope.peers);                    
+                    }
+                    setBounds($scope.peers);
                 })
             }).
             error(function (error){
@@ -104,10 +107,10 @@ angular.module('bmpUiApp')
                 var data = result.routers.data;
                 var temp = [];
                 var namesWithIP = [];
-                angular.forEach(data, function (value, key){                    
+                angular.forEach(data, function (value, key){
                     temp.push(apiFactory.getRouterLocation(value.RouterIP));
                     namesWithIP.push({ip: value.RouterIP, name: value.RouterName});
-                });                  
+                });
                 $q.all(temp).then(function (requests){
                     for(var i = 0; i < requests.length; i++)
                     {
@@ -121,10 +124,46 @@ angular.module('bmpUiApp')
                     } 
                     $scope.loading = false; 
                     //setBounds($scope.markers);                    
-                })          
+                })
             }).
             error(function (error){
                 console.log(error.message);
             })
         }
-    });
+
+        $scope.cards = ["",[]];
+
+        //router card DELETE \w CLICK
+        $scope.removeRouterCard = function(){
+          $scope.cards[0] = "";
+        };
+
+        //peer card DELETE \w CLICK
+        $scope.removePeerCard = function (card) {
+          var index = $scope.cards.indexOf(card);
+          $scope.cards[1].splice(index, 1);
+        };
+
+        var changeRouterCard = function(value){
+          $scope.cards[0] = value;
+        };
+
+        var changePeerCard = function(value) {
+          if ($scope.cards[1].indexOf(value) == -1) {
+            $scope.cards[1].push(value);
+            if ($scope.cards[1].length > 3) {
+              $scope.cards[1].shift();
+            }
+          }
+        };
+
+        //For when router is changed
+        var clearPeersCard = function() {
+          $scope.cards[1] = [];
+        };
+
+        //Test function to be called from within marker popup
+        $scope.test = function(){
+          alert("clicked view detailsasdfadfdsf");
+        };
+  });
