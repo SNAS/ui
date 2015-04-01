@@ -12,9 +12,13 @@
         <div bmp-router-card
              data="card"
              removeCard="cardRemove(card)"
-             card-type="'router'">
+             card-type="router">
         </div>
       </div>
     <!--end-->
   <hr>
+
+<div ng-controller="TopologyController">
+  <topology data="topologyData" options="topologyOptions"></topology>
+</div>
 </div>

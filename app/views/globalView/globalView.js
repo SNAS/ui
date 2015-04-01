@@ -23,7 +23,7 @@ angular.module('bmpUiApp')
         // $scope.markers.events = {
         //     click: function(marker, event, model, args){
         //         showRouter(marker);
-        //     } 
+        //     }
         // }
 
         $scope.$on('marker:open', function (e, data) {
@@ -35,13 +35,15 @@ angular.module('bmpUiApp')
             console.log('hello');
             $scope.selected = true;
 
-          for (var i = 0; i < $scope.markers.length; i++)
-            if ($scope.markers[i].id === marker.key) {
-              $scope.chosenRouter = $scope.markers[i];
+          for (var i = 0; i < $scope.routers.length; i++)
+            if ($scope.routers[i].id === marker.key) {
+              $scope.chosenRouter = $scope.routers[i];
               $scope.index = i;
             }else {
-              $scope.markers[i].options.visible = false;
+              $scope.routers[i].options.visible = false;
             }
+
+          changeRouterCard($scope.chosenRouter);
 
             getChosenPeers();
         }
@@ -79,7 +81,7 @@ angular.module('bmpUiApp')
        //      $scope.mapObject = $scope.map.control.getGMap();
        //      $scope.$on('menu-toggle', function(thing, args) {
        //          $timeout( function(){ google.maps.event.trigger($scope.mapObject, "resize"); }, 500);
-       //      });   
+       //      });
        // });
 
         // var setBounds = function (array){
@@ -93,14 +95,14 @@ angular.module('bmpUiApp')
         //     $scope.mapObject.fitBounds(bounds);
         //     if($scope.mapObject.getZoom()> 15){
         //       $scope.mapObject.setZoom(15);
-        //     }   
+        //     }
         // }
 
         getRouters();
 
         function getRouters() {
             var temp = [];
-            var markers = [];
+            var routers = [];
             apiFactory.getRouters().
             success(function (result){
 
@@ -116,14 +118,14 @@ angular.module('bmpUiApp')
                     {
                         var data = requests[i].data.v_geo_ip.data[0];
                         $scope.routers.push({
-                            id: namesWithIP[i].name, 
+                            id: namesWithIP[i].name,
                             lat: data.latitude,
                             lng: data.longitude,
                             ip: namesWithIP[i].ip
                         });
-                    } 
-                    $scope.loading = false; 
-                    //setBounds($scope.markers);                    
+                    }
+                    $scope.loading = false;
+                    //setBounds($scope.routers);
                 })
             }).
             error(function (error){

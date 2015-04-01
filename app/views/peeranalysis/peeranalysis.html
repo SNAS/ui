@@ -7,15 +7,15 @@
 
   <!------------------------------------------------- Prefix Trending per Peer--------------------------------------->
   <h3 class="page-header">Details of Peer :
-    <span ng-if="Status==1" style="color:green">"{{RouterName}}  {{PeerName}}"</span>
-    <span ng-if="Status==0" style="color:darkred">"{{RouterName}}  {{PeerName}}"</span>
+    <span ng-if="Status==1" style="color:green">{{RouterName}}  {{PeerName}}</span>
+    <span ng-if="Status==0" style="color:darkred">{{RouterName}}  {{PeerName}}</span>
   </h3>
   <pre><table>
     <p ng-bind-html="detailsPanel"></p>
   </table></pre>
   <h3 class="page-header">Prefix Trending for Peer :
-    <span ng-if="Status==1" style="color:green">"{{RouterName}}  {{PeerName}}"</span>
-    <span ng-if="Status==0" style="color:darkred">"{{RouterName}}  {{PeerName}}"</span>
+    <span ng-if="Status==1" style="color:green">{{RouterName}}  {{PeerName}}</span>
+    <span ng-if="Status==0" style="color:darkred">{{RouterName}}  {{PeerName}}</span>
   </h3>
   <nvd3 options="options" data="data"></nvd3>
 </div>

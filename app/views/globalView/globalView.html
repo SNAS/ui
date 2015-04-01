@@ -1,15 +1,15 @@
-<div class="relative">
+<div class="relative" ng-controller="GlobalViewController">
 
     <h1 class="page-header">Global View</h1>
 
     <mapbox map-id="licyeus.i9pkgkg8" scale-to-fit>
         <marker ng-repeat="router in routers"
-                ng-click="showRouter(router)"
                 lat="{{router.lat}}"
                 lng="{{router.lng}}"
                 color="teal">
           <h1>{{router.id}}</h1>
           <p>{{router.ip}}</p>
+          <p ng-click="showRouter(router)">detail</p>
         </marker>
     </mapbox>
 
@@ -35,24 +35,24 @@
                     <small>Prefixes</small>
                     <!--<a onclick="SCOPE.test()">View Details</a>       Works-->
                     <!--<a data-ng-click="test()">View Details</a>       Doesnt Work-->
-                </div>
-            </ui-gmap-windows>
-        </ui-gmap-markers>
 
-        <ui-gmap-markers doCluster="true" models="peers" coords="'self'" icon="'icon'" events="peers.events">
-            <ui-gmap-windows show="'show'">
-                <div ng-non-bindable>{{id}}</div>
-            </ui-gmap-windows>
-        </ui-gmap-markers>
 
-    </ui-gmap-google-map>--><!-- 
+    <!--</ui-gmap-google-map>&ndash;&gt;&lt;!&ndash;  </div>-->
+            <!--</ui-gmap-windows>-->
+        <!--</ui-gmap-markers>-->
 
-    <h2>{{chosenRouter.id}}</h2>
-    <div ng-show="selected">
-        TBD
-<<<<<<< HEAD
-    </div> -->
-=======
+        <!--<ui-gmap-markers doCluster="true" models="peers" coords="'self'" icon="'icon'" events="peers.events">-->
+            <!--<ui-gmap-windows show="'show'">-->
+                <!--<div ng-non-bindable>{{id}}</div>-->
+            <!--</ui-gmap-windows>-->
+        <!--</ui-gmap-markers>-->
+
+    <!--<h2>{{chosenRouter.id}}</h2>-->
+    <!--<div ng-show="selected">-->
+        <!--TBD-->
+<!--<<<<<<< HEAD-->
+    <!--</div> &ndash;&gt;-->
+<!--=======-->
     </div>
 
     <!--Router and Peers Cards-->
@@ -72,5 +72,4 @@
     </div>
     <!--end-->
 
->>>>>>> origin/master
 </div>

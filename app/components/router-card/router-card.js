@@ -1,6 +1,6 @@
 'use strict';
 
-  angular.module('bmp.components.routerCard', [])
+  angular.module('bmp.components.routerCard',[])
     .controller('RouterCardController', ['$scope', function ($scope) {
       //DEBUG
       window.SCOPES = $scope;

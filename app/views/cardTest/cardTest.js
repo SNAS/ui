@@ -10,6 +10,78 @@
 angular.module('bmpUiApp')
   .controller('CardController', ['$scope','apiFactory', '$http', '$timeout', '$interval', function ($scope, apiFactory, $http, $timeout, $interval) {
 
+    var nodes = [
+      {id: 1, label: '1.1'},
+      {id: 2, label: '100.1'},
+      {id: 3, label: '100.2'},
+      {id: 4, label: '192.54'},
+      {id: 5, label: '192.22'},
+      {id: 6, label: '200.1'},
+      {id: 7, label: '192.30'},
+      {id: 8, label: '200.2'},
+      {id: 9, label: '100.4'},
+      {id: 10, label: '100.3'}
+    ];
+    // create an array with edges
+    var edges = [
+      {id:1, from: 1, to: 2, label:'10|15', length:15},
+      {id:2, from: 2, to: 3, label:10, length:10},
+      {id:3, from: 2, to: 5, label:10, length:10},
+      {id:4, from: 2, to: 6, label:10, length:10},
+      {id:5, from: 3, to: 10, label:10, length:10},
+      {id:6, from: 4, to: 5, label:10, length:10},
+      {id:7, from: 5, to: 6, label:10, length:10},
+      {id:8, from: 5, to: 7, label:10, length:10},
+      {id:9, from: 6, to: 7, label:10, length:10},
+      {id:10, from: 6, to: 8, label:10, length:10},
+      {id:11, from: 7, to: 8, label:10, length:10},
+      {id:12, from: 8, to: 9, label:10, length:10},
+      {id:13, from: 9, to: 10, label:10, length:10}
+    ];
+
+    $scope.topologyOptions={
+      height: '1000px',
+   //   dragNodes:false,
+      configurePhysics:true,
+
+      physics:{
+        barnesHut: {
+          enabled: true,
+          gravitationalConstant: -2000,
+          centralGravity: 0.1,
+          springLength: 95,
+          springConstant: 0.04,
+          damping: 0.09
+        }
+    //    hierarchicalRepulsion: {
+          //centralGravity: 0.5,
+          //springLength: 150,
+          //springConstant: 0.01,
+          //nodeDistance: 60,
+          //damping: 0.09
+  //      }
+      },
+
+
+      nodes: {
+        color: {
+          background: '#00cc00',
+          border: 'red',
+          highlight: {
+            background: '#eeccee',
+            border: 'red'
+          }
+        },
+     //   shape: 'star',
+        radius: 24
+      }
+    }
+    $scope.topologyData={
+      nodes: nodes,
+      edges: edges
+    };
+
+
     $scope.cards = [];
 
     //DEBUG
