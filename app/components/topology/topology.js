@@ -13,7 +13,7 @@ angular.module('bmp.components.topology',[])
 
   })
 
-  .directive('topology', function () {
+  .directive('topology', function ($timeout) {
     return  {
       templateUrl: "components/topology/topology.html",
       restrict: 'AE',
@@ -30,7 +30,12 @@ angular.module('bmp.components.topology',[])
 
         // create a network
         var container= element[0];
-        var network = new vis.Network(container, scope.data, scope.options);
+        var network={};
+
+        $timeout(function () {
+            network = new vis.Network(container, scope.data, scope.options);
+          },500
+        )
 
         network.on('select', function (properties) {
          // var tmp=network.getSelection();

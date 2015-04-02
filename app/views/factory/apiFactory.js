@@ -76,5 +76,14 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer/prefix/" + peerIP + '?last=' + amount_of_entries);
     };
 
+    //topology
+    apiFactory.getNodes = function (){
+      return $http.get(urlBase + "linkstate/nodes");
+    };
+
+    apiFactory.getLinks = function (){
+      return $http.get(urlBase + "linkstate/links");
+    };
+
     return apiFactory;
 });
