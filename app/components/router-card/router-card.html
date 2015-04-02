@@ -10,8 +10,8 @@
         <!--collasped view-->
         <div ng-hide="cardExpand" class="collapsed">
           BMP Router | {{data.id}} | {{data.ip}} |
-          <span ng-class="{'red': data.data.isConnected!='1', 'green': data.data.isConnected=='1'}">
-            {{ data.data.isConnected=='1'&& '&#11014;'||'&#11015;' }}
+          <span ng-class="{'red': data.isConnected!='1', 'green': data.isConnected=='1'}">
+            {{ data.isConnected=='1'&& '&#11014;'||'&#11015;' }}
           </span>
         </div>
 
@@ -23,7 +23,7 @@
           <span style="float: right;text-align: right;">
             BMP Up Time
             <span style="color: green;">
-              {{ upTime }}
+              {{ data.upTime }}
             </span>
           </span>
           <h4>{{ data.id }}</h4>
@@ -87,8 +87,8 @@
                 <th>Organization Name</th>
               </tr>
               <tr>
-                <td>{{data.data.RouterAS}}</td>
-                <td>{{data.data.RouterName}}</td>
+                <td>{{data.RouterAS}}</td>
+                <td>{{data.RouterName}}</td>
                 <td>{{data.id}}</td>
               </tr>
             </table>

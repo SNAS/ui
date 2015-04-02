@@ -1,6 +1,7 @@
 'use strict';
 
   angular.module('bmp.components.routerCard', [])
+
     .controller('RouterCardController', ['$scope', function ($scope) {
       //DEBUG
       window.SCOPES = $scope;
@@ -92,34 +93,39 @@
         }
       ];
 
+      var calUpTime = function() {
+        //This works out uptime from data.LastModified
+        //Displays two largest results.
+        var timestmp = Date.parse($scope.data.LastModified); //"2015-03-22 22:23:06"
+        var timeNow = Date.now();
+        var diff = timeNow - timestmp;
 
-      //THIS HAS NOT BEEN TESTED WITH VARIOUS DATES
-      var timestmp = Date.parse("2015-03-22 22:23:06");//data.data.LastModified
-      var timeNow = Date.now();
-      var diff = timeNow - timestmp;
+        console.log(diff);
 
-      var timeStrings = ["Years:"," Months:"," Days:"," Hours:"," Minutes:"];
-      var times =       [31622400000, 2592000000, 86400000, 3600000, 60000];
-      var timeAmount =  [0,0,0,0,0];
+        var timeStrings = ["Years:", " Months:", " Days:", " Hours:", " Minutes:"];
+        var times = [31622400000, 2592000000, 86400000, 3600000, 60000];
+        var timeAmount = [0, 0, 0, 0, 0];
 
-      var timeString = "";
-      var show= 2; //show 2 largest
-      for(var i =0;i<times.length;i++){
-        var val = diff/times[i];
-        if(val>1){
-          var round = Math.floor(val);
-          timeAmount[i]= round;
-          diff = diff - (round*times[i]);
-          if(show==0)
-            break;
-          timeString+= timeStrings[i] + timeAmount[i];
-          show--;
+        var timeString = "";
+        var show = 2; //show 2 largest
+        for (var i = 0; i < times.length; i++) {
+          var val = diff / times[i];
+          if (val > 1) {
+            var round = Math.floor(val);
+            timeAmount[i] = round;
+            diff = diff - (round * times[i]);
+            if (show == 0)
+              break;
+            timeString += timeStrings[i] + timeAmount[i];
+            show--;
+          }
         }
-      }
-      console.log("the time is ",timeString);
-      $scope.upTime = timeString;
-    }])
+        console.log("the time is ", timeString);
+        return timeString;
+      };
 
+      $scope.upTime = calUpTime();
+    }])
 
   .controller('PeerCardController', ['$scope', function ($scope) {
     $scope.testData = "from the controller";
