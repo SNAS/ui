@@ -83,7 +83,8 @@ angular.module('bmpUiApp')
         }
 
         $scope.$on('menu-toggle', function() {
-            $timeout( function(){ //call resize 
+            $timeout( function(){ 
+                $scope.map.invalidateSize();
             }, 500);
         });
 
