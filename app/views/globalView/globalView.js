@@ -8,10 +8,23 @@
  * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
-    .controller('GlobalViewController', function ($scope, $q, $http, $timeout, apiFactory, mapboxService) {
+    .controller('GlobalViewController', function ($scope, $q, $http, $timeout, apiFactory, mapboxService, leafletData) {
         window.SCOPE = $scope;
-        //mine: 'pk.eyJ1IjoiaGFyam9uZXMiLCJhIjoibFNzSDV5OCJ9.TuozTWKZlJ4hwhxt2cA4CQ'
-        mapboxService.init({ accessToken: 'pk.eyJ1IjoibGljeWV1cyIsImEiOiJuZ1gtOWtjIn0.qaaGvywaJ_kCmwmlTSNyVw' });
+
+        var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
+        var mapID = 'pickledbadger.lkfb3epb';
+
+        angular.extend($scope, {
+            defaults: {
+                tileLayer: 'https://{s}.tiles.mapbox.com/v4/' + mapID + '/{z}/{x}/{y}.png?access_token=' + accessToken,
+            }
+        });
+
+        leafletData.getMap().then(function(map) {
+            $scope.map = map;
+        });
+
+        $scope.routerLayer;
 
         $scope.chosenRouter;
         $scope.loading = true;
@@ -20,30 +33,24 @@ angular.module('bmpUiApp')
         $scope.routers = [];
         $scope.peers = [];
 
-        // $scope.markers.events = {
-        //     click: function(marker, event, model, args){
-        //         showRouter(marker);
-        //     } 
-        // }
-
         $scope.$on('marker:open', function (e, data) {
             console.log('ooft');
 
           });
 
-        $scope.showRouter = function(marker){
-            console.log('hello');
-            $scope.selected = true;
+        $scope.selectRouter = function(router){
+             console.log('hello');
+          //   $scope.selected = true;
 
-          for (var i = 0; i < $scope.markers.length; i++)
-            if ($scope.markers[i].id === marker.key) {
-              $scope.chosenRouter = $scope.markers[i];
-              $scope.index = i;
-            }else {
-              $scope.markers[i].options.visible = false;
-            }
+          // for (var i = 0; i < $scope.markers.length; i++)
+          //   if ($scope.markers[i].id === marker.key) {
+          //     $scope.chosenRouter = $scope.markers[i];
+          //     $scope.index = i;
+          //   }else {
+          //     $scope.markers[i].options.visible = false;
+          //   }
 
-            getChosenPeers();
+          //   getChosenPeers();
         }
 
         function getChosenPeers(){
@@ -75,30 +82,16 @@ angular.module('bmpUiApp')
             })
         }
 
-       //  $scope.$watch($scope.map.control, function() {
-       //      $scope.mapObject = $scope.map.control.getGMap();
-       //      $scope.$on('menu-toggle', function(thing, args) {
-       //          $timeout( function(){ google.maps.event.trigger($scope.mapObject, "resize"); }, 500);
-       //      });   
-       // });
-
-        // var setBounds = function (array){
-        //     var bounds = new google.maps.LatLngBounds();
-        //     for (var i=0; i<array.length; i++) {
-        //       var latlng = new google.maps.LatLng(array[i].latitude, array[i].longitude);
-        //       bounds.extend(latlng);
-        //     }
-        //     if($scope.chosenRouter != undefined)
-        //         bounds.extend(new google.maps.LatLng($scope.chosenRouter.latitude, $scope.chosenRouter.longitude))
-        //     $scope.mapObject.fitBounds(bounds);
-        //     if($scope.mapObject.getZoom()> 15){
-        //       $scope.mapObject.setZoom(15);
-        //     }   
-        // }
+        $scope.$on('menu-toggle', function() {
+            $timeout( function(){ //call resize 
+            }, 500);
+        });
 
         getRouters();
 
         function getRouters() {
+            $scope.routerLayer = L.mapbox.featureLayer();
+
             var temp = [];
             var markers = [];
             apiFactory.getRouters().
@@ -114,22 +107,41 @@ angular.module('bmpUiApp')
                 $q.all(temp).then(function (requests){
                     for(var i = 0; i < requests.length; i++)
                     {
-                        var data = requests[i].data.v_geo_ip.data[0];
-                        $scope.routers.push({
-                            id: namesWithIP[i].name, 
-                            lat: data.latitude,
-                            lng: data.longitude,
-                            ip: namesWithIP[i].ip
-                        });
+                        // var data = requests[i].data.v_geo_ip.data[0];
+                        // console.log(requests[i]);
+                        // $scope.routers.push({
+                        //     id: i, 
+                        //     lat: data.latitude,
+                        //     lng: data.longitude,
+                        //     ip: namesWithIP[i].ip
+                        // });
+                        var latlng = [parseInt('5' + (i+3)), parseInt('3' + (i+3))];
+
+                        var marker = new L.marker(latlng);
+
+                        var popup = L.popup()
+                        .setLatLng(latlng)
+                        .setContent('<p>Hello world!<br />This is a nice popup.</p>');
+
+                        marker.bindPopup(popup);
+                        marker.addTo($scope.map);
+
+                        $scope.routers.push(marker);
                     } 
                     $scope.loading = false; 
-                    //setBounds($scope.markers);                    
+
+                    $scope.routerLayer = L.featureGroup($scope.routers);                    
+                    $scope.fitMap();            
                 })
             }).
             error(function (error){
                 console.log(error.message);
             })
         }
+
+        $scope.fitMap = function() {
+          $scope.map.fitBounds($scope.routerLayer.getBounds());
+        };
 
         $scope.cards = ["",[]];
 

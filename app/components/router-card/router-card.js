@@ -7,6 +7,7 @@
           templateUrl: "components/router-card/router-card.html",
           restrict: 'AE',
           replace: 'true',
+          controller: 'RouterCardController',
           scope: {
               data: '=',
               cardType: '@',
@@ -317,6 +318,7 @@
             //);
           },
           link: function(scope) {
+           // console.log(scope.options);
             scope.cardExpand=false;
 
             scope.changeCardState = function(){

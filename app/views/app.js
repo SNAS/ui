@@ -23,7 +23,8 @@
   'ui.grid.autoResize',
   'bmp.components.routerCard',
   'bgDirectives',
- 	'angular-mapbox'
+ 	'angular-mapbox',
+    'leaflet-directive'
  	])
  .config(function ($stateProvider, $urlRouterProvider) {
  	$urlRouterProvider.otherwise("/login");
