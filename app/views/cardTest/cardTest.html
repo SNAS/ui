@@ -19,13 +19,13 @@
 
   <!--Router and Peers Cards-->
   <!--<div ng-repeat="cards[0]">-->
-  <!--<div ng-if=" cards[0]!= '' ">-->
+  <div ng-if=" cards[0]!= '' ">
     <div bmp-router-card
          data="cards[0]"
          removeCard="removeRouterCard()"
          card-type="router">
     </div>
-  <!--</div>-->
+  </div>
   <div ng-repeat="card in [].concat(cards[1]).reverse()">
     <div bmp-router-card
          data="card"
