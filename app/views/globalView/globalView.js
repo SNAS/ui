@@ -83,7 +83,7 @@ angular.module('bmpUiApp')
         }
 
         $scope.$on('menu-toggle', function() {
-            $timeout( function(){ //call resize 
+            $timeout( function(){ //call resize
             }, 500);
         });
 
@@ -110,7 +110,7 @@ angular.module('bmpUiApp')
                         // var data = requests[i].data.v_geo_ip.data[0];
                         // console.log(requests[i]);
                         // $scope.routers.push({
-                        //     id: i, 
+                        //     id: i,
                         //     lat: data.latitude,
                         //     lng: data.longitude,
                         //     ip: namesWithIP[i].ip
@@ -127,11 +127,11 @@ angular.module('bmpUiApp')
                         marker.addTo($scope.map);
 
                         $scope.routers.push(marker);
-                    } 
-                    $scope.loading = false; 
+                    }
+                    $scope.loading = false;
 
-                    $scope.routerLayer = L.featureGroup($scope.routers);                    
-                    $scope.fitMap();            
+                    $scope.routerLayer = L.featureGroup($scope.routers);
+                    $scope.fitMap();
                 })
             }).
             error(function (error){
@@ -143,39 +143,34 @@ angular.module('bmpUiApp')
           $scope.map.fitBounds($scope.routerLayer.getBounds());
         };
 
-        $scope.cards = ["",[]];
-
-        //router card DELETE \w CLICK
-        $scope.removeRouterCard = function(){
-          $scope.cards[0] = "";
-        };
-
-        //peer card DELETE \w CLICK
-        $scope.removePeerCard = function (card) {
-          var index = $scope.cards.indexOf(card);
-          $scope.cards[1].splice(index, 1);
-        };
-
-        var changeRouterCard = function(value){
-          $scope.cards[0] = value;
-        };
-
-        var changePeerCard = function(value) {
-          if ($scope.cards[1].indexOf(value) == -1) {
-            $scope.cards[1].push(value);
-            if ($scope.cards[1].length > 3) {
-              $scope.cards[1].shift();
-            }
-          }
-        };
-
-        //For when router is changed
-        var clearPeersCard = function() {
-          $scope.cards[1] = [];
-        };
-
-        //Test function to be called from within marker popup
-        $scope.test = function(){
-          alert("clicked view detailsasdfadfdsf");
-        };
+        //$scope.cards = ["",[]];
+        //
+        ////router card DELETE \w CLICK
+        //$scope.removeRouterCard = function(){
+        //  $scope.cards[0] = "";
+        //};
+        //
+        ////peer card DELETE \w CLICK
+        //$scope.removePeerCard = function (card) {
+        //  var index = $scope.cards.indexOf(card);
+        //  $scope.cards[1].splice(index, 1);
+        //};
+        //
+        //var changeRouterCard = function(value){
+        //  $scope.cards[0] = value;
+        //};
+        //
+        //var changePeerCard = function(value) {
+        //  if ($scope.cards[1].indexOf(value) == -1) {
+        //    $scope.cards[1].push(value);
+        //    if ($scope.cards[1].length > 3) {
+        //      $scope.cards[1].shift();
+        //    }
+        //  }
+        //};
+        //
+        ////For when router is changed
+        //var clearPeersCard = function() {
+        //  $scope.cards[1] = [];
+        //};
   });

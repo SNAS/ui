@@ -7,7 +7,6 @@
           templateUrl: "components/router-card/router-card.html",
           restrict: 'AE',
           replace: 'true',
-          controller: 'RouterCardController',
           scope: {
               data: '=',
               cardType: '@',
