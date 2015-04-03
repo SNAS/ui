@@ -10,21 +10,20 @@
  */
  angular
  .module('bmpUiApp', [
- 	'ngAnimate',
- 	'ngCookies',
- 	'ngResource',
- 	'ngRoute',
- 	'ngSanitize',
- 	'ngTouch',
- 	'ui.router',
-  'nvd3',
-  'ui.grid',
-  'ui.grid.selection',
-  'ui.grid.autoResize',
-  'bmp.components.routerCard',
-  'bgDirectives',
- 	'angular-mapbox',
-    'leaflet-directive'
+        'ngAnimate',
+        'ngCookies',
+        'ngResource',
+        'ngRoute',
+        'ngSanitize',
+        'ngTouch',
+        'ui.router',
+        'nvd3',
+        'ui.grid',
+        'ui.grid.selection',
+        'ui.grid.autoResize',
+        'bmp.components.routerCard',
+        'bgDirectives',
+        'leaflet-directive'
  	])
  .config(function ($stateProvider, $urlRouterProvider) {
  	$urlRouterProvider.otherwise("/login");

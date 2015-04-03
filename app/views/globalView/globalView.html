@@ -2,6 +2,15 @@
 
     <h1 class="page-header">Global View</h1>
 
+    <div class="loading" ng-show="loading">
+        <span class="text-light">loading...</span>
+    </div>
+
+    <button ng-show="selected" class="btn btn-primary reset" ng-click="clearPeers(true)">
+        <span class="glyphicon glyphicon-remove" style="font-size: 7pt;"></span>
+        {{chosenRouter.RouterName}}
+    </button>
+
     <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
 
     <!--Router and Peers Cards-->
