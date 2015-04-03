@@ -85,5 +85,9 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "linkstate/links");
     };
 
+    apiFactory.getPeerLinks = function (peerHashId){
+      return $http.get(urlBase + "linkstate/links/peer/" + peerHashId);
+    };
+
     return apiFactory;
 });

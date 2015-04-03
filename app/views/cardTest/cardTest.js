@@ -45,11 +45,48 @@ angular.module('bmpUiApp')
         //   shape: 'star',
         radius: 24
       }
-    }
+    };
 
-    var nodes = [];
-    var edges = [];
+    var nodes = [
+      {id: 1, label: '1.1'},
+      {id: 2, label: '100.1'},
+      {id: 3, label: '100.2'},
+      {id: 4, label: '192.54'},
+      {id: 5, label: '192.22'},
+      {id: 6, label: '200.1'},
+      {id: 7, label: '192.30'},
+      {id: 8, label: '200.2'},
+      {id: 9, label: '100.4'},
+      {id: 10, label: '100.3'}
+    ];
+    var edges = [
+      {id:1, from: 1, to: 2, label:'10|15', length:15},
+      {id:2, from: 2, to: 3, label:10, length:10},
+      {id:3, from: 2, to: 5, label:10, length:10},
+      {id:4, from: 2, to: 6, label:10, length:10},
+      {id:5, from: 3, to: 10, label:10, length:10},
+      {id:6, from: 4, to: 5, label:10, length:10},
+      {id:7, from: 5, to: 6, label:10, length:10},
+      {id:8, from: 5, to: 7, label:10, length:10},
+      {id:9, from: 6, to: 7, label:10, length:10},
+      {id:10, from: 6, to: 8, label:10, length:10},
+      {id:11, from: 7, to: 8, label:10, length:10},
+      {id:12, from: 8, to: 9, label:10, length:10},
+      {id:13, from: 9, to: 10, label:10, length:10}
+    ];
     $scope.topologyData = {};
+
+    //$scope.selectedNode = 1;
+    //$scope.selectedEdges = [1];
+    //
+    //$(function (){
+    //  if($scope.selectedNode==1){
+    //    $scope.selectedEdges = [1];
+    //  }
+    //  else{
+    //    $scope.selectedEdges = [2];
+    //  }
+    //})
 
       //get nodes
     $(function () {
