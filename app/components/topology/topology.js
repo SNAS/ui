@@ -37,7 +37,7 @@ angular.module('bmp.components.topology', [])
         $timeout(function () {
             network = new vis.Network(container, scope.data, scope.options);
 
-            apiFactory.getNodes();
+     //       apiFactory.getNodes();
 
             network.on('select', function (properties) {
 
