@@ -1,0 +1,381 @@
+'use strict';
+
+/**
+ * @ngdoc function
+ * @name bmpUiApp.controller:WhoIsController
+ * @description
+ * # WhoIsController
+ * Controller of the Login page
+ */
+angular.module('bmpUiApp')
+  .controller('CardController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', function ($scope, apiFactory, $http, $timeout, $interval) {
+
+    $scope.topologyOptions = {
+      height: '1000px',
+      //   dragNodes:false,
+      configurePhysics: true,
+
+      physics: {
+        barnesHut: {
+          enabled: true,
+          gravitationalConstant: -2000,
+          centralGravity: 0.1,
+          springLength: 95,
+          springConstant: 0.04,
+          damping: 0.09
+        }
+        //    hierarchicalRepulsion: {
+        //centralGravity: 0.5,
+        //springLength: 150,
+        //springConstant: 0.01,
+        //nodeDistance: 60,
+        //damping: 0.09
+        //      }
+      },
+
+      nodes: {
+        color: {
+          background: '#9ec654',
+          border: '#9ec654',
+          highlight: {
+            background: '#f7a031',
+            border: '#f7a031'
+          }
+        },
+        //   shape: 'star',
+        radius: 24
+      }
+    };
+
+    var nodes = [
+      {id: 1, label: '1.1'},
+      {id: 2, label: '100.1'},
+      {id: 3, label: '100.2'},
+      {id: 4, label: '192.54'},
+      {id: 5, label: '192.22'},
+      {id: 6, label: '200.1'},
+      {id: 7, label: '192.30'},
+      {id: 8, label: '200.2'},
+      {id: 9, label: '100.4'},
+      {id: 10, label: '100.3'}
+    ];
+    var edges = [
+      {id:1, from: 1, to: 2, label:'10|15', length:15},
+      {id:2, from: 2, to: 3, label:10, length:10},
+      {id:3, from: 2, to: 5, label:10, length:10},
+      {id:4, from: 2, to: 6, label:10, length:10},
+      {id:5, from: 3, to: 10, label:10, length:10},
+      {id:6, from: 4, to: 5, label:10, length:10},
+      {id:7, from: 5, to: 6, label:10, length:10},
+      {id:8, from: 5, to: 7, label:10, length:10},
+      {id:9, from: 6, to: 7, label:10, length:10},
+      {id:10, from: 6, to: 8, label:10, length:10},
+      {id:11, from: 7, to: 8, label:10, length:10},
+      {id:12, from: 8, to: 9, label:10, length:10},
+      {id:13, from: 9, to: 10, label:10, length:10}
+    ];
+    $scope.topologyData = {};
+
+    //$scope.selectedNode = 1;
+    //$scope.selectedEdges = [1];
+    //
+    //$(function (){
+    //  if($scope.selectedNode==1){
+    //    $scope.selectedEdges = [1];
+    //  }
+    //  else{
+    //    $scope.selectedEdges = [2];
+    //  }
+    //})
+
+      //get nodes
+    $(function () {
+      apiFactory.getNodes().success(function (result) {
+        var nodesData = result.v_ls_nodes.data;
+        for (var i = 0; i < result.v_ls_nodes.size; i++) {
+          var hash_id = nodesData[i].hash_id;
+          var label;
+          if(nodesData[i].protocol=="IS-IS_L2")
+           label= nodesData[i].RouterId;
+          else
+            label= nodesData[i].IGP_RouterId;
+
+          nodes.push(
+            {
+              id: hash_id,
+              label: label
+            }
+          );
+        }
+      }).error(function (error) {
+        console.log(error.message);
+      });
+    })
+
+    //get edges
+    $(function(){
+      apiFactory.getLinks().success(function (result) {
+        var linksData = result.v_ls_links.data;
+        for (var i = 0; i < result.v_ls_links.size; i++) {
+          var from = linksData[i].local_node_hash_id;
+          var to = linksData[i].remote_node_hash_id;
+          var igp_metric = linksData[i].igp_metric;
+          if(from<to) {
+            edges.push(
+              {
+                from: from,
+                to: to,
+                label: igp_metric,
+                length: igp_metric
+              }
+            );
+          }
+        }
+      }).error(function (error) {
+        console.log(error.message);
+      });
+    })
+
+    $timeout(function(){
+      $scope.topologyData = {
+        nodes: nodes,
+        edges: edges
+      };
+    })
+
+//    $scope.cards = [];
+//
+//    //DEBUG
+//    window.SCOPE = $scope;
+//
+//    //Redraw Tables when menu state changed
+//    $scope.$on('menu-toggle', function (thing, args) {
+//      $timeout(function () {
+//        resize();
+//      }, 550);
+//    });
+//
+//    var resize = function() {
+//      $scope.whoIsGridApi.core.handleWindowResize();
+//    };
+//
+//    $scope.whoIsGridOptions = {
+//      enableRowSelection: true,
+//      enableRowHeaderSelection: false
+//    };
+//
+//<<<<<<< HEAD
+//    $scope.whoIsGridOptions.columnDefs = [
+//      {name: "asn", displayName: 'ASN', maxWidth: 10},
+//      {name: "as_name", displayName: 'AS Name'},
+//      {name: "org_name", displayName: 'ORG Name'},
+//      {name: "country", displayName: 'Country', maxWidth: 10},
+//      {name: "symbTransit", displayName: 'Transit', maxWidth: 10},
+//      {name: "symbOrigin", displayName: 'Origin', maxWidth: 10}
+//    ];
+//
+//=======
+//>>>>>>> bb7dc6ce2cb806081e080f57e125e5923dba66fe
+//    $scope.whoIsGridOptions.multiSelect = false;
+//    $scope.whoIsGridOptions.noUnselect = true;
+//    $scope.whoIsGridOptions.modifierKeysToMultiSelect = false;
+//    $scope.whoIsGridOptions.rowTemplate = '<div ng-click="grid.appScope.routerSelection();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
+//    $scope.whoIsGridOptions.onRegisterApi = function (gridApi) {
+//      $scope.whoIsGridApi = gridApi;
+//    };
+//
+//<<<<<<< HEAD
+//    //Loop through data selecting and altering relevant data.
+//    var searchValue = function (value, init) {
+//      if (value == "" || value == " ")
+//        return;
+//      var numberRegex = /^\d+$/;
+//
+//      if (numberRegex.exec(value) == null) {
+//        //  not a number do string search
+//        apiFactory.getWhoIsName(value).
+//          success(function (result) {
+//            $scope.whoIsGridOptions.data = $scope.whoIsData = result.w.data;
+//            createWhoIsDataGrid();
+//            if (init) {
+//              initSelect();
+//            }
+//          }).
+//          error(function (error) {
+//            console.log(error.message);
+//          });
+//      } else {
+//        // do a asn search
+//        apiFactory.getWhoIsWhereASN(value).
+//          success(function (result) {
+//            $scope.whoIsGridOptions.data = $scope.whoIsData = result.w.data;
+//            createWhoIsDataGrid();
+//          }).
+//          error(function (error) {
+//            console.log(error.message);
+//          });
+//      }
+//    };
+//
+//    var initSelect = function () {
+//      $timeout(function () {
+//        if ($scope.whoIsGridApi.selection.selectRow) {
+//          $scope.whoIsGridApi.selection.selectRow($scope.whoIsGridOptions.data[0]);
+//        }
+//      });
+//      $timeout(function () {
+//        $scope.changeSelected();
+//      });
+//    };
+//
+//    //Waits a bit for user to contiune typing.
+//    $scope.enterValue = function (value) {
+//      $scope.currentValue = value;
+//
+//      $timeout(function () {
+//        if (value == $scope.currentValue) {
+//          searchValue(value);
+//        }
+//      }, 500);
+//    };
+//
+//    var createWhoIsDataGrid = function () {
+//      for (var i = 0; i < $scope.whoIsData.length; i++) {
+//        $scope.whoIsData[i].symbTransit = ($scope.whoIsData[i].isTransit == 1) ? "✔" : "✘";
+//        $scope.whoIsData[i].symbOrigin = ($scope.whoIsData[i].isOrigin == 1) ? "✔" : "✘";
+//      }
+//    };
+//
+//    var resize = function () {
+//      $scope.whoIsGridApi.core.handleWindowResize();
+//    };
+//
+//    //cardTest DELETE \w CLICK
+//    $scope.cardRemove = function (card) {
+//      var index = $scope.cards.indexOf(card);
+//      $scope.cards.splice(index, 1);
+//    };
+//
+//    var cardChange = function (value) {
+//      if ($scope.cards.indexOf(value) == -1) {
+//        $scope.cards.push(value);
+//        if ($scope.cards.length > 3)
+//          $scope.cards.shift();
+//      }
+//    };
+//
+//    //Decided to put the data into a table in the pre to align it
+//    $scope.changeSelected = function () {
+//      var values = $scope.whoIsGridApi.selection.getSelectedRows()[0];
+//
+//      cardChange(values);
+//    };
+//
+//    //Init table data
+//    searchValue("Cisco", true);
+//=======
+//    apiFactory.getRouters().
+//      success(function (result){
+//        $scope.whoIsGridOptions.data = $scope.whoIsData = result.routers.data;
+//        createWhoIsDataGrid();
+//        $timeout(function () {
+//          if ($scope.whoIsGridApi.selection.selectRow) {
+//            $scope.whoIsGridApi.selection.selectRow($scope.whoIsGridOptions.data[0]);
+//            $scope.routerSelection();
+//          }
+//        });
+//      }).
+//      error(function (error){
+//        console.log(error.message);
+//      });
+//
+//    var createWhoIsDataGrid = function () {
+//      //for(var i = 0; i <  $scope.whoIsData.length; i++) {
+//      //  $scope.whoIsData[i].symbTransit = ($scope.whoIsData[i].isTransit == 1)? "✔":"✘";
+//      //  $scope.whoIsData[i].symbOrigin = ($scope.whoIsData[i].isOrigin == 1)? "✔":"✘";
+//      //}
+//    };
+//
+//    //Decided to put the data into a table in the pre to align it
+//    $scope.routerSelection = function() {
+//      $scope.chosenRouter = $scope.whoIsGridApi.selection.getSelectedRows()[0];
+//      apiFactory.getPeersByIp($scope.chosenRouter.RouterIP).
+//        success(function (result){
+//          $scope.peersGridOptions.data = $scope.peersData = result.v_peers.data;
+//          //console.dir($scope.peersGridOptions);
+//          //createWhoIsDataGrid();
+//        }).
+//        error(function (error){
+//          console.log(error.message);
+//        });
+//      changeRouterCard($scope.chosenRouter);
+//      clearPeersCard();
+//    };
+//
+//    //Old way for only one card
+//    ////cardTest DELETE \w CLICK
+//    //$scope.cardRemove = function(card){
+//    //  var index = $scope.cards.indexOf(card);
+//    //  $scope.cards.splice(index,1);
+//    //};
+//    //
+//    //var cardChange = function(value) {
+//    //  if ($scope.cards.indexOf(value) == -1) {
+//    //    $scope.cards.push(value);
+//    //    if ($scope.cards.length > 3)
+//    //      $scope.cards.shift();
+//    //  }
+//    //};
+//    //
+//
+//    $scope.cards = ["",[]];
+//
+//    //router card DELETE \w CLICK
+//    $scope.removeRouterCard = function(){
+//      $scope.cards[0] = "";
+//    };
+//
+//    //peer card DELETE \w CLICK
+//    $scope.removePeerCard = function (card) {
+//      var index = $scope.cards.indexOf(card);
+//      $scope.cards[1].splice(index, 1);
+//    };
+//
+//    var changeRouterCard = function(value){
+//      $scope.cards[0] = value;
+//    };
+//
+//    var changePeerCard = function(value) {
+//      if ($scope.cards[1].indexOf(value) == -1) {
+//        $scope.cards[1].push(value);
+//        if ($scope.cards[1].length > 3) {
+//          $scope.cards[1].shift();
+//        }
+//      }
+//    };
+//
+//    //For when router is changed
+//    var clearPeersCard = function() {
+//      $scope.cards[1] = [];
+//    };
+//
+//    $scope.peersGridOptions = {
+//      enableRowSelection: true,
+//      enableRowHeaderSelection: false
+//    };
+//
+//    $scope.peersGridOptions.multiSelect = false;
+//    $scope.peersGridOptions.noUnselect = true;
+//    $scope.peersGridOptions.modifierKeysToMultiSelect = false;
+//    $scope.peersGridOptions.rowTemplate = '<div ng-click="grid.appScope.peerSelection();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
+//    $scope.peersGridOptions.onRegisterApi = function (gridApi) {
+//      $scope.peersGridApi = gridApi;
+//    };
+//
+//    //Decided to put the data into a table in the pre to align it
+//    $scope.peerSelection = function() {
+//      //$scope.chosenRouter = $scope.peersGridApi.selection.getSelectedRows()[0];
+//      changePeerCard($scope.peersGridApi.selection.getSelectedRows()[0]);
+//    };
+//>>>>>>> bb7dc6ce2cb806081e080f57e125e5923dba66fe
+  }]);
