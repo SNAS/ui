@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
-    .controller('GlobalViewController', function ($scope, $q, $http, $timeout, apiFactory, leafletData) {
+    .controller('GlobalViewController', function ($scope, $state, $q, $http, $timeout, apiFactory, leafletData) {
         window.SCOPE = $scope;
 
         /************** START MAP **************/
@@ -58,7 +58,6 @@ angular.module('bmpUiApp')
         });
 
         $scope.routerLayer;
-        $scope.peerLayer;
 
         $scope.chosenRouter;
         $scope.loading = true;
@@ -76,6 +75,7 @@ angular.module('bmpUiApp')
 
             var temp = [];
             var markers = [];
+
             apiFactory.getRouters().
             success(function (result){
                 $scope.routerData = result.routers.data;
@@ -83,14 +83,17 @@ angular.module('bmpUiApp')
                 var temp = [];
                 var namesWithIP = [];
                 angular.forEach($scope.routerData, function (value, key){
-                    temp.push(apiFactory.getRouterLocation(value.RouterIP));
-                    namesWithIP.push({ip: value.RouterIP, name: value.RouterName});
+                    temp.push({
+                        req: apiFactory.getRouterLocation(value.RouterIP),
+                        RouterName: value.RouterName,
+                        RouterIP : value.RouterIP
+                    });
                 });
                 $q.all(temp).then(function (requests){
                     for(var i = 0; i < requests.length; i++)
                     {
-                        // var data = requests[i].data.v_geo_ip.data[0];
-                        // console.log(requests[i]);
+                        //var data = requests[i].req.data.v_geo_ip.data[0];
+                        //console.log(requests[i]);
                         // $scope.routers.push({
                         //     id: i,
                         //     lat: data.latitude,
@@ -101,10 +104,10 @@ angular.module('bmpUiApp')
                         /******* TEMPORARY CODE WHILE GEOIP IS DOWN *******/
                         var latlng = [parseInt('5' + (i+3)), parseInt('3' + (i+3))];
                         /******* TEMPORARY CODE WHILE GEOIP IS DOWN *******/
-
+                        
                         var options = {
-                            RouterName: namesWithIP[i].name,
-                            RouterIP: namesWithIP[i].ip,
+                            RouterName: requests[i].RouterName,
+                            RouterIP: requests[i].RouterIP,
                         }
 
                         var marker = new BMPMarker(latlng, options);
@@ -129,7 +132,7 @@ angular.module('bmpUiApp')
                 })
             }).
             error(function (error){
-                console.log(error.message);
+                console.log(error);
             })
         }
 
@@ -175,12 +178,17 @@ angular.module('bmpUiApp')
                 var data = result.v_peers.data;
                 var temp = [];
                 angular.forEach(data, function (value, key){
-                    temp.push(apiFactory.getRouterLocation(value.PeerIP));
+                    temp.push({
+                        req: apiFactory.getRouterLocation(value.PeerIP), 
+                        PeerIP: value.PeerIP,
+                        PeerName: value.PeerName,
+                        PeerASN: value.PeerASN
+                    });
                 });
                 $q.all(temp).then(function (requests){
                     for(var i = 0; i < requests.length; i++)
                     {
-                        //var geodata = requests[i].data.v_geo_ip.data[0];
+                        //var geodata = requests[i].req.data.v_geo_ip.data[0];
                         // $scope.peers.push({
                         //     id: geodata.ip_start + ' - ' + data.ip_end,
                         //     latitude: geodata.latitude,
@@ -198,15 +206,21 @@ angular.module('bmpUiApp')
                             iconUrl: '../images/marker-small.png'
                         });
                         var options = {
-                            icon: myIcon
+                            icon: myIcon,
+                            PeerName: requests[i].PeerName,
+                            PeerIP: requests[i].PeerIP,
+                            PeerASN: requests[i].PeerASN
                         };
 
                         var marker = new BMPMarker(latlng, options);
 
-                        var popup = L.popup({type: 'peer'})
+                        var popup = L.popup({type: 'peer', minWidth: 210})
                         .setLatLng(latlng)
-                        .setContent('<p>I am a peer!</p>');
+                        .setContent('<p class="page-header"><strong>' + options.PeerName + '</strong><br><small><strong>Uptime: </strong><span class="text-success">22D 14H</span></small></p><p><small><a href="#">' + options.PeerIP + '</a></small></p><p><small><strong>AS Number:</strong> ' + options.PeerASN + '</small></p>');
 
+                        marker.on('click', function(){
+                            $state.go('app.peerView', {RouterIP: $scope.chosenRouter.RouterIP});
+                        })
                         marker.bindPopup(popup);
                         marker.addTo($scope.map);
 
@@ -215,7 +229,7 @@ angular.module('bmpUiApp')
                 })
             }).
             error(function (error){
-                console.log(error.message);
+                console.log(error);
             })
         }
 

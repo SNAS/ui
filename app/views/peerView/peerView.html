@@ -1,6 +1,6 @@
 <div class="relative">
 
-    <h1 class="page-header">Global View</h1>
+    <h1 class="page-header">Peer View</h1>
 
     <div class="loading" ng-show="loading">
         <span class="text-light">loading...</span>
@@ -11,7 +11,12 @@
         {{chosenRouter.RouterName}}
     </button>
 
-    <!-- <input type="text" ng-model="search" class="map-control search" placeholder="Search"/> -->
+     <button class="btn btn-warning map-control reset" ng-click="clearPeers(true)">
+        <span class="glyphicon glyphicon-remove"></span>
+        TBD
+    </button>
+
+    <input type="text" ng-model="search" class="map-control search" placeholder="Search"/>
 
     <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
 

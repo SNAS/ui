@@ -64,10 +64,10 @@
 		 		templateUrl: 'views/globalView/globalView.html',
 		 		controller: 'GlobalViewController'
 		 	})
-			.state('app.summary', {
-				url: '/summary',
-				templateUrl: 'views/summary/summary.html',
-				controller: 'SummaryController'
+			.state('app.peerView', {
+				url: '/peer-view/{RouterIP}',
+				templateUrl: 'views/peerView/peerView.html',
+				controller: 'PeerViewController'
 			})
 		 	.state('app.peerAnalysis', {
 		 		url: '/peer-analysis',

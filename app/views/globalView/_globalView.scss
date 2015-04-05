@@ -17,23 +17,40 @@
     position: relative;
 }
 
-button.btn.btn-primary.reset {
-  position: absolute;
-  top: 80px;
-  right: 10px;
-  z-index: 1;
-  opacity: 0.6;
+.map-control{
+    z-index: 1;
+    top: 80px;
+    opacity: 0.6;
+    @include transition(opacity, 0.15s);
+    position: absolute;
 
-  &:hover{
-    opacity: 1;
-  }
+    &.reset {
+        right: 10px;
+    }
+    &.search {
+        border-radius: 8px;
+        left: 50px;
+        border: 1px solid #CCC;
+        padding: 5px;
+        &:focus{
+            opacity: 1;
+            outline: none;
+        }
+    }
+    &:hover{
+        opacity: 1;
+    }
 }
 
 .glyphicon-remove{
     font-size: 7pt;
 }
 
-.leaflet-popup-tip {
-    background-color: transparent;
-    @include transform(none);
+.leaflet-popup{
+
+    .leaflet-popup-tip {
+        background-color: transparent;
+        @include transform(none);
+        padding: 0;
+    }
 }
