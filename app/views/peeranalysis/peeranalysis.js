@@ -65,8 +65,8 @@ angular.module('bmpUiApp')
               for (var i = 0; i < peers.length; i++) {
                 var prefix = getPrefix(i, peers, peer_prefix);
 
-                peers[i].Status = ((peers[i].isUp === "1") && (peers[i].isBMPConnected === "1")) ? "Up" : "Down";
-                peers[i].IPv = (peers[i].isPeerIPv4 === "1") ? '4' : '6';
+                peers[i].Status = ((peers[i].isUp === 1) && (peers[i].isBMPConnected === 1)) ? "Up" : "Down";
+                peers[i].IPv = (peers[i].isPeerIPv4 === 1) ? '4' : '6';
                 peers[i].Pre_RIB = (prefix == null ) ? 'null' : prefix.Pre_RIB;
                 peers[i].Post_RIB = (prefix == null ) ? 'null' : prefix.Post_RIB;
               }

@@ -93,11 +93,11 @@ angular.module('bmpUiApp')
     //};
     //
 
-    $scope.cards = ["",[]];
+    $scope.cards = [[],[]];
 
     //router card DELETE \w CLICK
     $scope.removeRouterCard = function(){
-      $scope.cards[0] = "";
+      $scope.cards[0]= [];
     };
 
     //peer card DELETE \w CLICK
@@ -107,7 +107,7 @@ angular.module('bmpUiApp')
     };
 
     var changeRouterCard = function(value){
-      $scope.cards[0] = value;
+      $scope.cards[0][0] = value;
     };
 
     var changePeerCard = function(value) {

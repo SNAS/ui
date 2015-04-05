@@ -30,8 +30,10 @@ angular.module('bmpUiApp')
       { name: "as_name", displayName: 'AS Name' },
       { name: "org_name", displayName: 'ORG Name' },
       { name: "country", displayName: 'Country', maxWidth: 10 },
-      { name: "symbTransit", displayName: 'Transit', maxWidth: 10 },
-      { name: "symbOrigin", displayName: 'Origin', maxWidth: 10 }
+      { name: "ipv4", displayName: 'ipv4', maxWidth: 10 },
+      { name: "ipv6", displayName: 'ipv6', maxWidth: 10 }
+      //{ name: "symbTransit", displayName: 'Transit', maxWidth: 10 },
+      //{ name: "symbOrigin", displayName: 'Origin', maxWidth: 10 }
     ];
 
     $scope.whoIsGridOptions.multiSelect = false;
@@ -98,8 +100,10 @@ angular.module('bmpUiApp')
 
     var createWhoIsDataGrid = function () {
       for(var i = 0; i <  $scope.whoIsData.length; i++) {
-        $scope.whoIsData[i].symbTransit = ($scope.whoIsData[i].isTransit == 1)? "✔":"✘";
-        $scope.whoIsData[i].symbOrigin = ($scope.whoIsData[i].isOrigin == 1)? "✔":"✘";
+        $scope.whoIsData[i].ipv4 = $scope.whoIsData[i].transit_v4_prefixes+$scope.whoIsData[i].origin_v4_prefixes;
+        $scope.whoIsData[i].ipv6 = $scope.whoIsData[i].transit_v6_prefixes+$scope.whoIsData[i].origin_v6_prefixes;
+        //$scope.whoIsData[i].symbTransit = ($scope.whoIsData[i].isTransit == 1)? "✔":"✘";
+        //$scope.whoIsData[i].symbOrigin = ($scope.whoIsData[i].isOrigin == 1)? "✔":"✘";
       }
     };
 

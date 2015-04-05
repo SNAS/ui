@@ -1,4 +1,4 @@
-<div class="relative">
+<div class="relative" ng-controller="GlobalViewController">
 
     <h1 class="page-header">Global View</h1>
 
@@ -16,10 +16,12 @@
     <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
 
     <!--Router and Peers Cards-->
-    <!-- <div bmp-router-card
+    <!--<div ng-if=" cards[0]!= '' ">
+      <div bmp-router-card
         data="cards[0]"
         removeCard="removeRouterCard()"
         card-type="router">
+      </div>
     </div>
     <div ng-repeat="card in [].concat(cards[1]).reverse()">
       <div bmp-router-card
@@ -27,6 +29,7 @@
            removeCard="removePeerCard(card)"
            card-type="peer">
       </div>
-    </div> -->
+    </div>-->
     <!--end-->
+
 </div>
