@@ -12,7 +12,7 @@
               cardType: '@',
               removecard: '&'
           },
-          controller: function ($scope, apiFactory) {
+          controller: function ($scope, apiFactory) { //BmpRouterCardController
 
             //ROUTER DATA
             //{
@@ -27,10 +27,8 @@
             //  "LastModified":"2015-04-01 18:36:36"
             // }
 
-            console.log($scope);
-
-
             if($scope.cardType == "router") {
+
               $scope.options = {
                 chart: {
                   type: 'multiBarChart',
@@ -238,11 +236,10 @@
                     console.log(error.message);
                   });
               };
-
               calUpTime();
-              $scope.location = $scope.data.description;
-
-            }else if($scope.cardType == "peer"){
+              $scope.isUP = ($scope.data.isConnected=='1')? '⬆':'⬇';
+            }
+            else if($scope.cardType == "peer"){
               //  PEER DATA
               //  {
               //  "RouterName":"csr1.openbmp.org",
@@ -282,17 +279,14 @@
               //shouldnt go into this
               console.log("error with choosing card type")
             }
+            //Constuct the generic data.
             $scope.routerName = $scope.$parent.chosenRouter.RouterName;
             $scope.routerAS = $scope.$parent.chosenRouter.RouterAS;
             //Probably will be changed
             $scope.routerIp = $scope.$parent.chosenRouter.RouterIP;
 
-            if($scope.location == ""){
-
-            }
             //default data
             $scope.locationInfo = "<table class='routerLoc noRouterLoc'><tr><td>There is no Location Data ...</td></tr></table>";
-
             //if(description != empty) do this
             //loop through
             //$scope.locationInfo = (
