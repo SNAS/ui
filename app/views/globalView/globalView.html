@@ -1,23 +1,67 @@
-<div class="relative">
+<div class="relative" ng-controller="GlobalViewController">
 
     <h1 class="page-header">Global View</h1>
 
-    <div class="loading" ng-show="loading">
+    <mapbox map-id="licyeus.i9pkgkg8" scale-to-fit>
+        <marker ng-repeat="router in routers"
+                lat="{{router.lat}}"
+                lng="{{router.lng}}"
+                color="teal">
+          <h1>{{router.id}}</h1>
+          <p>{{router.ip}}</p>
+          <p ng-click="showRouter(router)">detail</p>
+        </marker>
+    </mapbox>
+
+    <!-- <div class="loading" ng-show="loading">
         <span class="text-light">loading...</span>
     </div>
 
-    <button ng-show="selected" class="btn btn-primary reset" ng-click="clearPeers(true)">
-        <span class="glyphicon glyphicon-remove" style="font-size: 7pt;"></span>
-        {{chosenRouter.RouterName}}
-    </button>
+    <mapbox map-id="harjones.libmi20l" lat="47.603569" lng="-122.329453"></mapbox>
+ -->
+    <!--<ui-gmap-google-map center='map.center' zoom='map.zoom' options='options' control='map.control'>
 
-    <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
+        <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" events="markers.events">
+            <ui-gmap-windows show="'show'" closeClick="'clear'">
+                <div class="map-window" ng-non-bindable>
+                    {{id}}
+                    <br/><br/>
+                    <div>
+                        <small>IP Address:</small><br/>
+                        {{ip}}
+                    </div>
+                    <br/>
+                    <small>Peers: {{peers.length}}</small><br/>
+                    <small>Prefixes</small>
+                    <!--<a onclick="SCOPE.test()">View Details</a>       Works-->
+                    <!--<a data-ng-click="test()">View Details</a>       Doesnt Work-->
+
+
+    <!--</ui-gmap-google-map>&ndash;&gt;&lt;!&ndash;  </div>-->
+            <!--</ui-gmap-windows>-->
+        <!--</ui-gmap-markers>-->
+
+        <!--<ui-gmap-markers doCluster="true" models="peers" coords="'self'" icon="'icon'" events="peers.events">-->
+            <!--<ui-gmap-windows show="'show'">-->
+                <!--<div ng-non-bindable>{{id}}</div>-->
+            <!--</ui-gmap-windows>-->
+        <!--</ui-gmap-markers>-->
+
+    <!--<h2>{{chosenRouter.id}}</h2>-->
+    <!--<div ng-show="selected">-->
+        <!--TBD-->
+<!--<<<<<<< HEAD-->
+    <!--</div> &ndash;&gt;-->
+<!--=======-->
+    </div>
 
     <!--Router and Peers Cards-->
-    <!-- <div bmp-router-card
+    <div ng-if=" cards[0]!= '' ">
+      <div bmp-router-card
         data="cards[0]"
         removeCard="removeRouterCard()"
         card-type="router">
+      </div>
     </div>
     <div ng-repeat="card in [].concat(cards[1]).reverse()">
       <div bmp-router-card
@@ -25,6 +69,7 @@
            removeCard="removePeerCard(card)"
            card-type="peer">
       </div>
-    </div> -->
+    </div>
     <!--end-->
+
 </div>

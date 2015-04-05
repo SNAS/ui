@@ -3,12 +3,12 @@
     <div class="content">
 
       <!--COLLAPSED view-->
-        <div ng-hide="cardExpand" class="collapsed">
+      <div ng-hide="cardExpand" class="collapsed">
           <span class="glyphicon"  ng-class="{'glyphicon-plus': !cardExpand, 'glyphicon-minus': cardExpand}"
                 ng-click="changeCardState()">
           </span>
-          <span class="glyphicon right glyphicon-remove" ng-click="removecard(data.asn)"></span>
-          <!--Router Card-->
+        <span class="glyphicon right glyphicon-remove" ng-click="removecard(data.asn)"></span>
+        <!--Router Card-->
           <span ng-switch-when="router" class="routerCard">
             <div class="col-sm-2">BMP Router |</div>
             <div class="col-sm-2">{{data.RouterName}} |</div>
@@ -20,7 +20,7 @@
             </div>
           </span>
 
-          <!--Peer Card-->
+        <!--Peer Card-->
           <span ng-switch-when="peer" class="peerCard">
               <div ng-hide="cardExpand" class="collapsed">
                 BMP Peer |
@@ -29,14 +29,14 @@
                 {{data.PeerIP}}
               </div>
           </span>
-        </div>
+      </div>
 
-        <!--EXPANDED view-->
-        <div ng-show="cardExpand">
+      <!--EXPANDED view-->
+      <div ng-show="cardExpand">
           <span class="glyphicon"  ng-class="{'glyphicon-plus': !cardExpand, 'glyphicon-minus': cardExpand}"
                 ng-click="changeCardState()">
           </span>
-          <span class="glyphicon right glyphicon-remove" ng-click="removecard(data.asn)"></span>
+        <span class="glyphicon right glyphicon-remove" ng-click="removecard(data.asn)"></span>
 
           <span ng-switch-when="router" class="routerCard">
             <!--Router Card-->
@@ -149,21 +149,21 @@
           <!--End Expanded Peer Card-->
           </span>
 
-            <!--Genertic info on both cards-->
-            <table class="tableSummary">
-              <tr>
-                <th>AS Number</th>
-                <th>AS Name</th>
-                <th>IP</th>
-              </tr>
-              <tr>
-                <td>{{ routerAS }}</td>
-                <td>{{ routerName }}</td>
-                <td>{{ routerIp }}</td>
-              </tr>
-            </table>
+        <!--Genertic info on both cards-->
+        <table class="tableSummary">
+          <tr>
+            <th>AS Number</th>
+            <th>AS Name</th>
+            <th>IP</th>
+          </tr>
+          <tr>
+            <td>{{ routerAS }}</td>
+            <td>{{ routerName }}</td>
+            <td>{{ routerIp }}</td>
+          </tr>
+        </table>
 
-          </div>
+      </div>
     </div>
   </span>
 </div>

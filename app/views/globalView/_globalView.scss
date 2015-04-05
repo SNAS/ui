@@ -17,23 +17,7 @@
     position: relative;
 }
 
-button.btn.btn-primary.reset {
-  position: absolute;
-  top: 80px;
-  right: 10px;
-  z-index: 1;
-  opacity: 0.6;
-
-  &:hover{
-    opacity: 1;
-  }
-}
-
-.glyphicon-remove{
-    font-size: 7pt;
-}
-
-.leaflet-popup-tip {
-    background-color: transparent;
-    @include transform(none);
+.angular-mapbox-map {
+  width: 100% !important;
+  height: 300px !important;
 }

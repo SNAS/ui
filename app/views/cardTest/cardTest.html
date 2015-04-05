@@ -1,14 +1,14 @@
 <div>
   <!------------------WHO IS---------------->
-    <h1>CARD TEST</h1>
-    <hr>
-    <!--Angular Table added here-->
-    <div class="routerGrid" ui-grid-selection ui-grid="whoIsGridOptions"></div>
-    <div class="peerGrid" ui-grid-selection ui-grid="peersGridOptions"></div>
+  <h1>CARD TEST</h1>
+  <hr>
+  <!--Angular Table added here-->
+  <div class="routerGrid" ui-grid-selection ui-grid="whoIsGridOptions"></div>
+  <div class="peerGrid" ui-grid-selection ui-grid="peersGridOptions"></div>
 
   <!--Router and Peers Cards-->
   <div ng-repeat="routerCard in cards[0]">
-  <!--<div ng-if=" cards[0]!= '' ">-->
+    <!--<div ng-if=" cards[0]!= '' ">-->
     <div bmp-router-card
          data="routerCard"
          removeCard="removeRouterCard()"
