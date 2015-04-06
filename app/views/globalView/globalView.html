@@ -1,4 +1,4 @@
-<div class="relative" ng-controller="GlobalViewController">
+<div class="relative">
 
     <h1 class="page-header">Global View</h1>
 
@@ -8,7 +8,7 @@
 
     <button ng-show="selected" class="btn btn-primary map-control reset" ng-click="clearPeers(true)">
         <span class="glyphicon glyphicon-remove"></span>
-        {{chosenRouter.RouterName}}
+        {{chosenRouter.options.RouterName}}
     </button>
 
     <!-- <input type="text" ng-model="search" class="map-control search" placeholder="Search"/> -->

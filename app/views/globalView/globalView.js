@@ -13,20 +13,6 @@ angular.module('bmpUiApp')
 
         /************** START MAP **************/
 
-        //Create a custom marker for router info
-        //TODO: one for peers
-        var BMPMarker = L.Marker.extend({
-            options: {
-                RouterIP: '',
-                RouterName: '',
-                description: '',
-                isConnected: '',
-                isPassive: '',
-                RouterAS: '',
-                LastModified: ''
-            }
-        })
-
         //IDs for mapbox
         //TODO: make constant in app.js
         var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
@@ -92,7 +78,7 @@ angular.module('bmpUiApp')
                 $q.all(temp).then(function (requests){
                     for(var i = 0; i < requests.length; i++)
                     {
-                        //var data = requests[i].req.data.v_geo_ip.data[0];
+                        //var data = requests[i].req;
                         //console.log(requests[i]);
                         // $scope.routers.push({
                         //     id: i,
@@ -110,7 +96,7 @@ angular.module('bmpUiApp')
                             RouterIP: requests[i].RouterIP,
                         }
 
-                        var marker = new BMPMarker(latlng, options);
+                        var marker = new L.Marker(latlng, options);
 
                         var popup = L.popup({type: 'router', minWidth: 200})
                         .setLatLng(latlng)
@@ -138,18 +124,20 @@ angular.module('bmpUiApp')
 
         //Called when a router is selected
         $scope.selectRouter = function(router){
-            if($scope.chosenRouter != undefined && router.options.RouterIP === $scope.chosenRouter.RouterIP)
+            if($scope.chosenRouter != undefined && router.options.RouterIP === $scope.chosenRouter.RouterIP){
+                console.log('returning');
                 return;
+            }
 
             $scope.clearPeers();
 
             $scope.selected = true;
 
-            for (var i = 0; i < $scope.routerData.length; i++){
+            for (var i = 0; i < $scope.routers.length; i++){
                 $scope.routers[i].setOpacity(0.5);
-                if ($scope.routerData[i].RouterIP === router.options.RouterIP) {
+                if ($scope.routers[i].options.RouterIP === router.options.RouterIP) {
                     router.setOpacity(1);
-                    $scope.chosenRouter = $scope.routerData[i];              
+                    $scope.chosenRouter = $scope.routers[i];              
                 }
             }
             getChosenPeers();
@@ -172,7 +160,7 @@ angular.module('bmpUiApp')
 
         //Populate map with chosen router's peers
         function getChosenPeers(){
-            apiFactory.getPeersByIp($scope.chosenRouter.RouterIP).
+            apiFactory.getPeersByIp($scope.chosenRouter.options.RouterIP).
             success(function (result){
                 var data = result.v_peers.data;
                 var temp = [];
@@ -211,16 +199,16 @@ angular.module('bmpUiApp')
                             PeerASN: requests[i].PeerASN
                         };
 
-                        var marker = new BMPMarker(latlng, options);
+                        var marker = new L.Marker(latlng, options);
 
-                        // var popup = L.popup({type: 'peer', minWidth: 210})
-                        // .setLatLng(latlng)
-                        // .setContent('<p class="page-header"><strong>' + options.PeerName + '</strong><br><small><strong>Uptime: </strong><span class="text-success">22D 14H</span></small></p><p><small><a href="#">' + options.PeerIP + '</a></small></p><p><small><strong>AS Number:</strong> ' + options.PeerASN + '</small></p>');
+                        var popup = L.popup({type: 'peer', minWidth: 210})
+                        .setLatLng(latlng)
+                        .setContent('<p class="page-header"><strong>' + options.PeerName + '</strong><br><small><strong>Uptime: </strong><span class="text-success">22D 14H</span></small></p><p><small><a href="#">' + options.PeerIP + '</a></small></p><p><small><strong>AS Number:</strong> ' + options.PeerASN + '</small></p>');
 
-                        marker.on('click', function(){
-                            $state.go('app.peerView', {RouterIP: $scope.chosenRouter.RouterIP});
-                        })
-                        //marker.bindPopup(popup);
+                        // marker.on('click', function(){
+                        //     $state.go('app.peerView', {RouterIP: $scope.chosenRouter.RouterIP});
+                        // })
+                        marker.bindPopup(popup);
                         marker.addTo($scope.map);
 
                         $scope.peers.push(marker);

@@ -11,6 +11,30 @@ angular.module('bmpUiApp')
     .controller('PeerViewController', function ($scope, $stateParams, $q, $http, $timeout, apiFactory, leafletData) {
         window.SCOPE = $scope;
 
+        $scope.search;
+        var ip = /^(?:[0-9]{1,3}\.){1,3}[0-9]{1,3}$/;
+        var string = /^[a-zA-Z][a-zA-Z0-9]*$/;
+
+        var timer;
+
+        $scope.$watch('search', function (val) {
+
+            if(val === undefined || val.length < 4)
+                return;            
+
+            if(timer){
+                // Ignore this change
+                $timeout.cancel(timer)
+            }  
+            timer= $timeout(function(){
+                console.log('doin ma ting');
+                if(ip.test(val))
+                    console.log('ip address');
+                else if(string.test(val))
+                    console.log('string');
+            }, 500)
+        });
+
         //IDs for mapbox
         //TODO: make constant in app.js
         var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
