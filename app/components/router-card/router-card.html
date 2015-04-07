@@ -10,14 +10,12 @@
         <span class="glyphicon right glyphicon-remove" ng-click="removecard(data.asn)"></span>
         <!--Router Card-->
           <span ng-switch-when="router" class="routerCard">
-            <div class="col-sm-2">BMP Router |</div>
-            <div class="col-sm-2">{{data.RouterName}} |</div>
-            <div class="col-sm-2">{{data.RouterIP}} | </div>
-            <div class="col-sm-2">
-              <span ng-class="{'red': data.isConnected!='1', 'green': data.isConnected=='1'}">
-                {{ isUP }}
-              </span>
-            </div>
+            BMP Router |
+            {{data.RouterName}} |
+            {{data.RouterIP}} |
+            <span ng-class="{'red': data.isConnected!='1', 'green': data.isConnected=='1'}">
+              {{ isUP }}
+            </span>
           </span>
 
         <!--Peer Card-->
@@ -75,7 +73,7 @@
                         <path fill="#ffaaff" stroke="#000000" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" d="m25.21665,3.56318l-0.03195,9.92302l4.3801,0.01345l-6.69095,6.59485l-6.3513,-6.1485l4.1816,-0.1817l0.1318,-10.02001l4.3807,-0.18111l0,0z" id="svg_6"/>
                       </g>
                       <g id="svg_peer">
-                        <ellipse fill="#ff007f" stroke="#000000" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" cx="200" cy="23.5" rx="22" ry="21.5" id="svg_12"/>
+                        <ellipse fill="#FDFDFD" stroke="#000000" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" cx="200" cy="23.5" rx="22" ry="21.5" id="svg_12"/>
                       </g>
                     </g>
                     <text xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_1" y="29.91202" x="199.91203" stroke-width="0" stroke="#000000" fill="#000000">{{ peersAmount }}</text>
@@ -154,12 +152,12 @@
           <tr>
             <th>AS Number</th>
             <th>AS Name</th>
-            <th>IP</th>
+            <!--<th>IP</th>-->
           </tr>
           <tr>
-            <td>{{ routerAS }}</td>
-            <td>{{ routerName }}</td>
-            <td>{{ routerIp }}</td>
+            <td>{{ RouterAS }}</td>
+            <td>{{ RouterName }}</td>
+            <!--<td>{{ RouterIP }}</td>-->
           </tr>
         </table>
 

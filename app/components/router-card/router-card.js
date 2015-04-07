@@ -13,6 +13,7 @@ angular.module('bmp.components.routerCard', [])
         removecard: '&'
       },
       controller: function ($scope, apiFactory) { //BmpRouterCardController
+        window.SCOPES = $scope;
 
         //ROUTER DATA
         //{
@@ -20,56 +21,53 @@ angular.module('bmp.components.routerCard', [])
         //  "RouterIP":"173.39.209.78",
         //  "RouterAS":0,
         //  "description":"",
-        //  "isConnected":1,"isPassive":0,
+        //  "isConnected":1,
+        //  "isPassive":0,
         //  "LastTermCode":65535,
         //  "LastTermReason":"Error while reading BMP data into buffer",
         //  "InitData":"",
         //  "LastModified":"2015-04-01 18:36:36"
         // }
-
         if($scope.cardType == "router") {
 
-          $scope.options = {
-            chart: {
-              type: 'multiBarChart',
-              height: 200,
-              width: 100,
-              showLegend: false,
-              showControls: false,
-              margin: {
-                top: 20,
-                right: 20,
-                bottom: 60,
-                left: 45
-              },
-              clipEdge: true,
-              staggerLabels: true,
-              transitionDuration: 500,
-              stacked: true,
-              xAxis: {
-                axisLabel: 'Time (ms)',
-                showMaxMin: false,
-                tickFormat: function (d) {
-                  return d3.format(',f')(d);
-                }
-              },
-              yAxis: {
-                axisLabel: 'Y Axis',
-                axisLabelDistance: 40,
-                tickFormat: function (d) {
-                  return d3.format(',.1f')(d);
-                }
-              }
-            }
-          };
+          $scope.datas = [];
+
+
+          var ips = ['v4', 'v6'];
+          for (var i = 0; i < ips.length; i++) {
+            apiFactory.getRouterIpType($scope.data.RouterIP, ips[i]).
+              success(function (result) {
+                var ipPeers = result.v_peers;
+                var ipAmount = ipPeers.size;
+                var key = "ip"+ips[i]+"Amount";
+                var item = {
+                  values: [
+                    {
+                      x: 2,
+                      y: ipAmount
+                    },
+                    {
+                      x: 3,
+                      y: ipAmount
+                    }
+                  ]
+                };
+                item.key = key;
+                $scope.datas.push(item);
+              }).
+              error(function (error) {
+                console.log(error.message);
+              });
+          }
 
           $scope.options = {
             "chart": {
               "type": "stackedAreaChart",
-              "showLegend": false,
+              //"type": "multiBarChart",
+              "showLegend": true,
               "showControls": false,
               "height": 200,
-              "width": 100,
+              "width": 120,
               "margin": {
                 "top": 20,
                 "right": 20,
@@ -79,42 +77,13 @@ angular.module('bmp.components.routerCard', [])
               "useVoronoi": false,
               "clipEdge": true,
               "transitionDuration": 500,
-              "useInteractiveGuideline": true,
+              "useInteractiveGuideline": false,
               "xAxis": {
                 "showMaxMin": false
               },
               "yAxis": {}
             }
           };
-
-          $scope.datas = [
-            {
-              "key": "Stream0",
-              "values": [
-                {
-                  "x": 2,
-                  "y": 6
-                },
-                {
-                  "x": 3,
-                  "y": 6
-                }
-              ]
-            },
-            {
-              "key": "Stream1",
-              "values": [
-                {
-                  "x": 2,
-                  "y": 4
-                },
-                {
-                  "x": 3,
-                  "y": 4
-                }
-              ]
-            }
-          ];
 
           //ROUTER UP TIME GRAPH
           //used line graph
@@ -199,10 +168,20 @@ angular.module('bmp.components.routerCard', [])
 
 
           var calUpTime = function () {
+
+            //var today = new Date();
+            //var day = today.getUTCDate();
+            //console.log("UTC day:",day);
+
             //This works out uptime from data.LastModified
             //Displays two largest results.
             var timestmp = Date.parse($scope.data.LastModified); //"2015-03-22 22:23:06"
             var timeNow = Date.now();
+
+            var d = new Date();
+            var offset = d.getTimezoneOffset() * 60000;
+            timeNow += offset;
+
             var diff = timeNow - timestmp;
 
             var timeStrings = ["Years:", " Months:", " Days:", " Hours:", " Minutes:"];
@@ -280,35 +259,36 @@ angular.module('bmp.components.routerCard', [])
           console.log("error with choosing card type")
         }
         //Constuct the generic data.
-        $scope.routerName = $scope.$parent.chosenRouter.RouterName;
-        $scope.routerAS = $scope.$parent.chosenRouter.RouterAS;
-        //Probably will be changed
-        $scope.routerIp = $scope.$parent.chosenRouter.RouterIP;
 
         //default data
-        $scope.locationInfo = "<table class='routerLoc noRouterLoc'><tr><td>There is no Location Data ...</td></tr></table>";
-        //if(description != empty) do this
-        //loop through
-        //$scope.locationInfo = (
-        //'<table class="routerLoc">'+
-        //  '<tr>'+
-        //    '<td>Type</td>'+
-        //    '<td>Router</td>'+
-        //  '</tr>'+
-        //  '<tr>'+
-        //    '<td>Location</td>'+
-        //    '<td>San Fran</td>'+
-        //  '</tr>'+
-        //  '<tr>'+
-        //    '<td>State</td>'+
-        //    '<td>CA</td>'+
-        //  '</tr>'+
-        //  '<tr>'+
-        //    '<td>Country</td>'+
-        //    '<td>US</td>'+
-        //  '</tr>'+
-        //'</table>'
-        //);
+        $scope.RouterName = $scope.data.RouterName;
+        $scope.RouterAS = $scope.data.RouterAS;
+
+        if($scope.data.State !== undefined || $scope.data.City !== undefined || $scope.data.Country !== undefined) {
+          $scope.locationInfo = (
+          '<table class="routerLoc">'+
+            '<tr>'+
+              '<td>Type</td>'+
+              '<td>'+$scope.cardType+'</td>'+
+            '</tr>'+
+            '<tr>'+
+              '<td>Location</td>'+
+              '<td>'+$scope.data.City+'</td>'+
+            '</tr>'+
+            '<tr>'+
+              '<td>State</td>'+
+              '<td>'+$scope.data.State+'</td>'+
+            '</tr>'+
+            '<tr>'+
+              '<td>Country</td>'+
+              '<td>'+$scope.data.Country+'</td>'+
+            '</tr>'+
+          '</table>'
+          );
+        }else{
+          //DEFAULT Data
+          $scope.locationInfo = "<table class='routerLoc noRouterLoc'><tr><td>There is no Location Data ...</td></tr></table>";
+        }
       },
       link: function(scope) {
         // console.log(scope.options);

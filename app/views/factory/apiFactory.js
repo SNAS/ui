@@ -26,6 +26,13 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "routers/status/up");
     };
 
+    apiFactory.getRouterIpType = function(routerIp, ipType){
+      return $http.get(urlBase + "peer/router/" +
+      routerIp + //10.22.165.14
+      "/type/"+
+      ipType); //v4 | v6
+    };
+
     apiFactory.getPeers = function () {
       return $http.get(urlBase + "peer");
     };
