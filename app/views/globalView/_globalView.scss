@@ -48,6 +48,10 @@
 
 .leaflet-popup{
 
+    &.routerpopup{
+        
+    }
+
     .leaflet-popup-tip {
         background-color: transparent;
         @include transform(none);

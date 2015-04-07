@@ -30,12 +30,6 @@ angular.module('bmpUiApp')
             $scope.map = map;
 
             $scope.routerLayer = new L.MarkerClusterGroup();
-
-            //listen on popup closure to reset peers
-            $scope.map.on('popupclose', function (e){
-                //console.log(e.options.type);
-                //$scope.clearPeers();
-            });
         });
 
         //Listen for a menu toggle broadcast to resize the map
@@ -71,7 +65,7 @@ angular.module('bmpUiApp')
                     temp.push(apiFactory.getRouterLocation(value.RouterIP));
                     data.push({
                         RouterIP: value.RouterIP,
-                        RouterName: value.RouterName
+                        RouterName: value.RouterName,
                     });
                 });
                 $q.all(temp).then(function (requests){
@@ -84,24 +78,54 @@ angular.module('bmpUiApp')
                         var options = {
                             RouterName: data[i].RouterName,
                             RouterIP: data[i].RouterIP,
+                            Country: result.country,
+                            State: result.stateprov,
+                            City: result.city
+                            //,storedOpacity: 1
                         }
 
                         var marker = new L.Marker(latlng, options);
 
-                        var popup = L.popup({type: 'router', minWidth: 200})
+                        var popup = L.popup({type: 'router', minWidth: 200, className: 'routerPopup'})
                         .setLatLng(latlng)
                         .setContent('<p class="page-header"><strong>' + options.RouterName + '</strong></p><p><small><strong>Uptime: </strong><span class="text-success">22D 14H</span></small></p><p><small><strong>IP Address: </strong>' + options.RouterIP + '</small></p><p><small><strong>Peers:</strong> 20</small></p><small><a href="#">View Detail</a></small>');
 
                         marker.bindPopup(popup);
 
+                        var timer;
+
                         marker.on('click', function (e){
                             $scope.selectRouter(e.target);
                         })
+                        marker.on('mouseover', function (e) {
+                            $timeout.cancel(timer)
+                            if(e.target.options.opacity < 1)
+                                e.target.setOpacity(0.7);
+                            e.target.openPopup();
+                        });
+                        marker.on('mouseout', function (e) {
+                            console.log(e.originalEvent.toElement);
+                            if(e.target.options.opacity < 1)
+                                e.target.setOpacity(0.5);
+                            
+                            if(timer){
+                                // Ignore this change
+                                $timeout.cancel(timer)
+                            }  
+                            timer= $timeout(function(){
+                                //console.log(e.originalEvent.toElement);
+                                e.target.closePopup();
+                            }, 500)
+                        });
 
                         $scope.routerLayer.addLayer(marker);
                         $scope.routers.push(marker);
                     }
                     $scope.map.addLayer($scope.routerLayer);
+                    $scope.routerLayer.on('spiderfied', function (a) {
+                        //console.log(a);
+                    });
+
                     $scope.loading = false;
                     $scope.fitMap();
                 })
@@ -123,8 +147,10 @@ angular.module('bmpUiApp')
             $scope.selected = true;
 
             for (var i = 0; i < $scope.routers.length; i++){
+                //router.options.storedOpacity = 0.5;
                 $scope.routers[i].setOpacity(0.5);
                 if ($scope.routers[i].options.RouterIP === router.options.RouterIP) {
+                    //router.options.storedOpacity = 1;
                     router.setOpacity(1);
                     $scope.chosenRouter = $scope.routers[i];              
                 }
@@ -137,6 +163,7 @@ angular.module('bmpUiApp')
                 $scope.map.removeLayer($scope.peers[i]);
             }
             for(var i = 0; i < $scope.routers.length; i++){
+                //$scope.routers[i].options.storedOpacity = 1;
                 $scope.routers[i].setOpacity(1);
             }
 
@@ -184,10 +211,22 @@ angular.module('bmpUiApp')
                         .setLatLng(latlng)
                         .setContent('<p class="page-header"><strong>' + options.PeerName + '</strong><br><small><strong>Uptime: </strong><span class="text-success">22D 14H</span></small></p><p><small><a href="#">' + options.PeerIP + '</a></small></p><p><small><strong>AS Number:</strong> ' + options.PeerASN + '</small></p>');
 
+                        marker.bindPopup(popup);
+
                         // marker.on('click', function(){
                         //     $state.go('app.peerView', {RouterIP: $scope.chosenRouter.RouterIP});
                         // })
-                        marker.bindPopup(popup);
+                        marker.on('mouseover', function (e) {
+                            e.target.openPopup();
+                            if(e.target.options.opacity < 1)
+                                e.target.setOpacity(0.8);
+                        });
+                        marker.on('mouseout', function (e) {
+                            e.target.closePopup();
+                            if(e.target.options.opacity < 1)
+                                e.target.setOpacity(0.5);
+                        });
+
                         marker.addTo($scope.map);
 
                         $scope.peers.push(marker);
