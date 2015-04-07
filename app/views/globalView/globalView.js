@@ -104,10 +104,10 @@ angular.module('bmpUiApp')
                             e.target.openPopup();
                         });
                         marker.on('mouseout', function (e) {
-                            console.log(e.originalEvent.toElement);
+                            //console.log(e.originalEvent.toElement);
                             if(e.target.options.opacity < 1)
                                 e.target.setOpacity(0.5);
-                            
+
                             if(timer){
                                 // Ignore this change
                                 $timeout.cancel(timer)
@@ -185,7 +185,10 @@ angular.module('bmpUiApp')
                     data.push({
                         PeerIP: value.PeerIP,
                         PeerName: value.PeerName,
-                        PeerASN: value.PeerASN
+                        PeerASN: value.PeerASN,
+                        Country: result.country,
+                        State: result.stateprov,
+                        City: result.city
                     });
                 });
                 $q.all(temp).then(function (requests){
