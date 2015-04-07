@@ -66,6 +66,7 @@ angular.module('bmpUiApp')
                     data.push({
                         RouterIP: value.RouterIP,
                         RouterName: value.RouterName,
+                        LastModified: value.LastModified
                     });
                 });
                 $q.all(temp).then(function (requests){
@@ -78,6 +79,7 @@ angular.module('bmpUiApp')
                         var options = {
                             RouterName: data[i].RouterName,
                             RouterIP: data[i].RouterIP,
+                            LastModified: data[i].LastModified,
                             Country: result.country,
                             State: result.stateprov,
                             City: result.city
@@ -190,9 +192,7 @@ angular.module('bmpUiApp')
                         PeerIP: value.PeerIP,
                         PeerName: value.PeerName,
                         PeerASN: value.PeerASN,
-                        Country: result.country,
-                        State: result.stateprov,
-                        City: result.city
+                        LastDownTimestamp: value.LastDownTimestamp
                     });
                 });
                 $q.all(temp).then(function (requests){
@@ -209,7 +209,11 @@ angular.module('bmpUiApp')
                             icon: myIcon,
                             PeerName: data[i].PeerName,
                             PeerIP: data[i].PeerIP,
-                            PeerASN: data[i].PeerASN
+                            PeerASN: data[i].PeerASN,
+                            LastDownTimestamp: data[i].LastDownTimestamp,
+                            Country: result.country,
+                            State: result.stateprov,
+                            City: result.city
                         };
 
                         var marker = new L.Marker(latlng, options);
@@ -237,8 +241,8 @@ angular.module('bmpUiApp')
                         });
 
                         marker.addTo($scope.map);
-
                         $scope.peers.push(marker);
+                        console.log($scope.peers);
                     }
                 })
             }).
