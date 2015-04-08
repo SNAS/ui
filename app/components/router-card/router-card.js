@@ -44,11 +44,16 @@ angular.module('bmp.components.routerCard', [])
               {x: 2,y: 0}
             ]}
           ];
+          var graphPoint = [0];
           angular.forEach($scope.ipAmountData, function(obj,index){
             var ipAmount = 0;
             apiFactory.getRouterIpType($scope.data.RouterIP, whichip[index]).
               success(function (result) {
                 ipAmount = result.v_peers.size;
+
+                if(ipAmount > graphPoint[0]) //for changing graph axis
+                  graphPoint[0] = ipAmount;
+
                 $scope.ipAmountData[index].values =(
                   [
                     {x: 1,y: ipAmount},
@@ -65,6 +70,7 @@ angular.module('bmp.components.routerCard', [])
             "chart": {
               "type": "stackedAreaChart",
               "showControls": false,
+              "showXAxis": false,
               "height": 200,
               "width": 120,
               "margin": {
@@ -77,8 +83,11 @@ angular.module('bmp.components.routerCard', [])
               "clipEdge": true,
               "transitionDuration": 500,
               "useInteractiveGuideline": false,
-              "xAxis": {
-                "showMaxMin": false
+              "tooltips": false,
+              //tickvalues
+              "yAxis": {
+                "showMaxMin": true,
+                "tickValues": graphPoint
               }
             }
           };
@@ -194,20 +203,22 @@ angular.module('bmp.components.routerCard', [])
             '   <th>Organization</th>' +
             ' </tr>');
             //$q.all(peersData.length).then(function (requests){
-            for (var i = 0; i < requests.length; i++) {
+            for (var i = 0; i < peersData.length; i++) {
               $scope.peerSummaryTable += (
               '<tr>' +
               ' <td>' + peersData[i].PeerASN + '</td>' +
               ' <td>' + peersData[i].PeerName + '</td>');
+              $scope.peerSummaryTable += '<td>-</td>';
+              $scope.peerSummaryTable += '</tr>';
               apiFactory.getWhoIsWhereASN(peersData[i].PeerASN).
                 success(function (result) {
                   var data = result.w.data;
-                  if (data.org_name === undefined || data.org_name == "") {
-                    $scope.peerSummaryTable += '<td> - </td>';
-                  } else {
-                    $scope.peerSummaryTable += '<td>' + data.org_name + '</td>';
-                  }
-                  $scope.peerSummaryTable += '</tr>';
+                  $scope.test
+                  //if (data[0].org_name === undefined || data[0].org_name == ""){
+                  //  $scope.peerSummaryTable += '<td> - </td>';
+                  //} else {
+                  //  $scope.peerSummaryTable += '<td>' + data.org_name + '</td>';
+                  //}
                 }).
                 error(function (error) {
                   console.log(error.message);
@@ -299,7 +310,7 @@ angular.module('bmp.components.routerCard', [])
         }
       },
       link: function(scope, $timeout) {
-        scope.cardExpand=true;//default false = closed
+        scope.cardExpand=false;//default false = closed
 
         scope.changeCardState = function() {
           scope.cardExpand = !scope.cardExpand;
