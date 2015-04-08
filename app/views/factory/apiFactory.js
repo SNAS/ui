@@ -88,16 +88,20 @@ angular.module('bmpUiApp')
     };
 
     //topology
-    apiFactory.getNodes = function (){
-      return $http.get(urlBase + "linkstate/nodes");
-    };
-
-    apiFactory.getLinks = function (){
-      return $http.get(urlBase + "linkstate/links");
+    apiFactory.getPeerNodes = function (peerHashId){
+      return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);
     };
 
     apiFactory.getPeerLinks = function (peerHashId){
       return $http.get(urlBase + "linkstate/links/peer/" + peerHashId);
+    };
+
+    apiFactory.getSPFospf = function (peerHashId,routerId){
+      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/ospf/" + routerId);
+    };
+
+    apiFactory.getSPFisis = function (peerHashId,routerId){
+      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/isis/" + routerId);
     };
 
     return apiFactory;
