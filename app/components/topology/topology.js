@@ -21,8 +21,8 @@ angular.module('bmp.components.topology', [])
       scope: {
         data: '=',
         options: '=',
-        selectedEdges: '=',
-        selectedNode: '=',
+      //  selectedEdges: '=',
+      //  selectedNode: '=',
         cardType: '@',
         removecard: '&'
       },
@@ -37,28 +37,26 @@ angular.module('bmp.components.topology', [])
         $timeout(function () {
             network = new vis.Network(container, scope.data, scope.options);
 
-     //       apiFactory.getNodes();
-
             network.on('select', function (properties) {
 
-              if(network.getSelection().nodes[0]==1) {
-                network.selectEdges([1,2,3,4,5,6,8,10,11,12,13]);
-              }
+              //if(network.getSelection().nodes[0]==1) {
+              //  network.selectEdges([1,2,3,4,5,6,8,10,11,12,13]);
+              //}
 
-              //apiFactory.getPeerLinks(network.getSelection().nodes[0]).success(function (result) {
-              //    var linksData = result.v_ls_links.data;
-              //    var selectedEdges = [];
-              //    for (var i = 0; i < result.v_ls_links.size; i++) {
-              //      var id = linksData[i].id;
-              //      selectedEdges.push(id);
-              //    }
-              //    network.selectEdges(selectedEdges);
-              //  }
-              //).error(function (error) {
-              //    console.log(error.message);
-              //  });
+              apiFactory.getPeerLinks(network.getSelection().nodes[0]).success(function (result) {
+                  var linksData = result.v_ls_links.data;
+                  var selectedEdges = [];
+                  for (var i = 0; i < result.v_ls_links.size; i++) {
+                    var id = linksData[i].id;
+                    selectedEdges.push(id);
+                  }
+                  network.selectEdges(selectedEdges);
+                }
+              ).error(function (error) {
+                  console.log(error.message);
+                });
             });
-          }, 500
+          }, 1000
         )
 
 

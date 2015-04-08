@@ -259,11 +259,6 @@ angular.module('bmp.components.routerCard', [])
           console.log("error with choosing card type")
         }
         //Constuct the generic data.
-
-        //default data
-        $scope.RouterName = $scope.data.RouterName;
-        $scope.RouterAS = $scope.data.RouterAS;
-
         if($scope.data.State !== undefined || $scope.data.City !== undefined || $scope.data.Country !== undefined) {
           $scope.locationInfo = (
           '<table class="routerLoc">'+

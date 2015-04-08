@@ -55,11 +55,10 @@ angular.module('bmpUiApp')
 
     apiFactory.getWhoIsName = function (name, lim) {
       if(lim === undefined) lim = limit;
-      return $http.get(urlBase + "whois/asn?where=" +
-        "w.as_name%20like%20%27%" + name + "%%27%20" +
-        "or%20w.org_name%20like%20%27%" + name + "%%27&limit=" +
-        lim
-      );
+
+      var uri = urlBase + "whois/asn?where=w.as_name like '%" + name + "%' or w.org_name like '%" + name + "%'&limit=" + lim;
+      var res = encodeURI(uri);
+      return $http.get(res);
     };
 
     //AS Analysis

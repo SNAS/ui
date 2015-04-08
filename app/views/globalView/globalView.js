@@ -203,7 +203,11 @@ angular.module('bmpUiApp')
                         PeerIP: value.PeerIP,
                         PeerName: value.PeerName,
                         PeerASN: value.PeerASN,
-                        LastDownTimestamp: value.LastDownTimestamp
+                        LastDownTimestamp: value.LastDownTimestamp,
+                        RouterName: value.RouterName,
+                        RouterIP: value.RouterIP,
+                        RouterAS: value.RouterAS,
+                        LocalASN: value.LocalASN
                     });
                 });
                 $q.all(temp).then(function (requests){
@@ -224,7 +228,11 @@ angular.module('bmpUiApp')
                             LastDownTimestamp: data[i].LastDownTimestamp,
                             Country: result.country,
                             State: result.stateprov,
-                            City: result.city
+                            City: result.city,
+                            RouterName: data[i].RouterName,
+                            RouterIP: data[i].RouterIP,
+                            RouterAS: data[i].RouterAS,
+                            LocalASN: data[i].LocalASN
                         };
 
                         var marker = new L.Marker(latlng, options);

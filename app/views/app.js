@@ -51,14 +51,14 @@ angular
       //END CARD TEST
 
       //Topology Test
-      // .state('app.topology', {
-      //   url: '/topology',
-      //   templateUrl: 'views/topologyTest/topologyTest.html',
-      //   controller: 'TopologyController',
-      //   data: {
-      //     requireLogin: false
-      //   }
-      // })
+      .state('app.topology', {
+         url: '/topology',
+         templateUrl: 'views/topologyTest/topologyTest.html',
+         controller: 'TopologyController',
+         data: {
+           requireLogin: false
+         }
+      })
 
       .state('app', {
         abstract: true,
