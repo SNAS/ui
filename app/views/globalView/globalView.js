@@ -94,30 +94,41 @@ angular.module('bmpUiApp')
 
                         marker.bindPopup(popup);
 
-                        var timer;
+                        var openTimer;
+                        var closeTimer;
 
                         marker.on('click', function (e){
                             $scope.selectRouter(e.target);
                         })
                         marker.on('mouseover', function (e) {
-                            $timeout.cancel(timer)
+                            $timeout.cancel(closeTimer);
+
                             if(e.target.options.opacity < 1)
                                 e.target.setOpacity(0.7);
-                            e.target.openPopup();
+
+                            if(openTimer){
+                                // Ignore this change
+                                $timeout.cancel(openTimer)
+                            }
+                            openTimer= $timeout(function(){
+                                //console.log(e.originalEvent.toElement);
+                                e.target.openPopup();
+                            }, 500)
                         });
                         marker.on('mouseout', function (e) {
-                            //console.log(e.originalEvent.toElement);
+                            $timeout.cancel(openTimer);
+
                             if(e.target.options.opacity < 1)
                                 e.target.setOpacity(0.5);
 
-                            if(timer){
+                            if(closeTimer){
                                 // Ignore this change
-                                $timeout.cancel(timer)
+                                $timeout.cancel(closeTimer)
                             }
-                            timer= $timeout(function(){
+                            closeTimer= $timeout(function(){
                                 //console.log(e.originalEvent.toElement);
                                 e.target.closePopup();
-                            }, 500)
+                            }, 1000)
                         });
 
                         $scope.routerLayer.addLayer(marker);
@@ -250,7 +261,6 @@ angular.module('bmpUiApp')
 
                         marker.addTo($scope.map);
                         $scope.peers.push(marker);
-                        console.log($scope.peers);
                     }
                 })
             }).
