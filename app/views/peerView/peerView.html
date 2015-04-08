@@ -18,8 +18,8 @@
 
     <input type="text" ng-model="search" class="map-control search" placeholder="Search"/>
 
-    <ul>
-        <li></li>
+    <ul class="map-control search suggestions">
+        <li ng-click="getData(s.type, s.content)" ng-repeat="s in suggestions">{{s.content}}</li>
     </ul>
 
     <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
