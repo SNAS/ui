@@ -4,7 +4,7 @@
     top: 110px;
     padding: 0;
     opacity: 1;
-    @include transition(none);
+    transition : none;
     background-color: #FFF;
 
     li{
