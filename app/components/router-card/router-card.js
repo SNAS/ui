@@ -193,7 +193,7 @@ angular.module('bmp.components.routerCard', [])
             '   <th>AS Name</th>' +
             '   <th>Organization</th>' +
             ' </tr>');
-            $q.all(peersData.length).then(function (requests){
+            //$q.all(peersData.length).then(function (requests){
             for (var i = 0; i < requests.length; i++) {
               $scope.peerSummaryTable += (
               '<tr>' +
@@ -214,7 +214,6 @@ angular.module('bmp.components.routerCard', [])
                 });
             }
             $scope.peerSummaryTable += '</table>';
-          }
           };
 
           $scope.isUP = ($scope.data.isConnected=='1')? '⬆':'⬇';
