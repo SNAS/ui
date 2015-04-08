@@ -17,14 +17,6 @@
     .collapsed {
       display: inline;
     }
-    .peerCard {
-
-    }
-    .routerCard {
-      svg {
-        display: inline;
-      }
-    }
     .routerLoc {
       text-align: left;
       border-style: solid;
@@ -38,6 +30,16 @@
       td {
         padding: 20px;
         text-align: center;
+      }
+    }
+    .peerCard {
+      .routerLoc{
+        margin: 3em 1em 1em 6em;
+      }
+    }
+    .routerCard {
+      .routerLoc{
+        margin-top: 2em;
       }
     }
     .tableSummary {

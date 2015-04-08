@@ -9,7 +9,7 @@
           </span>
         <span class="glyphicon right glyphicon-remove" ng-click="removecard(data.asn)"></span>
         <!--Router Card-->
-          <span ng-switch-when="router" class="routerCard">
+          <span ng-switch-when="global.router" class="routerCard">
             BMP Router |
             {{data.RouterName}} |
             {{data.RouterIP}} |
@@ -19,7 +19,7 @@
           </span>
 
         <!--Peer Card-->
-          <span ng-switch-when="peer" class="peerCard">
+          <span ng-switch-when="global.peer" class="peerCard">
               <div ng-hide="cardExpand" class="collapsed">
                 BMP Peer |
                 {{data.PeerASN}} |
@@ -36,10 +36,11 @@
           </span>
         <span class="glyphicon right glyphicon-remove" ng-click="removecard(data.asn)"></span>
 
-          <span ng-switch-when="router" class="routerCard">
+          <span ng-switch-when="global.router" class="routerCard">
             <!--Router Card-->
             <h3>BMP Router</h3>
 
+            <!--Router Up Time-->
             <span style="float: right;text-align: right;">
               BMP Up Time
               <span style="color: green;">
@@ -59,7 +60,7 @@
 
               <div class="col-md-4">
                 <!--Router SVG-->
-                <svg width="230" height="100" style="width:230px; height:100px; padding-top:50px;" xmlns="http://www.w3.org/2000/svg">
+                <svg width="230" height="100" style="width:280px; height:100px; padding-top:50px;padding-left:50px" xmlns="http://www.w3.org/2000/svg">
                   <g>
                     <g>
                       <g id="svg_link">
@@ -83,28 +84,35 @@
               </div>
 
               <div class="col-md-4">
-                <nvd3 options="options" data="datas"></nvd3>
+                <!--IP's Graph-->
+                <nvd3 options="ipAmountOptions" data="ipAmountData"></nvd3>
               </div>
 
             </div>
 
             <!--ROUTER up time graph-->
-            <nvd3 options="upTimeOptions" data="upTimeData" api="api"></nvd3>
+            <div>
+              <nvd3 options="upTimeOptions" data="upTimeData" api="api"></nvd3>
+            </div>
+
+            <!--NEED TO BE CHANGED-->
+            <!--R/Peers info table-->
+            <span ng-bind-html="peerSummaryTable"></span>
             <!--end router card-->
             <br>
           </span>
 
 
-          <span ng-switch-when="peer" class="peerCard">
+          <span ng-switch-when="global.peer" class="peerCard">
             <!--Peer Card-->
+
+            <h3>Peer Detail</h3>
             <span style="float: right;text-align: right;">
               Peer Down Time
               <span ng-class="{'red': downTime!='Up', 'green': downTime=='Up'}">
                 {{ downTime }}
               </span>
             </span>
-
-            <h3>Peer Detail</h3>
             <h4>{{ data.PeerName }}</h4>
 
 
@@ -144,23 +152,23 @@
             <div class="col-md-5">
               <span ng-bind-html="locationInfo"></span>
             </div>
+
+            <!--NEED TO BE CHANGED-->
+            <!--Peer info table-->
+            <table class="tableSummary">
+              <tr>
+                <th>AS Number</th>
+                <th>AS Name</th>
+                <!--<th>IP</th>-->
+              </tr>
+              <tr>
+                <td>{{ data.RouterAS }}</td>
+                <td>{{ data.RouterName }}</td>
+                <!--<td>{{ RouterIP }}</td>-->
+              </tr>
+            </table>
           <!--End Expanded Peer Card-->
           </span>
-
-        <!--Genertic info on both cards-->
-        <table class="tableSummary">
-          <tr>
-            <th>AS Number</th>
-            <th>AS Name</th>
-            <!--<th>IP</th>-->
-          </tr>
-          <tr>
-            <td>{{ RouterAS }}</td>
-            <td>{{ RouterName }}</td>
-            <!--<td>{{ RouterIP }}</td>-->
-          </tr>
-        </table>
-
       </div>
     </div>
   </span>

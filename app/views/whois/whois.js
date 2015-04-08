@@ -53,7 +53,6 @@ angular.module('bmpUiApp')
     $scope.whoIsGridOptions.multiSelect = false;
     $scope.whoIsGridOptions.noUnselect = true;
     $scope.whoIsGridOptions.modifierKeysToMultiSelect = false;
-    //   $scope.whoIsGridOptions.rowTemplate = '<p>test</p>';
     $scope.whoIsGridOptions.rowTemplate = '<div ng-click="grid.appScope.changeSelected();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
     $scope.whoIsGridOptions.onRegisterApi = function (gridApi) {
       $scope.whoIsGridApi = gridApi;

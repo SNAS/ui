@@ -12,8 +12,8 @@ angular.module('bmp.components.routerCard', [])
         cardType: '@',
         removecard: '&'
       },
-      controller: function ($scope, apiFactory) { //BmpRouterCardController
-        window.SCOPES = $scope;
+      controller: function ($scope, apiFactory, $timeout) { //BmpRouterCardController
+        window.SCOPER = $scope;
 
         //ROUTER DATA
         //{
@@ -28,51 +28,50 @@ angular.module('bmp.components.routerCard', [])
         //  "InitData":"",
         //  "LastModified":"2015-04-01 18:36:36"
         // }
-        if($scope.cardType == "router") {
 
-          $scope.datas = [];
+        if($scope.cardType == "global.router") {
 
-
-          var ips = ['v4', 'v6'];
-          for (var i = 0; i < ips.length; i++) {
-            apiFactory.getRouterIpType($scope.data.RouterIP, ips[i]).
+          //<!--IP's Graph-->
+          var whichip = ['v4','v6'];
+          //DEFAULT values
+          $scope.ipAmountData = [
+            {key:'ipv4Amount',values:[
+              {x: 1,y: 0},
+              {x: 2,y: 0}
+            ]},
+            {key:'ipv6Amount',values:[
+              {x: 1,y: 0},
+              {x: 2,y: 0}
+            ]}
+          ];
+          angular.forEach($scope.ipAmountData, function(obj,index){
+            var ipAmount = 0;
+            apiFactory.getRouterIpType($scope.data.RouterIP, whichip[index]).
               success(function (result) {
-                var ipPeers = result.v_peers;
-                var ipAmount = ipPeers.size;
-                var key = "ip"+ips[i]+"Amount";
-                var item = {
-                  values: [
-                    {
-                      x: 2,
-                      y: ipAmount
-                    },
-                    {
-                      x: 3,
-                      y: ipAmount
-                    }
+                ipAmount = result.v_peers.size;
+                $scope.ipAmountData[index].values =(
+                  [
+                    {x: 1,y: ipAmount},
+                    {x: 2,y: ipAmount}
                   ]
-                };
-                item.key = key;
-                $scope.datas.push(item);
+                );
               }).
               error(function (error) {
                 console.log(error.message);
               });
-          }
+          });
 
-          $scope.options = {
+          $scope.ipAmountOptions = {
             "chart": {
               "type": "stackedAreaChart",
-              //"type": "multiBarChart",
-              "showLegend": true,
               "showControls": false,
               "height": 200,
               "width": 120,
               "margin": {
                 "top": 20,
                 "right": 20,
-                "bottom": 60,
-                "left": 40
+                "bottom": 50,
+                "left": 50
               },
               "useVoronoi": false,
               "clipEdge": true,
@@ -80,14 +79,13 @@ angular.module('bmp.components.routerCard', [])
               "useInteractiveGuideline": false,
               "xAxis": {
                 "showMaxMin": false
-              },
-              "yAxis": {}
+              }
             }
           };
+          //END <!--IP's Graph-->
 
           //ROUTER UP TIME GRAPH
           //used line graph
-
           $scope.upTimeOptions = {
             "chart": {
               "showYAxis":false,
@@ -122,57 +120,24 @@ angular.module('bmp.components.routerCard', [])
               "key": "UpTime",
               color: '#1F7D1F',
               "values": [
-                {
-                  "x": 0,
-                  "y": 0
-                },
-                {
-                  "x": 3,
-                  "y": 0
-                },
-                {
-                  "x": 3,
-                  "y": 3
-                },
-                {
-                  "x": 12,
-                  "y": 3
-                },
-                {
-                  "x": 12,
-                  "y": 0
-                },
-                {
-                  "x": 15,
-                  "y": 0
-                },
-                {
-                  "x": 15,
-                  "y": 3
-                },
-                {
-                  "x": 21,
-                  "y": 3
-                },
-                {
-                  "x": 21,
-                  "y": 0
-                },
-                {
-                  "x": 27,
-                  "y": 0
-                }
+                //static data
+                {"x": 0,"y": 0},
+                {"x": 3,"y": 0},
+                {"x": 3,"y": 3},
+                {"x": 12,"y": 3},
+                {"x": 12,"y": 0},
+                {"x": 15,"y": 0},
+                {"x": 15,"y": 3},
+                {"x": 21,"y": 3},
+                {"x": 21,"y": 0},
+                {"x": 27,"y": 0}
               ]
             }
           ];
+          //End Router up time Graph
 
-
+          //<!--Router Up Time-->
           var calUpTime = function () {
-
-            //var today = new Date();
-            //var day = today.getUTCDate();
-            //console.log("UTC day:",day);
-
             //This works out uptime from data.LastModified
             //Displays two largest results.
             var timestmp = Date.parse($scope.data.LastModified); //"2015-03-22 22:23:06"
@@ -204,21 +169,72 @@ angular.module('bmp.components.routerCard', [])
             }
             console.log("the time is ", timeString);
             $scope.upTime = timeString;
-            $scope.peersAmount = 0;
-
-            apiFactory.getPeersByIp($scope.data.RouterIP).
-              success(function (result){
-                $scope.peersAmount = result.v_peers.size;
-                $scope.peersData = result.v_peers.data;
-              }).
-              error(function (error){
-                console.log(error.message);
-              });
           };
           calUpTime();
+
+          var peersData;
+            apiFactory.getPeersByIp($scope.data.RouterIP).
+            success(function (result){
+              $scope.peersAmount = result.v_peers.size;
+              peersData = result.v_peers.data;
+              peersTableCreate();
+            }).
+            error(function (error){
+              console.log(error.message);
+            });
+
+
+          var peersTableCreate = function() {
+            //<!--R/Peers info table-->
+            $scope.peerSummaryTable = (
+            '<table class="tableSummary">' +
+            ' <tr>' +
+            '   <th>AS Number</th>' +
+            '   <th>AS Name</th>' +
+            '   <th>Organization</th>' +
+            ' </tr>');
+            $q.all(peersData.length).then(function (requests){
+            for (var i = 0; i < requests.length; i++) {
+              $scope.peerSummaryTable += (
+              '<tr>' +
+              ' <td>' + peersData[i].PeerASN + '</td>' +
+              ' <td>' + peersData[i].PeerName + '</td>');
+              apiFactory.getWhoIsWhereASN(peersData[i].PeerASN).
+                success(function (result) {
+                  var data = result.w.data;
+                  if (data.org_name === undefined || data.org_name == "") {
+                    $scope.peerSummaryTable += '<td> - </td>';
+                  } else {
+                    $scope.peerSummaryTable += '<td>' + data.org_name + '</td>';
+                  }
+                  $scope.peerSummaryTable += '</tr>';
+                }).
+                error(function (error) {
+                  console.log(error.message);
+                });
+            }
+            $scope.peerSummaryTable += '</table>';
+          }
+          };
+
           $scope.isUP = ($scope.data.isConnected=='1')? '⬆':'⬇';
+
+          //TEST::to get chart to resize to container width
+          //$scope.test = function() {
+          //  if ($scope.cardExpand == true) {
+          //    setTimeout(function () {
+          //      $scope.api.refresh();
+          //      $scope.api.update();
+          //    })
+          //  }
+          //};
+          //$scope.test();
+
+
+
+          console.dir($scope);
         }
-        else if($scope.cardType == "peer"){
+        else if($scope.cardType == "global.peer"){
           //  PEER DATA
           //  {
           //  "RouterName":"csr1.openbmp.org",
@@ -250,10 +266,8 @@ angular.module('bmp.components.routerCard', [])
           //  "router_hash_id":"0314f419a33ec8819e78724f51348ef9"
           // }
 
-          //$scope.whoIsData[i].symbTransit = ($scope.whoIsData[i].isTransit == 1)? "✔":"✘";
           //peer stuff here
           $scope.downTime = ($scope.data.LastDownTimestamp === null)? "Up":$scope.data.LastDownTimestamp;
-          //$scope.location = $scope.data.description;
         }else {
           //shouldnt go into this
           console.log("error with choosing card type")
@@ -285,12 +299,11 @@ angular.module('bmp.components.routerCard', [])
           $scope.locationInfo = "<table class='routerLoc noRouterLoc'><tr><td>There is no Location Data ...</td></tr></table>";
         }
       },
-      link: function(scope) {
-        // console.log(scope.options);
-        scope.cardExpand=false;
+      link: function(scope, $timeout) {
+        scope.cardExpand=true;//default false = closed
 
-        scope.changeCardState = function(){
-          scope.cardExpand=!scope.cardExpand;
+        scope.changeCardState = function() {
+          scope.cardExpand = !scope.cardExpand;
         };
 
         scope.getCardState = function(){
