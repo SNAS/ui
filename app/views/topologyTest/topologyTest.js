@@ -11,28 +11,29 @@
 angular.module('bmpUiApp')
   .controller('TopologyController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
+    $scope.peerHashId = "54ecaeeec115457cbce466ff48857aa7"; //ospf
+    //   $scope.peerHashId = "daaa681792b33e36166a2205be05868d"; //isis
+
     $scope.topologyOptions = {
       height: '1000px',
       //   dragNodes:false,
       configurePhysics: true,
+      hover: true,
 
-      physics: {
-        barnesHut: {
-          //enabled: true,
-          //gravitationalConstant: -2000,
-          //centralGravity: 0.1,
-          //springLength: 95,
-          //springConstant: 0.04,
-          //damping: 0.09
-        }
-        //    hierarchicalRepulsion: {
-        //centralGravity: 0.5,
-        //springLength: 150,
-        //springConstant: 0.01,
-        //nodeDistance: 60,
-        //damping: 0.09
-        //      }
+      hierarchicalLayout: {
+        direction: "UD",
+        layout: "direction"
       },
+
+      //physics: {
+      //  hierarchicalRepulsion: {
+      //    //centralGravity: 0.5,
+      //    //springLength: 150,
+      //    //springConstant: 0.01,
+      //    //nodeDistance: 60,
+      //    //damping: 0.09
+      //  }
+      //},
 
       nodes: {
         color: {
@@ -79,18 +80,23 @@ angular.module('bmpUiApp')
 
     //get nodes
     $(function () {
-      apiFactory.getNodes().success(function (result) {
+      apiFactory.getPeerNodes($scope.peerHashId).success(function (result) {
         var nodesData = result.v_ls_nodes.data;
         for (var i = 0; i < result.v_ls_nodes.size; i++) {
           var hash_id = nodesData[i].hash_id;
           var label;
-          if(nodesData[i].protocol=="IS-IS_L2")
-            label= nodesData[i].RouterId;
-          else
-            label= nodesData[i].IGP_RouterId;
+          if (nodesData[i].protocol == "OSPFv2") {
+            label = nodesData[i].IGP_RouterId;
+            $scope.protocol = 'ospf';
+          }
+          else {
+            label = nodesData[i].RouterId;
+            $scope.protocol = 'isis';
+          }
 
           nodes.push(
             {
+              //     id: i,
               id: hash_id,
               label: label
             }
@@ -102,20 +108,21 @@ angular.module('bmpUiApp')
     })
 
     //get edges
-    $(function(){
-      apiFactory.getLinks().success(function (result) {
+    $(function () {
+      apiFactory.getPeerLinks($scope.peerHashId).success(function (result) {
         var linksData = result.v_ls_links.data;
         for (var i = 0; i < result.v_ls_links.size; i++) {
           var from = linksData[i].local_node_hash_id;
           var to = linksData[i].remote_node_hash_id;
           var igp_metric = linksData[i].igp_metric;
-          if(from<to) {
+          if (from < to) {
             edges.push(
               {
+                id: i,
                 from: from,
                 to: to,
-                label: igp_metric
-      //          length: igp_metric
+                label: igp_metric,
+                length: igp_metric
               }
             );
           }
@@ -125,7 +132,7 @@ angular.module('bmpUiApp')
       });
     })
 
-    $timeout(function(){
+    $timeout(function () {
       $scope.topologyData = {
         nodes: nodes,
         edges: edges

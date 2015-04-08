@@ -21,10 +21,9 @@ angular.module('bmp.components.topology', [])
       scope: {
         data: '=',
         options: '=',
-      //  selectedEdges: '=',
-      //  selectedNode: '=',
-        cardType: '@',
-        removecard: '&'
+        protocol: '=',
+        peerHashId: '='
+      //  removecard: '&'
       },
 
       link: function (scope, element, attrs) {
@@ -33,34 +32,76 @@ angular.module('bmp.components.topology', [])
         // create a network
         var container = element[0];
         var network = {};
+        var selectedEdges = [];
+
 
         $timeout(function () {
             network = new vis.Network(container, scope.data, scope.options);
 
-            network.on('select', function (properties) {
+       //   network.on('select', function (properties) {
+              network.on('hoverNode', function (properties) {
+              var selectedRouterId;
+              selectedEdges = [];
+              var selectedNodeId = network.getSelection().nodes[0];
 
-              //if(network.getSelection().nodes[0]==1) {
-              //  network.selectEdges([1,2,3,4,5,6,8,10,11,12,13]);
-              //}
-
-              apiFactory.getPeerLinks(network.getSelection().nodes[0]).success(function (result) {
-                  var linksData = result.v_ls_links.data;
-                  var selectedEdges = [];
-                  for (var i = 0; i < result.v_ls_links.size; i++) {
-                    var id = linksData[i].id;
-                    selectedEdges.push(id);
-                  }
-                  network.selectEdges(selectedEdges);
+              for(var i=0; i<scope.data.nodes.length; i++){
+                if(scope.data.nodes[i].id == selectedNodeId){
+                  selectedRouterId = scope.data.nodes[i].label;
                 }
-              ).error(function (error) {
-                  console.log(error.message);
-                });
+              }
+
+              var path_hash_ids = [];
+              if(scope.protocol=="ospf") {
+                apiFactory.getSPFospf(scope.peerHashId, selectedRouterId).success(function (result) {
+                    var SPFdata = result.igp_ospf.data;
+                    for (var i = 0; i < result.igp_ospf.size; i++) {
+                      path_hash_ids = SPFdata[i].path_hash_ids.split(",");
+                      queryEdge(path_hash_ids);
+                    }
+
+                    scope.data.nodes[1].color = {
+                      background: '#f7a031',
+                        border: '#f7a031',
+                        highlight: {
+                        background: '#9ec654',
+                          border: '#9ec654'
+                      }
+                    };
+           //         network.selectNodes([selectedNodeId],false);
+                    network.selectEdges(selectedEdges);
+            //        network.redraw();
+             //        network.focusOnNode(selectedNodeId);
+                  }
+                ).error(function (error) {
+                    console.log(error.message);
+                  });
+              }
+              else{
+
+              }
+
             });
           }, 1000
         )
 
+        function queryEdge(path_hash_ids) {
+          for(var i = 0; i<path_hash_ids.length-1; i++){
+            for(var j=0; j<scope.data.edges.length; j++){
+              if((path_hash_ids[i] == scope.data.edges[j].from && path_hash_ids[i+1] == scope.data.edges[j].to)||
+                (path_hash_ids[i] == scope.data.edges[j].to && path_hash_ids[i+1] == scope.data.edges[j].from)
+              ){
+                var selectedEdgeId=scope.data.edges[j].id;
+                if(selectedEdges.indexOf(selectedEdgeId)== -1) {
+                  selectedEdges.push(selectedEdgeId);
+                }
+                break;
+              }
+            }
+          }
+        }
 
-        //var buildGraph;
+
+          //var buildGraph;
         //buildGraph = function(scope, element) {
         //  var container, graph;
         //  container = element[0];
@@ -76,6 +117,8 @@ angular.module('bmp.components.topology', [])
         //  buildGraph(scope, element);
         //}, true);
       }
+
+
     }
   }])
 ;

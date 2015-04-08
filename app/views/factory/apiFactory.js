@@ -11,7 +11,7 @@ angular.module('bmpUiApp')
     .factory('apiFactory', function ($http, $q) {
 
     var urlBase = 'http://odl-dev.openbmp.org:8001/db_rest/v1/';
-    var limit = "&limit=1000";
+    var limit = 1000;
     var apiFactory = {};
 
     apiFactory.getRouters = function () {
@@ -38,7 +38,11 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getPeersByIp = function (ip) {
-      return $http.get(urlBase + "peer?where=routerip=%27" + ip + "%27");
+      return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip + "%%27");
+    };
+
+    apiFactory.getRoutersByIp = function (ip) {
+      return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip + "%%27");
     };
 
     apiFactory.getWhoIsASN = function (asn) {
@@ -49,16 +53,12 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "whois/asn?where=w.asn=" + asn);
     };
 
-    apiFactory.getWhoIsName = function (name) {
-      var uri = urlBase + "whois/asn?where=w.as_name like '%" + name + "%' or w.org_name like '%" + name + "%'" + limit;
+    apiFactory.getWhoIsName = function (name, lim) {
+      if(lim === undefined) lim = limit;
+
+      var uri = urlBase + "whois/asn?where=w.as_name like '%" + name + "%' or w.org_name like '%" + name + "%'&limit=" + lim;
       var res = encodeURI(uri);
       return $http.get(res);
-
-      //return $http.get(urlBase + "whois/asn?where=" +
-      //  "w.as_name%20like%20%27%" + name + "%%27%20" +
-      //  "or%20w.org_name%20like%20%27%" + name + "%%27" +
-      //  limit
-      //);
     };
 
     //AS Analysis
@@ -88,16 +88,20 @@ angular.module('bmpUiApp')
     };
 
     //topology
-    apiFactory.getNodes = function (){
-      return $http.get(urlBase + "linkstate/nodes");
-    };
-
-    apiFactory.getLinks = function (){
-      return $http.get(urlBase + "linkstate/links");
+    apiFactory.getPeerNodes = function (peerHashId){
+      return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);
     };
 
     apiFactory.getPeerLinks = function (peerHashId){
       return $http.get(urlBase + "linkstate/links/peer/" + peerHashId);
+    };
+
+    apiFactory.getSPFospf = function (peerHashId,routerId){
+      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/ospf/" + routerId);
+    };
+
+    apiFactory.getSPFisis = function (peerHashId,routerId){
+      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/isis/" + routerId);
     };
 
     return apiFactory;
