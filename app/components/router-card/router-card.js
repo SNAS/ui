@@ -284,11 +284,19 @@ angular.module('bmp.components.routerCard', [])
         }
         //Constuct the generic data.
         if($scope.data.State !== undefined || $scope.data.City !== undefined || $scope.data.Country !== undefined) {
+          var type;
+          if($scope.cardType == "global.router"){
+            type = "Router";
+          }else if($scope.cardType == "global.peer"){
+            type = "Peer";
+          }else{
+            type = "None";
+          }
           $scope.locationInfo = (
           '<table class="routerLoc">'+
             '<tr>'+
               '<td>Type</td>'+
-              '<td>'+$scope.cardType+'</td>'+
+              '<td>'+type+'</td>'+
             '</tr>'+
             '<tr>'+
               '<td>Location</td>'+
