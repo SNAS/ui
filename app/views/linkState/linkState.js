@@ -9,7 +9,7 @@
  */
 
 angular.module('bmpUiApp')
-  .controller('TopologyController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
+  .controller('linkStateController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
     $scope.peerHashId = "54ecaeeec115457cbce466ff48857aa7"; //ospf
     //   $scope.peerHashId = "daaa681792b33e36166a2205be05868d"; //isis

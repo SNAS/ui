@@ -50,16 +50,6 @@ angular
       })
       //END CARD TEST
 
-      //Topology Test
-      .state('app.topology', {
-         url: '/topology',
-         templateUrl: 'views/topologyTest/topologyTest.html',
-         controller: 'TopologyController',
-         data: {
-           requireLogin: false
-         }
-      })
-
       .state('app', {
         abstract: true,
         templateUrl: 'views/container/container.html',
@@ -87,6 +77,14 @@ angular
         url: '/as-analysis',
         templateUrl: 'views/asAnalysis/asAnalysis.html',
         controller: 'ASAnalysisController'
+      })
+      .state('app.linkState', {
+        url: '/linkState',
+        templateUrl: 'views/linkState/linkState.html',
+        controller: 'linkStateController',
+        data: {
+          requireLogin: true
+        }
       })
       .state('app.aggregationAnalysis', {
         url: '/aggregation-analysis',
