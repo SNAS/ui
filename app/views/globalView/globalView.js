@@ -281,6 +281,7 @@ angular.module('bmpUiApp')
         //router card DELETE \w CLICK
         $scope.removeRouterCard = function(){
           $scope.cards[0]= [];
+          $scope.cards[1]= [];//empty peers also
         };
 
         //peer card DELETE \w CLICK
