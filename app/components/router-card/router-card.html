@@ -166,18 +166,35 @@
               <span ng-bind-html="locationInfo"></span>
             </div>
 
-            <!--NEED TO BE CHANGED-->
+            <!--NEED TO BE CHANGED(pre and peer tables)-->
+            <!--Number Prefixes-->
+            <table class="ribTable">
+              <tr>
+                <th> </th>
+                <th>Number of prefixes</th>
+              </tr>
+              <tr>
+                <td>{{ ribData[0][0] }}</td>
+                <td>{{ ribData[0][1] }}</td>
+              </tr>
+              <tr>
+                <td>{{ ribData[1][0] }}</td>
+                <td>{{ ribData[1][1] }}</td>
+              </tr>
+            </table>
+            <br>
+
             <!--Peer info table-->
             <table class="tableSummary">
               <tr>
                 <th>AS Number</th>
                 <th>AS Name</th>
-                <!--<th>IP</th>-->
+                <th>Organization</th>
               </tr>
-              <tr>
-                <td>{{ data.RouterAS }}</td>
-                <td>{{ data.RouterName }}</td>
-                <!--<td>{{ RouterIP }}</td>-->
+              <tr ng-repeat="peer in peerDownData track by $index">
+                <td>{{ peer.DownstreamAS }}</td>
+                <td>{{ peer.as_name }}</td>
+                <td>{{ peer.org_name }}</td>
               </tr>
             </table>
           <!--End Expanded Peer Card-->

@@ -83,8 +83,16 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer/prefix");
     };
 
+    apiFactory.getPeerByIp = function (peerIP){
+      return $http.get(urlBase + "peer/prefix/" + peerIP);
+    };
+
     apiFactory.getPeerHistory = function (peerIP, amount_of_entries){
       return $http.get(urlBase + "peer/prefix/" + peerIP + '?last=' + amount_of_entries);
+    };
+
+    apiFactory.getPeerDownStream = function (peer_hash_id){
+      return $http.get(urlBase + "downstream/peer/" + peer_hash_id);
     };
 
     //topology

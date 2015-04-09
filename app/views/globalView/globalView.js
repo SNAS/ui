@@ -207,7 +207,8 @@ angular.module('bmpUiApp')
                         RouterName: value.RouterName,
                         RouterIP: value.RouterIP,
                         RouterAS: value.RouterAS,
-                        LocalASN: value.LocalASN
+                        LocalASN: value.LocalASN,
+                        peer_hash_id: value.peer_hash_id
                     });
                 });
                 $q.all(temp).then(function (requests){
@@ -232,7 +233,8 @@ angular.module('bmpUiApp')
                             RouterName: data[i].RouterName,
                             RouterIP: data[i].RouterIP,
                             RouterAS: data[i].RouterAS,
-                            LocalASN: data[i].LocalASN
+                            LocalASN: data[i].LocalASN,
+                            peer_hash_id: data[i].peer_hash_id
                         };
 
                         var marker = new L.Marker(latlng, options);
@@ -297,7 +299,7 @@ angular.module('bmpUiApp')
         var changePeerCard = function(value) {
           if ($scope.cards[1].indexOf(value) == -1) {
             $scope.cards[1].push(value);
-            if ($scope.cards[1].length > 3) {
+            if ($scope.cards[1].length > 4) {
               $scope.cards[1].shift();
             }
           }

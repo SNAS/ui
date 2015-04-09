@@ -298,7 +298,47 @@ angular.module('bmp.components.routerCard', [])
         //  "router_hash_id":"0314f419a33ec8819e78724f51348ef9"
         // }
 
+
         //peer stuff here
+        var peerPrefix;
+        $scope.ribData = [
+          ["Pre Rib", 0],
+          ["Post Rib", 0]
+        ];
+        apiFactory.getPeerByIp($scope.data.PeerName).
+          success(function (result){
+            peerPrefix = result.v_peer_prefix_report_last.data;
+            //atm this grabs first data item (may not be correct)
+            $scope.ribData[0][1] = peerPrefix[0].Pre_RIB;
+            $scope.ribData[1][1] = peerPrefix[0].Post_RIB;
+          }).
+          error(function (error){
+            console.log(error.message);
+          });
+
+        //DownstreamAS, as_name, and org_name
+        $scope.peerDownData = [];
+        apiFactory.getPeerDownStream($scope.data.peer_hash_id).
+          success(function (result){
+            var peerDown = result.peerDownstreamASN.data;
+
+            for(var i = 0; i<peerDown.length; i++) {
+              var data = peerDown[i];
+              if (data.org_name == "" || data.org_name === null) {
+                data.org_name = "-";
+              }
+              $scope.peerDownData.push({
+                DownstreamAS: data.DownstreamAS,
+                as_name: data.as_name,
+                org_name: data.org_name
+              });
+            }
+
+          }).
+          error(function (error){
+            console.log(error.message);
+          });
+
         $scope.downTime = ($scope.data.LastDownTimestamp === null)? "Up":$scope.data.LastDownTimestamp;
         createLocationTable();
       }else {
