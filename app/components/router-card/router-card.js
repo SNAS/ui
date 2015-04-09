@@ -195,36 +195,31 @@ angular.module('bmp.components.routerCard', [])
 
           var peersTableCreate = function() {
             //<!--R/Peers info table-->
-            $scope.peerSummaryTable = (
-            '<table class="tableSummary">' +
-            ' <tr>' +
-            '   <th>AS Number</th>' +
-            '   <th>AS Name</th>' +
-            '   <th>Organization</th>' +
-            ' </tr>');
-            //$q.all(peersData.length).then(function (requests){
-            for (var i = 0; i < peersData.length; i++) {
-              $scope.peerSummaryTable += (
-              '<tr>' +
-              ' <td>' + peersData[i].PeerASN + '</td>' +
-              ' <td>' + peersData[i].PeerName + '</td>');
-              $scope.peerSummaryTable += '<td>-</td>';
-              $scope.peerSummaryTable += '</tr>';
-              apiFactory.getWhoIsWhereASN(peersData[i].PeerASN).
-                success(function (result) {
-                  var data = result.w.data;
-                  $scope.test
-                  //if (data[0].org_name === undefined || data[0].org_name == ""){
-                  //  $scope.peerSummaryTable += '<td> - </td>';
-                  //} else {
-                  //  $scope.peerSummaryTable += '<td>' + data.org_name + '</td>';
-                  //}
-                }).
-                error(function (error) {
-                  console.log(error.message);
-                });
-            }
-            $scope.peerSummaryTable += '</table>';
+            $scope.peerSummaryTable = [];
+            //for (var i = 0; i < $scope.peersData.length; i++) {
+              angular.forEach(peersData, function(obj,index){
+                apiFactory.getWhoIsWhereASN(peersData[index].PeerASN).
+                  success(function (result) {
+                    var data = result.w.data;
+                    var orgName = '-';;
+
+                    try{
+                      if(data[0].org_name != ""){
+                        orgName = data[0].org_name;
+                      }
+                    }catch(err) {
+                      //Just to catch unfined exception
+                    }
+                    $scope.peerSummaryTable.push({
+                      PeerASN: peersData[index].PeerASN,
+                      PeerName: peersData[index].PeerName,
+                      org_name: orgName
+                    });
+                  }).
+                  error(function (error) {
+                    console.log(error.message);
+                  });
+            })
           };
 
           $scope.isUP = ($scope.data.isConnected=='1')? '⬆':'⬇';
@@ -239,9 +234,6 @@ angular.module('bmp.components.routerCard', [])
           //  }
           //};
           //$scope.test();
-
-
-
           console.dir($scope);
         }
         else if($scope.cardType == "global.peer"){
@@ -317,7 +309,7 @@ angular.module('bmp.components.routerCard', [])
           $scope.locationInfo = "<table class='routerLoc noRouterLoc'><tr><td>There is no Location Data ...</td></tr></table>";
         }
       },
-      link: function(scope, $timeout) {
+      link: function(scope) {
         scope.cardExpand=false;//default false = closed
 
         scope.changeCardState = function() {
