@@ -26,12 +26,12 @@ angular.module('bmpUiApp')
     };
 
     $scope.whoIsGridOptions.columnDefs = [
-      {name: "asn", displayName: 'ASN', maxWidth: 10},
-      {name: "as_name", displayName: 'AS Name'},
-      {name: "org_name", displayName: 'ORG Name'},
-      {name: "country", displayName: 'Country', maxWidth: 10},
+      {name: "asn", displayName: 'ASN', width: '*'},
+      {name: "as_name", displayName: 'AS Name', width: '18%'},
+      {name: "org_name", displayName: 'ORG Name', width: '35%'},
+      {name: "country", displayName: 'Country', width: '8%'},
       {
-        name: "ipv4", displayName: 'ipv4', maxWidth: 10,
+        name: "transit_v4", displayName: 'transit v4', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'green';
@@ -39,7 +39,23 @@ angular.module('bmpUiApp')
         }
       },
       {
-        name: "ipv6", displayName: 'ipv6', maxWidth: 10,
+        name: "transit_v6", displayName: 'transit v6', width: '*',
+        cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+          if (grid.getCellValue(row, col) > 0) {
+            return 'green';
+          }
+        }
+      },
+      {
+        name: "origin_v4", displayName: 'origin v4', width: '*',
+        cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+          if (grid.getCellValue(row, col) > 0) {
+            return 'green';
+          }
+        }
+      },
+      {
+        name: "origin_v6", displayName: 'origin v6', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'green';
@@ -117,8 +133,10 @@ angular.module('bmpUiApp')
 
     var createWhoIsDataGrid = function () {
       for (var i = 0; i < $scope.whoIsData.length; i++) {
-        $scope.whoIsData[i].ipv4 = $scope.whoIsData[i].transit_v4_prefixes + $scope.whoIsData[i].origin_v4_prefixes;
-        $scope.whoIsData[i].ipv6 = $scope.whoIsData[i].transit_v6_prefixes + $scope.whoIsData[i].origin_v6_prefixes;
+        $scope.whoIsData[i].transit_v4 = $scope.whoIsData[i].transit_v4_prefixes;
+        $scope.whoIsData[i].transit_v6 = $scope.whoIsData[i].transit_v6_prefixes;
+        $scope.whoIsData[i].origin_v4 = $scope.whoIsData[i].origin_v4_prefixes;
+        $scope.whoIsData[i].origin_v6 = $scope.whoIsData[i].origin_v6_prefixes;
         //$scope.whoIsData[i].symbTransit = ($scope.whoIsData[i].isTransit == 1)? "✔":"✘";
         //$scope.whoIsData[i].symbOrigin = ($scope.whoIsData[i].isOrigin == 1)? "✔":"✘";
       }

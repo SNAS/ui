@@ -38,8 +38,8 @@ angular.module('bmp.components.topology', [])
         $timeout(function () {
             network = new vis.Network(container, scope.data, scope.options);
 
-       //   network.on('select', function (properties) {
-              network.on('hoverNode', function (properties) {
+          network.on('select', function (properties) {
+       //       network.on('hoverNode', function (properties) {
               var selectedRouterId;
               selectedEdges = [];
               var selectedNodeId = network.getSelection().nodes[0];
@@ -67,9 +67,12 @@ angular.module('bmp.components.topology', [])
                           border: '#9ec654'
                       }
                     };
-           //         network.selectNodes([selectedNodeId],false);
-                    network.selectEdges(selectedEdges);
-            //        network.redraw();
+
+         //           network.selectNodes([selectedNodeId]);
+          //          network.selectEdges(selectedEdges);
+
+                    network._selectObject(selectedEdges,true,true,false,true);
+             //       network.redraw();
              //        network.focusOnNode(selectedNodeId);
                   }
                 ).error(function (error) {
@@ -100,8 +103,30 @@ angular.module('bmp.components.topology', [])
           }
         }
 
+        exports.selectEdges = function(selection) {
+          var i, iMax, id;
 
-          //var buildGraph;
+          if (!selection || (selection.length == undefined))
+            throw 'Selection must be an array with ids';
+
+          // first unselect any selected node
+          //this._unselectAll(true);
+
+          for (i = 0, iMax = selection.length; i < iMax; i++) {
+            id = selection[i];
+
+            var edge = this.edges[id];
+            if (!edge) {
+              throw new RangeError('Edge with id "' + id + '" not found');
+            }
+            this._selectObject(edge,true,true,false,true);
+          }
+          this.redraw();
+        };
+
+
+
+        //var buildGraph;
         //buildGraph = function(scope, element) {
         //  var container, graph;
         //  container = element[0];
