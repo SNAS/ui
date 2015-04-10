@@ -52,9 +52,9 @@
             <h4>{{ data.RouterName }}</h4>
             <br>
 
-            <!--Location table-->
             <div class="row">
 
+              <!--Location table-->
               <div class="col-md-4">
                 <span ng-bind-html="locationInfo"></span>
               </div>
@@ -84,8 +84,8 @@
                 <!--END SVG-->
               </div>
 
+              <!--IP's Graph-->
               <div class="col-md-4">
-                <!--IP's Graph-->
                 <nvd3 options="ipAmountOptions" data="ipAmountData"></nvd3>
               </div>
 
@@ -93,29 +93,26 @@
 
             <!--ROUTER up time graph-->
             <div>
-              <nvd3 options="upTimeOptions" data="upTimeData" api="api"></nvd3>
+              <nvd3 options="upTimeOptions" data="upTimeData" config="upTimeConfig"></nvd3>
             </div>
 
             <!--NEED TO BE CHANGED-->
             <!--R/Peers info table-->
             <!--<span ng-bind-html="peerSummaryTable"></span>-->
             <table class="tableSummary">
-            <tr>
-              <th>AS Number</th>
-              <th>AS Name</th>
-              <th>Organization</th>
-            </tr>
-            <tr ng-repeat="peer in peerSummaryTable track by $index">
-              <td>{{ peer.PeerASN }}</td>
-              <td>{{ peer.PeerName }}</td>
-              <td>{{ peer.org_name }}</td>
-            </tr>
-
+              <tr>
+                <th>AS Number</th>
+                <th>AS Name</th>
+                <th>Organization</th>
+              </tr>
+              <tr ng-repeat="peer in peerSummaryTable track by $index">
+                <td>{{ peer.PeerASN }}</td>
+                <td>{{ peer.PeerName }}</td>
+                <td>{{ peer.org_name }}</td>
+              </tr>
             </table>
-
-
-            <!--end router card-->
             <br>
+            <!--end router card-->
           </span>
 
 
@@ -169,18 +166,35 @@
               <span ng-bind-html="locationInfo"></span>
             </div>
 
-            <!--NEED TO BE CHANGED-->
+            <!--NEED TO BE CHANGED(pre and peer tables)-->
+            <!--Number Prefixes-->
+            <table class="ribTable">
+              <tr>
+                <th> </th>
+                <th>Number of prefixes</th>
+              </tr>
+              <tr>
+                <td>{{ ribData[0][0] }}</td>
+                <td>{{ ribData[0][1] }}</td>
+              </tr>
+              <tr>
+                <td>{{ ribData[1][0] }}</td>
+                <td>{{ ribData[1][1] }}</td>
+              </tr>
+            </table>
+            <br>
+
             <!--Peer info table-->
             <table class="tableSummary">
               <tr>
                 <th>AS Number</th>
                 <th>AS Name</th>
-                <!--<th>IP</th>-->
+                <th>Organization</th>
               </tr>
-              <tr>
-                <td>{{ data.RouterAS }}</td>
-                <td>{{ data.RouterName }}</td>
-                <!--<td>{{ RouterIP }}</td>-->
+              <tr ng-repeat="peer in peerDownData track by $index">
+                <td>{{ peer.DownstreamAS }}</td>
+                <td>{{ peer.as_name }}</td>
+                <td>{{ peer.org_name }}</td>
               </tr>
             </table>
           <!--End Expanded Peer Card-->

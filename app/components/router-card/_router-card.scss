@@ -50,5 +50,18 @@
         border-width: 1px;
       }
     }
+    .ribTable {
+      width: 100%;
+      border: solid 1px;
+      td, th {
+        padding: 3px;
+      }
+      th {
+        border-bottom: solid 1px #808080;
+      }
+      td:nth-of-type(odd) {
+        text-align: right;
+      }
+    }
   }
 }
