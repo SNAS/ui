@@ -15,9 +15,9 @@ angular.module('bmpUiApp')
     //   $scope.peerHashId = "daaa681792b33e36166a2205be05868d"; //isis
 
     $scope.topologyOptions = {
-      height: '1000px',
+      height: '700px',
       //   dragNodes:false,
-      configurePhysics: true,
+      //configurePhysics: true,
       hover: true,
 
       hierarchicalLayout: {
