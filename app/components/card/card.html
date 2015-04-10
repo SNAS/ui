@@ -1,0 +1,16 @@
+<div class="cardArea">
+  <div class="content">
+
+    <span class="glyphicon"  ng-class="{'glyphicon-plus': !cardExpand, 'glyphicon-minus': cardExpand}"
+          ng-click="changeCardState()">
+    </span>
+    <span class="glyphicon right glyphicon-remove">
+          <!--ng-click="removecard(data.asn)"-->
+    </span>
+
+    This much is working
+    <!--Templates will be inserted here-->
+    <div ng-include="components/card/templates/globalViewPeer.html"></div>
+
+  </div>
+</div>

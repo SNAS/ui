@@ -8,6 +8,7 @@
                 ng-click="changeCardState()">
           </span>
         <span class="glyphicon right glyphicon-remove" ng-click="removecard(data.asn)"></span>
+
         <!--Router Card-->
           <span ng-switch-when="global.router" class="routerCard">
             BMP Router |
@@ -18,7 +19,7 @@
             </span>
           </span>
 
-        <!--Peer Card-->
+        <!--Global Peer Card-->
           <span ng-switch-when="global.peer" class="peerCard">
               <div ng-hide="cardExpand" class="collapsed">
                 BMP Peer |
@@ -27,6 +28,17 @@
                 {{data.PeerIP}}
               </div>
           </span>
+
+        <!--Global Peer Card-->
+          <span ng-switch-when="peer.peer" class="peerCard">
+              <div ng-hide="cardExpand" class="collapsed">
+                BMP Peer |
+                {{data.PeerASN}} |
+                {{data.PeerName}} |
+                {{data.PeerIP}}
+              </div>
+          </span>
+
       </div>
 
       <!--EXPANDED view-->
@@ -117,7 +129,7 @@
 
 
           <span ng-switch-when="global.peer" class="peerCard">
-            <!--Peer Card-->
+            <!--Peer Card in Global View-->
 
             <h3>Peer Detail</h3>
             <span style="float: right;text-align: right;">
@@ -199,6 +211,101 @@
             </table>
           <!--End Expanded Peer Card-->
           </span>
+
+          <span ng-switch-when="peer.peer" class="peerCard">
+            <!--Peer Card in Peer View-->
+            PEER.PEER
+            <h3>Peer Detail</h3>
+            <span style="float: right;text-align: right;">
+              Peer Down Time
+              <span ng-class="{'red': downTime!='Up', 'green': downTime=='Up'}">
+                {{ downTime }}
+              </span>
+            </span>
+            <h4>{{ data.PeerName }}</h4>
+
+
+            <div class="col-md-5">
+              <!--SVG for the Router and Peers-->
+              <svg width="350.00000000000006" height="150" style="width:350px; height:150px;" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <g id="svg_link">
+                    <line x1="56.50251" y1="95.01256" x2="234.50251" y2="95.01256" stroke-width="1" stroke="#000000"/>
+                  </g>
+                  <g id="svg_router">
+                    <ellipse ry="21.5" rx="22" id="svg_12" cy="94.5" cx="57" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#ff007f"/>
+                    <path id="svg_2" d="m35.8348,92.35545l10.1537,-0.05322l-0.0235,-4.28049l6.8049,6.48255l-6.23725,6.259l-0.2215,-4.08485l-10.25378,-0.04355l-0.22258,-4.27945l0.00001,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#ffaaff"/>
+                    <path id="svg_3" d="m54.4888,114.7042l0.14675,-9.92205l-4.37965,-0.06185l6.7668,-6.5205l6.27974,6.2183l-4.18344,0.13551l-0.2477,10.01788l-4.3825,0.13271l0,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#d4aaff"/>
+                    <path id="svg_4" d="m77.667,96.3543l-10.15359,0.0513l0.02259,4.2804l-6.8036,-6.4838l6.2385,-6.2578l0.2207,4.0849l10.2538,0.0455l0.2216,4.2795l0,0l0,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#d4aaff"/>
+                    <path id="svg_6" d="m59.2166,74.5632l-0.0319,9.923l4.3801,0.0134l-6.6909,6.59489l-6.3513,-6.1485l4.1816,-0.1817l0.1318,-10.02l4.3807,-0.1811l0,0l-0.0001,0l0,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#ffaaff"/>
+                  </g>
+                  <title>Layer 1</title>
+                  <g id="svg_5">
+                    <ellipse ry="21.5" rx="22" cy="93.99749" cx="240.9196" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#ff007f" id="svg_7"/>
+                    <path d="m219.754,91.85291l10.15401,-0.05322l-0.02301,-4.28049l6.804,6.4826l-6.237,6.259l-0.22099,-4.08489l-10.254,-0.0435l-0.22301,-4.2795l0,0l0,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#ffaaff" id="svg_8"/>
+                    <path d="m238.408,114.2017l0.14699,-9.9221l-4.379,-0.06181l6.76601,-6.52049l6.28,6.2183l-4.183,0.1355l-0.248,10.0179l-4.383,0.1327l0,0l0,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#d4aaff" id="svg_9"/>
+                    <path d="m261.58701,95.8518l-10.15401,0.0513l0.02299,4.2804l-6.804,-6.4838l6.23801,-6.2578l0.22099,4.0849l10.254,0.04549l0.22202,4.2795l0,0l0,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#d4aaff" id="svg_10"/>
+                    <path d="m243.13625,74.06067l-0.03194,9.92302l4.3801,0.01345l-6.69095,6.59486l-6.35132,-6.14851l4.18161,-0.18169l0.13181,-10.02002l4.38069,-0.18111l0,0z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#ffaaff" id="svg_11"/>
+                  </g>
+                  <text fill="#000000" stroke="#000000" stroke-width="0" x="55.76471" y="137.58824" id="svg_13" font-size="24" font-family="Sans-serif" text-anchor="middle" xml:space="preserve">{{data.RouterIP}}</text>
+                  <text fill="#000000" stroke="#000000" stroke-width="0" x="240.47059" y="137.98039" font-size="24" font-family="Sans-serif" text-anchor="middle" xml:space="preserve" id="svg_14">{{data.PeerIP}}</text>
+                  <text fill="#000000" stroke="#000000" stroke-width="0" x="55.76471" y="70.13726" font-size="24" font-family="Sans-serif" text-anchor="middle" xml:space="preserve" id="svg_15">{{data.LocalASN}}</text>
+                  <text fill="#000000" stroke="#000000" stroke-width="0" x="239.29412" y="68.96079" font-size="24" font-family="Sans-serif" text-anchor="middle" xml:space="preserve" id="svg_16">{{data.PeerASN}}</text>
+                  <text fill="#000000" stroke="#000000" stroke-width="0" x="56.06742" y="34.26966" id="svg_17" font-size="24" font-family="Sans-serif" text-anchor="middle" xml:space="preserve">{{data.RouterName}}</text>
+                  <text fill="#000000" stroke="#000000" stroke-width="0" x="238.65169" y="33.70786" font-size="24" font-family="Sans-serif" text-anchor="middle" xml:space="preserve" id="svg_18">{{data.PeerName}}</text>
+                </g>
+              </svg>
+              <!--END SVG-->
+            </div>
+
+            <div class="col-md-5">
+              <span ng-bind-html="locationInfo"></span>
+            </div>
+
+            <!--NEED TO BE CHANGED(pre and peer tables)-->
+            <!--Number Prefixes-->
+            <table class="ribTable">
+              <tr>
+                <th> </th>
+                <th>Number of prefixes</th>
+              </tr>
+              <tr>
+                <td>{{ ribData[0][0] }}</td>
+                <td>{{ ribData[0][1] }}</td>
+              </tr>
+              <tr>
+                <td>{{ ribData[1][0] }}</td>
+                <td>{{ ribData[1][1] }}</td>
+              </tr>
+            </table>
+            <br>
+
+            <!--Peer info table-->
+            <table class="tableSummary">
+              <tr>
+                <th>AS Number</th>
+                <th>AS Name</th>
+                <th>Organization</th>
+              </tr>
+              <tr ng-repeat="peer in peerDownData track by $index">
+                <td>{{ peer.DownstreamAS }}</td>
+                <td>{{ peer.as_name }}</td>
+                <td>{{ peer.org_name }}</td>
+              </tr>
+            </table>
+
+          <div class="cardArea">
+            GRAPH WILL GO HERE
+          </div>
+          <!--<div bmp-router-card-->
+               <!--data="peer"-->
+               <!--card-type="peer.peer">-->
+          <!--</div>-->
+
+
+          <!--End Expanded Peer Card-->
+          </span>
+
       </div>
     </div>
   </span>

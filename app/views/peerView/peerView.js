@@ -20,7 +20,7 @@ angular.module('bmpUiApp')
         $scope.suggest = true;
 
         $scope.$watch('search', function (val) {
-            
+
             if(!$scope.suggest){
                 $scope.suggest = !$scope.suggest;
                 return;
@@ -28,19 +28,19 @@ angular.module('bmpUiApp')
 
             if(val === undefined || val.length < 4){
                 $scope.suggestions = [];
-                return;            
+                return;
             }
 
             if(timer){
                 // Ignore this change
                 $timeout.cancel(timer)
-            }  
+            }
             timer= $timeout(function(){
                 $scope.loading = true;
 
                 if(ip.test(val)){
                     getSuggestedPeers(val);
-                }                    
+                }
                 else if(string.test(val)){
                     console.log(val);
                     getSuggestedName(val);
@@ -76,7 +76,7 @@ angular.module('bmpUiApp')
 
         //Listen for a menu toggle broadcast to resize the map
         $scope.$on('menu-toggle', function() {
-            $timeout( function(){ 
+            $timeout( function(){
                 $scope.map.invalidateSize();
             }, 500);
         });
@@ -236,4 +236,31 @@ angular.module('bmpUiApp')
         $scope.fitMap = function() {
           $scope.map.fitBounds($scope.peerLayer.getBounds());
         };
+
+        //|---------------------------- Peer Card -----------------------------|\\
+        $scope.cards = [];
+
+        //peer card DELETE \w CLICK
+        $scope.removePeerCard = function (card) {
+          var index = $scope.cards.indexOf(card);
+          $scope.cards.splice(index, 1);
+        };
+
+        var changePeerCard = function(value) {
+          if ($scope.cards.indexOf(value) == -1) {
+            $scope.cards.push(value);
+            if ($scope.cards.length > 10) {
+              $scope.cards.shift();
+            }
+          }
+        };
+
+        //Not need here yet!!
+        var clearPeersCard = function() {
+          $scope.cards = [];
+        };
+
+        //|---------------------------- End Peer Card -----------------------------|\\
+
+
     });

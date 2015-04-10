@@ -22,13 +22,13 @@ angular
     'ui.grid.selection',
     'ui.grid.autoResize',
     'bmp.components.routerCard',
+    'bmp.components.card',
     'bgDirectives',
     'bmp.components.topology',
     'leaflet-directive'
   ])
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise("/login");
-
     $stateProvider
       .state('login', {
         url: '/login',
