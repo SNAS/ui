@@ -17,18 +17,17 @@
 
   <!--Router and Peers Cards-->
   <div ng-repeat="routerCard in cards[0]">
-    <!--<div ng-if=" cards[0]!= '' ">-->
-    <div bmp-router-card
-         data="routerCard"
-         removeCard="removeRouterCard()"
-         card-type="global.router">
+    <div bmp-card
+      template="globalViewRouter"
+      data="routerCard"
+      removeCard="removePeerCard()">
     </div>
   </div>
   <div ng-repeat="peerCard in [].concat(cards[1]).reverse()">
-    <div bmp-router-card
+    <div bmp-card
+         template="globalViewPeer"
          data="peerCard"
-         removeCard="removePeerCard(card)"
-         card-type="global.peer">
+         removeCard="removePeerCard()">
     </div>
   </div>
   <!--end-->

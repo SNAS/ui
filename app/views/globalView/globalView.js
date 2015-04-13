@@ -66,7 +66,8 @@ angular.module('bmpUiApp')
                     data.push({
                         RouterIP: value.RouterIP,
                         RouterName: value.RouterName,
-                        LastModified: value.LastModified
+                        LastModified: value.LastModified,
+                        isConnected: value.isConnected
                     });
                 });
                 $q.all(temp).then(function (requests){
@@ -80,6 +81,7 @@ angular.module('bmpUiApp')
                             RouterName: data[i].RouterName,
                             RouterIP: data[i].RouterIP,
                             LastModified: data[i].LastModified,
+                            isConnected: data[i].isConnected,
                             Country: result.country,
                             State: result.stateprov,
                             City: result.city
@@ -208,6 +210,8 @@ angular.module('bmpUiApp')
                         RouterIP: value.RouterIP,
                         RouterAS: value.RouterAS,
                         LocalASN: value.LocalASN,
+                        PeerPort: value.PeerPort,
+                        isPeerIPv4: value.isPeerIPv4,
                         peer_hash_id: value.peer_hash_id
                     });
                 });
@@ -234,6 +238,8 @@ angular.module('bmpUiApp')
                             RouterIP: data[i].RouterIP,
                             RouterAS: data[i].RouterAS,
                             LocalASN: data[i].LocalASN,
+                            PeerPort: data[i].PeerPort,
+                            isPeerIPv4: data[i].isPeerIPv4,
                             peer_hash_id: data[i].peer_hash_id
                         };
 

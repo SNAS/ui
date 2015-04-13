@@ -1,9 +1,21 @@
 'use strict';
 
-angular.module('bmp.components.routerCard', [])
+angular.module('bmp.components.routerCard',[])
 
   .controller('BmpRouterCardController', ["$scope", "apiFactory", "$timeout", function ($scope, apiFactory, $timeout) {
-      window.SCOPER = $scope;
+    //<!--<div bmp-router-card-->
+    //<!--data="routerCard"-->
+    //<!--removeCard="removeRouterCard()"-->
+    //<!--card-type="global.router">-->
+    //<!--</div>-->
+
+    //<!--<div bmp-router-card-->
+    //<!--data="peerCard"-->
+    //<!--removeCard="removePeerCard(card)"-->
+    //<!--card-type="global.peer">-->
+    //<!--</div>-->
+
+    window.SCOPER = $scope;
 
       var createLocationTable = function(){
         if ($scope.data.State !== undefined || $scope.data.City !== undefined || $scope.data.Country !== undefined) {
@@ -348,7 +360,7 @@ angular.module('bmp.components.routerCard', [])
 
   .directive('bmpRouterCard', function () {
     return  {
-      templateUrl: "components/router-card/router-card.html",
+      templateUrl: "views/components/router-card/router-card.html",
       restrict: 'AE',
       replace: 'true',
       scope: {
