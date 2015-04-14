@@ -15,9 +15,9 @@
   <!--</div>-->
   <!--&lt;!&ndash;end&ndash;&gt;-->
 
-    <span ng-init="expand=false;" class="glyphicon" ng-class="{'glyphicon-plus': !expand, 'glyphicon-minus': expand}"
+    <span ng-init="expand=false;" class="glyphicon" ng-class="{'glyphicon-plus': expand, 'glyphicon-minus': !expand}"
           ng-click="expand=!expand;">
-    </span>
+    </span>Routers
     <div ng-hide="expand" style="padding-left: 20px;">
       <!--show routers-->
       <div ng-repeat="router in routerList track by $index">
@@ -25,6 +25,7 @@
               ng-click="expanded=!expanded;">
         </span>
         <span
+          class="selectable"
           ng-click="changeRouterCard(router)">
           {{ router.RouterName }} || {{ router.RouterIP }} || {{ router.RouterAS }}
         </span>
@@ -33,6 +34,7 @@
           <span ng-init="getRouterPeers($index,router.RouterIP)">
             <div ng-repeat="peer in routerPeers[$index]">
               <span
+                class="selectable"
                 ng-click="changePeerCard(peer)">
                 {{ peer.PeerName }} || {{ peer.PeerIP }} || {{ peer.PeerASN }}
               </span>
@@ -48,7 +50,7 @@
     <div bmp-card
          template="globalViewRouter"
          data="routerCard"
-         removeCard="removePeerCard()">
+         removeCard="removeRouterCard()">
     </div>
   </div>
   <div ng-repeat="peerCard in [].concat(cards[1]).reverse()">

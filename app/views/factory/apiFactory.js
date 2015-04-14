@@ -15,7 +15,7 @@ angular.module('bmpUiApp')
     var apiFactory = {};
 
     apiFactory.getRouters = function () {
-      return $http.get(urlBase + 'routers?withgeo');
+      return $http.get(urlBase + 'routers');
     };
 
     apiFactory.getRoutersAndLocations = function () {

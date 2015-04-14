@@ -1,4 +1,10 @@
-.detailsPanel {
-  height: 300px;
-  overflow-y: scroll;
+ div{
+
+  .selectable{
+    &:hover {
+      color:blue;
+    }
+    cursor: pointer;
+  }
+
 }

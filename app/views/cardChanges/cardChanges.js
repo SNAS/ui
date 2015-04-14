@@ -13,7 +13,7 @@ angular.module('bmpUiApp')
     $scope.routerList = [];
     $scope.routerPeers = [];
 
-    apiFactory.getRouters().
+    apiFactory.getRoutersAndLocations().
       success(function (result){
         $scope.routerList = result.routers.data;
         $scope.routerPeers = new Array($scope.routerList.length);
@@ -24,7 +24,7 @@ angular.module('bmpUiApp')
 
 
     $scope.getRouterPeers = function(index,routerip) {
-      apiFactory.getPeersByIp(routerip).
+      apiFactory.getPeersAndLocationsByIp(routerip).
         success(function (result) {
           $scope.routerPeers[index] = result.v_peers.data;
         }).
