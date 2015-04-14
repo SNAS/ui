@@ -284,35 +284,5 @@ angular.module('bmpUiApp')
 
         /************** END MAP **************/
 
-        $scope.cards = [[],[]];
 
-        //router card DELETE \w CLICK
-        $scope.removeRouterCard = function(){
-          $scope.cards[0]= [];
-          $scope.cards[1]= [];//empty peers also
-        };
-
-        //peer card DELETE \w CLICK
-        $scope.removePeerCard = function (card) {
-          var index = $scope.cards.indexOf(card);
-          $scope.cards[1].splice(index, 1);
-        };
-
-        var changeRouterCard = function(value){
-          $scope.cards[0][0] = value;
-        };
-
-        var changePeerCard = function(value) {
-          if ($scope.cards[1].indexOf(value) == -1) {
-            $scope.cards[1].push(value);
-            if ($scope.cards[1].length > 4) {
-              $scope.cards[1].shift();
-            }
-          }
-        };
-
-        //For when router is changed
-        var clearPeersCard = function() {
-          $scope.cards[1] = [];
-        };
   });
