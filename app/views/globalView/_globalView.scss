@@ -19,7 +19,7 @@
 
 .map-control{
     z-index: 1;
-    top: 80px;
+    top: 10px;
     opacity: 0.6;
     @include transition(opacity, 0.15s);
     position: absolute;
