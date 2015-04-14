@@ -21,7 +21,7 @@ angular
     'ui.grid',
     'ui.grid.selection',
     'ui.grid.autoResize',
-    'bmp.components.routerCard',
+    //'bmp.components.routerCard',
     'bmp.components.card',
     'bgDirectives',
     'bmp.components.topology',
