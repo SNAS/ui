@@ -25,7 +25,8 @@ angular
     'bmp.components.card',
     'bgDirectives',
     'bmp.components.topology',
-    'leaflet-directive'
+    'leaflet-directive',
+    'bmp.components.map'
   ])
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise("/login");

@@ -18,8 +18,12 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + 'routers');
     };
 
-    apiFactory.getRouterLocation = function (ip) {
-      return $http.get(urlBase + "geoip/" + ip);
+    apiFactory.getRoutersAndLocations = function () {
+      return $http.get(urlBase + "routers?withgeo");
+    };
+
+    apiFactory.getPeersAndLocationsByIp = function (ip) {
+      return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip + "%%27&withgeo");
     };
 
     apiFactory.getRouterStatus = function () {
