@@ -85,6 +85,7 @@ angular.module('bmp.components.map', [])
                     RouterName: data[i].RouterName,
                     RouterIP: data[i].RouterIP,
                     LastModified: data[i].LastModified,
+                    isConnected: data[i].isConnected,
                     Country: data[i].country,
                     State: data[i].stateprov,
                     City: data[i].city,
@@ -139,6 +140,8 @@ angular.module('bmp.components.map', [])
                     RouterIP: data[i].RouterIP,
                     RouterAS: data[i].RouterAS,
                     LocalASN: data[i].LocalASN,
+                    PeerPort: data[i].PeerPort,
+                    isPeerIPv4: data[i].isPeerIPv4,
                     peer_hash_id: data[i].peer_hash_id,
 
                     icon:   L.mapbox.marker.icon({
