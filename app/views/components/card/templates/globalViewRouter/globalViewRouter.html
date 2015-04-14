@@ -1,0 +1,92 @@
+<div ng-controller="BmpCardGlobalRouterController">
+  <!--COLLAPSED view-->
+  <div ng-hide="cardExpand" class="collapsed">
+    <!--Router Card-->
+    BMP Router |
+    {{data.RouterName}} |
+    {{data.RouterIP}} |
+    <span ng-class="{'red': data.isConnected!='1', 'green': data.isConnected=='1'}">
+      {{ isUP }}
+    </span>
+  </div>
+
+  <!--EXPANDED view-->
+  <div ng-show="cardExpand">
+    <!--Router Card-->
+    <h3>BMP Router</h3>
+
+    <!--Router Up Time-->
+    <!--ADD A HELP-->
+    <span style="float: right;text-align: right;">
+      BMP Up Time
+      <span style="color: green;">
+        {{ upTime }}
+      </span>
+    </span>
+
+    <h4>{{ data.RouterName }}</h4>
+    <br>
+
+    <div class="row">
+
+      <!--Location table-->
+      <div class="col-md-4">
+        <span ng-bind-html="locationInfo"></span>
+      </div>
+
+      <div class="col-md-4">
+        <!--Router SVG-->
+        <svg width="230" height="100" style="width:280px; height:100px; padding-top:50px;padding-left:50px" xmlns="http://www.w3.org/2000/svg">
+          <g>
+            <g>
+              <g id="svg_link">
+                <line stroke="#000000" stroke-width="1" y2="21.5" x2="200" y1="21.5" x1="22"/>
+              </g>
+              <g id="svg_router">
+                <ellipse fill="#ff007f" stroke="#000000" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" cx="23" cy="23.5" id="svg_12" rx="22" ry="21.5"/>
+                <path fill="#ffaaff" stroke="#000000" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" d="m1.8348,21.35545l10.1537,-0.0532l-0.0235,-4.2805l6.8049,6.48255l-6.23725,6.259l-0.2215,-4.08485l-10.25378,-0.04355l-0.22258,-4.27945l0.00001,0z" id="svg_2"/>
+                <path fill="#d4aaff" stroke="#000000" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" d="m20.4888,43.7042l0.14675,-9.92205l-4.37965,-0.06185l6.7668,-6.5205l6.27975,6.2183l-4.18345,0.1355l-0.2477,10.0179l-4.3825,0.1327l0,0z" id="svg_3"/>
+                <path fill="#d4aaff" stroke="#000000" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" d="m43.66705,25.3543l-10.1537,0.0513l0.02265,4.28045l-6.8036,-6.4838l6.23845,-6.25785l0.2207,4.0849l10.2538,0.0455l0.2217,4.2795l0,0z" id="svg_4"/>
+                <path fill="#ffaaff" stroke="#000000" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" d="m25.21665,3.56318l-0.03195,9.92302l4.3801,0.01345l-6.69095,6.59485l-6.3513,-6.1485l4.1816,-0.1817l0.1318,-10.02001l4.3807,-0.18111l0,0z" id="svg_6"/>
+              </g>
+              <g id="svg_peer">
+                <ellipse fill="#FDFDFD" stroke="#000000" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" cx="200" cy="23.5" rx="22" ry="21.5" id="svg_12"/>
+              </g>
+            </g>
+            <text xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_1" y="29.91202" x="199.91203" stroke-width="0" stroke="#000000" fill="#000000">{{ peersAmount }}</text>
+          </g>
+        </svg>
+        <!--END SVG-->
+      </div>
+
+      <!--IP's Graph-->
+      <div class="col-md-4">
+        <nvd3 options="ipAmountOptions" data="ipAmountData"></nvd3>
+      </div>
+
+    </div>
+
+    <!--ROUTER up time graph-->
+    <div>
+      <nvd3 options="upTimeOptions" data="upTimeData" config="upTimeConfig"></nvd3>
+    </div>
+
+    <!--NEED TO BE CHANGED-->
+    <!--R/Peers info table-->
+    <!--<span ng-bind-html="peerSummaryTable"></span>-->
+    <table class="tableSummary">
+      <tr>
+        <th>AS Number</th>
+        <th>AS Name</th>
+        <th>Organization</th>
+      </tr>
+      <tr ng-repeat="peer in peerSummaryTable track by $index">
+        <td>{{ peer.PeerASN }}</td>
+        <td>{{ peer.PeerName }}</td>
+        <td>{{ peer.org_name }}</td>
+      </tr>
+    </table>
+    <br>
+    <!--end router card-->
+  </div>
+</div>
