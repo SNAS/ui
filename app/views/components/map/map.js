@@ -8,14 +8,19 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', [])
-.controller('MapController', function ($scope, $state, $q, $http, $timeout, apiFactory, leafletData) {
+.controller('MapController', function ($scope, $state, $q, $http, $timeout, apiFactory, leafletData, $compile) {
+    window.SCOPE = $scope;
 
     /************** START MAP **************/
 
-    $scope.chosenRouter;
-    $scope.chosenIndex;
+    $scope.chosenRouter = undefined;
+    $scope.chosenPeer = undefined;
+
+    $scope.chosenIndex = -1;
     $scope.loading = true;
     $scope.selected = false;
+
+    $scope.activePopup = false;
 
     $scope.routers = [];
     $scope.peers = [];
@@ -62,12 +67,7 @@ angular.module('bmp.components.map', [])
         $scope.routerLayer = new L.MarkerClusterGroup({
             selected: false,
             iconCreateFunction: function(cluster) {
-                $scope.cluster = cluster;
-                return L.mapbox.marker.icon({
-                  'marker-symbol': cluster.getChildCount(),
-                  'marker-color': '#364C69',
-                  'marker-size': 'large'
-                });
+                return $scope.clusterIcon(cluster);
             }
         });
 
@@ -89,8 +89,9 @@ angular.module('bmp.components.map', [])
                     Country: data[i].country,
                     State: data[i].stateprov,
                     City: data[i].city,
+                    
                     selected: false,
-
+                    type: 'router',
                     icon:   L.mapbox.marker.icon({
                                 'marker-color': '#758CAB',
                                 'marker-size': 'medium'
@@ -101,6 +102,13 @@ angular.module('bmp.components.map', [])
                 $scope.routerLayer.addLayer(marker);
                 $scope.routers.push(marker);
             }
+
+            $scope.routerLayer.on('animationend', function (e) {
+                e.target._featureGroup.eachLayer(function (l){
+                    l._iconNeedsUpdate = true;
+                })
+            });
+
             $scope.loading = false;
             $scope.fitMap('routers');            
         }).
@@ -144,6 +152,7 @@ angular.module('bmp.components.map', [])
                     isPeerIPv4: data[i].isPeerIPv4,
                     peer_hash_id: data[i].peer_hash_id,
 
+                    type: 'peer',
                     icon:   L.mapbox.marker.icon({
                                 'marker-color': '#DFC089',
                                 'marker-size': 'medium'
@@ -169,95 +178,128 @@ angular.module('bmp.components.map', [])
         })
     }
 
+    var openTimer;
+    var closeTimer;
+    var target;
     var createMarker = function(latlng, options, type){
-        var openTimer;
-        var closeTimer;
-
         var marker = new L.Marker(latlng, options);
 
         if(type === 'router')
         {
-             var popup = L.popup({type: 'router', minWidth: 200, className: 'routerPopup'})
-            .setLatLng(latlng)
-            .setContent('<p class="page-header"><strong>' + options.RouterName + '</strong></p><p><small><strong>Uptime: </strong><span class="text-success">' + options.LastModified + '</span></small></p><p><small><strong>IP Address: </strong>' + options.RouterIP + '</small></p><p><small><strong>Peers:</strong> 20</small></p><small><a href="#">View Detail</a></small>');
-        
+            var content = '<p class="page-header"><strong>' + 
+            options.RouterName + 
+            '</strong></p><p><small><strong>Uptime: </strong><span class="text-success">' + 
+            options.LastModified + 
+            '</span></small></p><p><small><strong>IP Address: </strong>' + 
+            options.RouterIP + 
+            '</small></p><p><small><strong>Peers:</strong> 20</small></p><small><a ng-click="viewDetails()">View Detail</a></small>';
+
             marker.on('click', function (e){
-                $scope.selectRouter(e.target);
+                $scope.selectMarker(e.target);
             })
         } 
         else 
         {
-            var popup = L.popup({type: 'peer', minWidth: 210})
-            .setLatLng(latlng)
-            .setContent('<p class="page-header"><strong>' + options.PeerName + '</strong><br><small><strong>Uptime: </strong><span class="text-success">' + options.LastModified + '</span></small></p><p><small><a href="#">' + options.PeerIP + '</a></small></p><p><small><strong>AS Number:</strong> ' + options.PeerASN + '</small></p>');
-        
+            var content = '<p class="page-header"><strong>' + 
+            options.PeerName + 
+            '</strong><br><small><strong>Uptime: </strong><span class="text-success">' + 
+            options.LastModified + 
+            '</span></small></p><p><small><a href="#">' + 
+            options.PeerIP + 
+            '</a></small></p><p><small><strong>AS Number:</strong> ' + 
+            options.PeerASN + 
+            '</small></p>';      
+
             marker.on('click', function(e){
-                changePeerCard(e.target.options);
+                $scope.selectMarker(e.target);
             });
         }
-       
+
+        //var linkFunction = $compile(angular.element(content));
+        //console.log(linkFunction($scope));
+
+        var popup = L.popup({type: 'router', minWidth: 200, className: 'routerPopup'})
+        .setLatLng(latlng)
+        .setContent(content);
         marker.bindPopup(popup);
         
         marker.on('mouseover', function (e) {
+            target = e.target;
             $timeout.cancel(closeTimer);
-
-            if(openTimer){
+            if(openTimer){                   
                 $timeout.cancel(openTimer)
             }
             openTimer= $timeout(function(){
-                e.target.openPopup();
+                target.openPopup();
             }, 500)
         });
         marker.on('mouseout', function (e) {
+            target = e.target;
             $timeout.cancel(openTimer);
-
             if(closeTimer){
                 $timeout.cancel(closeTimer)
             }
             closeTimer= $timeout(function(){
-                e.target.closePopup();
-            }, 1000)
+                target.closePopup();
+            }, 1000);
         });
 
         return marker;
     }
 
-    //Called when a router is selected
-    $scope.selectRouter = function(router){
-        if($scope.chosenRouter != undefined){
-            if(router.options.RouterIP === $scope.routers[$scope.chosenIndex].options.RouterIP){
-                return;
-            }
-            else{
-                $scope.routers[$scope.chosenIndex].options.selected = false;
-                $scope.routers[$scope.chosenIndex].setIcon(L.mapbox.marker.icon({
-                    'marker-color': '#758CAB',
-                    'marker-size': 'medium'
-                }));
+    $scope.viewDetails = function(){
+        console.log('ooft');
+    }
 
-                $scope.clearPeers();
+    $("map").mouseover(function(event) {
+        if($scope.activePopup)
+            if(event.target.classList[0] === "leaflet-tile"){
+                $scope.activePopup = false;
+                closeTimer= $timeout(function(){
+                    target.closePopup();
+                }, 1000);
             }
+
+        if(event.target.classList[0] === "leaflet-popup-content" ||
+           event.target.classList[0] === "leaflet-popup-content-wrapper"){
+            $scope.activePopup = true;
+            $timeout.cancel(closeTimer)
+        }           
+    });
+
+    //Called when a marker is selected
+    $scope.selectMarker = function(marker){
+        if(marker.options.type === 'router'){
+            if($scope.chosenRouter != undefined){
+                if(marker.options.RouterIP === $scope.routers[$scope.chosenIndex].options.RouterIP){
+                    //Same router - do nothing
+                    return;
+                }
+                else{
+                    $scope.clearPeers();
+                }
+            }
+            //Updates the router remove button
+            $scope.selected = true;
+
+            for (var i = 0; i < $scope.routers.length; i++){
+                if ($scope.routers[i].options.RouterIP === marker.options.RouterIP) {
+                    $scope.chosenRouter = $scope.routers[i];
+                    $scope.chosenIndex = i;
+
+                    $scope.routers[$scope.chosenIndex].options.selected = true;                
+                    $scope.routers[$scope.chosenIndex].setIcon(L.mapbox.marker.icon({
+                        'marker-color': '#3491df',
+                        'marker-size': 'large'
+                    }));
+                }
+            }
+            $scope.getPeers($scope.chosenRouter.options.RouterIP, true);
         }
-
-        $scope.selected = true;
-
-        for (var i = 0; i < $scope.routers.length; i++){
-            if ($scope.routers[i].options.RouterIP === router.options.RouterIP) {
-                $scope.chosenRouter = $scope.routers[i];
-                $scope.chosenIndex = i;
-
-                $scope.routers[$scope.chosenIndex].options.selected = true;                
-                $scope.routers[$scope.chosenIndex].setIcon(L.mapbox.marker.icon({
-                    'marker-color': '#3491df',
-                    'marker-size': 'large'
-                }));
-            }
+        else {
+            $scope.chosenPeer = marker;
         }
-        //Adding Router Card
-        changeRouterCard($scope.chosenRouter.options);
-        clearPeersCard();
-
-        $scope.getPeers($scope.chosenRouter.options.RouterIP, true);
+        
     }
 
     $scope.clearPeers = function(button) {
@@ -267,8 +309,43 @@ angular.module('bmp.components.map', [])
         if(button)
             $scope.map.closePopup();
 
+        if($scope.chosenRouter){
+            $scope.routers[$scope.chosenIndex].options.selected = false;
+            $scope.routers[$scope.chosenIndex].setIcon(L.mapbox.marker.icon({
+                'marker-color': '#758CAB',
+                'marker-size': 'medium'
+            }));
+
+            //Dirty way to redraw the icons. Please don't look at this
+            //TODO: Make it not rubbish
+            $scope.map.removeLayer($scope.routerLayer);
+            $scope.map.addLayer($scope.routerLayer);
+        }
+
         $scope.chosenRouter = undefined;
         $scope.selected = false;
+    }
+
+    $scope.clusterIcon = function(cluster){
+       var cmarkers = cluster.getAllChildMarkers();
+        var cselected = false;
+        for(var i =0; i < cmarkers.length; i++)
+        {
+          if(cmarkers[i].options.selected === true)
+          {
+            return L.mapbox.marker.icon({
+              'marker-symbol': cluster.getChildCount(),
+              'marker-color': '#3491df',
+              'marker-size': 'large'
+            });
+          }
+        }
+
+        return L.mapbox.marker.icon({
+          'marker-symbol': cluster.getChildCount(),
+          'marker-color': '#364C69',
+          'marker-size': 'large'
+        });
     }
 
     //Fit map to the bounds of the router layer
@@ -287,50 +364,18 @@ angular.module('bmp.components.map', [])
             $scope.map.fitBounds($scope.routerLayer.getBounds());
         }
     };
-
     /************** END MAP **************/
-
-    $scope.cards = [[],[]];
-
-    //router card DELETE \w CLICK
-    $scope.removeRouterCard = function(){
-      $scope.cards[0]= [];
-      $scope.cards[1]= [];//empty peers also
-    };
-
-    //peer card DELETE \w CLICK
-    $scope.removePeerCard = function (card) {
-      var index = $scope.cards.indexOf(card);
-      $scope.cards[1].splice(index, 1);
-    };
-
-    var changeRouterCard = function(value){
-      $scope.cards[0][0] = value;
-    };
-
-    var changePeerCard = function(value) {
-      if ($scope.cards[1].indexOf(value) == -1) {
-        $scope.cards[1].push(value);
-        if ($scope.cards[1].length > 4) {
-          $scope.cards[1].shift();
-        }
-      }
-    };
-
-    //For when router is changed
-    var clearPeersCard = function() {
-      $scope.cards[1] = [];
-    };
 })
 .directive('map', function () {
     return  {
       templateUrl: "views/components/map/map.html",
       restrict: 'AE',
-      replace: 'true',
       controller: 'MapController',
       scope: {
         type: '@',
-        ip: '='
+        ip: '=',
+        chosenRouter: '=router',
+        chosenPeer: '=peer'
       }
     }
 });

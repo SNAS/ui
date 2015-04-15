@@ -11,6 +11,11 @@ angular.module('bmpUiApp')
     .controller('PeerViewController', function ($scope, $stateParams, $q, $http, $timeout, apiFactory, leafletData) {
         window.SCOPE = $scope;
 
+        $scope.peer;
+        $scope.$watch('peer', function (val){
+            console.log(val);
+        })
+
         $scope.parameterIP = $stateParams.RouterIP;
 
         $scope.search;

@@ -1,5 +1,5 @@
 <div class="relative">
-
+{{ping}}
   <div class="loading" ng-show="loading">
       <span class="text-light">loading...</span>
   </div>
@@ -12,23 +12,4 @@
   <!-- <input type="text" ng-model="search" class="map-control search" placeholder="Search"/> -->
 
   <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
-
-  <!--Router and Peers Cards-->
-  <div ng-repeat="routerCard in cards[0]">
-    <!--<div ng-if=" cards[0]!= '' ">-->
-    <div bmp-router-card
-         data="routerCard"
-         removeCard="removeRouterCard()"
-         card-type="global.router">
-    </div>
-  </div>
-  <div ng-repeat="peerCard in [].concat(cards[1]).reverse()">
-    <div bmp-router-card
-         data="peerCard"
-         removeCard="removePeerCard(card)"
-         card-type="global.peer">
-    </div>
-  </div>
-  <!--end-->
-  
 </div>
