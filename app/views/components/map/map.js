@@ -164,6 +164,7 @@ angular.module('bmp.components.map', [])
                 $scope.peers.push(marker);
             }                
             $scope.loading = false;
+            $scope.map.addLayer($scope.peerLayer);
 
             if(withRouter){
                 $scope.fitMap('both');
