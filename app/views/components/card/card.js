@@ -10,7 +10,7 @@ angular.module('bmp.components.card',[])
       scope: {
         data: '=',
         removable: '=',
-        template: '@',
+        template: '=',
         removecard: '&'
       },
       link: function(scope, $rootScope) {

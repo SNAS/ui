@@ -26,7 +26,7 @@
         </span>
         <span
           class="selectable"
-          ng-click="changeRouterCard(router)">
+          ng-click="router.template='globalViewRouter';cardApi.changeCard(router)">
           {{ router.RouterName }} || {{ router.RouterIP }} || {{ router.RouterAS }}
         </span>
         <!--show router peers-->
@@ -35,7 +35,7 @@
             <div ng-repeat="peer in routerPeers[$index]">
               <span
                 class="selectable"
-                ng-click="changePeerCard(peer)">
+                ng-click="peer.template='globalViewPeer';cardApi.changeCard(peer)">
                 {{ peer.PeerName }} || {{ peer.PeerIP }} || {{ peer.PeerASN }}
               </span>
             </div>
@@ -45,22 +45,28 @@
     </div>
 
 
-  <!--Router and Peers Cards-->
-  <div ng-repeat="routerCard in cards[0]">
-    <div bmp-card
-         template="globalViewRouter"
-         data="routerCard"
-         removeCard="removeRouterCard()">
-    </div>
+  <!--&lt;!&ndash;Router and Peers Cards&ndash;&gt;-->
+  <!--<div ng-repeat="routerCard in cards[0]">-->
+    <!--<div bmp-card-->
+         <!--template="globalViewRouter"-->
+         <!--data="routerCard"-->
+         <!--removeCard="removeRouterCard()">-->
+    <!--</div>-->
+  <!--</div>-->
+  <!--<div ng-repeat="peerCard in [].concat(cards[1]).reverse()">-->
+    <!--<div bmp-card-->
+         <!--template="globalViewPeer"-->
+         <!--data="peerCard"-->
+         <!--removeCard="removePeerCard()">-->
+    <!--</div>-->
+  <!--</div>-->
+  <!--&lt;!&ndash;end&ndash;&gt;-->
+
+  <div bmp-card-list
+       length="[4,1]"
+       priority="['globalViewPeer','globalViewRouter']"
+       api="cardApi">
   </div>
-  <div ng-repeat="peerCard in [].concat(cards[1]).reverse()">
-    <div bmp-card
-         template="globalViewPeer"
-         data="peerCard"
-         removeCard="removePeerCard()">
-    </div>
-  </div>
-  <!--end-->
 
   <hr>
 </div>
