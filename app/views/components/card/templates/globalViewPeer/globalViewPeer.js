@@ -4,10 +4,10 @@ angular.module('bmp.components.card')
 
 .controller('BmpCardGlobalPeerController', ["$scope", "apiFactory", function ($scope, apiFactory) {
 
-    console.log("JUST TO SEE");
+    console.log($scope.data);
 
     var createLocationTable = function(){
-      if ($scope.data.State !== undefined || $scope.data.City !== undefined || $scope.data.Country !== undefined) {
+      if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
         var type;
         if ($scope.cardType == "global.router") {
           type = "BMP Router";
@@ -24,15 +24,15 @@ angular.module('bmp.components.card')
         ' </tr>' +
         ' <tr>' +
         '   <td>Location</td>' +
-        '   <td>' + $scope.data.City + '</td>' +
+        '   <td>' + $scope.data.city + '</td>' +
         ' </tr>' +
         ' <tr>' +
         '   <td>State</td>' +
-        '   <td>' + $scope.data.State + '</td>' +
+        '   <td>' + $scope.data.stateprov + '</td>' +
         ' </tr>' +
         ' <tr>' +
         '   <td>Country</td>' +
-        '   <td>' + $scope.data.Country + '</td>' +
+        '   <td>' + $scope.data.country + '</td>' +
         ' </tr>' +
         '</table>'
         );

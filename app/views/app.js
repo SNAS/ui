@@ -49,6 +49,15 @@ angular
           requireLogin: false
         }
       })
+
+      .state('app.cardChange', {
+        url: '/cardC',
+        templateUrl: 'views/cardChanges/cardChanges.html',
+        controller: 'CardChangesController',
+        data: {
+          requireLogin: false
+        }
+      })
       //END CARD TEST
 
       .state('app', {

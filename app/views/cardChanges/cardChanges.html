@@ -1,0 +1,66 @@
+<div>
+  <h1>CARD GLOBAL VIEW TEST</h1>
+  <hr>
+  <!--<h3>Dont click on csr1.openbmp.org lots of AS's!!!!</h3>-->
+  <!--&lt;!&ndash;Angular Table added here&ndash;&gt;-->
+  <!--<div class="routerGrid" ui-grid-selection ui-grid="whoIsGridOptions"></div>-->
+
+  <!--&lt;!&ndash;Router and Peers Cards&ndash;&gt;-->
+  <!--<div ng-repeat="peer in cards">-->
+    <!--<div bmp-card-->
+         <!--template="peerViewPeer"-->
+         <!--data="peer"-->
+         <!--removeCard="removePeerCard()">-->
+    <!--</div>-->
+  <!--</div>-->
+  <!--&lt;!&ndash;end&ndash;&gt;-->
+
+    <span ng-init="expand=false;" class="glyphicon" ng-class="{'glyphicon-plus': expand, 'glyphicon-minus': !expand}"
+          ng-click="expand=!expand;">
+    </span>Routers
+    <div ng-hide="expand" style="padding-left: 20px;">
+      <!--show routers-->
+      <div ng-repeat="router in routerList track by $index">
+        <span ng-init="expanded=false;" class="glyphicon" ng-class="{'glyphicon-plus': !expanded, 'glyphicon-minus': expanded}"
+              ng-click="expanded=!expanded;">
+        </span>
+        <span
+          class="selectable"
+          ng-click="changeRouterCard(router)">
+          {{ router.RouterName }} || {{ router.RouterIP }} || {{ router.RouterAS }}
+        </span>
+        <!--show router peers-->
+        <div ng-show="expanded" style="padding-left: 20px;">
+          <span ng-init="getRouterPeers($index,router.RouterIP)">
+            <div ng-repeat="peer in routerPeers[$index]">
+              <span
+                class="selectable"
+                ng-click="changePeerCard(peer)">
+                {{ peer.PeerName }} || {{ peer.PeerIP }} || {{ peer.PeerASN }}
+              </span>
+            </div>
+          </span>
+        </div>
+      </div>
+    </div>
+
+
+  <!--Router and Peers Cards-->
+  <div ng-repeat="routerCard in cards[0]">
+    <div bmp-card
+         template="globalViewRouter"
+         data="routerCard"
+         removeCard="removeRouterCard()">
+    </div>
+  </div>
+  <div ng-repeat="peerCard in [].concat(cards[1]).reverse()">
+    <div bmp-card
+         template="globalViewPeer"
+         data="peerCard"
+         removeCard="removePeerCard()">
+    </div>
+  </div>
+  <!--end-->
+
+  <hr>
+</div>
