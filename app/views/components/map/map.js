@@ -164,10 +164,10 @@ angular.module('bmp.components.map', [])
                 $scope.peers.push(marker);
             }
             $scope.loading = false;
+            $scope.map.addLayer($scope.peerLayer);
 
             if(withRouter){
                 $scope.fitMap('both');
-                $scope.map.addLayer($scope.peerLayer);
             }
             else{
                 $scope.fitMap('peers');
@@ -365,6 +365,99 @@ angular.module('bmp.components.map', [])
         }
     };
     /************** END MAP **************/
+
+    /*********** START SEARCH ************/
+    $scope.peer;
+    $scope.$watch('peer', function (val){
+        console.log(val);
+    })
+
+    $scope.search;
+
+    var timer;
+    $scope.searchLoading = false;
+    $scope.suggest = true;
+
+    $scope.$watch('search', function (val) {
+        if(!$scope.suggest){
+            $scope.suggest = !$scope.suggest;
+            return;
+        }
+
+        if(val === undefined){
+            $scope.suggestions = [];
+            return;
+        }
+
+        if(timer){
+            $timeout.cancel(timer)
+        }
+        timer= $timeout(function(){
+            $scope.searchLoading = true;
+
+            if(val.indexOf('.') > -1){
+                console.log('ipv4');
+                getSuggestedPeers(val);
+            }
+            else if(val.indexOf(':') > -1){
+                console.log('ipv6');
+                //getSuggestedName(val);
+            }
+            else if(parseInt(val)){
+                console.log('number');
+            }
+            else if(typeof(val) === 'string' && val.length >= 3){
+                console.log('string');
+                //$scope.loading = false;
+            }
+        }, 500)  
+
+        $scope.searchLoading = false;          
+    });
+
+    $scope.suggestions = [];
+
+    function getSuggestedPeers(ip){
+        $scope.suggestions = [];
+        $scope.suggest = false;
+
+        apiFactory.getRoutersByIp(ip).
+        success(function (result){
+            console.log(result.v_peers.data);
+            if(result.v_peers.data.length === 0){
+                $scope.loading = false;
+                return;
+            }
+            angular.forEach(result.v_peers.data, function (value, key){
+                $scope.suggestions.push({type: 'ip', content: value.RouterIP});
+            });
+            $scope.loading = false;
+        }).
+        error(function (error){
+            console.log(error);
+        })
+    }
+
+    function getSuggestedName(name){
+        apiFactory.getWhoIsName(name, 3).
+        success(function (result){
+            console.log(result.w.data);
+
+            angular.forEach(result.w.data, function (value, key){
+                $scope.suggestions.push({type: 'name', content: value.org_name + ' - ' + key});
+            });
+            $scope.loading = false;
+        }).
+        error(function (error){
+            console.log(error);
+        })
+    }
+
+    $scope.getData = function(type, content){
+        if(type === 'ip')
+            $scope.getChosenPeers(content);
+    }
+    /************** END SEARCH **************/
 })
 .directive('map', function () {
     return  {

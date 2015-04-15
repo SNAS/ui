@@ -1,5 +1,4 @@
 <div class="relative">
-{{ping}}
   <div class="loading" ng-show="loading">
       <span class="text-light">loading...</span>
   </div>
@@ -9,7 +8,8 @@
       {{chosenRouter.options.RouterName}}
   </button>
 
-  <!-- <input type="text" ng-model="search" class="map-control search" placeholder="Search"/> -->
+  <input ng-show="type === 'peers'" type="text" ng-model="search" class="map-control search" placeholder="Search"/>
+  <span ng-show="searchLoading" class="map-control search-loading glyphicon glyphicon-refresh"></span>
 
   <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
 </div>
