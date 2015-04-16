@@ -79,20 +79,37 @@
     </table>
     <br>
 
-    <!--Peer info table-->
-    <table class="tableSummary">
-      <tr>
-        <th>AS Number</th>
-        <th>AS Name</th>
-        <th>Organization</th>
-      </tr>
-      <tr ng-repeat="peer in peerDownData track by $index">
-        <td>{{ peer.DownstreamAS }}</td>
-        <td>{{ peer.as_name }}</td>
-        <td>{{ peer.org_name }}</td>
-      </tr>
-    </table>
-    <!--End Expanded Peer Card-->
+
+
+    <tabset>
+      <tab heading="Downstream ASes of Peer">
+        <!--Peer info table-->
+        <table class="tableSummary">
+          <tr>
+            <th>AS Number</th>
+            <th>AS Name</th>
+            <th>Organization</th>
+          </tr>
+          <tr ng-repeat="peer in peerDownData track by $index">
+            <td>{{ peer.DownstreamAS }}</td>
+            <td>{{ peer.as_name }}</td>
+            <td>{{ peer.org_name }}</td>
+          </tr>
+        </table>
+        <!--End Expanded Peer Card-->
+      </tab>
+      <tab heading="Routing Table" select="getRibData()">
+        Search <input type="text" placeholder="enter search here ..." />
+        <!--Angular Table added here-->
+        <div class="gridStyle" ui-grid-selection ui-grid="ribGridOptions" ui-grid-auto-resize></div>
+
+
+        <!--like the more details section.-->
+        <div>
+
+        </div>
+      </tab>
+    </tabset>
 
     <!--ADD ANGULAR TABLE HERE-->
 

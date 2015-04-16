@@ -99,6 +99,10 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "downstream/peer/" + peer_hash_id);
     };
 
+    apiFactory.getPeerRib = function (peer_hash_id){
+      return $http.get(urlBase + "rib/peer/" + peer_hash_id);
+    };
+
     //topology
     apiFactory.getPeerNodes = function (peerHashId){
       return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);
