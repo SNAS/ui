@@ -9,17 +9,16 @@ angular.module('bmp.components.card',[])
       replace: 'true',
       scope: {
         data: '=',
-        removable: '=',
+        removable: '=?', //optional
         template: '=',
         removecard: '&'
       },
       link: function(scope, $rootScope) {
         scope.templateLoc = 'views/components/card/templates/'+scope.template+'/'+scope.template+'.html';
-        scope.cardExpand = false;//default false = closed
+        scope.cardExpand = false; //default false = closed
 
         scope.changeCardState = function() {
           scope.cardExpand = !scope.cardExpand;
-          //$rootScope.$broadcast('cardExpand');
         };
 
         scope.getCardState = function(){

@@ -40,7 +40,7 @@ angular.module('bmp.components.map', [])
 
     //Use a promise to grab a copy of the map when available
     leafletData.getMap().then(function(map) {
-        $scope.map = map;   
+        $scope.map = map;
         $scope.init();
     });
 
@@ -59,7 +59,7 @@ angular.module('bmp.components.map', [])
         else if($scope.type === 'routers'){
             $scope.getRouters();
             $scope.map.addLayer($scope.routerLayer);
-        }        
+        }
     }
 
     //Populate map with routers
@@ -86,10 +86,10 @@ angular.module('bmp.components.map', [])
                     RouterIP: data[i].RouterIP,
                     LastModified: data[i].LastModified,
                     isConnected: data[i].isConnected,
-                    Country: data[i].country,
-                    State: data[i].stateprov,
-                    City: data[i].city,
-                    
+                    country: data[i].country,
+                    stateprov: data[i].stateprov,
+                    city: data[i].city,
+
                     selected: false,
                     type: 'router',
                     icon:   L.mapbox.marker.icon({
@@ -110,7 +110,7 @@ angular.module('bmp.components.map', [])
             });
 
             $scope.loading = false;
-            $scope.fitMap('routers');            
+            $scope.fitMap('routers');
         }).
         error(function (error){
             console.log(error);
@@ -142,9 +142,9 @@ angular.module('bmp.components.map', [])
                     PeerASName: data[i].as_name,
                     LastDownTimestamp: data[i].LastDownTimestamp,
                     LastModified: data[i].LastModified,
-                    Country: data[i].country,
-                    State: data[i].stateprov,
-                    City: data[i].city,
+                    country: data[i].country,
+                    stateprov: data[i].stateprov,
+                    city: data[i].city,
                     RouterName: data[i].RouterName,
                     RouterIP: data[i].RouterIP,
                     RouterAS: data[i].RouterAS,
@@ -163,7 +163,7 @@ angular.module('bmp.components.map', [])
                 var marker = createMarker(latlng, options, 'peer');
                 $scope.peerLayer.addLayer(marker);
                 $scope.peers.push(marker);
-            }                
+            }
             $scope.loading = false;
             $scope.map.addLayer($scope.peerLayer);
 
@@ -261,11 +261,11 @@ angular.module('bmp.components.map', [])
         .setLatLng(latlng)
         .setContent(linkFunction($scope)[0]);
         marker.bindPopup(popup);
-        
+
         marker.on('mouseover', function (e) {
             target = e.target;
             $timeout.cancel(closeTimer);
-            if(openTimer){                   
+            if(openTimer){
                 $timeout.cancel(openTimer)
             }
             openTimer= $timeout(function(){
@@ -303,7 +303,7 @@ angular.module('bmp.components.map', [])
            event.target.classList[0] === "leaflet-popup-content-wrapper"){
             $scope.activePopup = true;
             $timeout.cancel(closeTimer)
-        }           
+        }
     });
 
     //Called when a marker is selected
@@ -326,7 +326,7 @@ angular.module('bmp.components.map', [])
                     $scope.chosenRouter = $scope.routers[i];
                     $scope.chosenIndex = i;
 
-                    $scope.routers[$scope.chosenIndex].options.selected = true;                
+                    $scope.routers[$scope.chosenIndex].options.selected = true;
                     $scope.routers[$scope.chosenIndex].setIcon(L.mapbox.marker.icon({
                         'marker-color': '#3491df',
                         'marker-size': 'large'
@@ -338,7 +338,7 @@ angular.module('bmp.components.map', [])
         else {
             $scope.chosenPeer = marker;
         }
-        
+
     }
 
     $scope.clearPeers = function(button) {

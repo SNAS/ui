@@ -46,6 +46,24 @@ angular.module('bmp.components.cardList',[])
           scope.cards = buildarr;
         };
 
+        scope.removeCard = function (card){
+          console.dir(card);
+
+          var pIndex = scope.priority.indexOf(card.template);
+
+          var index = arr[pIndex].indexOf(card);
+          arr[pIndex].splice(index, 1);
+
+          //if empty then empty childs
+          if(arr[pIndex]==[]){
+            for(var i = pIndex; i > 0; i--){
+              arr[i] = [];
+            }
+          }
+
+          buildList();
+        };
+
         scope.api = {
 
           removeCard: function (card){
