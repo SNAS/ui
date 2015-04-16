@@ -34,9 +34,12 @@ angular.module('bmpUiApp')
       ],
 
       rowTemplate :
-        '<div ng-click="grid.appScope.changeSelected();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
+        '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
       onRegisterApi : function (gridApi) {
         $scope.gridApi = gridApi;
+        gridApi.selection.on.rowSelectionChanged($scope,function(row) {
+          changeSelected(row.entity);
+        });
       }
     };
 
@@ -75,7 +78,6 @@ angular.module('bmpUiApp')
 
               $timeout(function () {
                 $scope.gridApi.selection.selectRow($scope.peerTableOptions.data[0]);
-                $scope.changeSelected();
               });
 
             }
@@ -87,12 +89,9 @@ angular.module('bmpUiApp')
       );
     });
 
-    //gridApi.selection.on.rowSelectionChanged($scope,function(){
-    //});
-
     // Click on row in Peers table
-    $scope.changeSelected = function() {
-      var row = $scope.gridApi.selection.getSelectedGridRows()[0].entity;
+    function changeSelected(row) {
+    //  var row = $scope.gridApi.selection.getSelectedGridRows()[0].entity;
       var detailsPanel = '<thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>';
       var amount_of_entries = 1000;
       var noShow = ["$$hashKey","Status","IPv"];
@@ -115,7 +114,7 @@ angular.module('bmpUiApp')
       //   }
 
       angular.forEach(row, function(value, key) {
-        if(noShow.indexOf(key)== -1) { //doesnt show certain fields
+        if(noShow.indexOf(key)== -1) { //doesn't show certain fields
           detailsPanel += (
           '<tr>' +
           '<td>' +
@@ -236,16 +235,4 @@ angular.module('bmpUiApp')
       );
     }
 
-
-    function selectText(containerid) {
-      if (document.selection) {
-        var range = document.body.createTextRange();
-        range.moveToElementText(document.getElementById(containerid));
-        range.select();
-      } else if (window.getSelection) {
-        var range = document.createRange();
-        range.selectNode(document.getElementById(containerid));
-        window.getSelection().addRange(range);
-      }
-    }
   }]);

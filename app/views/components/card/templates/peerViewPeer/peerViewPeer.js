@@ -5,6 +5,8 @@ angular.module('bmp.components.card')
 .controller('BmpCardPeerPeerController', ["$scope", "apiFactory", function ($scope, apiFactory) {
     window.SCOPE = $scope;
 
+
+
     var createLocationTable = function(){
       if ($scope.data.State !== undefined || $scope.data.City !== undefined || $scope.data.Country !== undefined) {
         var type;

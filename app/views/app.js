@@ -22,10 +22,12 @@ angular
     'ui.grid.selection',
     'ui.grid.autoResize',
     //'bmp.components.routerCard',
+    'bmp.components.cardList',
     'bmp.components.card',
     'bgDirectives',
     'bmp.components.topology',
-    'leaflet-directive'
+    'leaflet-directive',
+    'bmp.components.map'
   ])
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise("/login");
@@ -44,6 +46,15 @@ angular
         url: '/card',
         templateUrl: 'views/cardTest/cardTest.html',
         controller: 'CardController',
+        data: {
+          requireLogin: false
+        }
+      })
+
+      .state('app.cardChange', {
+        url: '/cardC',
+        templateUrl: 'views/cardChanges/cardChanges.html',
+        controller: 'CardChangesController',
         data: {
           requireLogin: false
         }

@@ -1,0 +1,10 @@
+ div{
+
+  .selectable{
+    &:hover {
+      color:blue;
+    }
+    cursor: pointer;
+  }
+
+}

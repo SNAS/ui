@@ -1,0 +1,15 @@
+<div class="relative">
+  <div class="loading" ng-show="loading">
+      <span class="text-light">loading...</span>
+  </div>
+
+  <button ng-show="selected" class="btn btn-primary map-control reset" ng-click="clearPeers(true)">
+      <span class="glyphicon glyphicon-remove"></span>
+      {{chosenRouter.options.RouterName}}
+  </button>
+
+  <input ng-show="type === 'peers'" type="text" ng-model="search" class="map-control search" placeholder="Search"/>
+  <span ng-show="searchLoading" class="map-control search-loading glyphicon glyphicon-refresh"></span>
+
+  <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
+</div>

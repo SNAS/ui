@@ -79,8 +79,28 @@
     </table>
     <br>
     <!--Peer info table-->
+<<<<<<< HEAD
     <h3> Peer view<h3/>
     <div ui-grid="peerViewPeerOptions" ui-grid-auto-resize ng-style"{'height':height}"></div>
     <!--div ui-grid-selection ui-grid="peerViewPeerOptions" class = "ui-viewport-grid" ui-grid-pagination ui-grid-auto-resize ng-style="{'height': height}"></div-->
     <!--End Expanded Peer Card  ui-grid-auto-resize ng-style="getTableStyle()"-->
+=======
+    <table class="tableSummary">
+      <tr>
+        <th>AS Number</th>
+        <th>AS Name</th>
+        <th>Organization</th>
+      </tr>
+      <tr ng-repeat="peer in peerDownData track by $index">
+        <td>{{ peer.DownstreamAS }}</td>
+        <td>{{ peer.as_name }}</td>
+        <td>{{ peer.org_name }}</td>
+      </tr>
+    </table>
+    <!--End Expanded Peer Card-->
+
+    <!--ADD ANGULAR TABLE HERE-->
+
+  </div>
+>>>>>>> 1166584e51185570444a6f1479c9238877e8721a
 </div>
