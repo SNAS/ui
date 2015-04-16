@@ -1,4 +1,5 @@
-<div ng-controller="TopologyController">
-  <!--<topology data="topologyData" options="topologyOptions" selected-edges="selectedEdges" selected-node="selectedNode"></topology>-->
-  <topology data="topologyData" options="topologyOptions" protocol="protocol" peer-hash-id="peerHashId"></topology>
+<div ng-controller="linkStateController">
+  <!--<topology data="topologyData" options="topologyOptions" protocol="protocol" peer-hash-id="peerHashId" get-spf-table="getSPFtable" path="path"></topology>-->
+  <topology></topology>
+  <div id="SPFtable" class="grid" ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
 </div>
