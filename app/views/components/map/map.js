@@ -305,7 +305,7 @@ angular.module('bmp.components.map', [])
 
     //Called when a marker is selected
     $scope.selectMarker = function(marker){
-        if(marker.options.type === 'router'){
+        if(marker.options.type === 'Router'){
             if($scope.chosenRouter != undefined){
                 if(marker.options.RouterIP === $scope.routers[$scope.chosenIndex].options.RouterIP){
                     //Same router - do nothing
