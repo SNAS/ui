@@ -26,7 +26,7 @@ angular
     //'ui.bootstrap.tabs',
     'ui.bootstrap',
     'bgDirectives',
-    'bmp.components.topology',
+    //'bmp.components.topology',
     'leaflet-directive',
     'bmp.components.map'
   ])

@@ -79,24 +79,27 @@
     </table>
     <br>
 
-
-
     <tabset>
       <tab heading="Downstream ASes of Peer">
-        <!--Peer info table-->
-        <table class="tableSummary">
-          <tr>
-            <th>AS Number</th>
-            <th>AS Name</th>
-            <th>Organization</th>
-          </tr>
-          <tr ng-repeat="peer in peerDownData track by $index">
-            <td>{{ peer.DownstreamAS }}</td>
-            <td>{{ peer.as_name }}</td>
-            <td>{{ peer.org_name }}</td>
-          </tr>
-        </table>
-        <!--End Expanded Peer Card-->
+        <div ui-grid="peerViewPeerOptions" ui-grid-auto-resize ng-style="{'height':height}"></div>
+        <!--div ui-grid-selection ui-grid="peerViewPeerOptions" class = "ui-viewport-grid" ui-grid-pagination ui-grid-auto-resize ng-style="{'height': height}"></div-->
+        <!--End Expanded Peer Card  ui-grid-auto-resize ng-style="getTableStyle()"-->
+
+        <!--&lt;!&ndash;Peer info table&ndash;&gt;-->
+        <!--<table class="tableSummary">-->
+          <!--<tr>-->
+            <!--<th>AS Number</th>-->
+            <!--<th>AS Name</th>-->
+            <!--<th>Organization</th>-->
+          <!--</tr>-->
+          <!--<tr ng-repeat="peer in peerDownData track by $index">-->
+            <!--<td>{{ peer.DownstreamAS }}</td>-->
+            <!--<td>{{ peer.as_name }}</td>-->
+            <!--<td>{{ peer.org_name }}</td>-->
+          <!--</tr>-->
+        <!--</table>-->
+        <!--&lt;!&ndash;End Expanded Peer Card&ndash;&gt;-->
+        
       </tab>
       <tab heading="Routing Table" select="getRibData()">
         Search <input type="text" placeholder="enter search here ..." />
@@ -110,8 +113,5 @@
         </div>
       </tab>
     </tabset>
-
-    <!--ADD ANGULAR TABLE HERE-->
-
   </div>
 </div>

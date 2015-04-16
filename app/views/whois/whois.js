@@ -73,6 +73,14 @@ angular.module('bmpUiApp')
     $scope.whoIsGridOptions.onRegisterApi = function (gridApi) {
       $scope.whoIsGridApi = gridApi;
     };
+    // $scope.peerViewPeerOptions.onRegisterApi = function (height){
+    //   $scope.whoIsPeerApi = height;
+    // }
+
+    // debugger;
+
+    console.dir($scope.whoIsGridOptions);
+    console.dir($scope.whoIsGridApi);
 
     //Loop through data selecting and altering relevant data.
     var searchValue = function (value, init) {
@@ -111,6 +119,7 @@ angular.module('bmpUiApp')
     var initSelect = function () {
       $timeout(function () {
         if ($scope.whoIsGridApi.selection.selectRow) {
+          console.dir($scope.whoIsGridApi);
           $scope.whoIsGridApi.selection.selectRow($scope.whoIsGridOptions.data[0]);
         }
       });

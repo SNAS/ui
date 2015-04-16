@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', [])
-.controller('MapController', function ($scope, $state, $q, $http, $timeout, apiFactory, leafletData, $compile) {
+.controller('MapController', function ($scope, $state, $q, $http, $timeout, apiFactory, leafletData, $compile, $filter) {
     window.SCOPE = $scope;
 
     /************** START MAP **************/
@@ -139,6 +139,7 @@ angular.module('bmp.components.map', [])
                     PeerName: data[i].PeerName,
                     PeerIP: data[i].PeerIP,
                     PeerASN: data[i].PeerASN,
+                    PeerASName: data[i].as_name,
                     LastDownTimestamp: data[i].LastDownTimestamp,
                     LastModified: data[i].LastModified,
                     country: data[i].country,
@@ -186,41 +187,79 @@ angular.module('bmp.components.map', [])
 
         if(type === 'router')
         {
-            var content = '<p class="page-header"><strong>' +
-            options.RouterName +
-            '</strong></p><p><small><strong>Uptime: </strong><span class="text-success">' +
-            options.LastModified +
-            '</span></small></p><p><small><strong>IP Address: </strong>' +
-            options.RouterIP +
-            '</small></p><p><small><strong>Peers:</strong> 20</small></p><small><a ng-click="viewDetails()">View Detail</a></small>';
-
-            marker.on('click', function (e){
-                $scope.selectMarker(e.target);
-            })
+            var content =   '<span>' +
+                                '<p class="page-header"' + 
+                                    '<strong>' + 
+                                        options.RouterName + 
+                                    '</strong>' +
+                                '</p>' +
+                                '<p>' +
+                                    '<small>' +
+                                        '<strong>IP Address: </strong> ' + 
+                                        options.RouterIP + 
+                                    '</small>' +
+                                '</p>' +
+                                '<p>' +
+                                    '<small>' +
+                                        '<strong>Peers: </strong> ' + 
+                                            '20' +
+                                            //options.PeersCount + 
+                                    '</small>' +
+                                '</p>' +
+                                '<p>' +
+                                    '<small>' +
+                                        '<strong>Uptime: </strong>' +
+                                        '<span class="text-success">' + 
+                                            options.LastModified + 
+                                        '</span>' +
+                                    '</small>' +
+                                '</p>' +
+                                '<p>' +
+                                    '<small>' +
+                                        '<a ng-click="updateSelected(' + options.RouterIP + ')">View Detail</a>' +
+                                    '</small>' +
+                                '</p>' +
+                            '</span>';   
+        } 
+        else 
+        {   
+            var content =   '<span>' +
+                                '<p class="page-header">' + 
+                                    '<strong>' + 
+                                        options.PeerName + 
+                                    '</strong>' +
+                                '</p>' +
+                                '<p>' +
+                                    '<small>' +
+                                        '<strong>AS Number:</strong> ' + 
+                                        options.PeerASN + 
+                                    '</small>' +
+                                '</p>' +
+                                '<p>' +
+                                    '<small>' +
+                                        '<strong>Uptime: </strong>' +
+                                        '<span class="text-success">' + 
+                                            options.LastModified + 
+                                        '</span>' +
+                                    '</small>' +
+                                '</p>' +
+                                '<p>' +
+                                    '<small>' +
+                                        '<a ng-click="updateSelected(options)">View Detail</a>' +
+                                    '</small>' +
+                                '</p>' +
+                            '</span>';      
         }
-        else
-        {
-            var content = '<p class="page-header"><strong>' +
-            options.PeerName +
-            '</strong><br><small><strong>Uptime: </strong><span class="text-success">' +
-            options.LastModified +
-            '</span></small></p><p><small><a href="#">' +
-            options.PeerIP +
-            '</a></small></p><p><small><strong>AS Number:</strong> ' +
-            options.PeerASN +
-            '</small></p>';
 
-            marker.on('click', function(e){
-                $scope.selectMarker(e.target);
-            });
-        }
+        marker.on('click', function(e){
+            $scope.selectMarker(e.target);
+        });
 
-        //var linkFunction = $compile(angular.element(content));
-        //console.log(linkFunction($scope));
+        var linkFunction = $compile(angular.element(content));
 
-        var popup = L.popup({type: 'router', minWidth: 200, className: 'routerPopup'})
+        var popup = L.popup({type: 'router', minWidth: 200, className: 'router-popup'})
         .setLatLng(latlng)
-        .setContent(content);
+        .setContent(linkFunction($scope)[0]);
         marker.bindPopup(popup);
 
         marker.on('mouseover', function (e) {
@@ -247,8 +286,8 @@ angular.module('bmp.components.map', [])
         return marker;
     }
 
-    $scope.viewDetails = function(){
-        console.log('ooft');
+    $scope.updateSelected = function(test){
+        console.log(test);
     }
 
     $("map").mouseover(function(event) {
@@ -366,13 +405,15 @@ angular.module('bmp.components.map', [])
     };
     /************** END MAP **************/
 
+
     /*********** START SEARCH ************/
     $scope.peer;
-    $scope.$watch('peer', function (val){
-        console.log(val);
-    })
+    $scope.extra = undefined;
 
     $scope.search;
+    $scope.filters = [];
+    $scope.filteredPeers = [];
+    $scope.suggestions = [];
 
     var timer;
     $scope.searchLoading = false;
@@ -384,78 +425,121 @@ angular.module('bmp.components.map', [])
             return;
         }
 
-        if(val === undefined){
+        if(val === undefined || val.length == 0){
             $scope.suggestions = [];
+            $scope.extra = undefined;
+            $timeout.cancel(timer);
             return;
         }
 
         if(timer){
-            $timeout.cancel(timer)
+            $timeout.cancel(timer);
         }
         timer= $timeout(function(){
             $scope.searchLoading = true;
+            var type = "";
 
             if(val.indexOf('.') > -1){
-                console.log('ipv4');
-                getSuggestedPeers(val);
+                type = 'PeerIP';
             }
             else if(val.indexOf(':') > -1){
-                console.log('ipv6');
-                //getSuggestedName(val);
+                type = 'PeerIP';
             }
             else if(parseInt(val)){
-                console.log('number');
+                type = 'PeerASN';
             }
             else if(typeof(val) === 'string' && val.length >= 3){
-                console.log('string');
-                //$scope.loading = false;
+                type = 'PeerASName';
             }
-        }, 500)  
-
-        $scope.searchLoading = false;          
-    });
-
-    $scope.suggestions = [];
-
-    function getSuggestedPeers(ip){
-        $scope.suggestions = [];
-        $scope.suggest = false;
-
-        apiFactory.getRoutersByIp(ip).
-        success(function (result){
-            console.log(result.v_peers.data);
-            if(result.v_peers.data.length === 0){
-                $scope.loading = false;
+            else{
+                $scope.suggestions = [];
+                $scope.extra = undefined;
+                $scope.searchLoading = false;
                 return;
             }
-            angular.forEach(result.v_peers.data, function (value, key){
-                $scope.suggestions.push({type: 'ip', content: value.RouterIP});
-            });
-            $scope.loading = false;
-        }).
-        error(function (error){
-            console.log(error);
-        })
+
+            getSuggestedPeers(type, val);
+        }, 500);   
+    });
+
+    function getSuggestedPeers(type, val){
+        $scope.suggestions = [];
+        $scope.extra = undefined;
+        var count = 0;
+        val = val.toUpperCase();
+        var array;
+
+        if($scope.filtered){
+            array = $scope.filteredPeers;
+        }
+        else{
+            array = $scope.peers;
+        }
+
+        for(var i = 0; i < array.length; i++){
+            if(array[i].options[type] === null)
+                continue;
+            var curr = array[i].options[type].toString();
+            if(curr.toUpperCase().lastIndexOf(val, 0) === 0){
+                count ++;
+
+                var sugLength = $scope.suggestions.length;
+                if(sugLength < 5){
+                    var duplicate = false;
+                    for(var j = 0; j < sugLength; j++){
+                        if($scope.suggestions[j].content.toUpperCase() === curr.toUpperCase()){
+                            //We already have this result in the autocomplete, add to the list
+                            $scope.suggestions[j].object.push(array[i]);
+                            var duplicate = true;
+                            break;
+                        }
+                    }
+                    if(!duplicate){
+                        $scope.suggestions.push({'type': type, 'content': curr, 'object': [array[i]]});
+                    }
+                }
+            }
+        }
+        if(count > 5)
+            $scope.extra = count-5 + ' more result(s); refine search';
+        else if(count === 0)
+            $scope.extra = 'no results';
+
+        $scope.searchLoading = false;
     }
 
-    function getSuggestedName(name){
-        apiFactory.getWhoIsName(name, 3).
-        success(function (result){
-            console.log(result.w.data);
+    $scope.getData = function(type, object, content){
+        $scope.loading = true;
+        $scope.filteredPeers = [];
 
-            angular.forEach(result.w.data, function (value, key){
-                $scope.suggestions.push({type: 'name', content: value.org_name + ' - ' + key});
-            });
-            $scope.loading = false;
-        }).
-        error(function (error){
-            console.log(error);
-        })
+        for(var i = 0; i < object.length; i++){
+             $scope.filteredPeers.push(object[i]);
+        }
+
+        $scope.loading = false;
+
+        $scope.searchTerm = content;
+        $scope.search = "";
+
+        $scope.peerLayer.clearLayers();
+        $scope.peerLayer.addLayers($scope.filteredPeers);
+        $scope.fitMap('peers');
+
+        $scope.filters.push(content);
+        $scope.filtered = true;
+
+        $scope.suggestions = [];
+        $scope.extra = undefined;
     }
 
-    $scope.getData = function(type, content){
-        if(type === 'ip')
-            $scope.getChosenPeers(content);
+    $scope.clearSearch = function(){
+        $scope.searchTerm = undefined;
+        $scope.filters = [];
+        $scope.filtered = false;
+        $scope.peerLayer.clearLayers();
+        $scope.peerLayer.addLayers($scope.peers);
+        $scope.search = "";
+        $scope.fitMap('peers');
     }
     /************** END SEARCH **************/
 })
