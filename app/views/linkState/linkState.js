@@ -21,8 +21,8 @@ angular.module('bmpUiApp')
       hover: true,
 
       hierarchicalLayout: {
-        direction: "UD"
-        //   layout: "direction"
+        direction: "UD",
+        layout: "direction"
       },
 
       //physics: {
@@ -200,7 +200,7 @@ angular.module('bmpUiApp')
 
   .directive('topology', ['apiFactory', '$timeout', function (apiFactory, $timeout) {
     return {
-      templateUrl: "components/topology/topology.html",
+      templateUrl: "views/linkState/topology.html",
       restrict: 'AE',
       replace: 'true',
       //scope: {
