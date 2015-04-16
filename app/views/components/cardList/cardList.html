@@ -1,0 +1,7 @@
+<div ng-repeat="card in [].concat(cards).reverse()">
+  <div bmp-card
+       template="card.template"
+       data="card"
+       removeCard="removeCard(card)">
+  </div>
+</div>

@@ -1,5 +1,4 @@
 <div>
-  <!------------------WHO IS---------------->
   <h1>CARD TEST</h1>
   <hr>
   <h3>Dont click on csr1.openbmp.org lots of AS's!!!!</h3>
@@ -8,18 +7,11 @@
 
   <!--Router and Peers Cards-->
   <div ng-repeat="peer in cards">
-    {{ peer }}
-    <div bmp-router-card
-         data="peer"
-         removeCard="removePeerCard()"
-         card-type="peer.peer">
-    </div>
     <div bmp-card
-         template="globalViewPeer"
-         data="peer">
-         <!--removeCard="removePeerCard()"-->
+         template="peerViewPeer"
+         data="peer"
+         removeCard="removePeerCard()">
     </div>
-
   </div>
   <!--end-->
 

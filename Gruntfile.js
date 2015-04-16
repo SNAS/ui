@@ -74,7 +74,7 @@ module.exports = function (grunt) {
         tasks: ['karma']
       },
       compass: {
-        files: ['<%= yeoman.app %>/views/{,*/}*.{scss,sass}'],
+        files: ['<%= yeoman.app %>/views/**/*.{scss,sass}'],
         tasks: ['compass:server', 'autoprefixer']
       },
       gruntfile: {
@@ -178,7 +178,7 @@ module.exports = function (grunt) {
         ignorePath:  /\.\.\//
       },
       sass: {
-        src: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
+        src: ['<%= yeoman.app %>/views/{,*/}*.{scss,sass}'],
         ignorePath: /(\.\.\/){1,2}bower_components\//
       }
     },
