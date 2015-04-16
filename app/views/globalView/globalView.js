@@ -15,26 +15,6 @@ angular.module('bmpUiApp')
 
     $scope.location = "globalView";
 
-    //LOGIC FOR WATCHING THE MAP SELECTED MARKER
-    $scope.$watch('router', function (current){
-      if(current !== undefined){
-        var cardData = current.options;
-        console.log(cardData);
-        cardData.template = "globalViewRouter";
-        $scope.cardApi.changeCard(cardData);
-      }
-    });
-
-    $scope.$watch('peer', function (current){
-      if(current !== undefined){
-        var cardData = current.options;
-        console.log(cardData);
-        cardData.template = "globalViewPeer";
-        $scope.cardApi.changeCard(cardData);
-      }
-    });
-
-
     $scope.routerList = [];
     $scope.routerPeers = [];
 

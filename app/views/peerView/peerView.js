@@ -14,17 +14,6 @@ angular.module('bmpUiApp')
         $scope.location = "peerView";
         $scope.parameterIP = $stateParams.RouterIP;
 
-        //LOGIC FOR WATCHING THE MAP SELECTED MARKER
-        $scope.$watch('peer', function (current){
-          if(current !== undefined){
-            var cardData = current.options;
-            console.log(cardData);
-            cardData.template = "peerViewPeer";
-            $scope.cardApi.changeCard(cardData);
-          }
-        });
-
-
         // $scope.search;
         // var dot = '.';
         // var colon = ':';
