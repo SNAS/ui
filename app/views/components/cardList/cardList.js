@@ -71,9 +71,11 @@ angular.module('bmp.components.cardList',[])
           },
 
           changeCard: function(card) {
-            card.template = pageLocation + card.type;
+            card.template = scope.pageLocation + card.type;
 
             var pIndex = scope.priority.indexOf(card.template);
+
+            //debugger;
 
             //check card doesnt exist
             if (arr[pIndex].indexOf(card) == -1) {

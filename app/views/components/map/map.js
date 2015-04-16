@@ -88,7 +88,7 @@ angular.module('bmp.components.map', [])
                     city: data[i].city,
 
                     selected: false,
-                    type: 'router',
+                    type: 'Router',
                     icon:   L.mapbox.marker.icon({
                                 'marker-color': '#758CAB',
                                 'marker-size': 'medium'
@@ -150,7 +150,7 @@ angular.module('bmp.components.map', [])
                     isPeerIPv4: data[i].isPeerIPv4,
                     peer_hash_id: data[i].peer_hash_id,
 
-                    type: 'peer',
+                    type: 'Peer',
                     icon:   L.mapbox.marker.icon({
                                 'marker-color': '#DFC089',
                                 'marker-size': 'medium'
@@ -184,29 +184,29 @@ angular.module('bmp.components.map', [])
         if(type === 'router')
         {
             var content =   '<span>' +
-                                '<p class="page-header">' + 
-                                    '<strong>' + 
-                                        options.RouterName + 
+                                '<p class="page-header">' +
+                                    '<strong>' +
+                                        options.RouterName +
                                     '</strong>' +
                                 '</p>' +
                                 '<p>' +
                                     '<small>' +
-                                        '<strong>IP Address: </strong> ' + 
-                                        options.RouterIP + 
+                                        '<strong>IP Address: </strong> ' +
+                                        options.RouterIP +
                                     '</small>' +
                                 '</p>' +
                                 '<p>' +
                                     '<small>' +
-                                        '<strong>Peers: </strong> ' + 
+                                        '<strong>Peers: </strong> ' +
                                             '20' +
-                                            //options.PeersCount + 
+                                            //options.PeersCount +
                                     '</small>' +
                                 '</p>' +
                                 '<p>' +
                                     '<small>' +
                                         '<strong>Uptime: </strong>' +
-                                        '<span class="text-success">' + 
-                                            options.LastModified + 
+                                        '<span class="text-success">' +
+                                            options.LastModified +
                                         '</span>' +
                                     '</small>' +
                                 '</p>' +
@@ -215,27 +215,27 @@ angular.module('bmp.components.map', [])
                                         '<a ng-click="updateSelected(' + options.RouterIP + ')">View Detail</a>' +
                                     '</small>' +
                                 '</p>' +
-                            '</span>';   
-        } 
-        else 
-        {   
+                            '</span>';
+        }
+        else
+        {
             var content =   '<span>' +
-                                '<p class="page-header">' + 
-                                    '<strong>' + 
-                                        options.PeerName + 
+                                '<p class="page-header">' +
+                                    '<strong>' +
+                                        options.PeerName +
                                     '</strong>' +
                                 '</p>' +
                                 '<p>' +
                                     '<small>' +
-                                        '<strong>AS Number:</strong> ' + 
-                                        options.PeerASN + 
+                                        '<strong>AS Number:</strong> ' +
+                                        options.PeerASN +
                                     '</small>' +
                                 '</p>' +
                                 '<p>' +
                                     '<small>' +
                                         '<strong>Uptime: </strong>' +
-                                        '<span class="text-success">' + 
-                                            options.LastModified + 
+                                        '<span class="text-success">' +
+                                            options.LastModified +
                                         '</span>' +
                                     '</small>' +
                                 '</p>' +
@@ -244,7 +244,7 @@ angular.module('bmp.components.map', [])
                                         '<a ng-click="updateSelected()">View Detail</a>' +
                                     '</small>' +
                                 '</p>' +
-                            '</span>';      
+                            '</span>';
         }
 
         marker.on('click', function(e){
@@ -456,7 +456,7 @@ angular.module('bmp.components.map', [])
             }
 
             getSuggestedPeers(type, val);
-        }, 500);   
+        }, 500);
     });
 
     function getSuggestedPeers(type, val){
