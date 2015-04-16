@@ -78,20 +78,9 @@
       </tr>
     </table>
     <br>
-
     <!--Peer info table-->
-    <table class="tableSummary">
-      <tr>
-        <th>AS Number</th>
-        <th>AS Name</th>
-        <th>Organization</th>
-      </tr>
-      <tr ng-repeat="peer in peerDownData track by $index">
-        <td>{{ peer.DownstreamAS }}</td>
-        <td>{{ peer.as_name }}</td>
-        <td>{{ peer.org_name }}</td>
-      </tr>
-    </table>
-    <!--End Expanded Peer Card-->
-  </div>
+    <h3> Peer view<h3/>
+    <div ui-grid="peerViewPeerOptions" ui-grid-auto-resize ng-style"{'height':height}"></div>
+    <!--div ui-grid-selection ui-grid="peerViewPeerOptions" class = "ui-viewport-grid" ui-grid-pagination ui-grid-auto-resize ng-style="{'height': height}"></div-->
+    <!--End Expanded Peer Card  ui-grid-auto-resize ng-style="getTableStyle()"-->
 </div>
