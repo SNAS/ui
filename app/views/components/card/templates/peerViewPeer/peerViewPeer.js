@@ -128,6 +128,7 @@ angular.module('bmp.components.card')
       apiFactory.getPeerRib($scope.data.peer_hash_id).
         success(function (result) {
           $scope.ribGridOptions.data = result.v_routes.data;
+          $scope.ribGridApi.core.handleWindowResize();
         }).
         error(function (error) {
           console.log(error.message);
@@ -184,13 +185,13 @@ angular.module('bmp.components.card')
     $scope.peerDownData = [];
     apiFactory.getPeerDownStream($scope.data.peer_hash_id).
       success(function (result){
-        //var peerDown 
+        //var peerDown
         $scope.peerViewPeerOptions.data = result.peerDownstreamASN.data;
-        
+
    /*   var temii = $scope.peerViewPeerOptions.data.length
       //console.log(temii)
      var y;
-      if (temii > 10){ 
+      if (temii > 10){
           y = 10;
         }
         else
@@ -202,7 +203,7 @@ angular.module('bmp.components.card')
    /*  $scope.getTableStyle = function(temii){
         //console.log(y)
        var y = $scope.peerViewPeerOptions.data.length;
-        if (temii > 10){ 
+        if (temii > 10){
           y = 10;
         }
         else
@@ -214,7 +215,7 @@ angular.module('bmp.components.card')
        // var length = $('img:visible').length; // unique to cellTemplates
         //var marginHeight = 90; //can be changed to fit later
        // return {height: (y * 35) +"px"}
-        
+
        // return {
          // height: (y * 35)+"px"
          // height:(length * $scope.peerViewPeerOptions.rowHeight + $scope.peerViewPeerOptions.headerRowHeight + marginHeight) + "px"
