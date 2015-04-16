@@ -25,7 +25,7 @@ angular
     'bmp.components.cardList',
     'bmp.components.card',
     'bgDirectives',
-    'bmp.components.topology',
+    //'bmp.components.topology',
     'leaflet-directive',
     'bmp.components.map'
   ])
