@@ -11,6 +11,7 @@ angular.module('bmpUiApp')
     .controller('PeerViewController', function ($scope, $stateParams, $q, $http, $timeout, apiFactory, leafletData) {
         window.SCOPE = $scope;
 
+        $scope.location = "peerView";
         $scope.parameterIP = $stateParams.RouterIP;
 
         //LOGIC FOR WATCHING THE MAP SELECTED MARKER

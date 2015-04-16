@@ -13,6 +13,8 @@ angular.module('bmpUiApp')
     $scope.router;
     $scope.peer;
 
+    $scope.location = "globalView";
+
     //LOGIC FOR WATCHING THE MAP SELECTED MARKER
     $scope.$watch('router', function (current){
       if(current !== undefined){

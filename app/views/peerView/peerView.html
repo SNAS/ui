@@ -2,14 +2,15 @@
 
     <h1 class="page-header">Peer View</h1>
 
-    <map type="peers" ip="parameterIP" peer="peer"/>
+    <map ip="parameterIP" location="location"/>
 
   <!--This is card Controller-->
   <!--Cards are drawn in here-->
   <div bmp-card-list
        length="[10]"
        priority="['peerViewPeer']"
-       api="cardApi">
+       api="cardApi"
+       page-location="location">
   </div>
 
 </div>

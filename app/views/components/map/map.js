@@ -12,15 +12,12 @@ angular.module('bmp.components.map', [])
     window.SCOPE = $scope;
 
     /************** START MAP **************/
-
-    $scope.chosenRouter = undefined;
-    $scope.chosenPeer = undefined;
-
     $scope.chosenIndex = -1;
     $scope.loading = true;
     $scope.selected = false;
 
     $scope.activePopup = false;
+    $scope.activeMarker;
 
     $scope.routers = [];
     $scope.peers = [];
@@ -52,11 +49,11 @@ angular.module('bmp.components.map', [])
     });
 
     $scope.init = function(){
-        if($scope.type === 'peers'){
+        if($scope.location === 'peerView'){
             $scope.getPeers($scope.ip);
             $scope.map.addLayer($scope.peerLayer);
         }
-        else if($scope.type === 'routers'){
+        else if($scope.location === 'globalView'){
             $scope.getRouters();
             $scope.map.addLayer($scope.routerLayer);
         }
@@ -184,11 +181,10 @@ angular.module('bmp.components.map', [])
     var target;
     var createMarker = function(latlng, options, type){
         var marker = new L.Marker(latlng, options);
-
         if(type === 'router')
         {
             var content =   '<span>' +
-                                '<p class="page-header"' + 
+                                '<p class="page-header">' + 
                                     '<strong>' + 
                                         options.RouterName + 
                                     '</strong>' +
@@ -245,7 +241,7 @@ angular.module('bmp.components.map', [])
                                 '</p>' +
                                 '<p>' +
                                     '<small>' +
-                                        '<a ng-click="updateSelected(options)">View Detail</a>' +
+                                        '<a ng-click="updateSelected()">View Detail</a>' +
                                     '</small>' +
                                 '</p>' +
                             '</span>';      
@@ -270,6 +266,7 @@ angular.module('bmp.components.map', [])
             }
             openTimer= $timeout(function(){
                 target.openPopup();
+                $scope.activeMarker = target;
             }, 500)
         });
         marker.on('mouseout', function (e) {
@@ -286,8 +283,8 @@ angular.module('bmp.components.map', [])
         return marker;
     }
 
-    $scope.updateSelected = function(test){
-        console.log(test);
+    $scope.updateSelected = function(){
+        $scope.cardApi.changeCard($scope.activeMarker.options);
     }
 
     $("map").mouseover(function(event) {
@@ -549,10 +546,9 @@ angular.module('bmp.components.map', [])
       restrict: 'AE',
       controller: 'MapController',
       scope: {
-        type: '@',
-        ip: '=',
-        chosenRouter: '=router',
-        chosenPeer: '=peer'
+        location: '=',
+        ip: '=?',
+        cardApi: '='
       }
     }
 });
