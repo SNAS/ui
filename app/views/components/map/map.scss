@@ -36,6 +36,45 @@
         }
         @include animation(spin 1s linear infinite);
     }
+    &.search.suggestions{
+        list-style-type: none;
+        width: 180px;
+        top: 40px;
+        padding: 0;
+        opacity: 1;
+        transition : none;
+        background-color: #FFF;
+
+        li{
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &.extra{
+                color: #999;
+                font-style: italic;
+                font-size: 8pt;
+                cursor: default;
+                &:hover{
+                    background-color: #FFF;
+                }
+            }
+
+            &:hover{
+                background-color: #EEE;
+            }
+        }
+    }
+    &.peer-buttons{
+        right: 10px;
+        
+        .reset{
+            margin-left: 5px;
+        }
+    }
     &.reset {
         right: 10px;
     }
