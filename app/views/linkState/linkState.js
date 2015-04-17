@@ -11,14 +11,15 @@
 angular.module('bmpUiApp')
   .controller('linkStateController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
-    $scope.peerHashId = "54ecaeeec115457cbce466ff48857aa7"; //ospf
-    //   $scope.peerHashId = "daaa681792b33e36166a2205be05868d"; //isis
+    $scope.peerHashId = "16ea27797629984cc5fd8c7a210b082d"; //ospf
+    //   $scope.peerHashId = "42e3715aaec11635f6dded418a1fe8f2"; //isis
 
     $scope.topologyOptions = {
-      height: '300px',
-      //   dragNodes:false,
+      height: '500px',
+      //dragNodes:false,
       //configurePhysics: true,
-      hover: true,
+      //hover: true,
+       stabilize:false,
 
       hierarchicalLayout: {
         direction: "UD",
@@ -44,7 +45,6 @@ angular.module('bmpUiApp')
             border: '#f7a031'
           }
         },
-        //   shape: 'star',
         radius: 24
       }
     };
@@ -129,29 +129,40 @@ angular.module('bmpUiApp')
                 from: from,
                 to: to,
                 label: igp_metric,
-                length: igp_metric,
                 style: 'line'
-              }
-            );
+              });
+            edges.push(
+              {
+                id: i+100,
+                from: from,
+                to: to,
+                label: igp_metric+100,
+                style: 'line'
+              });
+            //for (var j = 0; j < edges.length-1; j++) {
+            //  if (from == edges[j].from && to == edges[j].to) {
+            //    edges[i].label = igp_metric + 1;
+            //    break;
+            //  }
+            //}
           }
-          else {
-            for (var j = 0; j < edges.length; j++) {
-              if (from == edges[j].to && to == edges[j].from && igp_metric != edges[j].label) {
-                edges.push(
-                  {
-                    id: i,
-                    from: from,
-                    to: to,
-                    label: igp_metric,
-                    length: igp_metric,
-                    style: 'arrow'
-                  }
-                );
-                edges[j].style = 'arrow';
-                break;
-              }
-            }
-          }
+          //else {
+          //  for (var j = 0; j < edges.length; j++) {
+          //    if (from == edges[j].to && to == edges[j].from && igp_metric != edges[j].label) {
+          //      edges.push(
+          //        {
+          //          id: i,
+          //          from: from,
+          //          to: to,
+          //          label: igp_metric,
+          //          style: 'arrow'
+          //        }
+          //      );
+          //      edges[j].style = 'arrow';
+          //      break;
+          //    }
+          //  }
+          //}
         }
       }).error(function (error) {
         console.log(error.message);
@@ -165,17 +176,13 @@ angular.module('bmpUiApp')
       };
     })
 
-    //SPF Table data
-   // $scope.SPFtableOptions.data = {};
-
     //SPF Table options
     $scope.SPFtableOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       multiSelect: false,
-      //  noUnselect: true,
       selectionRowHeaderWidth: 35,
-      rowHeight: 35,
+      //rowHeight: 35,
 
       columnDefs: [
         {field: 'prefix', displayName: 'Prefix', width: '*'},
@@ -196,6 +203,9 @@ angular.module('bmpUiApp')
         });
       }
     };
+
+    //SPF Table data
+    $scope.SPFtableOptions.data = {};
   }])
 
   .directive('topology', ['apiFactory', '$timeout', function (apiFactory, $timeout) {
@@ -215,67 +225,82 @@ angular.module('bmpUiApp')
       link: function ($scope, element, attrs) {
         var container = element[0];
         var network = {};
-        var flag = false;
+       // var flag = false;
         var SPFdata;
 
         $timeout(function () {
-            // create a network
             network = new vis.Network(container, $scope.topologyData, $scope.topologyOptions);
-
-            network.on('select', function (properties) {
-              var selectedNodeId = network.getSelection().nodes[0];
-              if (!selectedNodeId) {
-                flag = false;
-              }
-              else {
-                var selectedRouterId = queryNodeRouterId(selectedNodeId);
-
-                //if there is no node having been selected, draw the shortest path tree of this node
-                if (flag == false) {
-                  flag = true;
-                  if ($scope.protocol == "ospf") {
-                    apiFactory.getSPFospf($scope.peerHashId, selectedRouterId).success(function (result) {
-                        SPFdata = result.igp_ospf.data;
-                        drawShortestPathTree(SPFdata);
-                      for (var i = 0; i < SPFdata.length; i++) {
-                        SPFdata[i].neighbor_addr_adjusted = (SPFdata[i].neighbor_addr == null) ? 'local' :SPFdata[i].neighbor_addr;
-                      }
-                        $scope.SPFtableOptions.data = SPFdata;
-                      }
-                    ).error(function (error) {
-                        console.log(error.message);
-                      });
-                  }
-                  else if ($scope.protocol == "isis") {
-                    apiFactory.getSPFisis($scope.peerHashId, selectedRouterId).success(function (result) {
-                        SPFdata = result.igp_isis.data;
-                        drawShortestPathTree(SPFdata);
-                        $scope.SPFtableOptions.data = SPFdata;
-                      }
-                    ).error(function (error) {
-                        console.log(error.message);
-                      });
-                  }
-
-                } else {//if one node have been selected, draw the shortest path between it and the node just selected.
-                  flag = false;
-                  drawShortestPath(SPFdata, selectedRouterId);
-                }
-              }
-            })
+            network.on('select', click);
           }, 1000
         );
 
-        function queryNodeRouterId(nodeId) {
+        function click() {
+          var selectedNodeHashId = network.getSelection().nodes[0];
+          //if (!selectedNodeHashId) {
+          //  flag = false;
+          //}
+          //else {
+            var selectedRouterId = queryNodeRouterId(selectedNodeHashId);
+
+            //if there is no node having been selected, draw the shortest path tree of this node
+            //if (flag == false) {
+            //  flag = true;
+              if ($scope.protocol == "ospf") {
+                apiFactory.getSPFospf($scope.peerHashId, selectedRouterId).success(function (result) {
+                    SPFdata = result.igp_ospf.data;
+                    drawShortestPathTree(SPFdata);
+                    for (var i = 0; i < SPFdata.length; i++) {
+                      SPFdata[i].neighbor_addr_adjusted = (SPFdata[i].neighbor_addr == null) ? 'local' : SPFdata[i].neighbor_addr;
+                    }
+                    $scope.SPFtableOptions.data = SPFdata;
+                  }
+                ).error(function (error) {
+                    console.log(error.message);
+                  });
+              }
+              else if ($scope.protocol == "isis") {
+                apiFactory.getSPFisis($scope.peerHashId, selectedRouterId).success(function (result) {
+                    SPFdata = result.igp_isis.data;
+                    drawShortestPathTree(SPFdata);
+                    for (var i = 0; i < SPFdata.length; i++) {
+                      SPFdata[i].neighbor_addr_adjusted = (SPFdata[i].neighbor_addr == null) ? 'local' : SPFdata[i].neighbor_addr;
+                    }
+                    $scope.SPFtableOptions.data = SPFdata;
+                  }
+                ).error(function (error) {
+                    console.log(error.message);
+                  });
+              }
+
+          //  } else {//if one node have been selected, draw the shortest path between it and the node just selected.
+          //    flag = false;
+          //    drawShortestPath(SPFdata, selectedRouterId);
+          //  }
+          //}
+        }
+
+        //query node id by node hash id
+        function queryNodeId(nodeHashId) {
           for (var i = 0; i < $scope.topologyData.nodes.length; i++) {
-            if ($scope.topologyData.nodes[i].id == nodeId) {
+            if ($scope.topologyData.nodes[i].id == nodeHashId) {
+              return i;
+            }
+          }
+          throw new RangeError('Node with id "' + nodeHashId + '" not found');
+        }
+
+        //query node router id by node hash id
+        function queryNodeRouterId(nodeHashId) {
+          for (var i = 0; i < $scope.topologyData.nodes.length; i++) {
+            if ($scope.topologyData.nodes[i].id == nodeHashId) {
               var routerId = $scope.topologyData.nodes[i].label;
               return routerId;
             }
           }
-          throw new RangeError('Node with id "' + nodeId + '" not found');
+          throw new RangeError('Node with id "' + nodeHashId + '" not found');
         }
 
+        //query edge id by two nodes connected to
         function queryEdgeId(node1, node2) {
           for (var i = 0; i < $scope.topologyData.edges.length; i++) {
             if ((node1 == $scope.topologyData.edges[i].from && node2 == $scope.topologyData.edges[i].to) ||
@@ -284,9 +309,10 @@ angular.module('bmpUiApp')
               return edgeId;
             }
           }
-          throw new RangeError('Edge connecting node "' + node1 + 'and node' + node2 + '" not found');
+          throw new RangeError('Edge connecting node ' + node1 + ' and node ' + node2 + ' not found');
         }
 
+        //select edges by edge id
         function selectEdges(selectedEdges) {
           for (var i = 0; i < selectedEdges.length; i++) {
             var edge = network.edges[selectedEdges[i]];
@@ -298,6 +324,7 @@ angular.module('bmpUiApp')
           }
         }
 
+        //select nodes by node hash id
         function selectNodes(selectedNodes) {
           for (var i = 0; i < selectedNodes.length; i++) {
             var node = network.nodes[selectedNodes[i]];
@@ -314,9 +341,11 @@ angular.module('bmpUiApp')
           var selectedEdges = [];
           var selectedNodes = [];
 
-          network._unselectAll(true);
+        //  network._unselectAll(true);
 
           selectedNodes.push(SPFdata[0].path_hash_ids.split(",")[0]);
+        //  var root_id = queryNodeId(selectedNodes);
+        //  $scope.topologyData.nodes[root_id].image = "/images/routerMedChecked.png";
 
           for (var i = 0; i < SPFdata.length; i++) {
             var path_hash_ids = SPFdata[i].path_hash_ids.split(",");
@@ -326,83 +355,45 @@ angular.module('bmpUiApp')
                 selectedEdges.push(selectedEdgeId);
               }
             }
+
+            var src_hash_id = path_hash_ids[path_hash_ids.length - 1];
+            var src_id = queryNodeId(src_hash_id);
+            $scope.topologyData.nodes[src_id].level = path_hash_ids.length - 1;
           }
 
-          //for (var i = 0; i < $scope.topologyData.nodes.length; i++) {
-          //  var nodeId = $scope.topologyData.nodes[i].id;
-          //  network.nodes[nodeId].level = i;
-          //}
-
-
+          // create a network
+          network = new vis.Network(container, $scope.topologyData, $scope.topologyOptions);
+          network.on('select', click)
           selectEdges(selectedEdges);
           selectNodes(selectedNodes);
-
-          //var data = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"'
-          //+ ' width="35px" height="35px" viewBox="-17 775 35 35" enable-background="new -17 775 35 35" xml:space="preserve">'
-          //  + ' <g><path fill="#FFFFFF" stroke="#CECECE" stroke-miterlimit="10" d="M0.732,776.464c8.986,0,16.267,7.282,16.267,16.271'
-          //  + ' C17,801.716,9.719,809,0.732,809c-8.986,0-16.269-7.284-16.269-16.266C-15.537,783.746-8.253,776.464,0.732,776.464z"/>'
-          //  + ' <path fill="#333333" d="M0.732,780.452c-6.666,0-12.068,5.4-12.068,12.068c0,6.663,5.402,12.062,12.068,12.062'
-          //  + ' c6.662,0,12.066-5.399,12.066-12.062C12.798,785.853,7.395,780.452,0.732,780.452z M-2.065,785.031L-2.065,785.031l2.229-2.226'
-          //  + ' c0.171-0.168,0.392-0.251,0.617-0.251l0,0c0.007,0,0.007,0,0.014,0c0.047,0,0.104,0.006,0.151,0.015'
-          //  + ' c0.043,0.011,0.087,0.023,0.127,0.041c0.01,0.003,0.02,0.003,0.027,0.011c0.121,0.05,0.224,0.122,0.312,0.21l2.195,2.204'
-          //  + ' c0.339,0.339,0.339,0.882,0,1.221l0,0c-0.337,0.338-0.884,0.331-1.219,0L1.632,785.5l-0.011,4.576'
-          //  + ' c-0.006,0.477-0.385,0.863-0.869,0.858c-0.476,0-0.861-0.39-0.858-0.868l0.014-4.572l-0.753,0.754c-0.34,0.339-0.887,0.332-1.22,0'
-          //  + ' C-2.403,785.909-2.398,785.363-2.065,785.031z M-4.562,795.398L-4.562,795.398c-0.338-0.341-0.338-0.884,0-1.22l0.754-0.756'
-          //  + ' l-4.578-0.008c-0.475-0.005-0.864-0.389-0.857-0.867c0-0.475,0.387-0.865,0.868-0.86l4.572,0.012l-0.753-0.754'
-          //  + ' c-0.339-0.339-0.334-0.886,0-1.218c0.338-0.335,0.884-0.335,1.217,0l0,0l2.223,2.231c0.169,0.165,0.253,0.391,0.253,0.614l0,0'
-          //  + ' c0,0.006,0,0.006,0,0.012c0,0.048-0.008,0.104-0.017,0.151c-0.01,0.045-0.024,0.087-0.038,0.128'
-          //  + ' c-0.007,0.01-0.007,0.021-0.013,0.026c-0.047,0.122-0.12,0.222-0.212,0.312l-2.203,2.196'
-          //  + ' C-3.683,795.738-4.229,795.738-4.562,795.398z M3.536,800.012L3.536,800.012l-2.229,2.222c-0.171,0.172-0.396,0.252-0.616,0.252'
-          //  + ' l0,0c-0.007,0-0.007,0-0.014,0c-0.046,0-0.104-0.003-0.151-0.013c-0.043-0.013-0.087-0.023-0.127-0.037'
-          //  + ' c-0.01-0.008-0.02-0.008-0.027-0.013c-0.12-0.051-0.225-0.12-0.312-0.212l-2.196-2.203c-0.339-0.337-0.339-0.878,0-1.216l0,0'
-          //  + ' c0.338-0.343,0.884-0.336,1.22,0l0.752,0.75l0.013-4.575c0.003-0.476,0.386-0.864,0.869-0.857c0.475,0,0.861,0.388,0.857,0.868'
-          //  + ' l-0.013,4.573l0.754-0.755c0.339-0.34,0.885-0.334,1.22,0C3.875,799.135,3.875,799.68,3.536,800.012z M9.829,793.359l-4.573-0.012'
-          //  + ' l0.755,0.755c0.339,0.337,0.332,0.885,0,1.22c-0.339,0.331-0.885,0.331-1.22,0l0,0l-2.224-2.231'
-          //  + ' c-0.167-0.166-0.251-0.391-0.251-0.616l0,0c0-0.005,0-0.005,0-0.01c0-0.051,0.007-0.105,0.017-0.152'
-          //  + ' c0.009-0.044,0.023-0.086,0.037-0.128c0.006-0.009,0.006-0.019,0.014-0.026c0.047-0.12,0.121-0.224,0.212-0.311l2.201-2.197'
-          //  + ' c0.339-0.339,0.878-0.339,1.217,0l0,0c0.339,0.34,0.336,0.885,0,1.218l-0.754,0.754l4.58,0.015'
-          //  + ' c0.472,0.002,0.861,0.385,0.857,0.866C10.696,792.979,10.308,793.363,9.829,793.359z"/>'
-          //  + ' </g> <circle fill="#B1DFEF" stroke="#1379B7" stroke-miterlimit="10" cx="-9.834" cy="782.58" r="4.833"/>'
-          //  + ' <polyline fill="#B1DFEF" stroke="#1379B7" stroke-linecap="round" stroke-miterlimit="10" points="-12.375,782.498 -10.709,784.498'
-          //  + ' -7.292,780.664 "/> </svg>';
-          //var DOMURL = window.URL || window.webkitURL || window;
-          ////var img = new Image();
-          //var svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
-          //var url = DOMURL.createObjectURL(svg);
-
-          network.nodes[selectedNodes].image =  "/images/routerMedChecked.png";
-          network.nodes[selectedNodes].color = '#f7a031';
-          network.nodes[selectedNodes].fontColor = '#f7a031';
-          network.nodes[selectedNodes].shape = 'database';
-          //  network.nodes[selectedNodes].label =  "1";
           network.redraw();
         }
 
         //draw the shortest path between these two nodes
-        function drawShortestPath(SPFdata, selectedRouterId) {
-          var selectedEdges = [];
-          var selectedNodes = [];
-
-          network._unselectAll(true);
-
-          for (var i = 0; i < SPFdata.length; i++) {
-            if (SPFdata[i].src_router_id == selectedRouterId) {
-              selectedNodes = SPFdata[i].path_hash_ids.split(",");
-              for (var j = 0; j < selectedNodes.length - 1; j++) {
-                var selectedEdgeId = queryEdgeId(selectedNodes[j], selectedNodes[j + 1]);
-                if (selectedEdges.indexOf(selectedEdgeId) == -1) {
-                  selectedEdges.push(selectedEdgeId);
-                }
-              }
-
-              selectEdges(selectedEdges);
-              selectNodes(selectedNodes);
-              network.redraw();
-              break;
-            }
-          }
-
-        }
+        //function drawShortestPath(SPFdata, selectedRouterId) {
+        //  var selectedEdges = [];
+        //  var selectedNodes = [];
+        //
+        //  network._unselectAll(true);
+        //
+        //  for (var i = 0; i < SPFdata.length; i++) {
+        //    if (SPFdata[i].src_router_id == selectedRouterId) {
+        //      selectedNodes = SPFdata[i].path_hash_ids.split(",");
+        //      for (var j = 0; j < selectedNodes.length - 1; j++) {
+        //        var selectedEdgeId = queryEdgeId(selectedNodes[j], selectedNodes[j + 1]);
+        //        if (selectedEdges.indexOf(selectedEdgeId) == -1) {
+        //          selectedEdges.push(selectedEdgeId);
+        //        }
+        //      }
+        //
+        //      selectEdges(selectedEdges);
+        //      selectNodes(selectedNodes);
+        //      network.redraw();
+        //      break;
+        //    }
+        //  }
+        //
+        //}
 
         //draw the path
         $scope.drawPath = function (path) {
@@ -414,16 +405,13 @@ angular.module('bmpUiApp')
           selectedNodes = path.split(",");
           for (var j = 0; j < selectedNodes.length - 1; j++) {
             var selectedEdgeId = queryEdgeId(selectedNodes[j], selectedNodes[j + 1]);
-            if (selectedEdges.indexOf(selectedEdgeId) == -1) {
               selectedEdges.push(selectedEdgeId);
-            }
           }
 
           selectEdges(selectedEdges);
           selectNodes(selectedNodes);
           network.redraw();
         }
-
 
       }
     }
