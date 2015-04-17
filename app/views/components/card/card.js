@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('bmp.components.card',[])
+angular.module('bmp.components.card',['ui.bootstrap'])
 
   .directive('bmpCard', function () {
     return  {

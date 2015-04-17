@@ -6,9 +6,9 @@ angular.module('bmp.components.card')
     window.SCOPE = $scope;
 
 
-
+    //This can probably be moved so dont repeat.
     var createLocationTable = function(){
-      if ($scope.data.State !== undefined || $scope.data.City !== undefined || $scope.data.Country !== undefined) {
+      if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
         var type;
         if ($scope.cardType == "global.router") {
           type = "BMP Router";
@@ -63,6 +63,83 @@ angular.module('bmp.components.card')
     //  "router_hash_id":"0314f419a33ec8819e78724f51348ef9"
     // }
 
+
+    //  "RouterName": "csr1.openbmp.org",
+    //  "PeerName": "lo-0.edge5.Washington1.Level3.net",
+    //  "Prefix": "216.40.30.0",
+    //  "PrefixLen": 23,
+    //  "Origin": "igp",
+    //  "Origin_AS": 4306,
+    //  "MED": 0,
+    //  "LocalPref": 0,
+    //  "NH": "4.68.1.197",
+    //  "AS_Path": " 3356 3257 4436 4436 4436 4436 6450 4306",
+    //  "ASPath_Count": 8,
+    //  "Communities": "3257:3257 3356:3 3356:22 3356:86 3356:575 3356:666 3356:2006",
+    //  "ExtCommunities": "",
+    //  "ClusterList": "",
+    //  "Aggregator": "",
+    //  "PeerAddress": "4.68.1.197",
+    //  "PeerASN": 3356,
+    //  "isPeerIPv4": "1",
+    //  "isPeerVPN": "0",
+    //  "LastModified": "2015-04-16 17:53:41"
+
+    $scope.ribGridOptions = {
+      enableRowSelection: true,
+      enableRowHeaderSelection: false
+    };
+    //
+    $scope.ribGridOptions.columnDefs = [
+      {name: "Prefix", displayName: 'Prefix', width: "15%"},
+      {name: "NH", displayName: 'NH', width: "15%"},
+      {
+        name: "AS_Path", displayName: 'AS Path',
+        cellTooltip:
+          function( row, col ) {
+            return "just a test";
+          }
+      },
+      {name: "MED", displayName: 'MED', width: "10%"},
+      {name: "LocalPref", displayName: 'Local Prefix', width: "10%"}
+    ];
+
+    //var columnDefs = [{
+    //  field: 'code'},
+    //  {field: 'name'},
+    //  {
+    //    field: 'status',
+    //    cellTemplate: statusTemplate
+    //  }
+    //];
+    ////<div ng-click="grid.appScope.rib.ribGridSelection();"></div>
+
+    $scope.ribGridOptions.multiSelect = false;
+    $scope.ribGridOptions.noUnselect = true;
+    $scope.ribGridOptions.modifierKeysToMultiSelect = false;
+    $scope.ribGridOptions.rowTemplate = '<div ng-click="grid.appScope.ribGridSelection();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
+    $scope.ribGridOptions.onRegisterApi = function (gridApi) {
+      $scope.ribGridApi= gridApi;
+    };
+
+    console.log($scope.ribGridOptions);
+
+    $scope.getRibData = function() {
+      apiFactory.getPeerRib($scope.data.peer_hash_id).
+        success(function (result) {
+          $scope.ribGridOptions.data = result.v_routes.data;
+          $scope.ribGridApi.core.handleWindowResize();
+        }).
+        error(function (error) {
+          console.log(error.message);
+        });
+    };
+
+    $scope.ribGridSelection = function(){
+      var values = $scope.ribGridApi.selection.getSelectedRows()[0];
+      console.log(values);
+    };
+
     //peer stuff here
     var peerPrefix;
     $scope.ribData = [
@@ -108,13 +185,13 @@ angular.module('bmp.components.card')
     $scope.peerDownData = [];
     apiFactory.getPeerDownStream($scope.data.peer_hash_id).
       success(function (result){
-        //var peerDown 
+        //var peerDown
         $scope.peerViewPeerOptions.data = result.peerDownstreamASN.data;
-        
+
    /*   var temii = $scope.peerViewPeerOptions.data.length
       //console.log(temii)
      var y;
-      if (temii > 10){ 
+      if (temii > 10){
           y = 10;
         }
         else
@@ -126,7 +203,7 @@ angular.module('bmp.components.card')
    /*  $scope.getTableStyle = function(temii){
         //console.log(y)
        var y = $scope.peerViewPeerOptions.data.length;
-        if (temii > 10){ 
+        if (temii > 10){
           y = 10;
         }
         else
@@ -138,7 +215,7 @@ angular.module('bmp.components.card')
        // var length = $('img:visible').length; // unique to cellTemplates
         //var marginHeight = 90; //can be changed to fit later
        // return {height: (y * 35) +"px"}
-        
+
        // return {
          // height: (y * 35)+"px"
          // height:(length * $scope.peerViewPeerOptions.rowHeight + $scope.peerViewPeerOptions.headerRowHeight + marginHeight) + "px"

@@ -25,9 +25,10 @@ angular.module('bmp.components.cardList',[])
       restrict: 'AE',
       replace: 'true',
       scope: {
-        length: '=',   //set length of cards to show
-        priority: '=', //order for the cards !!most imp at end!!
-        api: '='       //directive global api
+        length: '=',      //set length of cards to show
+        priority: '=',    //order for the cards !!most imp at end!!
+        api: '=',         //directive global api
+        pageLocation: '=' //location for getting relevant template
       },
       link: function(scope) {
         scope.cards = [];
@@ -46,22 +47,9 @@ angular.module('bmp.components.cardList',[])
           scope.cards = buildarr;
         };
 
+        //this is naughty used for when click x in card direc
         scope.removeCard = function (card){
-          console.dir(card);
-
-          var pIndex = scope.priority.indexOf(card.template);
-
-          var index = arr[pIndex].indexOf(card);
-          arr[pIndex].splice(index, 1);
-
-          //if empty then empty childs
-          if(arr[pIndex]==[]){
-            for(var i = pIndex; i > 0; i--){
-              arr[i] = [];
-            }
-          }
-
-          buildList();
+          scope.api.removeCard(card);
         };
 
         scope.api = {
@@ -83,7 +71,11 @@ angular.module('bmp.components.cardList',[])
           },
 
           changeCard: function(card) {
+            card.template = scope.pageLocation + card.type;
+
             var pIndex = scope.priority.indexOf(card.template);
+
+            //debugger;
 
             //check card doesnt exist
             if (arr[pIndex].indexOf(card) == -1) {

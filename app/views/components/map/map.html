@@ -8,8 +8,21 @@
       {{chosenRouter.options.RouterName}}
   </button>
 
+  <div ng-show="searchTerm" ng-click="clearSearch()" class="map-control peer-buttons">
+    <span class="glyphicon glyphicon-remove"></span>
+    <button ng-repeat="f in filters" class="btn btn-warning reset">
+        {{f}}
+    </button>
+  </div>
+
   <input ng-show="type === 'peers'" type="text" ng-model="search" class="map-control search" placeholder="Search"/>
+
   <span ng-show="searchLoading" class="map-control search-loading glyphicon glyphicon-refresh"></span>
+
+  <ul ng-show="suggestions.length > 0" class="map-control search suggestions">
+      <li ng-class="{extra: s.type === 'extra'}" ng-click="getData(s.type, s.object, s.content)" ng-repeat="s in suggestions">{{s.content}}</li>
+      <li ng-show="extra" class="extra">{{extra}}</li>
+  </ul>
 
   <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
 </div>
