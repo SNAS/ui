@@ -50,3 +50,11 @@
     text-align: right;
   }
 }
+.tab-pane{
+  padding: 5px;
+  background-color: #ffffff;
+  .uiGridClass {
+    width: 100%;
+    height: 200px;
+  }
+}

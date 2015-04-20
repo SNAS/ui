@@ -21,11 +21,12 @@ angular
     'ui.grid',
     'ui.grid.selection',
     'ui.grid.autoResize',
-    //'bmp.components.routerCard',
     'bmp.components.cardList',
     'bmp.components.card',
+    //'ui.bootstrap.tabs',
+    'ui.bootstrap',
     'bgDirectives',
-    'bmp.components.topology',
+    //'bmp.components.topology',
     'leaflet-directive',
     'bmp.components.map'
   ])

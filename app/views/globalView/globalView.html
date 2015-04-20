@@ -2,7 +2,7 @@
 
     <h1 class="page-header">Global View</h1>
 
-    <map type="routers" router="router" peer="peer"/>
+    <map card-api="cardApi" location="location"/>
 
     <!--This is the Router/Peers 'Card' so can use this aswell as the map-->
     <span ng-init="expand=false;" class="glyphicon" ng-class="{'glyphicon-plus': expand, 'glyphicon-minus': !expand}"
@@ -39,6 +39,7 @@
     <div bmp-card-list
          length="[4,1]"
          priority="['globalViewPeer','globalViewRouter']"
-         api="cardApi">
+         api="cardApi"
+         page-location="location">
     </div>
 </div>

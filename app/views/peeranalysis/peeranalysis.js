@@ -5,7 +5,7 @@
  * @name bmpUiApp.controller:PeerAnalysisController
  * @description
  * # PeerAnalysisController
- * Controller of the Login page
+ * Controller of the PeerAnalysis page
  */
 angular.module('bmpUiApp')
   .controller('PeerAnalysisController', ['$scope', 'apiFactory','$timeout', function ($scope, apiFactory, $timeout) {
@@ -45,7 +45,7 @@ angular.module('bmpUiApp')
 
     function getPrefix(i, peers, peer_prefix) {
       for (var idx in peer_prefix) {
-        if ((peer_prefix[idx].PeerName == peers[i].PeerName) && (peer_prefix[idx].RouterName == peers[i].RouterName)) {
+        if ((peer_prefix[idx].peer_hash_id == peers[i].peer_hash_id) && (peer_prefix[idx].RouterName == peers[i].RouterName)) {
           return peer_prefix[idx];
         }
       }
@@ -70,8 +70,8 @@ angular.module('bmpUiApp')
 
                 peers[i].Status = ((peers[i].isUp === 1) && (peers[i].isBMPConnected === 1)) ? "Up" : "Down";
                 peers[i].IPv = (peers[i].isPeerIPv4 === 1) ? '4' : '6';
-                peers[i].Pre_RIB = (prefix == null ) ? 'null' : prefix.Pre_RIB;
-                peers[i].Post_RIB = (prefix == null ) ? 'null' : prefix.Post_RIB;
+                peers[i].Pre_RIB = (prefix == null ) ? '0' : prefix.Pre_RIB;
+                peers[i].Post_RIB = (prefix == null ) ? '0' : prefix.Post_RIB;
               }
 
               $scope.peerTableOptions.data = peers;
@@ -131,7 +131,7 @@ angular.module('bmpUiApp')
 
       $scope.detailsPanel = detailsPanel;
 
-      apiFactory.getPeerHistory(row.PeerIP, amount_of_entries).success(
+      apiFactory.getPeerHistory(row.peer_hash_id, amount_of_entries).success(
         function (result) {
 
           var peer_history = result.v_peer_prefix_report.data;
@@ -152,9 +152,16 @@ angular.module('bmpUiApp')
           }
 
           var pre_rib_min = d3.min(pre_rib_values, function (d) { return d.y; })*0.999;
-          var pre_rib_max = d3.max(pre_rib_values, function (d) { return d.y; });
+          var pre_rib_max = d3.max(pre_rib_values, function (d) { return d.y; }) ;
           var post_rib_min = d3.min(post_rib_values, function (d) { return d.y; })*0.999;
           var post_rib_max = d3.max(post_rib_values, function (d) { return d.y; });
+          if (pre_rib_max == 0){
+            pre_rib_max = post_rib_max;
+          }
+          if (post_rib_max == 0){
+            post_rib_max = pre_rib_min;
+          }
+
 
           $scope.options = {
             chart: {
