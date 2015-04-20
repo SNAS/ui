@@ -1,0 +1,301 @@
+@font-face {
+	font-family: 'bmpsymbol';
+	src:url('../fonts/icomoon.eot?thenz9');
+	src:url('../fonts/icomoon.eot?#iefixthenz9') format('embedded-opentype'),
+		url('../fonts/icomoon.woff?thenz9') format('woff'),
+		url('../fonts/icomoon.ttf?thenz9') format('truetype'),
+		url('../fonts/icomoon.svg?thenz9#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="bmp-"], [class*=" bmp-"] {
+	font-family: 'bmpsymbol';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.bmp-down_bmp:before {
+	content: "\e640";
+}
+
+.bmp-down_ebgp:before {
+	content: "\e641";
+}
+
+.bmp-down_ibgp:before {
+	content: "\e642";
+}
+
+.bmp-down_igp:before {
+	content: "\e643";
+}
+
+.bmp-down_peer:before {
+	content: "\e644";
+}
+
+.bmp-ap_sm:before {
+	content: "\e600";
+}
+
+.bmp-ap:before {
+	content: "\e601";
+}
+
+.bmp-arrow_router:before {
+	content: "\e602";
+}
+
+.bmp-as_router1-4:before {
+	content: "\e603";
+}
+
+.bmp-as_router5-9:before {
+	content: "\e604";
+}
+
+.bmp-as_router10-17:before {
+	content: "\e605";
+}
+
+.bmp-basic_router:before {
+	content: "\e606";
+}
+
+.bmp-basiclabel_router:before {
+	content: "\e607";
+}
+
+.bmp-bmp_label:before {
+	content: "\e608";
+}
+
+.bmp-bmp_router1-4:before {
+	content: "\e609";
+}
+
+.bmp-bmp_router5-9:before {
+	content: "\e60a";
+}
+
+.bmp-bmp_router10-17:before {
+	content: "\e60b";
+}
+
+.bmp-close:before {
+	content: "\e60c";
+}
+
+.bmp-collapse:before {
+	content: "\e60d";
+}
+
+.bmp-down:before {
+	content: "\e60e";
+}
+
+.bmp-ebgp_label:before {
+	content: "\e60f";
+}
+
+.bmp-ebgp_router1-4:before {
+	content: "\e610";
+}
+
+.bmp-ebgp_router5-9:before {
+	content: "\e611";
+}
+
+.bmp-ebgp_router10-17:before {
+	content: "\e612";
+}
+
+.bmp-expand:before {
+	content: "\e613";
+}
+
+.bmp-first_router1-4:before {
+	content: "\e614";
+}
+
+.bmp-first_router5-9:before {
+	content: "\e615";
+}
+
+.bmp-first_router10-17:before {
+	content: "\e616";
+}
+
+.bmp-genpeer:before {
+	content: "\e617";
+}
+
+.bmp-ibgp_label:before {
+	content: "\e618";
+}
+
+.bmp-ibgp_router1-4:before {
+	content: "\e619";
+}
+
+.bmp-ibgp_router5-9:before {
+	content: "\e61a";
+}
+
+.bmp-ibgp_router10-17:before {
+	content: "\e61b";
+}
+
+.bmp-igp_label:before {
+	content: "\e61c";
+}
+
+.bmp-igp_router1-4:before {
+	content: "\e61d";
+}
+
+.bmp-igp_router5-9:before {
+	content: "\e61e";
+}
+
+.bmp-igp_router10-17:before {
+	content: "\e61f";
+}
+
+.bmp-info:before {
+	content: "\e620";
+}
+
+.bmp-ip_tag:before {
+	content: "\e621";
+}
+
+.bmp-ipv4:before {
+	content: "\e622";
+}
+
+.bmp-ipv6:before {
+	content: "\e623";
+}
+
+.bmp-menu:before {
+	content: "\e624";
+}
+
+.bmp-move:before {
+	content: "\e625";
+}
+
+.bmp-network:before {
+	content: "\e626";
+}
+
+.bmp-no_transit:before {
+	content: "\e627";
+}
+
+.bmp-openrouter:before {
+	content: "\e628";
+}
+
+.bmp-outline_router:before {
+	content: "\e629";
+}
+
+.bmp-peer_label:before {
+	content: "\e62a";
+}
+
+.bmp-peer_router1-4:before {
+	content: "\e62b";
+}
+
+.bmp-peer_router5-9:before {
+	content: "\e62c";
+}
+
+.bmp-peer_router10-17:before {
+	content: "\e62d";
+}
+
+.bmp-peerrouter:before {
+	content: "\e62e";
+}
+
+.bmp-postrib:before {
+	content: "\e62f";
+}
+
+.bmp-prerib:before {
+	content: "\e630";
+}
+
+.bmp-reversepath:before {
+	content: "\e631";
+}
+
+.bmp-shadow:before {
+	content: "\e632";
+}
+
+.bmp-side_menu:before {
+	content: "\e633";
+}
+
+.bmp-start_router1-4:before {
+	content: "\e634";
+}
+
+.bmp-start_router5-9:before {
+	content: "\e635";
+}
+
+.bmp-start_router10-17:before {
+	content: "\e636";
+}
+
+.bmp-startcheck_router1-4:before {
+	content: "\e637";
+}
+
+.bmp-startcheck_router5-9:before {
+	content: "\e638";
+}
+
+.bmp-startcheck_router10-17:before {
+	content: "\e639";
+}
+
+.bmp-stop_router1-4:before {
+	content: "\e63a";
+}
+
+.bmp-stop_router5-9:before {
+	content: "\e63b";
+}
+
+.bmp-stop_router10-17:before {
+	content: "\e63c";
+}
+
+.bmp-transit:before {
+	content: "\e63d";
+}
+
+.bmp-up:before {
+	content: "\e63e";
+}
+
+.bmp-view:before {
+	content: "\e63f";
+}
+
