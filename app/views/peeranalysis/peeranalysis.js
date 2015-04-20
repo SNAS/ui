@@ -45,7 +45,7 @@ angular.module('bmpUiApp')
 
     function getPrefix(i, peers, peer_prefix) {
       for (var idx in peer_prefix) {
-        if ((peer_prefix[idx].PeerName == peers[i].PeerName) && (peer_prefix[idx].RouterName == peers[i].RouterName)) {
+        if ((peer_prefix[idx].peer_hash_id == peers[i].peer_hash_id) && (peer_prefix[idx].RouterName == peers[i].RouterName)) {
           return peer_prefix[idx];
         }
       }

@@ -146,7 +146,7 @@ angular.module('bmp.components.card')
       ["Pre Rib", 0],
       ["Post Rib", 0]
     ];
-    apiFactory.getPeerByIp($scope.data.PeerName).
+    apiFactory.getPeerPrefixByHashId($scope.data.peer_hash_id).
       success(function (result){
         peerPrefix = result.v_peer_prefix_report_last.data;
         //atm this grabs first data item (may not be correct)
