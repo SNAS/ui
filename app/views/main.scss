@@ -18,15 +18,30 @@
  //===================================================================================
 // Variables
 //===================================================================================
-$brand-primary: 							#3491df;
-$text-light:								#fff;
+//$brand-primary: 							#3491df;
+//$text-light:								#fff;
+//
+//$navbar-default-toggle-hover-bg:			darken($brand-primary, 10%);
+//$navbar-default-toggle-icon-bar-bg:       	#fff;
+//$navbar-default-toggle-border-color:       	#fff;
+//$navbar-default-color:             			#fff;
+//$navbar-default-link-color:  				#fff;
+//$navbar-default-bg:                			#3491df;
 
-$navbar-default-toggle-hover-bg:			darken($brand-primary, 10%);
-$navbar-default-toggle-icon-bar-bg:       	#fff;
-$navbar-default-toggle-border-color:       	#fff;
-$navbar-default-color:             			#fff;
-$navbar-default-link-color:  				#fff;
-$navbar-default-bg:                			#3491df;
+
+$brand-primary: #00ccff;
+$text-light: #a6a6a6;
+
+$navbar-default-toggle-hover-bg:darken($brand-primary, 10%);
+$navbar-default-toggle-icon-bar-bg:#fff;
+$navbar-default-toggle-border-color:#fff;
+$navbar-default-color:#00ccff;
+$navbar-default-link-color:#fff;
+$navbar-default-bg:#15bdf4;
+$navbar-default-brand-color:#fff;
+$text-color:#888;
+
+
 
 a{
     cursor: pointer;
