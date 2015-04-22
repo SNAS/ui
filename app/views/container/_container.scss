@@ -19,7 +19,7 @@
 }
 
 .text-light{
-  color: $text-light
+  color: #222;
 
 
 
@@ -109,17 +109,18 @@
   }
 
   a{
-    color: #b7b7b7;
+    color: #444;
     background-color: #fff !important;
 
   }
 
   a:active {
-    color: #b7b7b7;
+    color: #444;
     background-color: #fff !important;
   }
 
   a:hover {
+    color: #15bdf4;
     background-color: #eee !important;
     border-left: 5px solid #51d2f7;
 

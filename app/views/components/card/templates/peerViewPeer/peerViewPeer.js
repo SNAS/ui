@@ -3,7 +3,7 @@
 angular.module('bmp.components.card')
 
 .controller('BmpCardPeerPeerController', ["$scope", "apiFactory", function ($scope, apiFactory) {
-    window.SCOPE = $scope;
+    window.SCOPEZ = $scope;
 
 
     //This can probably be moved so dont repeat.
@@ -63,6 +63,7 @@ angular.module('bmp.components.card')
     //  "router_hash_id":"0314f419a33ec8819e78724f51348ef9"
     // }
 
+    //$scope.routingPoint = [-77.03221142292,38.913371603574];
 
     //  "RouterName": "csr1.openbmp.org",
     //  "PeerName": "lo-0.edge5.Washington1.Level3.net",
@@ -93,15 +94,9 @@ angular.module('bmp.components.card')
     $scope.ribGridOptions.columnDefs = [
       {name: "Prefix", displayName: 'Prefix', width: "15%"},
       {name: "NH", displayName: 'NH', width: "15%"},
-      {
-        name: "AS_Path", displayName: 'AS Path',
-        cellTooltip:
-          function( row, col ) {
-            return "just a test";
-          }
-      },
+      {name: "AS_Path", displayName: 'AS Path'},
       {name: "MED", displayName: 'MED', width: "10%"},
-      {name: "LocalPref", displayName: 'Local Prefix', width: "10%"}
+      {name: "LocalPref", displayName: 'Local Pref', width: "10%"}
     ];
 
     //var columnDefs = [{
@@ -122,8 +117,6 @@ angular.module('bmp.components.card')
       $scope.ribGridApi= gridApi;
     };
 
-    console.log($scope.ribGridOptions);
-
     $scope.getRibData = function() {
       apiFactory.getPeerRib($scope.data.peer_hash_id).
         success(function (result) {
@@ -136,8 +129,8 @@ angular.module('bmp.components.card')
     };
 
     $scope.ribGridSelection = function(){
-      var values = $scope.ribGridApi.selection.getSelectedRows()[0];
-      console.log(values);
+      $scope.values = $scope.ribGridApi.selection.getSelectedRows()[0];
+      console.dir($scope.values);
     };
 
     //peer stuff here
@@ -275,9 +268,5 @@ angular.module('bmp.components.card')
     }
 
     createLocationTable();
-
-
-
-
 
 }]);
