@@ -75,8 +75,6 @@ angular.module('bmp.components.cardList',[])
 
             var pIndex = scope.priority.indexOf(card.template);
 
-            //debugger;
-
             //check card doesnt exist
             if (arr[pIndex].indexOf(card) == -1) {
               arr[pIndex].push(card);
