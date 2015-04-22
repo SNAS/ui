@@ -5,7 +5,6 @@ angular.module('bmp.components.card')
 .controller('BmpCardPeerPeerController', ["$scope", "apiFactory", function ($scope, apiFactory) {
     window.SCOPEZ = $scope;
 
-
     //This can probably be moved so dont repeat.
     var createLocationTable = function(){
       if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
@@ -63,76 +62,6 @@ angular.module('bmp.components.card')
     //  "router_hash_id":"0314f419a33ec8819e78724f51348ef9"
     // }
 
-    //$scope.routingPoint = [-77.03221142292,38.913371603574];
-
-    //  "RouterName": "csr1.openbmp.org",
-    //  "PeerName": "lo-0.edge5.Washington1.Level3.net",
-    //  "Prefix": "216.40.30.0",
-    //  "PrefixLen": 23,
-    //  "Origin": "igp",
-    //  "Origin_AS": 4306,
-    //  "MED": 0,
-    //  "LocalPref": 0,
-    //  "NH": "4.68.1.197",
-    //  "AS_Path": " 3356 3257 4436 4436 4436 4436 6450 4306",
-    //  "ASPath_Count": 8,
-    //  "Communities": "3257:3257 3356:3 3356:22 3356:86 3356:575 3356:666 3356:2006",
-    //  "ExtCommunities": "",
-    //  "ClusterList": "",
-    //  "Aggregator": "",
-    //  "PeerAddress": "4.68.1.197",
-    //  "PeerASN": 3356,
-    //  "isPeerIPv4": "1",
-    //  "isPeerVPN": "0",
-    //  "LastModified": "2015-04-16 17:53:41"
-
-    $scope.ribGridOptions = {
-      enableRowSelection: true,
-      enableRowHeaderSelection: false
-    };
-    //
-    $scope.ribGridOptions.columnDefs = [
-      {name: "Prefix", displayName: 'Prefix', width: "15%"},
-      {name: "NH", displayName: 'NH', width: "15%"},
-      {name: "AS_Path", displayName: 'AS Path'},
-      {name: "MED", displayName: 'MED', width: "10%"},
-      {name: "LocalPref", displayName: 'Local Pref', width: "10%"}
-    ];
-
-    //var columnDefs = [{
-    //  field: 'code'},
-    //  {field: 'name'},
-    //  {
-    //    field: 'status',
-    //    cellTemplate: statusTemplate
-    //  }
-    //];
-    ////<div ng-click="grid.appScope.rib.ribGridSelection();"></div>
-
-    $scope.ribGridOptions.multiSelect = false;
-    $scope.ribGridOptions.noUnselect = true;
-    $scope.ribGridOptions.modifierKeysToMultiSelect = false;
-    $scope.ribGridOptions.rowTemplate = '<div ng-click="grid.appScope.ribGridSelection();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
-    $scope.ribGridOptions.onRegisterApi = function (gridApi) {
-      $scope.ribGridApi= gridApi;
-    };
-
-    $scope.getRibData = function() {
-      apiFactory.getPeerRib($scope.data.peer_hash_id).
-        success(function (result) {
-          $scope.ribGridOptions.data = result.v_routes.data;
-          $scope.ribGridApi.core.handleWindowResize();
-        }).
-        error(function (error) {
-          console.log(error.message);
-        });
-    };
-
-    $scope.ribGridSelection = function(){
-      $scope.values = $scope.ribGridApi.selection.getSelectedRows()[0];
-      console.dir($scope.values);
-    };
-
     //peer stuff here
     var peerPrefix;
     $scope.ribData = [
@@ -172,63 +101,47 @@ angular.module('bmp.components.card')
       {name: "as_name", displayName: 'AS Name', width: '*'},
       {name: "org_name", displayName:'Organization', width: '*'}
     ];
+    var peerViewPeerDefaultData = [{"as_name":"NO DATA"}];
+    $scope.peerViewPeerOptions.onRegisterApi = function (gridApi) {
+      $scope.peerViewPeerApi= gridApi;
+    };
 
+    $scope.$watch('cardExpand', function(val) {
+      if($scope.cardExpand == true){
+        setTimeout(function(){
+          //$scope.peerViewPeerApi.core.handleWindowResize();
+          $scope.calGridHeight();
+        },10)
+      }
+    });
+
+
+    $scope.calGridHeight = function(){
+      $scope.peerViewPeerApi.core.handleWindowResize();
+
+      var height;
+      if($scope.peerViewPeerOptions.data.length > 10){
+        height = ((10 * 30) + 30);
+      }else{
+        height = (($scope.peerViewPeerOptions.data.length * 30) + 50);
+      }
+      $scope.height = height;
+      $scope.peerViewPeerApi.grid.gridHeight = $scope.height;
+    };
 
     //DownstreamAS, as_name, and org_name (working)
     $scope.peerDownData = [];
     apiFactory.getPeerDownStream($scope.data.peer_hash_id).
       success(function (result){
         //var peerDown
-        $scope.peerViewPeerOptions.data = result.peerDownstreamASN.data;
-
-   /*   var temii = $scope.peerViewPeerOptions.data.length
-      //console.log(temii)
-     var y;
-      if (temii > 10){
-          y = 10;
+        if(result.peerDownstreamASN.data.length == 0){
+          $scope.peerViewPeerOptions.data = peerViewPeerDefaultData;
+        }else {
+          $scope.peerViewPeerOptions.data = result.peerDownstreamASN.data;
         }
-        else
-        {
-          y = temii;
-        }
-        //console.log(y)
-        angular.element(document.getElementsByClassName('grid')[0]).css('height', (y*50)+'px');
-   /*  $scope.getTableStyle = function(temii){
-        //console.log(y)
-       var y = $scope.peerViewPeerOptions.data.length;
-        if (temii > 10){
-          y = 10;
-        }
-        else
-        {
-          y = temii;
-        }
+        $scope.peerViewPeerApi.core.handleWindowResize();
 
-       // console.log($scope.peerViewPeerOptions.data.length)
-       // var length = $('img:visible').length; // unique to cellTemplates
-        //var marginHeight = 90; //can be changed to fit later
-       // return {height: (y * 35) +"px"}
-
-       // return {
-         // height: (y * 35)+"px"
-         // height:(length * $scope.peerViewPeerOptions.rowHeight + $scope.peerViewPeerOptions.headerRowHeight + marginHeight) + "px"
-        //}*/
-
-       function setHeight(extra){
-          $scope.height = (($scope.peerViewPeerOptions.data.length * 40) +30);
-          if (extra){
-            $scope.height += extra;
-          }
-          /*$scope.peerViewPeerOptions.onRegisterApi = function (gridApi){
-            $scope.whoIsPeerApi = gridApi;
-          }*/
-         // $scope.whoIsPeerApi.grid.gridHeight = $scope.height;//temis calcualted height
-        }
-
-    //  };
-     // $scope.getTableStyle($scope.peerViewPeerOptions.data.length);
-
-       for(var i = 0; i<$scope.peerViewPeerOptions.length; i++) {
+        for(var i = 0; i<$scope.peerViewPeerOptions.length; i++) {
           var data = $scope.peerViewPeerOptions[i];
           if (data.org_name == "" || data.org_name === null) {
             data.org_name = "-";
@@ -254,18 +167,80 @@ angular.module('bmp.components.card')
         console.log(error.message);
       });
 
-      //$scope.newRow = $scope.peerViewPeerOptions.data
-      //console.log(($scope.peerViewPeerOptions.data).length)
-
 
     $scope.downTime = ($scope.data.LastDownTimestamp === null)? "Up":$scope.data.LastDownTimestamp;
 
-
     $scope.peerFullIp = $scope.data.PeerIP;
     if($scope.data.isPeerIPv4 == "1"){
-      //is ipv4 so add ' :<port'
+      //is ipv4 so add ' :<port>'
       $scope.peerFullIp = $scope.data.PeerIP + " :" + $scope.data.PeerPort;
     }
+
+
+    //  "RouterName": "csr1.openbmp.org",
+    //  "PeerName": "lo-0.edge5.Washington1.Level3.net",
+    //  "Prefix": "216.40.30.0",
+    //  "PrefixLen": 23,
+    //  "Origin": "igp",
+    //  "Origin_AS": 4306,
+    //  "MED": 0,
+    //  "LocalPref": 0,
+    //  "NH": "4.68.1.197",
+    //  "AS_Path": " 3356 3257 4436 4436 4436 4436 6450 4306",
+    //  "ASPath_Count": 8,
+    //  "Communities": "3257:3257 3356:3 3356:22 3356:86 3356:575 3356:666 3356:2006",
+    //  "ExtCommunities": "",
+    //  "ClusterList": "",
+    //  "Aggregator": "",
+    //  "PeerAddress": "4.68.1.197",
+    //  "PeerASN": 3356,
+    //  "isPeerIPv4": "1",
+    //  "isPeerVPN": "0",
+    //  "LastModified": "2015-04-16 17:53:41"
+
+    $scope.ribGridOptions = {
+      enableRowSelection: true,
+      enableRowHeaderSelection: false
+    };
+    //
+    $scope.ribGridOptions.columnDefs = [
+      {name: "Prefix", displayName: 'Prefix', width: "15%"},
+      {name: "NH", displayName: 'NH', width: "15%"},
+      {name: "AS_Path", displayName: 'AS Path'},
+      {name: "MED", displayName: 'MED', width: "10%"},
+      {name: "LocalPref", displayName: 'Local Pref', width: "10%"}
+    ];
+
+    $scope.ribGridOptions.multiSelect = false;
+    $scope.ribGridOptions.noUnselect = true;
+    $scope.ribGridOptions.modifierKeysToMultiSelect = false;
+    $scope.ribGridOptions.rowTemplate = '<div ng-click="grid.appScope.ribGridSelection();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
+    $scope.ribGridOptions.onRegisterApi = function (gridApi) {
+      $scope.ribGridApi= gridApi;
+    };
+
+    $scope.getRibData = function() {
+      apiFactory.getPeerRib($scope.data.peer_hash_id).
+        success(function (result) {
+          $scope.ribGridOptions.data = result.v_routes.data;
+          $scope.ribGridApi.core.handleWindowResize();
+        }).
+        error(function (error) {
+          console.log(error.message);
+        });
+    };
+
+    $scope.ribGridSelection = function(){
+      $scope.values = $scope.ribGridApi.selection.getSelectedRows()[0];
+      apiFactory.getPeerGeo($scope.values.Prefix).
+        success(function (result) {
+          $scope.values.geo = result.v_geo_ip.data;
+        }).
+        error(function (error) {
+          console.log(error.message);
+        });
+    };
+
 
     createLocationTable();
 
