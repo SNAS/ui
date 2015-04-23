@@ -80,26 +80,25 @@
     <br>
 
     <tabset>
-      <tab heading="Downstream ASes of Peer">
-        <div class="gridStyle" ui-grid="peerViewPeerOptions" ng-style="{'height':height}"></div>
+      <tab heading="Downstream ASes of Peer" select="downStreamTab()">
+        <div class="gridStyle" ui-grid="peerViewPeerOptions" ng-style="{'height':peerViewPeerOptions.changeHeight}"></div>
       </tab>
       <tab heading="Routing Table" select="getRibData()">
 
-        Search <input type="text" placeholder="enter search here ..." />
+        <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
 
         <!--Angular Table added here-->
-        <div class="gridStyle" ui-grid-selection ui-grid="ribGridOptions"></div>
+        <div class="gridStyle" ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}"></div>
 
 
         <!--like the more details section.-->
         <div ng-if="values !== undefined">
           <!--{{ values }}-->
+          <h3>Prefix Detail</h3>
 
           <section style="width: 100%;margin: auto;padding: 10px;">
             <div class="left-container"
-              style="float: left;">
-
-              <h3>Prefix Detail</h3>
+              style="float: left;width:49%;">
 
               <svg width="350.00000000000006" height="150" style="width:350px; height:150px;" xmlns="http://www.w3.org/2000/svg">
                 <g>

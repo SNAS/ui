@@ -2,7 +2,7 @@
 
 angular.module('bmp.components.card')
 
-.controller('BmpCardPeerPeerController', ["$scope", "apiFactory", function ($scope, apiFactory) {
+.controller('BmpCardPeerPeerController', ["$scope", "apiFactory", "$timeout", function ($scope, apiFactory, $timeout) {
     window.SCOPEZ = $scope;
 
     //This can probably be moved so dont repeat.
@@ -85,11 +85,12 @@ angular.module('bmp.components.card')
 
 
     //Redraw Tables when menu state changed
-  /*  $scope.$on('menu-toggle', function(thing, args) {
+    $scope.$on('menu-toggle', function(thing, args) {
       $timeout( function(){
-        resize();
+        $scope.peerViewPeerApi.core.handleWindowResize();
+        $scope.ribGridApi.core.handleWindowResize();
       }, 550);
-    });*/
+    });
 
     $scope.peerViewPeerOptions = {
       enableRowSelection: true,
@@ -110,23 +111,27 @@ angular.module('bmp.components.card')
       if($scope.cardExpand == true){
         setTimeout(function(){
           //$scope.peerViewPeerApi.core.handleWindowResize();
-          $scope.calGridHeight();
+          $scope.calGridHeight($scope.peerViewPeerOptions, $scope.peerViewPeerApi);
         },10)
       }
     });
 
-
-    $scope.calGridHeight = function(){
+    $scope.downStreamTab = function(){
       $scope.peerViewPeerApi.core.handleWindowResize();
+    };
+
+
+    $scope.calGridHeight = function(grid, gridapi){
+      gridapi.core.handleWindowResize();
 
       var height;
-      if($scope.peerViewPeerOptions.data.length > 10){
+      if(grid.data.length > 10){
         height = ((10 * 30) + 30);
       }else{
-        height = (($scope.peerViewPeerOptions.data.length * 30) + 50);
+        height = ((grid.data.length * 30) + 50);
       }
-      $scope.height = height;
-      $scope.peerViewPeerApi.grid.gridHeight = $scope.height;
+      grid.changeHeight = height;
+      gridapi.grid.gridHeight = grid.changeHeight;
     };
 
     //DownstreamAS, as_name, and org_name (working)
@@ -222,7 +227,7 @@ angular.module('bmp.components.card')
     $scope.getRibData = function() {
       apiFactory.getPeerRib($scope.data.peer_hash_id).
         success(function (result) {
-          $scope.ribGridOptions.data = result.v_routes.data;
+          $scope.ribGridOptions.data = $scope.initalRibdata = result.v_routes.data;
           $scope.ribGridApi.core.handleWindowResize();
         }).
         error(function (error) {
@@ -234,7 +239,7 @@ angular.module('bmp.components.card')
       $scope.values = $scope.ribGridApi.selection.getSelectedRows()[0];
       apiFactory.getPeerGeo($scope.values.Prefix).
         success(function (result) {
-          $scope.values.geo = result.v_geo_ip.data;
+          $scope.values.geo = result.v_geo_ip.data[0];
         }).
         error(function (error) {
           console.log(error.message);
@@ -243,5 +248,154 @@ angular.module('bmp.components.card')
 
 
     createLocationTable();
+
+    //--------------------------------------- SEARCH --------------------------------------------//
+
+    //FE80:0000:0000:0000:0202:B3FF:FE1E:8329
+
+    //TODO -- ipv6 regexs not TESTED!!!
+
+    //______________________________\\
+    //             NOTES             \\
+    //------------------------------------------------------------------------------------------------
+    //complete ip
+    //http://odl-dev.openbmp.org:8001/db_rest/v1/rib/peer/c33f36c12036e98d89ae3ea54cce0be2/lookup/213.136.103.0
+    //
+    //incomplete ip
+    //http://odl-dev.openbmp.org:8001/db_rest/v1/rib/peer/c33f36c12036e98d89ae3ea54cce0be2/prefix/213.137
+    //
+    //complete ip with pre length
+    //http://odl-dev.openbmp.org:8001/db_rest/v1/rib/peer/c33f36c12036e98d89ae3ea54cce0be2/prefix/213.137.138.0/24
+    //-------------------------------------------------------------------------------------------------
+
+    //Loop through data selecting and altering relevant data.
+    var searchValue = function (value, init) {
+      if (value == "" || value == " ") {
+        //when clear search populates origninal data.
+        $scope.ribGridOptions.data = $scope.initalRibdata;
+        return;
+      }
+      //used to determine which regex's to use ipv4 || ipv6
+      var whichIp;
+
+      var ipv4Regex = /\d{1,3}\./;
+      var ipv6Regex = /( [0-9a-fA-F]{4}\: ) | (\:\:([0-9a-fA-F]{4})?:)/;
+
+      if(ipv4Regex.exec(value) != null){
+        whichIp = 0;
+      }else if(ipv6Regex.exec(value) != null){
+        whichIp = 1;
+      }else{
+        //Entered Alphanumerics
+        console.log('invalid search');
+        return;
+      }
+
+      //regex[x][0] = ipv4 match's
+      //regex[x][1] = ipv6 match's
+
+      //regex[0] for matching whole ip with prefix  190.0.103.0/24
+      //regex[1] for matching whole ip              190.0.103.0
+      //regex[2] for matching part done ip's        190.0.
+
+      var regexs = [
+        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/(?:\d|[1-9]\d|1[0-1]\d|12[0-8])$/ , /^[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\/[0-128]$/],
+        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/ , /^[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]$/],
+        [/^(\d{1,3}\.){0,2}\d{1,3}\.?$/ , /^([0-9a-fA-F]\:){1,7}[0-9a-fA-F]\:?$/]
+      ];
+
+      var fullIpWithPreLenReg = regexs[0][whichIp];
+      var fullIpRegex = regexs[1][whichIp];
+      var partCompIpRegex = regexs[2][whichIp];
+
+      //noticing ipv7 with XXXX::XXXX:X ...
+      //can only get on occurance of it
+      //if spilt of :: > 2 then has more 1 occ
+      //else if length 1 no ::
+      //else then has :: once
+
+      //var regexTest = (/^(\:\:)?  |  (( ([0-9a-fA-F]\:){1,4} ){1,7} \:)  |  ( (\:[0-9a-fA-F]{1,4}){1,7})$/);
+
+
+      //TODO :::::::::::::::::: WAS WORKING HERE ::::::::::::::::::::::::::
+      //IPV6 :: case
+      //TODO - check it is ipv6 with the ::   //could done ABCD::0Jzy:
+        //if (whichIP) { //means its ipv4
+        //  var colOccur = (value.match(/\:\:/g) || []).length;
+        //  if (0 < colOccur < 2) {
+        //
+        //    ipv6ShortHand(value);//only call this is ipv6 is valid
+        //  }
+        //}
+
+      if (fullIpWithPreLenReg.exec(value) != null || partCompIpRegex.exec(value) != null) {
+        //Full ip with prefix or partial ip
+        apiFactory.getPeerRibPrefix($scope.data.peer_hash_id, value).
+          success(function (result) {
+            $scope.ribGridOptions.data = result.v_routes.data;
+            $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+          }).
+          error(function (error) {
+            console.log(error.message);
+          });
+      }else if(fullIpRegex.exec(value) != null){
+        //full ip
+        //pass in peer hash and the matched regex value
+        apiFactory.getPeerRibLookup($scope.data.peer_hash_id,value).
+          success(function (result) {
+            $scope.ribGridOptions.data = result.v_routes.data;
+            $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+          }).
+          error(function (error) {
+            console.log(error.message);
+          });
+      }else{
+        //Entered Alphanumerics
+      }
+    };
+
+    //Waits a bit for user to contiune typing.
+    $scope.enterValue = function (value) {
+      $scope.currentValue = value;
+
+      $timeout(function () {
+        if (value == $scope.currentValue) {
+          searchValue(value);
+        }
+      }, 700);
+    };
+    //-------------------------------------END SEARCH--------------------------------------------//
+
+    var ipv6ShortHand = function(value) {
+      var searchStr = value;
+      var doblColIndex = value.indexOf("::");
+      var zeroToAdd = 8 - ((value.match(/[0-9a-fA-F]{4}/g)) || []).length;
+
+      //build the string of zero's
+      var zeroStr = "";
+      for (var i = 0; i < zeroToAdd - 1; i++) {
+        zeroStr += "0000:"
+      }
+      zeroStr += "0000";
+
+      //change zero string depending on where it appears
+      if (doblColIndex + 2 == value.length && doblColIndex == 0) {
+        //only the ::
+        //dont need to do anything
+      } else if (doblColIndex == 0) {
+        //at the beginning
+        zeroStr = zeroStr + ":"; //append to end
+      } else if (doblColIndex + 2 == value.length) {
+        //at the end
+        zeroStr = ":" + zeroStr; //append to front
+      } else {
+        //norm case eg FE80::0202:B3FF:FE1E:8329
+        zeroStr = ":" + zeroStr + ":"; //append to front
+      }
+
+      searchStr = searchStr.replace("::", zeroStr);
+
+      return searchStr;
+    };
 
 }]);
