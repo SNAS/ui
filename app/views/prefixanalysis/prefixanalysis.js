@@ -50,7 +50,6 @@ angular.module('bmpUiApp')
       $timeout(function () {
         if (value == $scope.currentValue) {
           getPrefixDataGrid(value);
-          getPrefixHisGrid(value);
         }
       }, 500);
     };
@@ -80,35 +79,56 @@ angular.module('bmpUiApp')
 
     //get Origin_AS infomation from PrefixData
     $scope.getASInfo = function () {
-      var showValues = '<table>';
+      //$scope.showValues = '<table>';
 
-      apiFactory.getWhoIsWhereASN($scope.Origin_AS)
-        .success(function(result) {
+      var url = apiFactory.getWhoIsWhereASNSync($scope.Origin_AS);
+
+      console.log(url);
+
+      var request = $http({
+        method: "get",
+        url: url
+      });
+      request.success(function (result) {
+        $scope.showValues = '<table>';
+        console.log(result);
           $scope.values = result.w.data[0];
-        });
+          angular.forEach($scope.values , function (value, key) {
 
+            if (key != "raw_output") {
+              $scope.showValues += (
+              '<tr>' +
+              '<td>' +
+              key + ': ' +
+              '</td>' +
 
-      angular.forEach($scope.values , function (value, key) {
+              '<td>' +
+              value +
+              '</td>' +
+              '</tr>'
+              );
+            }
 
-        if (key != "raw_output") {
-          showValues += (
-          '<tr>' +
-          '<td>' +
-          key + ': ' +
-          '</td>' +
-
-          '<td>' +
-          value +
-          '</td>' +
-          '</tr>'
-          );
-        }
+          });
+        $scope.showValues += '</table>';
+        //$scope.hideAsInfo = false;
+        //$scope.getAsInfoValues = $scope.showValues;
 
       });
-      showValues += '</table>';
-      //$scope.hideAsInfo = false;
-      $scope.getAsInfoValues = showValues;
     };
+
+
+    //  this function is for getting peer information and return a drop-down list
+    var getPeers = function(){
+      apiFactory.getPeers()
+        .success(function(result) {
+          $scope.peerData = result.v_peers.data;
+
+        });
+    }
+
+    getPeers();
+
 
 
     //deal with the data from History of prefix
@@ -127,32 +147,44 @@ angular.module('bmpUiApp')
       {name: "communities", displayName: 'Communities', width: '*'},
       {name: "last_modified", displayName: 'Last_Modified', width: '*'},
     ];
-
-    var getPrefixHisGrid = function (searchPrefix){
-      apiFactory.getHistoryPrefix(searchPrefix)
+    var createPrefixHisGrid = function () {
+      for (var i = 0; i < $scope.HisData.length; i++) {
+        $scope.HisData[i].router_name = $scope.HisData[i].RouterName;
+        $scope.HisData[i].peer_name = $scope.HisData[i].PeerName;
+        $scope.HisData[i].nh = $scope.HisData[i].NH;
+        $scope.HisData[i].as_path = $scope.HisData[i].AS_Path;
+        $scope.HisData[i].peer_asn = $scope.HisData[i].PeerASN;
+        $scope.HisData[i].communities = $scope.HisData[i].Communities;
+        $scope.HisData[i].med = $scope.HisData[i].MED;
+        $scope.HisData[i].last_modified = $scope.HisData[i].LastModified;
+      }
+    };
+    var getPrefixHisGrid = function (searchPrefix) {
+      if ("All peers" == searchPrefix)
+      {
+        apiFactory.getHistoryPrefix(searchPrefix)
         .success(function(data) {
           $scope.HistoryPrefixOptions.data = $scope.HisData = data.v_routes_history.data;
           createPrefixHisGrid();
-          //if([] != $scope.HisData){
-          //  createPrefixHisGrid()
-          //}else
-          //{
-          //  $scope.hideHisGrid = false;
-          //}
         });
+
+      }
+      else
+      {
+        $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
+        apiFactory.getPeerHistoryPrefix(searchPrefix,$scope.peerHashId)
+          .success(function(data) {
+            $scope.HistoryPrefixOptions.data = $scope.HisData = data.v_routes_history.data;
+            createPrefixHisGrid();
+          });
+      }
     };
-    var createPrefixHisGrid = function () {
-      for (var i = 0; i < $scope.HisData.length; i++) {
-      $scope.HisData[i].router_name = $scope.HisData[i].RouterName;
-      $scope.HisData[i].peer_name = $scope.HisData[i].PeerName;
-      $scope.HisData[i].nh = $scope.HisData[i].NH;
-      $scope.HisData[i].as_path = $scope.HisData[i].AS_Path;
-      $scope.HisData[i].peer_asn = $scope.HisData[i].PeerASN;
-      $scope.HisData[i].communities = $scope.HisData[i].Communities;
-      $scope.HisData[i].med = $scope.HisData[i].MED;
-      $scope.HisData[i].last_modified = $scope.HisData[i].LastModified;
+
+
+    $scope.selectChange = function(){
+      //$scope.peerName = $scope.peerData.selectPeer.peer_hash_id;
+      getPrefixHisGrid($scope.currentValue);
     }
-  };
 
   }]);
 

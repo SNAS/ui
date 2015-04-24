@@ -8,151 +8,204 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('aggregationanalysisController',['$scope', 'apiFactory', '$http', '$timeout', '$interval', function ($scope, apiFactory, $http, $timeout) {
+  .controller('aggregationanalysisController',['$scope', 'apiFactory', '$http', '$timeout', function ($scope, apiFactory, $http, $timeout) {
     //DEBUG
     window.SCOPE = $scope;
 
-    //control if show the table
-    //$scope.hideHisGrid = true;
-    //$scope.hideAsInfo = true;
+     $scope.searchPrefix = "";
 
-    //$scope.hidePrefixGrid = true;
-    //Redraw Tables when menu state changed
     $scope.$on('menu-toggle', function (thing, args) {
       $timeout(function () {
         resize();
       }, 550);
     });
 
-    //populate prefix data into Grid
-    $scope.AllPrefixOptions = {
+    //populate prefix data into ShowPrefixsOptions Grid
+    $scope.ShowPrefixsOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false
     };
 
-    $scope.AllPrefixOptions.columnDefs = [
+    $scope.ShowPrefixsOptions.columnDefs = [
       {name: "router_name", displayName: 'RouterName', width: '*'},
       {name: "peer_name", displayName: 'PeerName', width: '*'},
-      {name: "nh", displayName: 'NH', width: '*'},
-      {name: "as_path", displayName: 'AS_Path', width: '*'},
-      {name: "peer_asn", displayName: 'Peer_ASN', width: '*'},
-      {name: "med", displayName: 'MED', width: '*'},
-      {name: "communities", displayName: 'Communities', width: '*'},
-      {name: "last_modified", displayName: 'Last_Modified', width: '*'},
-
+      {name: "prefix", displayName: 'Prefix', width: '*'},
     ];
 
+    $scope.getsShowPrefixInfo = function(){
 
-    //Waits a bit for user to contiune typing.
-    $scope.enterValue = function (value) {
-      $scope.currentValue = value;
-
-      $timeout(function () {
-        if (value == $scope.currentValue) {
-          getPrefixDataGrid(value);
-          getPrefixHisGrid(value);
-        }
-      }, 500);
-    };
-
-    //$scope.searchPrefix = "176.105.176.0/24";
-
-    var getPrefixDataGrid = function (searchPrefix){
-      apiFactory.getPrefix(searchPrefix)
+      apiFactory.getAsnCount($scope.searchPrefix)
         .success(function(data) {
-          $scope.AllPrefixOptions.data = $scope.PrefixData = data.v_routes.data;
-          createPrefixDataGrid()
-        });
-    };
-    var createPrefixDataGrid = function () {
-      for (var i = 0; i < $scope.PrefixData.length; i++) {
-        $scope.PrefixData[i].router_name = $scope.PrefixData[i].RouterName;
-        $scope.PrefixData[i].peer_name = $scope.PrefixData[i].PeerName;
-        $scope.PrefixData[i].nh = $scope.PrefixData[i].NH;
-        $scope.PrefixData[i].as_path = $scope.PrefixData[i].AS_Path;
-        $scope.PrefixData[i].peer_asn = $scope.PrefixData[i].PeerASN;
-        $scope.PrefixData[i].communities = $scope.PrefixData[i].Communities;
-        $scope.PrefixData[i].med = $scope.PrefixData[i].MED;
-        $scope.PrefixData[i].last_modified = $scope.PrefixData[i].LastModified;
-      }
-      $scope.Origin_AS = $scope.PrefixData[0].Origin_AS
-    };
-
-    //get Origin_AS infomation from PrefixData
-    $scope.getASInfo = function () {
-      var showValues = '<table>';
-
-      apiFactory.getWhoIsWhereASN($scope.Origin_AS)
-        .success(function(result) {
-          $scope.values = result.w.data[0];
-        });
-
-
-      angular.forEach($scope.values , function (value, key) {
-
-        if (key != "raw_output") {
-          showValues += (
-          '<tr>' +
-          '<td>' +
-          key + ': ' +
-          '</td>' +
-
-          '<td>' +
-          value +
-          '</td>' +
-          '</tr>'
-          );
-        }
-
+        $scope.prefix_amount= data.table.data[0].PrefixCount;
+          apiFactory.getAsnInfo(109,$scope.prefix_amount)
+            .success(function(result) {
+              $scope.ShowPrefixsOptions.data = $scope.PrefixData = result.v_routes.data;
+              createShowPrefixsOptions();
+            });
       });
-      showValues += '</table>';
-      //$scope.hideAsInfo = false;
-      $scope.getAsInfoValues = showValues;
     };
 
+    var createShowPrefixsOptions = function () {
+      for (var i = 0; i < $scope.PrefixData.length; i++) {
+        $scope.PrefixData[i].router_name = $scope.PrefixData[i].RouterName + "/" + $scope.PrefixData[i].PrefixLen;
+        $scope.PrefixData[i].peer_name = $scope.PrefixData[i].PeerName;
+        $scope.PrefixData[i].prefix = $scope.PrefixData[i].Prefix;
+      }
+    };
 
-    //deal with the data from History of prefix
-    $scope.HistoryPrefixOptions = {
-      enableRowSelection: false,
+    //  this function is for getting peer information and return a drop-down list
+    var getPeers = function(){
+      apiFactory.getPeers()
+        .success(function(result) {
+          $scope.peerData = result.v_peers.data;
+
+        });
+    }
+
+    getPeers();
+
+    $scope.selectChange = function(){
+      $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
+      showaggregatePrefixes();
+    }
+
+    //calculate redundant route information.
+    var  aggregatePrefixes = function(data) {
+      $scope.aggregated_prefixes = [];
+      $scope.auxiliary_array = [];
+      $scope.reduced_prefix_amount = 0;
+
+      for (var i = 0; i < data.length; i++) $scope.auxiliary_array[i] = false; // init auxiliary_array,make it all false
+
+      data.sort(function (a, b) {
+        return a.PrefixLen - b.PrefixLen
+      });
+
+
+      for (var i = 0; i < data.length - 1; i++) {
+        if ((!$scope.auxiliary_array[i]) && (data[i].isPeerIPv4 == 1)) {
+          for (var j = i + 1; j < data.length; j++) {
+            if ((data[j].isPeerIPv4 == 1) && (!$scope.auxiliary_array[j])) {
+              compare(data[i], data[j], j); //Compare two addresses
+            }
+          }
+        }
+      }
+    }
+
+    function compare(a, b, j) {
+      var element;
+      if (ipToBinary(a.Prefix).substring(0, a.PrefixLen) == ipToBinary(b.Prefix).substring(0, a.PrefixLen)) {
+        if ((a.Origin == b.Origin) & (a.AS_Path == b.AS_Path) & (a.Communities == b.Communities) & (a.ExtCommunities == b.ExtCommunities) & (a.MED == b.MED)) {
+          $scope.reduced_prefix_amount++;
+          var key = a.Prefix + '/' + a.PrefixLen;
+          var value = b.Prefix + '/' + b.PrefixLen;
+          var t = 0, found = 0;
+          while (( !found ) && ( t < $scope.aggregated_prefixes.length )) {
+            if ($scope.aggregated_prefixes[t].Prefix == key) {
+              $scope.aggregated_prefixes[t].Covers = $scope.aggregated_prefixes[t].Covers + "; " + value;
+              found = true;
+            }
+            t++;
+          }
+          if (!found) {
+            element = {
+              "Prefix": key,
+              "Covers": value
+            }
+            $scope.aggregated_prefixes.push(element);
+          }
+          $scope.auxiliary_array[j] = true;
+
+          console.log(ipToBinary(a.Prefix) + " and " + ipToBinary(b.Prefix));
+          console.log(element);
+          console.log($scope.reduced_prefix_amount);
+        }
+      }
+    }
+
+    //Transform string ip adress to binary view
+    function ipToBinary(ip) {
+      var d = ip.split('.');
+      return toBinaryStr(d[0]) + toBinaryStr(d[1]) + toBinaryStr(d[2]) + toBinaryStr(d[3]);
+    }
+
+    function toBinaryStr(d) {
+      var y = parseInt(d).toString(2);
+      while (y.length < 8) {
+        y = "0" + y;
+      }
+      return y;
+    }
+
+    var showaggregatePrefixes = function()
+    {
+      apiFactory.getAsnInfoPeer($scope.searchPrefix,$scope.peerHashId)
+        .success(function(data) {
+          var prefixes_of_as_and_peer = data.v_routes.data;
+          $scope.prefix_amount = data.v_routes.size; // for calculating, store the length of prefixes
+          aggregatePrefixes(prefixes_of_as_and_peer);
+          createShowRedundantOptions();
+          //createChartOptions();
+          if ("" != prefixes_of_as_and_peer)
+          {
+            createChartOptions();
+            $scope.efficiency = ($scope.prefix_amount - $scope.reduced_prefix_amount)/$scope.prefix_amount
+          }
+          else
+          {
+            $scope.efficiency = "No data avalible"
+          }
+        });
+    }
+
+
+    <!--show redundant prefix-->
+    $scope.ShowRedundantOptions = {
+      enableRowSelection: true,
       enableRowHeaderSelection: false
     };
-
-    $scope.HistoryPrefixOptions.columnDefs = [
-      {name: "router_name", displayName: 'RouterName', width: '*'},
-      {name: "peer_name", displayName: 'PeerName', width: '*'},
-      {name: "nh", displayName: 'NH', width: '*'},
-      {name: "as_path", displayName: 'AS_Path', width: '*'},
-      {name: "peer_asn", displayName: 'Peer_ASN', width: '*'},
-      {name: "med", displayName: 'MED', width: '*'},
-      {name: "communities", displayName: 'Communities', width: '*'},
-      {name: "last_modified", displayName: 'Last_Modified', width: '*'},
+    $scope.ShowRedundantOptions.columnDefs = [
+      {name: "Prefix", displayName: 'Prefix', width: '*'},
+      {name: "Covers", displayName: 'Covered Prefix', width: '*'},
     ];
 
-    var getPrefixHisGrid = function (searchPrefix){
-      apiFactory.getHistoryPrefix(searchPrefix)
-        .success(function(data) {
-          $scope.HistoryPrefixOptions.data = $scope.HisData = data.v_routes_history.data;
-          createPrefixHisGrid();
-          //if([] != $scope.HisData){
-          //  createPrefixHisGrid()
-          //}else
-          //{
-          //  $scope.hideHisGrid = false;
-          //}
-        });
+    var createShowRedundantOptions = function () {
+        $scope.ShowRedundantOptions.data = $scope.aggregated_prefixes;
     };
-    var createPrefixHisGrid = function () {
-      for (var i = 0; i < $scope.HisData.length; i++) {
-        $scope.HisData[i].router_name = $scope.HisData[i].RouterName;
-        $scope.HisData[i].peer_name = $scope.HisData[i].PeerName;
-        $scope.HisData[i].nh = $scope.HisData[i].NH;
-        $scope.HisData[i].as_path = $scope.HisData[i].AS_Path;
-        $scope.HisData[i].peer_asn = $scope.HisData[i].PeerASN;
-        $scope.HisData[i].communities = $scope.HisData[i].Communities;
-        $scope.HisData[i].med = $scope.HisData[i].MED;
-        $scope.HisData[i].last_modified = $scope.HisData[i].LastModified;
+
+  //get data for the efficiency chart
+    var createChartOptions = function()
+    {    $scope.chartOptions = {
+      chart: {
+        type: 'pieChart',
+        height: 500,
+        x: function(d){return d.key;},
+        y: function(d){return d.y;},
+        showLabels: true,
+        transitionDuration: 500,
+        labelThreshold: 0.01,
+        legend: {
+          margin: {
+            top: 5,
+            right: 35,
+            bottom: 5,
+            left: 0
+          }
+        }
       }
     };
+      $scope.data = [
+        {
+          key: "Aggregatable Prefixes",
+          y: $scope.reduced_prefix_amount
+        },
+        {
+          key: "Unaggregatable Prefixes",
+          y: $scope.prefix_amount - $scope.reduced_prefix_amount
+        }
+      ];
+    }
 
   }]);
 

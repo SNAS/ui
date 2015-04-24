@@ -51,6 +51,7 @@ angular.module('bmpUiApp')
 
     apiFactory.getWhoIsWhereASN = function (asn) {
       return $http.get(urlBase + "whois/asn?where=w.asn=" + asn);
+      //return urlBase + "whois/asn?where=w.asn=" + asn;
     };
 
     apiFactory.getWhoIsName = function (name, lim) {
@@ -110,6 +111,39 @@ angular.module('bmpUiApp')
 
     apiFactory.getSPFisis = function (peerHashId,routerId){
       return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/isis/" + routerId);
+    };
+
+    // prefix analysis
+    apiFactory.getPrefix = function (prefix) {
+      return $http.get(urlBase + "rib/prefix/" + prefix);
+    };
+
+    apiFactory.getHistoryPrefix = function (prefix) {
+      return $http.get(urlBase + "rib/history/" + prefix);
+    };
+
+    apiFactory.getPeerHistoryPrefix = function (prefix,hashId) {
+      //return $http.get(urlBase + "rib/history/" + prefix);
+      return $http.get(urlBase + "rib/peer/" + hashId +"/history/" + prefix)
+    };
+
+
+    apiFactory.getWhoIsWhereASNSync = function (asn) {
+      //fix it later . now this is a Sync API
+      return urlBase + "whois/asn?where=w.asn=" + asn;
+    };
+
+    // Aggregation analysis
+    apiFactory.getAsnCount = function (asn) {
+      return $http.get(urlBase + "rib/asn/" + asn + "/count");
+    };
+
+    apiFactory.getAsnInfoPeer = function (asn,hashId) {
+      return $http.get(urlBase + "rib/peer/" + hashId + "/asn/" + asn);
+    };
+
+    apiFactory.getAsnInfo = function (asn,prefix_amount) {
+      return $http.get(urlBase + "rib/asn/" + asn + "?limit=" + prefix_amount);
     };
 
     return apiFactory;

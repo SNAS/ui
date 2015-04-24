@@ -86,11 +86,11 @@ angular
           requireLogin: true
         }
       })
-      .state('app.aggregationAnalysis', {
+      /*.state('app.aggregationAnalysis', {
         url: '/aggregation-analysis',
         templateUrl: 'views/aggregationAnalysis/aggregationAnalysis.html',
         controller: 'AggregationAnalysisController'
-      })
+      })*/
       .state('app.prefixAnalysis', {
         url: '/prefix-analysis',
         templateUrl: 'views/prefixAnalysis/prefixAnalysis.html',
@@ -111,6 +111,11 @@ angular
         url: '/preferences',
         templateUrl: 'views/preferences/preferences.html',
         controller: 'PreferencesController'
+      })
+      .state('app.aggregationanalysis', {
+        url: '/aggregation-analysis',
+        templateUrl: 'views/aggregationanalysis/aggregationanalysis.html',
+        controller: 'aggregationanalysisController'
       });
   })
   .run(function ($rootScope, $state, $cookies) {
