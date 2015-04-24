@@ -251,22 +251,7 @@ angular.module('bmp.components.card')
 
     //--------------------------------------- SEARCH --------------------------------------------//
 
-    //FE80:0000:0000:0000:0202:B3FF:FE1E:8329
-
-    //TODO -- ipv6 regexs not TESTED!!!
-
-    //______________________________\\
-    //             NOTES             \\
-    //------------------------------------------------------------------------------------------------
-    //complete ip
-    //http://odl-dev.openbmp.org:8001/db_rest/v1/rib/peer/c33f36c12036e98d89ae3ea54cce0be2/lookup/213.136.103.0
-    //
-    //incomplete ip
-    //http://odl-dev.openbmp.org:8001/db_rest/v1/rib/peer/c33f36c12036e98d89ae3ea54cce0be2/prefix/213.137
-    //
-    //complete ip with pre length
-    //http://odl-dev.openbmp.org:8001/db_rest/v1/rib/peer/c33f36c12036e98d89ae3ea54cce0be2/prefix/213.137.138.0/24
-    //-------------------------------------------------------------------------------------------------
+    //TODO - ATM IPV6 with XXXX:0:  not accepted need to add place to fill zero's
 
     //Loop through data selecting and altering relevant data.
     var searchValue = function (value, init) {
@@ -279,7 +264,7 @@ angular.module('bmp.components.card')
       var whichIp;
 
       var ipv4Regex = /\d{1,3}\./;
-      var ipv6Regex = /( [0-9a-fA-F]{4}\: ) | (\:\:([0-9a-fA-F]{4})?:)/;
+      var ipv6Regex = /([0-9a-fA-F]{4}\:)|(\:\:([0-9a-fA-F]{1,4})?)/;
 
       if(ipv4Regex.exec(value) != null){
         whichIp = 0;
@@ -299,36 +284,42 @@ angular.module('bmp.components.card')
       //regex[2] for matching part done ip's        190.0.
 
       var regexs = [
-        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/(?:\d|[1-9]\d|1[0-1]\d|12[0-8])$/ , /^[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\/[0-128]$/],
-        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/ , /^[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]\:[0-9a-fA-F]$/],
-        [/^(\d{1,3}\.){0,2}\d{1,3}\.?$/ , /^([0-9a-fA-F]\:){1,7}[0-9a-fA-F]\:?$/]
+        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/(?:\d|[1-9]\d|1[0-1]\d|12[0-8])$/ , /^([0-9a-fA-F]{4}\:){7}[0-9a-fA-F]{4}\/[0-128]$/],
+        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/ , /^([0-9a-fA-F]{4}\:){7}[0-9a-fA-F]{4}$/],
+        [/^(\d{1,3}\.){0,2}\d{1,3}\.?$/ , /^([0-9a-fA-F]{4}\:){0,7}[0-9a-fA-F]{4}\:?$/]
       ];
 
       var fullIpWithPreLenReg = regexs[0][whichIp];
       var fullIpRegex = regexs[1][whichIp];
       var partCompIpRegex = regexs[2][whichIp];
 
-      //noticing ipv7 with XXXX::XXXX:X ...
-      //can only get on occurance of it
-      //if spilt of :: > 2 then has more 1 occ
-      //else if length 1 no ::
-      //else then has :: once
+      //IPV6 shorthand case
+      if (whichIp) { //means its ipv6
+        var colOccur = (value.match(/\:\:/g) || []).length;
+        if (0 < colOccur < 2) {
+          //one occurance of ::
 
-      //var regexTest = (/^(\:\:)?  |  (( ([0-9a-fA-F]\:){1,4} ){1,7} \:)  |  ( (\:[0-9a-fA-F]{1,4}){1,7})$/);
+          var ipv6Arr = value.split("::");
 
+          var ipv6PartLenRegex = /[0-9a-fA-F]{4}/g;
+          var ipv6PartCheckRegex = /^([0-9a-fA-F]{4}\:){0,5}[0-9a-fA-F]{4}$/;
 
-      //TODO :::::::::::::::::: WAS WORKING HERE ::::::::::::::::::::::::::
-      //IPV6 :: case
-      //TODO - check it is ipv6 with the ::   //could done ABCD::0Jzy:
-        //if (whichIP) { //means its ipv4
-        //  var colOccur = (value.match(/\:\:/g) || []).length;
-        //  if (0 < colOccur < 2) {
-        //
-        //    ipv6ShortHand(value);//only call this is ipv6 is valid
-        //  }
-        //}
+          var len = 0;
+          var check = [];
+          for(var i = 0; i < ipv6Arr.length; i++){
+            len += (ipv6Arr[i].match(ipv6PartLenRegex) || []).length;
+            check.push(ipv6PartCheckRegex.exec(ipv6Arr[i]) != null);
+          }
+
+          if(len < 8 && check.indexOf(0) == -1){
+            //valid ipv6 with ::
+            value = ipv6ShortHand(value);
+          }
+        }
+      }
 
       if (fullIpWithPreLenReg.exec(value) != null || partCompIpRegex.exec(value) != null) {
+        console.log(value);
         //Full ip with prefix or partial ip
         apiFactory.getPeerRibPrefix($scope.data.peer_hash_id, value).
           success(function (result) {
@@ -339,6 +330,7 @@ angular.module('bmp.components.card')
             console.log(error.message);
           });
       }else if(fullIpRegex.exec(value) != null){
+        console.log(value);
         //full ip
         //pass in peer hash and the matched regex value
         apiFactory.getPeerRibLookup($scope.data.peer_hash_id,value).
@@ -366,6 +358,7 @@ angular.module('bmp.components.card')
     };
     //-------------------------------------END SEARCH--------------------------------------------//
 
+    //This take XXXX::XXXX:XXXX and turns into XXXX:0000:0000:0000:0000:0000:XXXX:XXXX
     var ipv6ShortHand = function(value) {
       var searchStr = value;
       var doblColIndex = value.indexOf("::");
