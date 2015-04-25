@@ -23,6 +23,55 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+
+.bmp-openrouter:before {
+	content: "\e620";
+}
+
+/*.bmp-openrouter:after {
+	content: "\e624";
+    right: 15px;
+    top: -75px;
+    z-index: 1;
+    font-size: 38px;
+    position: relative;
+}*/
+
+icon
+{
+    font-size: 38px;
+}
+
+/*.multi icon:nth-child(1)
+{   
+    right: 15px;
+    top: -75px;
+    z-index: 1;
+    position: relative;
+}
+
+
+
+.bmp-openrouter:after {
+	content: "\e620";
+}*/
+
+
+/*.bmp-openrouter:after {
+	content: "\e620";
+    right: 25px;
+    top: -75px;
+    z-index: 2;
+    font-size: 38px;
+    position: relative;
+}*/
+
+
+
+
+
+
+
 .bmp-down_bmp:before {
 	content: "\e640";
 }
