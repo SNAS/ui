@@ -3,6 +3,9 @@
       <span class="text-light">loading...</span>
   </div>
 
+  <div ng-if="showSearch">
+
+
   <button ng-show="selected" class="btn btn-primary map-control reset" ng-click="clearPeers(true)">
       <span class="glyphicon glyphicon-remove"></span>
       {{chosenRouter.options.RouterName}}
@@ -23,6 +26,9 @@
       <li ng-class="{extra: s.type === 'extra'}" ng-click="getData(s.type, s.object, s.content)" ng-repeat="s in suggestions">{{s.content}}</li>
       <li ng-show="extra" class="extra">{{extra}}</li>
   </ul>
+
+  </div>
+
 
   <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
 </div>

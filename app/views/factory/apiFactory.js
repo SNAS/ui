@@ -37,6 +37,10 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer");
     };
 
+    apiFactory.getPeerGeo = function (ip) {
+      return $http.get(urlBase + "geoip/" + ip);
+    };
+
     apiFactory.getPeersByIp = function (ip) {
       return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip + "%%27");
     };

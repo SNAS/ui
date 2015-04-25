@@ -9,6 +9,7 @@
  */
 angular.module('bmp.components.map', [])
 .controller('MapController', function ($scope, $state, $q, $http, $timeout, apiFactory, leafletData, $compile, $filter) {
+
     window.SCOPE = $scope;
 
     /************** START MAP **************/
@@ -21,6 +22,9 @@ angular.module('bmp.components.map', [])
 
     $scope.routers = [];
     $scope.peers = [];
+
+    $scope.showSearch = true;
+    $scope.usePopUps = true;
 
     //IDs for mapbox
     //TODO: make constant in app.js
@@ -56,6 +60,15 @@ angular.module('bmp.components.map', [])
         else if($scope.location === 'globalView'){
             $scope.getRouters();
             $scope.map.addLayer($scope.routerLayer);
+        }else if($scope.location === 'singlePoint'){
+            //single marker stuff here
+            $scope.map.invalidateSize();
+            $scope.showSearch = false;
+            $scope.usePopUps = false;
+            $scope.loading = false;
+            //new L.Marker(latlng, options)
+            $scope.map.addLayer(new L.Marker([3,3]));
+            window.SCOPERZ = $scope;
         }
     }
 
@@ -288,19 +301,21 @@ angular.module('bmp.components.map', [])
     }
 
     $("map").mouseover(function(event) {
-        if($scope.activePopup)
-            if(event.target.classList[0] === "leaflet-tile"){
-                $scope.activePopup = false;
-                closeTimer= $timeout(function(){
-                    target.closePopup();
-                }, 1000);
-            }
+      if($scope.usePopUps) {
+        if ($scope.activePopup)
+          if (event.target.classList[0] === "leaflet-tile") {
+            $scope.activePopup = false;
+            closeTimer = $timeout(function () {
+              target.closePopup();
+            }, 1000);
+          }
 
-        if(event.target.classList[0] === "leaflet-popup-content" ||
-           event.target.classList[0] === "leaflet-popup-content-wrapper"){
-            $scope.activePopup = true;
-            $timeout.cancel(closeTimer)
+        if (event.target.classList[0] === "leaflet-popup-content" ||
+          event.target.classList[0] === "leaflet-popup-content-wrapper") {
+          $scope.activePopup = true;
+          $timeout.cancel(closeTimer)
         }
+      }
     });
 
     //Called when a marker is selected
@@ -541,7 +556,7 @@ angular.module('bmp.components.map', [])
     /************** END SEARCH **************/
 })
 .directive('map', function () {
-    return  {
+    return {
       templateUrl: "views/components/map/map.html",
       restrict: 'AE',
       controller: 'MapController',
