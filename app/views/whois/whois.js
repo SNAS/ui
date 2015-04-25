@@ -22,7 +22,8 @@ angular.module('bmpUiApp')
 
     $scope.whoIsGridOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: false
+      enableRowHeaderSelection: false,
+      rowHeight: 25
     };
 
     $scope.whoIsGridOptions.columnDefs = [
@@ -34,7 +35,7 @@ angular.module('bmpUiApp')
         name: "transit_v4", displayName: 'transit v4', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
-            return 'green';
+            return 'highlight';
           }
         }
       },
@@ -42,7 +43,7 @@ angular.module('bmpUiApp')
         name: "transit_v6", displayName: 'transit v6', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
-            return 'green';
+            return 'highlight';
           }
         }
       },
@@ -50,7 +51,7 @@ angular.module('bmpUiApp')
         name: "origin_v4", displayName: 'origin v4', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
-            return 'green';
+            return 'highlight';
           }
         }
       },
@@ -58,7 +59,7 @@ angular.module('bmpUiApp')
         name: "origin_v6", displayName: 'origin v6', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
-            return 'green';
+            return 'highlight';
           }
         }
       }
@@ -158,7 +159,7 @@ angular.module('bmpUiApp')
     $scope.changeSelected = function () {
       var noShow = ["$$hashKey", "symbOrigin", "symbTransit"];
       var values = $scope.whoIsGridApi.selection.getSelectedRows()[0];
-      var showValues = '<table>';
+      var showValues = '<table class="tableStyle">';
 
       angular.forEach(values, function (value, key) {
         if (noShow.indexOf(key) == -1) { //doesnt show certain fields
@@ -176,7 +177,7 @@ angular.module('bmpUiApp')
 
                 showValues += (
                 '<td>' +
-                s[0].trim() + ': ' +
+                s[0].trim() + ' ' +
                 '</td>' +
 
                 '<td>' +
@@ -190,7 +191,7 @@ angular.module('bmpUiApp')
             showValues += (
             '<tr>' +
             '<td>' +
-            key + ': ' +
+            key + ' ' +
             '</td>' +
 
             '<td>' +

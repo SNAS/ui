@@ -126,7 +126,7 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "rib/peer/" + peer_hash_id);
     };
 
-    //topology
+    //nextTopology
     apiFactory.getPeerNodes = function (peerHashId){
       return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);
     };
