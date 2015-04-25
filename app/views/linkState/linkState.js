@@ -19,14 +19,34 @@ angular.module('bmpUiApp')
       //dragNodes:false,
       //configurePhysics: true,
       //hover: true,
-       stabilize:false,
-
-      hierarchicalLayout: {
-        direction: "UD",
-        layout: "direction"
+       stabilize:true,
+      smoothCurves:{
+        dynamic: true,
+        type: "straightCross"
       },
 
+      //hierarchicalLayout: {
+      //  direction: "UD",
+      //  layout: "direction"
+      //},
+
+
       //physics: {
+      //  barnesHut: {
+      //    enabled: true,
+      //    gravitationalConstant: -2000,
+      //    centralGravity: 0.1,
+      //    springLength: 95,
+      //    springConstant: 0.04,
+      //    damping: 0.09
+      //  },
+      //  repulsion: {
+      //    centralGravity: 0.1,
+      //    springLength: 50,
+      //    springConstant: 0.05,
+      //    nodeDistance: 100,
+      //    damping: 0.09
+      //  },
       //  hierarchicalRepulsion: {
       //    //centralGravity: 0.5,
       //    //springLength: 150,
@@ -131,20 +151,6 @@ angular.module('bmpUiApp')
                 label: igp_metric,
                 style: 'line'
               });
-            edges.push(
-              {
-                id: i+100,
-                from: from,
-                to: to,
-                label: igp_metric+100,
-                style: 'line'
-              });
-            //for (var j = 0; j < edges.length-1; j++) {
-            //  if (from == edges[j].from && to == edges[j].to) {
-            //    edges[i].label = igp_metric + 1;
-            //    break;
-            //  }
-            //}
           }
           //else {
           //  for (var j = 0; j < edges.length; j++) {
@@ -155,7 +161,7 @@ angular.module('bmpUiApp')
           //          from: from,
           //          to: to,
           //          label: igp_metric,
-          //          style: 'arrow'
+          //          style: 'line'
           //        }
           //      );
           //      edges[j].style = 'arrow';
@@ -174,6 +180,7 @@ angular.module('bmpUiApp')
         nodes: nodes,
         edges: edges
       };
+
     })
 
     //SPF Table options
@@ -304,7 +311,7 @@ angular.module('bmpUiApp')
         function queryEdgeId(node1, node2) {
           for (var i = 0; i < $scope.topologyData.edges.length; i++) {
             if ((node1 == $scope.topologyData.edges[i].from && node2 == $scope.topologyData.edges[i].to) ||
-              (node1 == $scope.topologyData.edges[i].to && node2 == $scope.topologyData.edges[i].from && $scope.topologyData.edges[i].style == 'line')) {
+              (node1 == $scope.topologyData.edges[i].to && node2 == $scope.topologyData.edges[i].from)) {
               var edgeId = $scope.topologyData.edges[i].id;
               return edgeId;
             }
@@ -341,11 +348,14 @@ angular.module('bmpUiApp')
           var selectedEdges = [];
           var selectedNodes = [];
 
-        //  network._unselectAll(true);
+          network._unselectAll(true);
 
           selectedNodes.push(SPFdata[0].path_hash_ids.split(",")[0]);
-        //  var root_id = queryNodeId(selectedNodes);
-        //  $scope.topologyData.nodes[root_id].image = "/images/routerMedChecked.png";
+          for (var i = 0; i < $scope.topologyData.nodes.length; i++) {
+            $scope.topologyData.nodes[i].image = "/images/routerMed.png";
+          }
+          var root_id = queryNodeId(selectedNodes[0]);
+          $scope.topologyData.nodes[root_id].image = "/images/routerMedChecked.png";
 
           for (var i = 0; i < SPFdata.length; i++) {
             var path_hash_ids = SPFdata[i].path_hash_ids.split(",");
@@ -362,11 +372,14 @@ angular.module('bmpUiApp')
           }
 
           // create a network
+            network.storePosition();
           network = new vis.Network(container, $scope.topologyData, $scope.topologyOptions);
           network.on('select', click)
           selectEdges(selectedEdges);
           selectNodes(selectedNodes);
+             //network.focusOnNode(selectedNodes[0], {animation:true});
           network.redraw();
+        //  network.freezeSimulation(true);
         }
 
         //draw the shortest path between these two nodes

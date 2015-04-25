@@ -37,6 +37,10 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer");
     };
 
+    apiFactory.getPeerGeo = function (ip) {
+      return $http.get(urlBase + "geoip/" + ip);
+    };
+
     apiFactory.getPeersByIp = function (ip) {
       return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip + "%%27");
     };
@@ -126,7 +130,7 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "rib/peer/" + peer_hash_id);
     };
 
-    //topology
+    //nextTopology
     apiFactory.getPeerNodes = function (peerHashId){
       return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);
     };

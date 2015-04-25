@@ -5,9 +5,12 @@
     BMP Router |
     {{data.RouterName}} |
     {{data.RouterIP}} |
-    <span ng-class="{'red': data.isConnected!='1', 'green': data.isConnected=='1'}">
-      {{ isUP }}
-    </span>
+    <icon
+      ng-class="{'bmp-down': data.isConnected!='1', 'bmp-up': data.isConnected=='1'}"
+      ng-style="data.isConnected != '1' && {'color': '#f2732d'} ||
+              data.isConnected == '1' && {'color': '#7ec35c'}"
+      style="font-size:36;">
+    </icon>
   </div>
 
   <!--EXPANDED view-->
@@ -17,18 +20,19 @@
 
     <!--Router Up Time-->
     <!--ADD A HELP-->
-    <span style="float: right;text-align: right;">
-      BMP Up Time
-      <span style="color: green;">
-        {{ upTime }}
-      </span>
+  <span style="float: right;text-align: right;">
+    BMP Up Time
+    <span style="color: green;">
+      {{ upTime }}
     </span>
+  </span>
 
     <h4>{{ data.RouterName }}</h4>
     <br>
 
     <div class="row">
 
+<<<<<<< HEAD
 <div>
   <span style="color:red">this is a span with icon 
 
@@ -177,6 +181,8 @@
 
 
 
+=======
+>>>>>>> cb3cd1e910b4c596806115a74253a21c28383fbf
       <!--Location table-->
       <div class="col-md-4">
         <span ng-bind-html="locationInfo"></span>

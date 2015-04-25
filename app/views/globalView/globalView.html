@@ -16,7 +16,7 @@
           </span>
           <span
             class="selectable"
-            ng-click="router.template='globalViewRouter';cardApi.changeCard(router)">
+            ng-click="router.type='Router';cardApi.changeCard(router)">
             {{ router.RouterName }} || {{ router.RouterIP }} || {{ router.RouterAS }}
           </span>
         <!--show router peers-->
@@ -25,7 +25,7 @@
               <div ng-repeat="peer in routerPeers[$index]">
                 <span
                   class="selectable"
-                  ng-click="peer.template='globalViewPeer';cardApi.changeCard(peer)">
+                  ng-click="peer.type='Peer';cardApi.changeCard(peer)">
                   {{ peer.PeerName }} || {{ peer.PeerIP }} || {{ peer.PeerASN }}
                 </span>
               </div>
