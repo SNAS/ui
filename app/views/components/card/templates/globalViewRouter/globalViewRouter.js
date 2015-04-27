@@ -17,7 +17,10 @@ angular.module('bmp.components.card')
             type = "None";
           }
           $scope.locationInfo = (
-          '<table class="routerLoc">' +
+          '<table class="table">' +
+          ' <tr>' +
+          '   <th>' + $scope.data.RouterName + '</th>' +
+          ' </tr>' +
           ' <tr>' +
           '   <td>Type</td>' +
           '   <td>' + type + '</td>' +
@@ -73,11 +76,11 @@ angular.module('bmp.components.card')
 
       //DEFAULT values
       $scope.ipAmountData = [
-        {key:'ipv4Amount',values:[
+        {key:'ipv4',values:[
           {x: 1,y: 0},
           {x: 2,y: 0}
         ]},
-        {key:'ipv6Amount',values:[
+        {key:'ipv6',values:[
           {x: 1,y: 0},
           {x: 2,y: 0}
         ]}
@@ -122,11 +125,14 @@ angular.module('bmp.components.card')
           "clipEdge": true,
           "transitionDuration": 500,
           "useInteractiveGuideline": false,
+          "interactive": false,
           "tooltips": false,
-          //tickvalues
           "yAxis": {
             "showMaxMin": true,
             "tickValues": graphPoint
+          },
+          "xAxis":{
+
           }
         }
       };
@@ -232,6 +238,41 @@ angular.module('bmp.components.card')
         $scope.upTime = timeString;
       };
       calUpTime();
+
+      //AS Number	AS Name	Organization
+      //PeerASN, PeerName, org_name
+
+      $scope.peerViewPeerOptions.columnDefs = [
+        {name: "PeerASN", displayName: 'AS Number', width: '*'},
+        {name: "PeerName", displayName: 'AS Name', width: '*'},
+        {name: "org_name", displayName:'Organization', width: '*'}
+      ];
+      var peerViewPeerDefaultData = [{"as_name":"NO DATA"}];
+      $scope.peerViewPeerOptions.onRegisterApi = function (gridApi) {
+        $scope.peerViewPeerApi= gridApi;
+      };
+
+      $scope.$watch('cardExpand', function(val) {
+        if($scope.cardExpand == true){
+          setTimeout(function(){
+            //$scope.peerViewPeerApi.core.handleWindowResize();
+            $scope.calGridHeight($scope.peerViewPeerOptions, $scope.peerViewPeerApi);
+          },10)
+        }
+      });
+
+      $scope.calGridHeight = function(grid, gridapi){
+        gridapi.core.handleWindowResize();
+
+        var height;
+        if(grid.data.length > 10){
+          height = ((10 * 30) + 30);
+        }else{
+          height = ((grid.data.length * 30) + 50);
+        }
+        grid.changeHeight = height;
+        gridapi.grid.gridHeight = grid.changeHeight;
+      };
 
       var peersTableCreate = function() {
         //<!--R/Peers info table-->

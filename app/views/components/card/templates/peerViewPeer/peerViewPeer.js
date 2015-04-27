@@ -346,18 +346,6 @@ angular.module('bmp.components.card')
       }
     };
 
-    //Waits a bit for user to contiune typing.
-    $scope.enterValue = function (value) {
-      $scope.currentValue = value;
-
-      $timeout(function () {
-        if (value == $scope.currentValue) {
-          searchValue(value);
-        }
-      }, 700);
-    };
-    //-------------------------------------END SEARCH--------------------------------------------//
-
     //This take XXXX::XXXX:XXXX and turns into XXXX:0000:0000:0000:0000:0000:XXXX:XXXX
     var ipv6ShortHand = function(value) {
       var searchStr = value;
@@ -390,5 +378,18 @@ angular.module('bmp.components.card')
 
       return searchStr;
     };
+
+    //Waits a bit for user to contiune typing.
+    $scope.enterValue = function (value) {
+      $scope.currentValue = value;
+
+      $timeout(function () {
+        if (value == $scope.currentValue) {
+          searchValue(value);
+        }
+      }, 700);
+    };
+
+    //-------------------------------------END SEARCH--------------------------------------------//
 
 }]);
