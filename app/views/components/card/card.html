@@ -3,11 +3,10 @@
 
     <icon
       ng-class="{'bmp-expand': cardExpand, 'bmp-collapse': !cardExpand}"
-      style="font-size:36;color:#333;position: absolute;padding-top: 10px;"
       ng-click="changeCardState()">
     </icon>
 
-    <icon class="bmp-close right" style="font-size:36;color:#333;padding-top: 10px;"
+    <icon class="bmp-close right"
           ng-click="removecard(data)"
           ng-class="{'collapsed': cardExpand}">
     </icon>

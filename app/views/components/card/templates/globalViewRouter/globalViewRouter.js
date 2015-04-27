@@ -242,21 +242,23 @@ angular.module('bmp.components.card')
       //AS Number	AS Name	Organization
       //PeerASN, PeerName, org_name
 
-      $scope.peerViewPeerOptions.columnDefs = [
-        {name: "PeerASN", displayName: 'AS Number', width: '*'},
-        {name: "PeerName", displayName: 'AS Name', width: '*'},
-        {name: "org_name", displayName:'Organization', width: '*'}
-      ];
+      $scope.globalViewPeerOptions = {
+        columnDefs: [
+          {name: "PeerASN", displayName: 'AS Number', width: '*'},
+          {name: "PeerName", displayName: 'AS Name', width: '*'},
+          {name: "org_name", displayName: 'Organization', width: '*'}
+        ]
+      };
       var peerViewPeerDefaultData = [{"as_name":"NO DATA"}];
-      $scope.peerViewPeerOptions.onRegisterApi = function (gridApi) {
-        $scope.peerViewPeerApi= gridApi;
+      $scope.globalViewPeerOptions.onRegisterApi = function (gridApi) {
+        $scope.globalViewPeerApi= gridApi;
       };
 
       $scope.$watch('cardExpand', function(val) {
         if($scope.cardExpand == true){
           setTimeout(function(){
             //$scope.peerViewPeerApi.core.handleWindowResize();
-            $scope.calGridHeight($scope.peerViewPeerOptions, $scope.peerViewPeerApi);
+            $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
           },10)
         }
       });
@@ -300,6 +302,7 @@ angular.module('bmp.components.card')
               console.log(error.message);
             });
         })
+        $scope.globalViewPeerOptions.data = $scope.peerSummaryTable;
       };
 
       $scope.isUP = ($scope.data.isConnected=='1')? '⬆':'⬇';

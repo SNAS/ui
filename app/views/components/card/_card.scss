@@ -6,6 +6,17 @@
   margin: 2px auto;
   .content {
     display: inline;
+    .bmp-expand, .bmp-collapse {
+      font-size:15px;
+      color:#333;
+      position: absolute;
+      padding-top: 10px;
+    }
+    .bmp-close{
+      font-size:15px;
+      color:#333;
+      padding-top: 10px;
+    }
     .red {
       color: red;
     }

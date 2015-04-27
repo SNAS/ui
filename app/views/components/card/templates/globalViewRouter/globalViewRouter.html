@@ -73,21 +73,9 @@
       <nvd3 options="upTimeOptions" data="upTimeData" config="upTimeConfig"></nvd3>
     </div>
 
-    <!--NEED TO BE CHANGED-->
     <!--R/Peers info table-->
-    <!--<span ng-bind-html="peerSummaryTable"></span>-->
-    <table class="tableSummary">
-      <tr>
-        <th>AS Number</th>
-        <th>AS Name</th>
-        <th>Organization</th>
-      </tr>
-      <tr ng-repeat="peer in peerSummaryTable track by $index">
-        <td>{{ peer.PeerASN }}</td>
-        <td>{{ peer.PeerName }}</td>
-        <td>{{ peer.org_name }}</td>
-      </tr>
-    </table>
+    <div class="gridStyle" ui-grid="globalViewPeerOptions" ng-style="{'height':globalViewPeerOptions.changeHeight}"></div>
+
     <br>
     <!--end router card-->
   </div>
