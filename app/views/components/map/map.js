@@ -379,7 +379,6 @@ angular.module('bmp.components.map', [])
 
     $scope.clusterIcon = function(cluster){
        var cmarkers = cluster.getAllChildMarkers();
-        var cselected = false;
         for(var i =0; i < cmarkers.length; i++)
         {
           if(cmarkers[i].options.selected === true)
@@ -563,7 +562,8 @@ angular.module('bmp.components.map', [])
       scope: {
         location: '=',
         ip: '=?',
-        cardApi: '='
+        cardApi: '=',
+        type: '@'
       }
     }
 });
