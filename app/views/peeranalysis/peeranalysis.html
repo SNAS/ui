@@ -1,21 +1,22 @@
-<div ng-controller="PeerAnalysisController">
+<div>
   <!------------------------------------------------- PEER TABLE----------------------------------------------------->
-  <h1 class="page-header">BGP Peers</h1>
+  <h1 class="pgtitle">BGP Peers</h1>
 
-  <div id="peerTable" class="grid" ui-grid="peerTableOptions" ui-grid-selection ui-grid-auto-resize></div>
+  <div id="peerTable" class="gridStyle" ui-grid="peerTableOptions" ui-grid-selection ui-grid-auto-resize></div>
   <!------------------------------------------------- ./PEER TABLE -------------------------------------------------->
 
   <!------------------------------------------------- Prefix Trending per Peer--------------------------------------->
-  <h3 class="page-header">Details of Peer :
-    <span ng-if="Status==1" style="color:green">{{RouterName}}  {{PeerName}}</span>
-    <span ng-if="Status==0" style="color:darkred">{{RouterName}}  {{PeerName}}</span>
+  <h3 class="pgtitle"> Peer Details
+    <span ng-if="Status==1" class="up-text">{{RouterName}}  {{PeerName}}</span>
+    <span ng-if="Status==0" class="down-text">{{RouterName}}  {{PeerName}}</span>
   </h3>
-  <pre><table>
-    <p ng-bind-html="detailsPanel"></p>
-  </table></pre>
-  <h3 class="page-header">Prefix Trending for Peer :
-    <span ng-if="Status==1" style="color:green">{{RouterName}}  {{PeerName}}</span>
-    <span ng-if="Status==0" style="color:darkred">{{RouterName}}  {{PeerName}}</span>
+
+  <div class="detailspanel">
+    <pre class="preStyle" ng-bind-html="detailsPanel"></pre>
+  </div>
+  <h3 class="pgtitle">Peer Prefix Trend
+    <span ng-if="Status==1" class="up-text">{{RouterName}}  {{PeerName}}</span>
+    <span ng-if="Status==0" class="down-text">{{RouterName}}  {{PeerName}}</span>
   </h3>
   <nvd3 options="options" data="data"></nvd3>
 </div>

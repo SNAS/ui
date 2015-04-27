@@ -19,10 +19,20 @@ angular.module('bmpUiApp')
       multiSelect:false,
       noUnselect:true,
       selectionRowHeaderWidth: 35,
-      rowHeight: 35,
+      rowHeight: 25,
 
       columnDefs: [
-        {field: 'Status', displayName: 'Status',width:'8%'},
+        {field: 'Status', displayName: 'Status',width:'4%',
+          cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+
+            if ((row.entity.isUp === 1) && (row.entity.isBMPConnected === 1)) {
+              return 'up-icon bmp-up';
+            }
+            else{
+              return 'down-icon bmp-down';
+            }
+          }
+        },
         {field: 'RouterName', displayName: 'RouterName',width: '15%'},
         {field: 'PeerName', displayName: 'PeerName',width:'22%' },
         {field: 'PeerIP', displayName: 'PeerIP',width:'10%' },
@@ -68,7 +78,7 @@ angular.module('bmpUiApp')
               for (var i = 0; i < peers.length; i++) {
                 var prefix = getPrefix(i, peers, peer_prefix);
 
-                peers[i].Status = ((peers[i].isUp === 1) && (peers[i].isBMPConnected === 1)) ? "Up" : "Down";
+              //  peers[i].Status = ((peers[i].isUp === 1) && (peers[i].isBMPConnected === 1)) ? "Up" : "Down";
                 peers[i].IPv = (peers[i].isPeerIPv4 === 1) ? '4' : '6';
                 peers[i].Pre_RIB = (prefix == null ) ? '0' : prefix.Pre_RIB;
                 peers[i].Post_RIB = (prefix == null ) ? '0' : prefix.Post_RIB;
@@ -92,7 +102,7 @@ angular.module('bmpUiApp')
     // Click on row in Peers table
     function changeSelected(row) {
     //  var row = $scope.gridApi.selection.getSelectedGridRows()[0].entity;
-      var detailsPanel = '<thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>';
+      var detailsPanel = '<table class="tableStyle"><thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>';
       var amount_of_entries = 1000;
       var noShow = ["$$hashKey","Status","IPv"];
 
@@ -118,7 +128,7 @@ angular.module('bmpUiApp')
           detailsPanel += (
           '<tr>' +
           '<td>' +
-          key + ': ' +
+          key +
           '</td>' +
 
           '<td>' +
@@ -128,6 +138,7 @@ angular.module('bmpUiApp')
           );
         }
       });
+      detailsPanel += '</table>';
 
       $scope.detailsPanel = detailsPanel;
 
@@ -173,7 +184,8 @@ angular.module('bmpUiApp')
                 bottom: 60,
                 left: 100
               },
-              color: ['#9ec654' ,'#f7a031'],
+              color: ['#4ec0f1' ,'#9ec654'],
+              //color: ['#9ec654' ,'#f7a031'],
               focusShowAxisY: true,
               interactive:false,
 

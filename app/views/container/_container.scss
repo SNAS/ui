@@ -2,6 +2,10 @@
 //===================================================================================
 // Header, Footer & Sidebar
 //===================================================================================
+
+.container-fluid{
+}
+
 .container-fluid > .navbar-header{
   margin-right: 0;
   margin-left: 0;
@@ -13,10 +17,10 @@
 
 }
 
-.navbar-header {
-  color: fff;
-  float: left;
-}
+//.navbar-header {
+//  color: fff;
+//  float: left;
+//}
 
 .text-light{
   color: #222;
@@ -44,6 +48,7 @@
 .navbar-toggle{
   display: block;
   float: left;
+  background-color: #15bdf4;
 }
 
 .sidebar-nav > li{
