@@ -75,33 +75,63 @@ angular.module('bmp.components.card')
       var whichip = ['v4','v6'];
 
       //DEFAULT values
-      $scope.ipAmountData = [
-        {key:'ipv4',values:[
-          {x: 1,y: 0},
-          {x: 2,y: 0}
-        ]},
-        {key:'ipv6',values:[
-          {x: 1,y: 0},
-          {x: 2,y: 0}
-        ]}
+      //$scope.ipAmountData = [
+      //  {key:'ipv4',values:[
+      //    {x: 1,y: 0},
+      //    {x: 2,y: 0}
+      //  ]},
+      //  {key:'ipv6',values:[
+      //    {x: 1,y: 0},
+      //    {x: 2,y: 0}
+      //  ]}
+      //];
+
+    $scope.ipAmountData = [
+        {
+          //key:'ipv4',
+          values:[
+            {x: "ipv4",y: 0}
+           ]
+        },
+        {
+          //key:'ipv6',
+          values:[
+            {x: "ipv6",y: 0}
+          ]
+        },
+        {
+          //key:'ipTotal',
+          values:[
+            {x: "ipTotal",y: 0}
+          ]
+        }
       ];
 
       var graphPoint = [0];
+      var ipTotal = 0;
       angular.forEach($scope.ipAmountData, function(obj,index){
         var ipAmount = 0;
         apiFactory.getRouterIpType($scope.data.RouterIP, whichip[index]).
           success(function (result) {
             ipAmount = result.v_peers.size;
+            ipTotal+=ipAmount;
 
-            if(ipAmount > graphPoint[0]) //for changing graph axis
-              graphPoint[0] = ipAmount;
+            //if(ipAmount > graphPoint[0]) //for changing graph axis
+            //  graphPoint[0] = ipAmount;
+            //
+            $scope.ipAmountData[index].values[0].y = ipAmount;
+            //  (
+            //  [
+            //    {x: "peer",y: ipAmount}
+            //  ]
+            //);
 
-            $scope.ipAmountData[index].values =(
-              [
-                {x: 1,y: ipAmount},
-                {x: 2,y: ipAmount}
-              ]
-            );
+            $scope.ipAmountData[$scope.ipAmountData.length-1].values[0].y = ipTotal;
+            //  (
+            //  [
+            //    {x: "peer",y: ipTotal}
+            //  ]
+            //);
           }).
           error(function (error) {
             console.log(error.message);
@@ -110,32 +140,28 @@ angular.module('bmp.components.card')
 
       $scope.ipAmountOptions = {
         "chart": {
-          "type": "stackedAreaChart",
+          "type": "multiBarChart",
+          "height": 250,
+          "width": 300,
           "showControls": false,
-          "showXAxis": false,
-          "height": 200,
-          "width": 120,
+          "showLegend": false,
           "margin": {
             "top": 20,
             "right": 20,
-            "bottom": 50,
-            "left": 50
+            "bottom": 60,
+            "left": 45
           },
-          "useVoronoi": false,
           "clipEdge": true,
+          "staggerLabels": false,
           "transitionDuration": 500,
-          "useInteractiveGuideline": false,
-          "interactive": false,
-          "tooltips": false,
+          "stacked": false,
           "yAxis": {
-            "showMaxMin": true,
-            "tickValues": graphPoint
-          },
-          "xAxis":{
-
+            tickFormat:d3.format('d')
           }
         }
       };
+
+
       //END <!--IP's Graph-->
 
       //ROUTER UP TIME GRAPH
@@ -199,6 +225,7 @@ angular.module('bmp.components.card')
         if ($scope.cardExpand == true) {
           //resize
           $scope.upTimeConfig.visible = true;
+          $scope.globalViewPeerApi.core.handleWindowResize();
         }
       });
       //End Router up time Graph

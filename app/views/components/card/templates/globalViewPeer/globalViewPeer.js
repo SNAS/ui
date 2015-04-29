@@ -83,39 +83,66 @@ angular.module('bmp.components.card')
         console.log(error.message);
       });
 
-    //DownstreamAS, as_name, and org_name
+    //Redraw Tables when menu state changed
+    $scope.$on('menu-toggle', function(thing, args) {
+      $timeout( function(){
+        $scope.peerViewPeerApi.core.handleWindowResize();
+        $scope.ribGridApi.core.handleWindowResize();
+      }, 550);
+    });
+
+    $scope.globalViewPeerOptions = {
+      "columnDefs":[
+        {name: "DownstreamAS", displayName: 'AS Number', width: '*'},
+        {name: "as_name", displayName: 'AS Name', width: '*'},
+        {name: "org_name", displayName:'Organization', width: '*'}
+      ]
+    };
+    var peerViewPeerDefaultData = [{"as_name":"-"},{"DownstreamAS":"-"},{"org_name":"-"}];
+
+    $scope.globalViewPeerOptions.onRegisterApi = function (gridApi) {
+      $scope.globalViewPeerApi= gridApi;
+    };
+
+    $scope.$watch('cardExpand', function(val) {
+      if($scope.cardExpand == true){
+        setTimeout(function(){
+          $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
+        },10)
+      }
+    });
+
+    $scope.calGridHeight = function(grid, gridapi){
+      gridapi.core.handleWindowResize();
+
+      var height;
+      if(grid.data.length > 10){
+        height = ((10 * 30) + 30);
+      }else{
+        height = ((grid.data.length * 30) + 50);
+      }
+      grid.changeHeight = height;
+      gridapi.grid.gridHeight = grid.changeHeight;
+    };
+
+    //DownstreamAS, as_name, and org_name (working)
     $scope.peerDownData = [];
     apiFactory.getPeerDownStream($scope.data.peer_hash_id).
       success(function (result){
-        var peerDown = result.peerDownstreamASN.data;
-
-        for(var i = 0; i<peerDown.length; i++) {
-          var data = peerDown[i];
-          if (data.org_name == "" || data.org_name === null) {
-            data.org_name = "-";
-          }
-          $scope.peerDownData.push({
-            DownstreamAS: data.DownstreamAS,
-            as_name: data.as_name,
-            org_name: data.org_name
-          });
+        //var peerDown
+        if(result.peerDownstreamASN.data.length == 0){
+          $scope.globalViewPeerOptions.data = peerViewPeerDefaultData;
+        }else {
+          $scope.globalViewPeerOptions.data = result.peerDownstreamASN.data;
         }
-        if($scope.peerDownData.length < 1){
-          //  No data
-          $scope.peerDownData.push({
-            DownstreamAS: "None",
-            as_name: "None",
-            org_name: "None"
-          });
-        }
-
+        $scope.globalViewPeerOptions.core.handleWindowResize();
       }).
       error(function (error){
         console.log(error.message);
       });
 
-    $scope.downTime = ($scope.data.LastDownTimestamp === null)? "Up":$scope.data.LastDownTimestamp;
 
+    $scope.downTime = ($scope.data.LastDownTimestamp === null)? "Up":$scope.data.LastDownTimestamp;
 
     $scope.peerFullIp = $scope.data.PeerIP;
     if($scope.data.isPeerIPv4 == "1"){

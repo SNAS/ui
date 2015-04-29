@@ -1,106 +1,89 @@
-.router-peer-icon{
-  text-align: center;
-  padding-top: 3em;
-  .bmp-outline-route {
-    font-size:50px;
-    color:#6197d1;
-  }
-  .bmp-genpeer {
-    font-size:50px;
-    color:#6197d1;
-  }
-  .peers-icon{
-    display: initial;
-    .bmp-openrouter {
-      font-size:50px;
-      color:#6197d1;
-      position: absolute;
-    }
-    .peer-amount{
-      position: absolute;
-      padding-top: 1.1em;
-      width: 50px;
+$router-color: #5795DC;
+$peer-color: #EAA546;
+$connector-color: #AFAFAF;
+$peer-text-color: #FFFFFF;
+
+.peers-amount-img {
+  width:100%;
+  height: 100%;
+  position: absolute;
+
+  .left-section {
+    width:120px;
+    height:50px;
+    display:table-cell;
+    .centre {
       text-align: center;
+      .bmp-outline-route {
+        color:$router-color;
+        font-size:50px;
+      }
+      .router-name-text{
+        color: $connector-color;
+      }
+    }
+  }
+
+  .middle-section {
+    width:50px;
+    height:50px;
+    display:table-cell;
+  }
+
+  .right-section {
+    width:50px;
+    height:50px;
+    display:table-cell;
+    color: $peer-color;
+    .peers-amount {
+      text-align: center;
+      .bmp-openrouter {
+        position: relative;
+        font-size:50px;
+        color: $connector-color;
+      }
+      .inner-circle {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        background-color: $peer-color;
+        border-radius: 25px;
+        margin: 0 auto;
+        margin-top: -47px;
+        margin-bottom: 10px;
+      }
+      .peers-amount-text {
+        position: relative;
+        margin-top: -75%;
+        margin-bottom: 15px;
+        color: $peer-text-color;
+      }
+    }
+
+    .bmp-peer_label {
+      text-align: center;
+      font-size: 18px;
+      position: relative;
     }
   }
 }
 
-/*
-$purple: #9A68C7;
-$blue: #3BA9E4;
-$green: #75B343;
-$orange: #FF6A42;
-
-
-/* Common Colors - Variables
-
-$off-wht: rgba(white,.4);
-
-/* Mixins
-
-@mixin btn-theme($btn-color) {
-	border-color: darken($btn-color, 20%);
-	background-color: $btn-color;
-	&:hover {
-		background-color: darken($btn-color, 6%);
-		box-shadow: 0 .125em $off-wht, inset 0 .063em $off-wht, inset 0 -.188em lighten($btn-color, 2%);
-	}
-	&:active {
-		box-shadow: 0 .063em $off-wht, inset 0 0 1.094em darken($btn-color, 40%), inset 0 .063em darken($btn-color, 20%),inset 0 -0.188em darken($btn-color, 20%);
-	}
+.router-peer-line {
+  position: relative;
+  background-color:$connector-color;
+  width: 75px;
+  height: 1px;
+  top: 25px;
+  left: 98px;
 }
 
-@mixin trans($val...) {
-	-webkit-transition: $val;
-	-moz-transition: $val;
-	-o-transition: $val;
-	transition: $val;
-}
-
-/* Button Global
-
-.btn {
-	display: inline-block;
-	margin: 1rem;
-	padding: .938em 1.875em;
-	border: .094em solid;
-	border-radius: .625em;
-	box-shadow: 0 .375em .313em -.313em rgba(black,.8), inset 0 .063em $off-wht, inset 0 -.188em rgba(black,.15);
-	color: #FFF;
-	font: bold 1.8rem sans-serif;
-	@include trans(0.2s ease-in-out);
-	text: {
-		transform: uppercase;
-		decoration: none;
-		shadow: 0 .063em rgba(black,.3);
-	}
-  cursor:pointer;
-}
-
-/* Themes
-
-.purple {
-	@include btn-theme($purple);
-}
-.blue {
-	@include btn-theme($blue);
-}
-.green {
-	@include btn-theme($green);
-}
-.orange {
-	@include btn-theme($orange);
-}*/
-
-svg .title {
+svg.title {
  font: bold 56px Arial;
 }
 
 .routerLoc {
   text-align: left;
   border-style: hidden;
-  //border-width: 0px;
-  //width: 100%;
   margin-left: 4px;
 }
 
@@ -123,7 +106,6 @@ svg .title {
   width: 100%;
   td, th {
     padding: 3px;
-//    border-style: solid;
     border-width: 1px;
   }
 }
