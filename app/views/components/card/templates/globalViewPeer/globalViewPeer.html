@@ -2,12 +2,15 @@
   <!--COLLAPSED view-->
   <div ng-hide="cardExpand" class="collapsed">
     <!--Global Peer Card-->
-          <div ng-hide="cardExpand" class="collapsed">
-            BMP Peer |
-            {{data.PeerASN}} |
-            {{data.PeerName}} |
-            {{data.PeerIP}}
-          </div>
+    <icon class="bmp-outline_router" style="font-size:36px;color:#e9a445;"></icon>
+    <div class="collapsedContent">
+      <ul class="collContentItems">
+        <li>BMP PEER</li>
+        <li>{{data.PeerASN}}</li>
+        <li>{{data.PeerName}}</li>
+        <li>{{data.PeerIP}}</li>
+      </ul>
+    </div>
     <!--End Peer Card Expand-->
   </div>
 

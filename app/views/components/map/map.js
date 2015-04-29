@@ -10,7 +10,7 @@
 angular.module('bmp.components.map', [])
 .controller('MapController', function ($scope, $state, $q, $http, $timeout, apiFactory, leafletData, $compile, $filter) {
 
-    window.SCOPE = $scope;
+    window.SCOPEMAP = $scope;
 
     /************** START MAP **************/
     $scope.chosenIndex = -1;
@@ -23,7 +23,6 @@ angular.module('bmp.components.map', [])
     $scope.routers = [];
     $scope.peers = [];
 
-    $scope.showSearch = true;
     $scope.usePopUps = true;
 
     //IDs for mapbox
@@ -40,7 +39,7 @@ angular.module('bmp.components.map', [])
     });
 
     //Use a promise to grab a copy of the map when available
-    leafletData.getMap().then(function(map) {
+    leafletData.getMap($scope.id).then(function(map) {
         $scope.map = map;
         $scope.init();
     });
@@ -60,15 +59,25 @@ angular.module('bmp.components.map', [])
         else if($scope.location === 'globalView'){
             $scope.getRouters();
             $scope.map.addLayer($scope.routerLayer);
-        }else if($scope.location === 'singlePoint'){
-            //single marker stuff here
-            $scope.map.invalidateSize();
-            $scope.showSearch = false;
-            $scope.usePopUps = false;
-            $scope.loading = false;
-            //new L.Marker(latlng, options)
-            $scope.map.addLayer(new L.Marker([3,3]));
-            window.SCOPERZ = $scope;
+        }
+        else if($scope.location === 'peerCard'){
+            console.log($scope.plotMarker);
+            if($scope.plotMarker != undefined){
+                //single marker stuff here
+                $scope.map.invalidateSize();
+                $scope.usePopUps = false;
+                $scope.loading = false;
+
+                var latlng = [$scope.plotMarker.latitude, $scope.plotMarker.longitude];
+                var options = {
+                    icon:   L.mapbox.marker.icon({
+                        'marker-color': '#758CAB',
+                        'marker-size': 'medium'
+                    })
+                }
+                var marker = new L.Marker(latlng, options);
+                $scope.map.addLayer(marker);
+            }
         }
     }
 
@@ -379,7 +388,6 @@ angular.module('bmp.components.map', [])
 
     $scope.clusterIcon = function(cluster){
        var cmarkers = cluster.getAllChildMarkers();
-        var cselected = false;
         for(var i =0; i < cmarkers.length; i++)
         {
           if(cmarkers[i].options.selected === true)
@@ -563,7 +571,9 @@ angular.module('bmp.components.map', [])
       scope: {
         location: '=',
         ip: '=?',
-        cardApi: '='
+        plotMarker: "=?",
+        cardApi: '=',
+        id: "@name"
       }
     }
 });
