@@ -63,8 +63,6 @@ angular.module('bmpUiApp')
           }
         }
       }
-      //{ name: "symbTransit", displayName: 'Transit', maxWidth: 10 },
-      //{ name: "symbOrigin", displayName: 'Origin', maxWidth: 10 }
     ];
 
     $scope.whoIsGridOptions.multiSelect = false;
@@ -77,8 +75,6 @@ angular.module('bmpUiApp')
     // $scope.peerViewPeerOptions.onRegisterApi = function (height){
     //   $scope.whoIsPeerApi = height;
     // }
-
-    // debugger;
 
     console.dir($scope.whoIsGridOptions);
     console.dir($scope.whoIsGridApi);
@@ -146,8 +142,6 @@ angular.module('bmpUiApp')
         $scope.whoIsData[i].transit_v6 = $scope.whoIsData[i].transit_v6_prefixes;
         $scope.whoIsData[i].origin_v4 = $scope.whoIsData[i].origin_v4_prefixes;
         $scope.whoIsData[i].origin_v6 = $scope.whoIsData[i].origin_v6_prefixes;
-        //$scope.whoIsData[i].symbTransit = ($scope.whoIsData[i].isTransit == 1)? "✔":"✘";
-        //$scope.whoIsData[i].symbOrigin = ($scope.whoIsData[i].isOrigin == 1)? "✔":"✘";
       }
     };
 

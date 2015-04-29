@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 /**
  * @ngdoc function
@@ -11,69 +11,69 @@
 angular.module('bmpUiApp')
   .controller('topologyTestController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
-    //nx.define('ExtendLink', nx.graphic.Topology.Link, {
-    //  properties: {
-    //    sourceLabel: null,
-    //    targetLabel: null
-    //  },
-    //  view: function(view) {
-    //    view.content.push({
-    //      name: 'source',
-    //      type: 'nx.graphic.Text',
-    //      props: {
-    //        'class': 'sourceLabel',
-    //        'alignment-baseline': 'text-after-edge',
-    //        'text-anchor': 'start'
-    //      }
-    //    }, {
-    //      name: 'target',
-    //      type: 'nx.graphic.Text',
-    //      props: {
-    //        'class': 'targetLabel',
-    //        'alignment-baseline': 'text-after-edge',
-    //        'text-anchor': 'end'
-    //      }
-    //    });
-    //
-    //    return view;
-    //  },
-    //  methods: {
-    //    update: function() {
-    //
-    //      this.inherited();
-    //
-    //      var el, point;
-    //
-    //      var line = this.line();
-    //      var angle = line.angle();
-    //      var stageScale = this.stageScale();
-    //
-    //      // pad line
-    //      line = line.pad(18 * stageScale, 18 * stageScale);
-    //
-    //      if (this.sourceLabel()) {
-    //        el = this.view('source');
-    //        point = line.start;
-    //        el.set('x', point.x);
-    //        el.set('y', point.y);
-    //        el.set('text', this.sourceLabel());
-    //        el.set('transform', 'rotate(' + angle + ' ' + point.x + ',' + point.y + ')');
-    //        el.setStyle('font-size', 12 * stageScale);
-    //      }
-    //
-    //
-    //      if (this.targetLabel()) {
-    //        el = this.view('target');
-    //        point = line.end;
-    //        el.set('x', point.x);
-    //        el.set('y', point.y);
-    //        el.set('text', this.targetLabel());
-    //        el.set('transform', 'rotate(' + angle + ' ' + point.x + ',' + point.y + ')');
-    //        el.setStyle('font-size', 12 * stageScale);
-    //      }
-    //    }
-    //  }
-    //});
+    nx.define('ExtendLink', nx.graphic.Topology.Link, {
+      properties: {
+        sourceLabel: null,
+        targetLabel: null
+      },
+      view: function (view) {
+        view.content.push({
+          name: 'source',
+          type: 'nx.graphic.Text',
+          props: {
+            'class': 'sourceLabel',
+            'alignment-baseline': 'text-after-edge',
+            'text-anchor': 'start'
+          }
+        }, {
+          name: 'target',
+          type: 'nx.graphic.Text',
+          props: {
+            'class': 'targetLabel',
+            'alignment-baseline': 'text-after-edge',
+            'text-anchor': 'end'
+          }
+        });
+
+        return view;
+      },
+      methods: {
+        update: function () {
+
+          this.inherited();
+
+          var el, point;
+
+          var line = this.line();
+          var angle = line.angle();
+          var stageScale = this.stageScale();
+
+          // pad line
+          line = line.pad(18 * stageScale, 18 * stageScale);
+
+          if (this.sourceLabel()) {
+            el = this.view('source');
+            point = line.start;
+            el.set('x', point.x);
+            el.set('y', point.y);
+            el.set('text', this.sourceLabel());
+            el.set('transform', 'rotate(' + angle + ' ' + point.x + ',' + point.y + ')');
+            el.setStyle('font-size', 12 * stageScale);
+          }
+
+
+          if (this.targetLabel()) {
+            el = this.view('target');
+            point = line.end;
+            el.set('x', point.x);
+            el.set('y', point.y);
+            el.set('text', this.targetLabel());
+            el.set('transform', 'rotate(' + angle + ' ' + point.x + ',' + point.y + ')');
+            el.setStyle('font-size', 12 * stageScale);
+          }
+        }
+      }
+    });
 
     // initialize a topology
     var topo = new nx.graphic.Topology({
@@ -91,9 +91,10 @@ angular.module('bmpUiApp')
       },
       dataProcessor: 'force',
       adaptive: true,
-      identityKey:'id',
+      identityKey: 'id',
       showIcon: true,
-   //   linkInstanceClass: 'ExtendLink'
+      linkInstanceClass: 'ExtendLink',
+
     });
 
     $scope.peerHashId = "16ea27797629984cc5fd8c7a210b082d"; //ospf
@@ -123,7 +124,7 @@ angular.module('bmpUiApp')
           {
             id: hash_id,
             label: routerId
-          //  image: "/images/routerMed.png",
+            //  image: "/images/routerMed.png",
           });
       }
     }).error(function (error) {
@@ -137,6 +138,7 @@ angular.module('bmpUiApp')
         var source = linksData[i].local_node_hash_id;
         var target = linksData[i].remote_node_hash_id;
         var igp_metric = linksData[i].igp_metric;
+        var interfaceIP = linksData[i].InterfaceIP;
         if (source < target) {
           links.push(
             {
@@ -144,21 +146,21 @@ angular.module('bmpUiApp')
               source: source,
               target: target,
               label: igp_metric,
-              sourceLabel: igp_metric,
-              targetLabel: igp_metric
+              interfaceIP: interfaceIP
             });
         }
         else {
           for (var j = 0; j < links.length; j++) {
             if (source == links[j].target && target == links[j].source && igp_metric != links[j].label) {
-              links[j]=
-                {
-                  id: links[j].id,
-                  source: links[j].source,
-                  target: links[j].target,
-                  sourceLabel: links[j].label,
-                  targetLabel: igp_metric
-                }
+              links[j] =
+              {
+                id: links[j].id,
+                source: links[j].source,
+                target: links[j].target,
+                sourceLabel: links[j].label,
+                targetLabel: igp_metric,
+                interfaceIP: interfaceIP
+              }
               break;
             }
           }
@@ -202,26 +204,41 @@ angular.module('bmpUiApp')
         topo.data(topologyData);
       });
 
-      var nodeLayer = topo.getLayer('nodes');
-      var nodeLayerHighlightElements = nodeLayer.highlightedElements();
-      var linksLayer = topo.getLayer('linkSet');
-      var linksLayerHighlightElements = linksLayer.highlightedElements();
-
-      topo.on('clickNode', function(sender,event){
-        var selectedRouterId = event['_label'];
-        var selectedNodeHashId = event['_data-id'];
-
-        nodeLayerHighlightElements.clear();
+      topo.on('clickStage', function (sender, event) {
+        var linksLayer = topo.getLayer('links');
+        var linksLayerHighlightElements = linksLayer.highlightedElements();
         linksLayerHighlightElements.clear();
-        nodeLayerHighlightElements.add(topo.getNode(selectedNodeHashId));
+
+        var pathLayer = topo.getLayer("paths");
+        pathLayer.clear();
+        $scope.SPFtableOptions.data = {};
+      });
+
+      topo.upon('clickNode', function (sender, node) {
+        var selectedRouterId = node['_label'];
+        var selectedNodeHashId = node['_data-id'];
+
+        topo.selectedNodes().clear();
+        topo.selectedNodes().add(node);
+
+        //fade out all layer
+        //nx.each(topo.layers(), function (layer) {
+        //  layer.fadeOut(true);
+        //}, this);
+
+        var linksLayer = topo.getLayer('links');
+        var linksLayerHighlightElements = linksLayer.highlightedElements();
+        linksLayerHighlightElements.clear();
+
+        var pathLayer = topo.getLayer("paths");
+        pathLayer.clear();
 
         if (protocol == "ospf") {
           apiFactory.getSPFospf($scope.peerHashId, selectedRouterId).success(function (result) {
               SPFdata = result.igp_ospf.data;
+              //drawShortestPathTree(SPFdata);
               var selectedLinks = getSelectedLinks(SPFdata);
-              //var test = topo.getNode(selectedNodeHashId).links();
               linksLayerHighlightElements.addRange(selectedLinks);
-              //linksLayerHighlightElements.addRange(test);
               for (var i = 0; i < SPFdata.length; i++) {
                 SPFdata[i].neighbor_addr_adjusted = (SPFdata[i].neighbor_addr == null) ? 'local' : SPFdata[i].neighbor_addr;
               }
@@ -234,6 +251,7 @@ angular.module('bmpUiApp')
         else if (protocol == "isis") {
           apiFactory.getSPFisis($scope.peerHashId, selectedRouterId).success(function (result) {
               SPFdata = result.igp_isis.data;
+              //drawShortestPathTree(SPFdata);
               var selectedLinks = getSelectedLinks(SPFdata);
               linksLayerHighlightElements.addRange(selectedLinks);
               for (var i = 0; i < SPFdata.length; i++) {
@@ -245,28 +263,18 @@ angular.module('bmpUiApp')
               console.log(error.message);
             });
         }
+
+        return false;
+      });
+
+      topo.on('enterNode', function (sender, node) {
       });
 
       var app = new nx.ui.Application();
       app.container(document.getElementById('topology'));
       topo.attach(app);
-    },500);
+    }, 1000);
 
-
-    function getSelectedLinks(SPFdata) {
-      var selectedLinks = [];
-
-      for (var i = 0; i < SPFdata.length; i++) {
-        var path_hash_ids = SPFdata[i].path_hash_ids.split(",");
-        for (var j = 0; j < path_hash_ids.length - 1; j++) {
-          var selectedLink = topo.getLinkSet(path_hash_ids[j], path_hash_ids[j + 1]);
-          if (selectedLinks.indexOf(selectedLink) == -1) {
-            selectedLinks.push(selectedLink);
-          }
-        }
-      }
-      return selectedLinks;
-    }
 
     //SPF Table options
     $scope.SPFtableOptions = {
@@ -291,11 +299,102 @@ angular.module('bmpUiApp')
         $scope.gridApi = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           var path = row.entity.path_hash_ids;
-          $scope.drawPath(path);
+          var neighbor_addr = row.entity.neighbor_addr;
+          $scope.drawPath(path,neighbor_addr);
         });
       }
     };
 
     //SPF Table data
     $scope.SPFtableOptions.data = {};
+
+    function getSelectedLinks(SPFdata) {
+      var selectedLinks = [];
+      for (var i = 0; i < SPFdata.length; i++) {
+        var path_hash_ids = SPFdata[i].path_hash_ids.split(",");
+        var neighbor_addr = SPFdata[i].neighbor_addr;
+        for (var j = 0; j < path_hash_ids.length - 1; j++) {
+          var selectedLink = findLink(path_hash_ids[j], path_hash_ids[j + 1], neighbor_addr);
+         // nx.extend(linksObj, _linksObj);
+          selectedLinks.push(selectedLink);
+        }
+      }
+      return selectedLinks;
+    }
+
+    //function drawShortestPathTree(SPFdata) {
+    //  var pathLayer = topo.getLayer("paths");
+    //  pathLayer.clear();
+    //  for (var i = 0; i < SPFdata.length; i++) {
+    //    var path_hash_ids = SPFdata[i].path_hash_ids.split(",");
+    //    var selectedLinks = [];
+    //    for (var j = 0; j < path_hash_ids.length - 1; j++) {
+    //      var selectedLink = nx.util.values(findLink(path_hash_ids[j], path_hash_ids[j + 1]));
+    //      selectedLinks.push(selectedLink[0]);
+    //      //  nx.extend(linksObj, _linksObj);
+    //    }
+    //    //   var selectedLinks = nx.util.values(linksObj).reverse();
+    //    if (selectedLinks.length != 0) {
+    //      var path = new nx.graphic.Topology.Path({
+    //        links: selectedLinks
+    //        //  arrow: 'cap'
+    //      });
+    //      pathLayer.addPath(path);
+    //    }
+    //  }
+    //}
+
+    //draw the path
+    $scope.drawPath = function (path_hash_ids, neighbor_addr) {
+      var pathLayer = topo.getLayer("paths");
+      pathLayer.clear();
+      var selectedNodes = path_hash_ids.split(",");
+      var selectedLinks = [];
+      for (var j = 0; j < selectedNodes.length - 1; j++) {
+        var selectedLink =findLink(selectedNodes[j], selectedNodes[j + 1], neighbor_addr);
+        selectedLinks.push(selectedLink);
+      }
+      if (selectedLinks.length != 0) {
+        var reverse = false;
+        if(selectedLinks.length == 1 && selectedNodes[0] > selectedNodes[1]){
+            reverse = true;
+        }
+        var path = new nx.graphic.Topology.Path({
+          links: selectedLinks,
+          arrow: 'cap',
+          pathStyle:{
+            'stroke': '#666',
+            'stroke-width': '0px',
+            fill: '#b2e47f'
+          },
+          reverse: reverse
+        });
+
+        pathLayer.addPath(path);
+      }
+    }
+
+    function findLink(nodeId1, nodeId2, neighbor_addr) {
+      var links;
+      if (nodeId1 < nodeId2) {
+        links = nx.util.values(topo.getLinksByNode(nodeId1, nodeId2));
+      }
+      else {
+        links = nx.util.values(topo.getLinksByNode(nodeId2, nodeId1));
+      }
+
+      if(links.length == 1){
+        return links[0];
+      }
+      else {
+        for(var i=0; i<links.length; i++){
+          var interfaceIP = links[i]._model._data.interfaceIP;
+          if(interfaceIP == neighbor_addr){
+            return links[i];
+          }
+        }
+        return links[0];
+      }
+    }
+
   }]);
