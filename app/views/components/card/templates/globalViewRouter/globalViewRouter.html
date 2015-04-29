@@ -42,16 +42,32 @@
 
       <div class="col-md-4">
 
-        <div class="router-peer-icon">
-          <icon class="bmp-outline_router bmp-outline-route"></icon>
-          <icon class="bmp-genpeer"></icon>
+        <div class="peer-amount-icon" style="padding-top: 70px;padding-left: 30px;">
+          <div class="peers-amount-img">
 
-          <div class="peers-icon">
-            <icon class="bmp-openrouter"></icon>
-            <span class="peer-amount">
-              {{ peersAmount }}
-            </span>
+            <div class="left-section">
+              <div class="centre">
+                <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
+                <div class="router-name-text">{{ data.RouterIP }}</div>
+              </div>
+            </div>
+
+            <span class="middle-section"></span>
+
+            <div class="right-section">
+              <div class="peers-amount">
+                <icon class="bmp-openrouter"></icon>
+                <div class="inner-circle"></div>
+                <div class="peers-amount-text">
+                  {{ peersAmount }}
+                </div>
+              </div>
+              <icon class="bmp-peer_label"></icon>
+            </div>
+
           </div>
+
+          <div class="router-peer-line"></div>
         </div>
 
       </div>

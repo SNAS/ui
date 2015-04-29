@@ -16,6 +16,7 @@
 
   <!--EXPANDED view-->
   <div ng-show="cardExpand">
+    <hr>
     <!--Peer Card in Global View-->
 
     <h3>Peer Detail</h3>
@@ -83,19 +84,9 @@
     </table>
     <br>
 
+
     <!--Peer info table-->
-    <table class="tableSummary">
-      <tr>
-        <th>AS Number</th>
-        <th>AS Name</th>
-        <th>Organization</th>
-      </tr>
-      <tr ng-repeat="peer in peerDownData track by $index">
-        <td>{{ peer.DownstreamAS }}</td>
-        <td>{{ peer.as_name }}</td>
-        <td>{{ peer.org_name }}</td>
-      </tr>
-    </table>
-    <!--End Expanded Peer Card-->
+    <div class="gridStyle" ui-grid="globalViewPeerOptions" ng-style="{'height':globalViewPeerOptions.changeHeight}"></div>
+
   </div>
 </div>
