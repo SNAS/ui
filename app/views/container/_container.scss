@@ -1,11 +1,6 @@
-
 //===================================================================================
 // Header, Footer & Sidebar
 //===================================================================================
-
-.container-fluid{
-}
-
 .container-fluid > .navbar-header{
   margin-right: 0;
   margin-left: 0;
@@ -14,19 +9,15 @@
   font-style: normal;
   font-variant: normal;
   font-weight: 100;
-
 }
 
-//.navbar-header {
-//  color: fff;
-//  float: left;
-//}
+.navbar-header {
+  color: #fff;
+  float: left;
+}
 
 .text-light{
   color: #222;
-
-
-
 }
 
 .navbar{
@@ -48,7 +39,6 @@
 .navbar-toggle{
   display: block;
   float: left;
-  background-color: #15bdf4;
 }
 
 .sidebar-nav > li{
@@ -64,9 +54,10 @@
   font-family: 'Helvetica Neue';
   font-style: normal;
   font-variant: normal;
-  font-weight: 100;
+  font-weight: 200;
 
 }
+
 
 #wrapper {
   padding-left: 0;
@@ -121,7 +112,7 @@
 
   a:active {
     color: #444;
-    background-color: #fff !important;
+    background-color: #15bdf4 !important;
   }
 
   a:hover {
@@ -162,11 +153,14 @@
   font-family: 'Helvetica Neue';
   font-style: normal;
   font-variant: normal;
-  font-weight: 100;
+  font-weight: 200;
+}
 
-
+.text-white{
+  color: #fff;
 
 }
+
 
 @include keyframes(close-menu-top) {
   0% {

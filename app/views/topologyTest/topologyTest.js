@@ -325,7 +325,7 @@ angular.module('bmpUiApp')
     }
 
     function clear(){
-      
+
     }
 
     nx.define('ExtendLink', nx.graphic.Topology.Link, {
