@@ -10,6 +10,7 @@
 angular.module('bmpUiApp')
     .factory('apiFactory', function ($http, $q) {
 
+    //http://demo.openbmp.org:8001/db_rest/v1/
     var urlBase = 'http://odl-dev.openbmp.org:8001/db_rest/v1/';
     var limit = 1000;
     var apiFactory = {};
@@ -128,6 +129,14 @@ angular.module('bmpUiApp')
 
     apiFactory.getPeerRib = function (peer_hash_id){
       return $http.get(urlBase + "rib/peer/" + peer_hash_id);
+    };
+
+    apiFactory.getPeerRibLookup = function (peer_hash_id,ip){
+      return $http.get(urlBase + "rib/peer/" + peer_hash_id + "/lookup/" + ip);
+    };
+
+    apiFactory.getPeerRibPrefix = function (peer_hash_id,ip){
+      return $http.get(urlBase + "rib/peer/" + peer_hash_id + "/prefix/" + ip);
     };
 
     //nextTopology

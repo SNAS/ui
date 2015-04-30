@@ -1,0 +1,66 @@
+//override
+.router-peer-line{
+  top: 45px;
+  width: 40%;
+  left: 27%;
+}
+
+.left-section{
+  width: 0;
+}
+.no-width{
+  width:0;
+}
+
+.red {
+  color: red;
+}
+.green {
+  color: green;
+}
+.routerLoc {
+  text-align: left;
+  border-style: solid;
+  border-width: 1px;
+  width: 100%;
+  margin-left: 20px;
+}
+.noRouterLoc {
+  width: 200px;
+  height: 150px;
+  td {
+    padding: 20px;
+    text-align: center;
+  }
+}
+.peerCard {
+  .routerLoc{
+    margin: 3em 1em 1em 6em;
+  }
+}
+.routerCard {
+  .routerLoc{
+    margin-top: 2em;
+  }
+}
+.tableSummary {
+  width: 100%;
+  td, th {
+    padding: 3px;
+    border-style: solid;
+    border-width: 1px;
+  }
+}
+.ribTable {
+  width: 100%;
+  border: solid 1px;
+  td, th {
+    padding: 3px;
+  }
+  th {
+    border-bottom: solid 1px #808080;
+  }
+  td:nth-of-type(odd) {
+    text-align: right;
+  }
+}

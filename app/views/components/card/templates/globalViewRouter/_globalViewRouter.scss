@@ -18,10 +18,16 @@ $peer-text-color: #FFFFFF;
         color:$router-color;
         font-size:50px;
       }
+      .peer {
+        color: #EAA546;
+      }
       .router-name-text{
         color: $connector-color;
       }
     }
+  }
+  .no-width{
+    width:0;
   }
 
   .middle-section {

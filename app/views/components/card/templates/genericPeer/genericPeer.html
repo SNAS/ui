@@ -1,0 +1,99 @@
+<div ng-controller="BmpCardPeerController">
+  <!--COLLAPSED view-->
+  <div ng-hide="cardExpand" class="collapsed">
+    <!--Global Peer Card-->
+    <icon class="bmp-outline_router" style="font-size:36px;color:#e9a445;"></icon>
+    <div class="collapsedContent">
+      <ul class="collContentItems">
+        <li>BMP PEER</li>
+        <li>{{data.PeerASN}}</li>
+        <li>{{data.PeerName}}</li>
+        <li>{{data.PeerIP}}</li>
+      </ul>
+    </div>
+    <!--End Peer Card Expand-->
+  </div>
+
+  <!--EXPANDED view-->
+  <div ng-show="cardExpand">
+    <br>
+    <!--Peer Card in Global View-->
+
+    <h3>Peer Detail</h3>
+    <span style="float: right;text-align: right;">
+      Peer Down Time
+      <span ng-class="{'red': downTime!='Up', 'green': downTime=='Up'}">
+        {{ downTime }}
+      </span>
+    </span>
+    <h4>{{ data.PeerName }}</h4>
+
+
+    <div class="row">
+
+      <div class="col-md-4">
+
+        <div class="peer-amount-icon" style="padding-top: 70px;padding-left: 30px;width:100%;height:200px">
+          <div class="peers-amount-img">
+
+            <div class="left-section no-width">
+              <div class="centre">
+                <div class="router-name-text">{{data.RouterName}}</div>
+                <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
+                <div class="router-name-text">{{data.RouterIP}}</div>
+              </div>
+            </div>
+
+            <span class="middle-section"></span>
+
+            <div class="left-section no-width">
+              <div class="centre">
+                <div class="router-name-text">{{data.PeerName}}</div>
+                <div class="bmp-peer_router10-17 peer bmp-outline-route"></div>
+                <div class="router-name-text">{{ peerFullIp }}</div>
+              </div>
+            </div>
+            <!--ASN's not used yet-->
+            <!--{{data.LocalASN}}-->
+            <!--{{data.PeerASN}}-->
+          </div>
+
+          <div class="router-peer-line"></div>
+
+
+      </div>
+
+      </div>
+
+      <div class="col-md-4">
+        <span ng-bind-html="locationInfo"></span>
+      </div>
+
+      <div class="col-md-4">
+        <!--NEED TO BE CHANGED(pre and peer tables)-->
+        <!--Number Prefixes-->
+        <table class="ribTable">
+          <tr>
+            <th> </th>
+            <th>Number of prefixes</th>
+          </tr>
+          <tr>
+            <td>{{ ribData[0][0] }}</td>
+            <td>{{ ribData[0][1] }}</td>
+          </tr>
+          <tr>
+            <td>{{ ribData[1][0] }}</td>
+            <td>{{ ribData[1][1] }}</td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+
+    <br>
+
+    <!--This is where the insert will go-->
+    <div ng-include="templatePath + data.template + '/insert.html'"></div>
+
+  </div>
+</div>

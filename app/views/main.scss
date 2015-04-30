@@ -88,15 +88,18 @@ a{
 @import "summary/summary";
 @import "bmpglyph";
 
+//test pages
+@import "cardChanges/cardChanges";
 
 //=============================================================
 // Components
 //===================================================================================
-//@import "components/router-card/router-card";
+//card imports
 @import "components/card/card";
-@import "components/card/templates/globalViewPeer/globalViewPeer";
 @import "components/card/templates/globalViewRouter/globalViewRouter";
-@import "components/card/templates/peerViewPeer/peerViewPeer";
-@import "components/map/map";
+@import "components/card/templates/genericPeer/genericPeer";
+@import "components/card/templates/globalViewPeer/insert";
+@import "components/card/templates/peerViewPeer/insert";
 
-@import "cardChanges/cardChanges";
+//map
+@import "components/map/map";

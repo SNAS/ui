@@ -71,45 +71,35 @@ angular.module('bmp.components.card')
           console.log(error.message);
         });
 
-      //<!--IP's Graph-->
-      var whichip = ['v4','v6'];
 
-      //DEFAULT values
-      //$scope.ipAmountData = [
-      //  {key:'ipv4',values:[
-      //    {x: 1,y: 0},
-      //    {x: 2,y: 0}
-      //  ]},
-      //  {key:'ipv6',values:[
-      //    {x: 1,y: 0},
-      //    {x: 2,y: 0}
-      //  ]}
-      //];
-
-    $scope.ipAmountData = [
+      $scope.ipAmountData = [
         {
-          //key:'ipv4',
+          key:'ips',
           values:[
             {x: "ipv4",y: 0}
            ]
         },
         {
-          //key:'ipv6',
+          key:'ips',
           values:[
             {x: "ipv6",y: 0}
           ]
         },
         {
-          //key:'ipTotal',
+          key:'ips',
           values:[
             {x: "ipTotal",y: 0}
           ]
         }
       ];
 
-      var graphPoint = [0];
+
+      //<!--IP's Graph-->
+      var whichip = ['v4','v6'];
+
       var ipTotal = 0;
-      angular.forEach($scope.ipAmountData, function(obj,index){
+      var graphPoint = [0];
+      angular.forEach(whichip, function(obj,index){
         var ipAmount = 0;
         apiFactory.getRouterIpType($scope.data.RouterIP, whichip[index]).
           success(function (result) {
