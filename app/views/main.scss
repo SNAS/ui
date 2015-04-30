@@ -94,12 +94,17 @@ a{
 //=============================================================
 // Components
 //===================================================================================
+
 //card imports
 @import "components/card/card";
 @import "components/card/templates/globalViewRouter/globalViewRouter";
 @import "components/card/templates/genericPeer/genericPeer";
 @import "components/card/templates/globalViewPeer/insert";
 @import "components/card/templates/peerViewPeer/insert";
+@import "components/card/templates/preUpdatesGraph/preUpdatesGraph";
+@import "components/card/templates/preWithdrawsGraph/preWithdrawsGraph";
+@import "components/card/templates/updatesGraph/updatesGraph";
+@import "components/card/templates/withdrawsGraph/withdrawsGraph";
 
 //map
 @import "components/map/map";
