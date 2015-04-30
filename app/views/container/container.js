@@ -25,7 +25,7 @@ angular.module('bmpUiApp')
 
     .directive('activeItem', function ($location) {
     return {
-      restrict: 'AE',
+      restrict: 'A',
       link: function($scope, element, attrs, controller) {
         var path = element.context.children[0].href;
         if(path === '')
