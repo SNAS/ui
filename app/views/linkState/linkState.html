@@ -1,5 +1,6 @@
 <div>
   <!--<nextTopology data="topologyData" options="topologyOptions" protocol="protocol" peer-hash-id="peerHashId" get-spf-table="getSPFtable" path="path"></nextTopology>-->
-  <topology></topology>
-  <div id="SPFtable" class="grid" ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
+  <!--<topology></topology>-->
+  <div id="topology"></div>
+  <div id="SPFtable" class="grid" ng-show="show===true" ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
 </div>

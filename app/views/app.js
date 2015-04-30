@@ -61,17 +61,6 @@ angular
       })
       //END CARD TEST
 
-      //Next nextTopology test
-      .state('app.topologyTest', {
-        url: '/topology-test',
-        templateUrl: 'views/topologyTest/topologyTest.html',
-        controller: 'topologyTestController',
-        data: {
-          requireLogin: false
-        }
-      })
-      //End next nextTopology test
-
       .state('app', {
         abstract: true,
         templateUrl: 'views/container/container.html',

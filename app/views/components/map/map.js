@@ -16,6 +16,7 @@ angular.module('bmp.components.map', [])
     $scope.chosenIndex = -1;
     $scope.loading = true;
     $scope.selected = false;
+    $scope.error; 
 
     $scope.activePopup = false;
     $scope.activeMarker;
@@ -95,7 +96,20 @@ angular.module('bmp.components.map', [])
 
         apiFactory.getRoutersAndLocations().
         success(function (result){
-            var data = result.routers.data;
+            try {
+                var data = result.routers.data;
+            } catch(e) {
+                console.log(e);
+                $scope.error = e;
+                $scope.loading = false;
+                return;
+            }
+
+            if(data.length < 1){
+                $scope.error = "Error: no results from server";
+                $scope.loading = false;
+                return;
+            }
 
             for(var i = 0; i < data.length; i++){
                 var latlng = [data[i].latitude, data[i].longitude];
@@ -132,7 +146,9 @@ angular.module('bmp.components.map', [])
             $scope.fitMap('routers');
         }).
         error(function (error){
-            console.log(error);
+            $scope.error = "Error: API error";
+            $scope.loading = false;
+            return;
         })
     }
 
@@ -140,8 +156,11 @@ angular.module('bmp.components.map', [])
     $scope.getPeers = function (ip, withRouter){
         $scope.peerLayer = new L.MarkerClusterGroup({
             iconCreateFunction: function(cluster) {
+                var children = cluster.getChildCount();
+                if(children > 99)
+                    children = "danger";
                 return L.mapbox.marker.icon({
-                  'marker-symbol': cluster.getChildCount(),
+                  'marker-symbol': children,
                   'marker-color': '#C59948',
                   'marker-size': 'large'
                 });
@@ -149,7 +168,20 @@ angular.module('bmp.components.map', [])
         });
         apiFactory.getPeersAndLocationsByIp(ip).
         success(function (result){
-            var data = result.v_peers.data;
+            try {
+                var data = result.v_peers.data;
+            } catch(e) {
+                console.log(e);
+                $scope.error = e;
+                $scope.loading = false;
+                return;
+            }
+
+            if(data.length < 1){
+                $scope.error = "Error: no results from server";
+                $scope.loading = false;
+                return;
+            }
 
             for(var i = 0; i < data.length; i++){
                 var latlng = [data[i].latitude, data[i].longitude];
@@ -193,8 +225,10 @@ angular.module('bmp.components.map', [])
                 $scope.fitMap('peers');
             }
         }).
-        error(function (error){
-            console.log(error);
+        error(function (data, status){
+            $scope.error = "Error: API error";
+            $scope.loading = false;
+            return;
         })
     }
 
