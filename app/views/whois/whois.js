@@ -22,7 +22,8 @@ angular.module('bmpUiApp')
 
     $scope.whoIsGridOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: false
+      enableRowHeaderSelection: false,
+      rowHeight: 25
     };
 
     $scope.whoIsGridOptions.columnDefs = [
@@ -34,7 +35,7 @@ angular.module('bmpUiApp')
         name: "transit_v4", displayName: 'transit v4', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
-            return 'green';
+            return 'highlight';
           }
         }
       },
@@ -42,7 +43,7 @@ angular.module('bmpUiApp')
         name: "transit_v6", displayName: 'transit v6', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
-            return 'green';
+            return 'highlight';
           }
         }
       },
@@ -50,7 +51,7 @@ angular.module('bmpUiApp')
         name: "origin_v4", displayName: 'origin v4', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
-            return 'green';
+            return 'highlight';
           }
         }
       },
@@ -58,12 +59,10 @@ angular.module('bmpUiApp')
         name: "origin_v6", displayName: 'origin v6', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
-            return 'green';
+            return 'highlight';
           }
         }
       }
-      //{ name: "symbTransit", displayName: 'Transit', maxWidth: 10 },
-      //{ name: "symbOrigin", displayName: 'Origin', maxWidth: 10 }
     ];
 
     $scope.whoIsGridOptions.multiSelect = false;
@@ -73,6 +72,12 @@ angular.module('bmpUiApp')
     $scope.whoIsGridOptions.onRegisterApi = function (gridApi) {
       $scope.whoIsGridApi = gridApi;
     };
+    // $scope.peerViewPeerOptions.onRegisterApi = function (height){
+    //   $scope.whoIsPeerApi = height;
+    // }
+
+    console.dir($scope.whoIsGridOptions);
+    console.dir($scope.whoIsGridApi);
 
     //Loop through data selecting and altering relevant data.
     var searchValue = function (value, init) {
@@ -111,6 +116,7 @@ angular.module('bmpUiApp')
     var initSelect = function () {
       $timeout(function () {
         if ($scope.whoIsGridApi.selection.selectRow) {
+          console.dir($scope.whoIsGridApi);
           $scope.whoIsGridApi.selection.selectRow($scope.whoIsGridOptions.data[0]);
         }
       });
@@ -136,8 +142,6 @@ angular.module('bmpUiApp')
         $scope.whoIsData[i].transit_v6 = $scope.whoIsData[i].transit_v6_prefixes;
         $scope.whoIsData[i].origin_v4 = $scope.whoIsData[i].origin_v4_prefixes;
         $scope.whoIsData[i].origin_v6 = $scope.whoIsData[i].origin_v6_prefixes;
-        //$scope.whoIsData[i].symbTransit = ($scope.whoIsData[i].isTransit == 1)? "✔":"✘";
-        //$scope.whoIsData[i].symbOrigin = ($scope.whoIsData[i].isOrigin == 1)? "✔":"✘";
       }
     };
 
@@ -149,7 +153,7 @@ angular.module('bmpUiApp')
     $scope.changeSelected = function () {
       var noShow = ["$$hashKey", "symbOrigin", "symbTransit"];
       var values = $scope.whoIsGridApi.selection.getSelectedRows()[0];
-      var showValues = '<table>';
+      var showValues = '<table class="tableStyle">';
 
       angular.forEach(values, function (value, key) {
         if (noShow.indexOf(key) == -1) { //doesnt show certain fields
@@ -167,7 +171,7 @@ angular.module('bmpUiApp')
 
                 showValues += (
                 '<td>' +
-                s[0].trim() + ': ' +
+                s[0].trim() + ' ' +
                 '</td>' +
 
                 '<td>' +
@@ -181,7 +185,7 @@ angular.module('bmpUiApp')
             showValues += (
             '<tr>' +
             '<td>' +
-            key + ': ' +
+            key + ' ' +
             '</td>' +
 
             '<td>' +

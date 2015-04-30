@@ -25,7 +25,7 @@ angular.module('bmpUiApp')
         y: function(d){ return d.value; },
         showValues: true,
         staggerLabels:false,
-        color:["#9ec654"],
+        color:["#4ec0f1"],
         valueFormat: function(d){
           return d3.format('d')(d);
         },
@@ -64,7 +64,7 @@ angular.module('bmpUiApp')
         y: function(d){ return d.value; },
         showValues: true,
         staggerLabels:false,
-        color:["#f7a031"],
+        color:["#9ec654"],
         valueFormat: function(d){
           return d3.format('d')(d);
         },

@@ -1,13 +1,16 @@
 <div class="cardArea">
   <div class="content">
 
-    <span class="glyphicon"  ng-class="{'glyphicon-plus': !cardExpand, 'glyphicon-minus': cardExpand}"
-          ng-click="changeCardState()">
-    </span>
-    <span class="glyphicon right glyphicon-remove"
+    <icon
+      ng-class="{'bmp-expand': cardExpand, 'bmp-collapse': !cardExpand}"
+      ng-click="changeCardState()">
+    </icon>
+
+    <icon class="bmp-close right"
+          ng-if="removable"
           ng-click="removecard(data)"
           ng-class="{'collapsed': cardExpand}">
-    </span>
+    </icon>
 
     <!--Templates will be inserted here-->
     <div ng-include="templateLoc"></div>

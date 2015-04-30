@@ -18,7 +18,11 @@
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
-    <link rel="stylesheet" href="//api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css">
+    <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css">
+
+    <!--next.js-->
+    <link rel="stylesheet" href="views/components/NeXt_0.7.3/next/css/next-blue.css">
+    <link rel="stylesheet" href="views/components/NeXt_0.7.3/next-topology/css/next-topology.css">
 
   </head>
 
@@ -80,19 +84,31 @@
     <script src="bower_components/leaflet/dist/leaflet.js"></script>
     <script src="bower_components/leaflet/dist/leaflet-src.js"></script>
     <script src="bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
     <!-- /components Directives-->
-    <script src="//api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js"></script>
     <!--<script src="views/components/router-card/router-card.js"></script>-->
     <script src="views/components/card/card.js"></script>
-    <script src="views/components/topology/topology.js"></script>
+    <script src="views/components/cardList/cardList.js"></script>
+    <script src="views/components/map/map.js"></script>
 
     <!-- /components Card Templates-->
-    <script src="views/components/card/templates/globalViewPeer/globalViewPeer.js"></script>
+    <!--Router-->
     <script src="views/components/card/templates/globalViewRouter/globalViewRouter.js"></script>
-    <script src="views/components/card/templates/peerViewPeer/peerViewPeer.js"></script>
+    <!--Peer-->
+    <script src="views/components/card/templates/genericPeer/genericPeer.js"></script>
+    <script src="views/components/card/templates/globalViewPeer/insert.js"></script>
+    <script src="views/components/card/templates/peerViewPeer/insert.js"></script>
+
+    <!--<script src="views/components/card/templates/peerViewPeer/peerViewPeer.js"></script>-->
+    <!--<script src="views/components/card/templates/globalViewPeer/globalViewPeer.js"></script>-->
+
+    <!--next.js-->
+    <script src="views/components/NeXt_0.7.3/next/js/next.js"></script>
+    <script src="views/components/NeXt_0.7.3/next-topology/js/next-topology.js"></script>
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="views/app.js"></script>
@@ -108,11 +124,11 @@
     <script src="views/whoIs/whoIs.js"></script>
     <script src="views/container/container.js"></script>
     <script src="views/factory/apiFactory.js"></script>
+    <script src="views/linkState/linkState.js"></script>
 
     <!--TEST-->
     <script src="views/cardTest/cardTest.js"></script>
-    <script src="views/linkState/linkState.js"></script>
-
+    <script src="views/cardChanges/cardChanges.js"></script>
     <!--END TEST-->
 
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>

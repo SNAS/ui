@@ -3,10 +3,11 @@
 angular.module('bmp.components.card')
 
   .controller('BmpCardGlobalRouterController', ["$scope", "apiFactory", function ($scope, apiFactory) {
-      window.SCOPER = $scope;
+
+      console.log($scope.data);
 
       var createLocationTable = function(){
-        if ($scope.data.State !== undefined || $scope.data.City !== undefined || $scope.data.Country !== undefined) {
+        if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
           var type;
           if ($scope.cardType == "global.router") {
             type = "BMP Router";
@@ -16,22 +17,25 @@ angular.module('bmp.components.card')
             type = "None";
           }
           $scope.locationInfo = (
-          '<table class="routerLoc">' +
+          '<table class="table">' +
+          ' <tr>' +
+          '   <th>' + $scope.data.RouterName + '</th>' +
+          ' </tr>' +
           ' <tr>' +
           '   <td>Type</td>' +
           '   <td>' + type + '</td>' +
           ' </tr>' +
           ' <tr>' +
           '   <td>Location</td>' +
-          '   <td>' + $scope.data.City + '</td>' +
+          '   <td>' + $scope.data.city + '</td>' +
           ' </tr>' +
           ' <tr>' +
           '   <td>State</td>' +
-          '   <td>' + $scope.data.State + '</td>' +
+          '   <td>' + $scope.data.stateprov + '</td>' +
           ' </tr>' +
           ' <tr>' +
           '   <td>Country</td>' +
-          '   <td>' + $scope.data.Country + '</td>' +
+          '   <td>' + $scope.data.country + '</td>' +
           ' </tr>' +
           '</table>'
           );
@@ -67,37 +71,57 @@ angular.module('bmp.components.card')
           console.log(error.message);
         });
 
+
+      $scope.ipAmountData = [
+        {
+          key:'ips',
+          values:[
+            {x: "ipv4",y: 0}
+           ]
+        },
+        {
+          key:'ips',
+          values:[
+            {x: "ipv6",y: 0}
+          ]
+        },
+        {
+          key:'ips',
+          values:[
+            {x: "ipTotal",y: 0}
+          ]
+        }
+      ];
+
+
       //<!--IP's Graph-->
       var whichip = ['v4','v6'];
 
-      //DEFAULT values
-      $scope.ipAmountData = [
-        {key:'ipv4Amount',values:[
-          {x: 1,y: 0},
-          {x: 2,y: 0}
-        ]},
-        {key:'ipv6Amount',values:[
-          {x: 1,y: 0},
-          {x: 2,y: 0}
-        ]}
-      ];
-
+      var ipTotal = 0;
       var graphPoint = [0];
-      angular.forEach($scope.ipAmountData, function(obj,index){
+      angular.forEach(whichip, function(obj,index){
         var ipAmount = 0;
         apiFactory.getRouterIpType($scope.data.RouterIP, whichip[index]).
           success(function (result) {
             ipAmount = result.v_peers.size;
+            ipTotal+=ipAmount;
 
-            if(ipAmount > graphPoint[0]) //for changing graph axis
-              graphPoint[0] = ipAmount;
+            //if(ipAmount > graphPoint[0]) //for changing graph axis
+            //  graphPoint[0] = ipAmount;
+            //
+            $scope.ipAmountData[index].values[0].y = ipAmount;
+            //  (
+            //  [
+            //    {x: "peer",y: ipAmount}
+            //  ]
+            //);
 
-            $scope.ipAmountData[index].values =(
-              [
-                {x: 1,y: ipAmount},
-                {x: 2,y: ipAmount}
-              ]
-            );
+            $scope.ipAmountData[$scope.ipAmountData.length-1].values[0].y = ipTotal;
+            //  (
+            //  [
+            //    {x: "peer",y: ipTotal}
+            //  ]
+            //);
           }).
           error(function (error) {
             console.log(error.message);
@@ -106,29 +130,28 @@ angular.module('bmp.components.card')
 
       $scope.ipAmountOptions = {
         "chart": {
-          "type": "stackedAreaChart",
+          "type": "multiBarChart",
+          "height": 250,
+          "width": 300,
           "showControls": false,
-          "showXAxis": false,
-          "height": 200,
-          "width": 120,
+          "showLegend": false,
           "margin": {
             "top": 20,
             "right": 20,
-            "bottom": 50,
-            "left": 50
+            "bottom": 60,
+            "left": 45
           },
-          "useVoronoi": false,
           "clipEdge": true,
+          "staggerLabels": false,
           "transitionDuration": 500,
-          "useInteractiveGuideline": false,
-          "tooltips": false,
-          //tickvalues
+          "stacked": false,
           "yAxis": {
-            "showMaxMin": true,
-            "tickValues": graphPoint
+            tickFormat:d3.format('d')
           }
         }
       };
+
+
       //END <!--IP's Graph-->
 
       //ROUTER UP TIME GRAPH
@@ -192,6 +215,7 @@ angular.module('bmp.components.card')
         if ($scope.cardExpand == true) {
           //resize
           $scope.upTimeConfig.visible = true;
+          $scope.globalViewPeerApi.core.handleWindowResize();
         }
       });
       //End Router up time Graph
@@ -232,6 +256,43 @@ angular.module('bmp.components.card')
       };
       calUpTime();
 
+      //AS Number	AS Name	Organization
+      //PeerASN, PeerName, org_name
+
+      $scope.globalViewPeerOptions = {
+        columnDefs: [
+          {name: "PeerASN", displayName: 'AS Number', width: '*'},
+          {name: "PeerName", displayName: 'AS Name', width: '*'},
+          {name: "org_name", displayName: 'Organization', width: '*'}
+        ]
+      };
+      var peerViewPeerDefaultData = [{"as_name":"NO DATA"}];
+      $scope.globalViewPeerOptions.onRegisterApi = function (gridApi) {
+        $scope.globalViewPeerApi= gridApi;
+      };
+
+      $scope.$watch('cardExpand', function(val) {
+        if($scope.cardExpand == true){
+          setTimeout(function(){
+            //$scope.peerViewPeerApi.core.handleWindowResize();
+            $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
+          },10)
+        }
+      });
+
+      $scope.calGridHeight = function(grid, gridapi){
+        gridapi.core.handleWindowResize();
+
+        var height;
+        if(grid.data.length > 10){
+          height = ((10 * 30) + 30);
+        }else{
+          height = ((grid.data.length * 30) + 50);
+        }
+        grid.changeHeight = height;
+        gridapi.grid.gridHeight = grid.changeHeight;
+      };
+
       var peersTableCreate = function() {
         //<!--R/Peers info table-->
         $scope.peerSummaryTable = [];
@@ -258,6 +319,7 @@ angular.module('bmp.components.card')
               console.log(error.message);
             });
         })
+        $scope.globalViewPeerOptions.data = $scope.peerSummaryTable;
       };
 
       $scope.isUP = ($scope.data.isConnected=='1')? '⬆':'⬇';

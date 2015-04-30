@@ -2,35 +2,15 @@
 
     <h1 class="page-header">Peer View</h1>
 
-    <div class="loading" ng-show="loading">
-        <span class="text-light">loading...</span>
-    </div>
+    <map name="peer-view-map" type="peers" card-api="cardApi" ip="parameterIP" location="location"/>
 
-    <button ng-show="selected" class="btn btn-primary map-control reset" ng-click="clearPeers(true)">
-        <span class="glyphicon glyphicon-remove"></span>
-        {{chosenRouter.RouterName}}
-    </button>
+  <!--This is card Controller-->
+  <!--Cards are drawn in here-->
+  <div bmp-card-list
+       length="[10]"
+       priority="['Peer']"
+       api="cardApi"
+       page-location="location">
+  </div>
 
-     <button class="btn btn-warning map-control reset" ng-click="clearPeers(true)">
-        <span class="glyphicon glyphicon-remove"></span>
-        TBD
-    </button>
-
-    <input type="text" ng-model="search" class="map-control search" placeholder="Search"/>
-
-    <ul class="map-control search suggestions">
-        <li ng-click="getData(s.type, s.content)" ng-repeat="s in suggestions">{{s.content}}</li>
-    </ul>
-
-    <leaflet defaults="defaults" height="480px" width="100%"></leaflet>
-
-    <!--Peers Cards-->
-    <!--<div ng-repeat="peerCard in [].concat(cards[1]).reverse()">-->
-      <!--<div bmp-router-card-->
-           <!--data="peerCard"-->
-           <!--removeCard="removePeerCard(card)"-->
-           <!--card-type="peer.peer">-->
-      <!--</div>-->
-    <!--</div>-->
-    <!--end-->
 </div>

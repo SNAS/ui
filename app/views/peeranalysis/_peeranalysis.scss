@@ -1,4 +1,50 @@
-.grid {
-  width: 100%;
-  height: 400px;
+.gridStyle {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+}
+
+.pgtitle {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 100;
+  line-height: 19.8px;
+}
+
+.preStyle{
+  background-color: #f4f6f9;
+}
+
+.tableStyle{
+  font-size: 11px;
+  font-weight: lighter;
+}
+
+.detailspanel {
+  height: 300px;
+  overflow-y: scroll;
+}
+
+.up-text{
+  color: #7ec35c
+}
+
+.down-text{
+  color: #f2732d
+}
+
+.up-icon{
+  color: #7ec35c;
+  text-align: center;
+  padding-top: 6px;
+}
+
+.down-icon{
+  color: #f2732d;
+  text-align: center;
+  padding-top: 6px;
 }

@@ -1,24 +1,18 @@
 <div>
   <!------------------WHO IS---------------->
-
-
-      <!--<bg-splitter orientation="vertical">-->
-        <!--<bg-pane>-->
-          <h1>WHOIS</h1>
-          <hr>
-          Search ASN or Name
-          <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
-          <!--Angular Table added here-->
-          <div class="gridStyle" ui-grid-selection ui-grid="whoIsGridOptions"></div>
-
-        <!--</bg-pane>-->
-        <!--<bg-pane>-->
-          <h2>DETAILS</h2>
-          <hr>
-          <div class="detailsPanel">
-            <pre ng-bind-html="selectedItem"></pre>
-          </div>
-        <!--</bg-pane>-->
-      <!--</bg-splitter>-->
-  <hr>
-</div>
+  <h1 class="pgtitle">WHOIS</h1>
+  <div style="padding-bottom:12px">
+    Search ASN or Name
+    <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
+  </div>
+  <!--Angular Table added here-->
+  <div class="gridStyle" ui-grid-selection ui-grid="whoIsGridOptions"></div>
+  <div>
+  <!--<div style="padding:12px">-->
+    <h3 class="pgtitle">DETAILS</h3>
+    <div class="detailspanel" >
+      <pre class="preStyle" ng-bind-html="selectedItem"></pre>
+    </div>
+    <hr>
+  </div>
+  </div>

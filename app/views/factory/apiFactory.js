@@ -10,6 +10,7 @@
 angular.module('bmpUiApp')
     .factory('apiFactory', function ($http, $q) {
 
+    //http://demo.openbmp.org:8001/db_rest/v1/
     var urlBase = 'http://odl-dev.openbmp.org:8001/db_rest/v1/';
     var limit = 1000;
     var apiFactory = {};
@@ -18,8 +19,8 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + 'routers');
     };
 
-    apiFactory.getRouterLocation = function (ip) {
-      return $http.get(urlBase + "geoip/" + ip);
+    apiFactory.getRoutersAndLocations = function () {
+      return $http.get(urlBase + "routers?withgeo");
     };
 
     apiFactory.getRouterStatus = function () {
@@ -37,12 +38,20 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer");
     };
 
+    apiFactory.getPeerGeo = function (ip) {
+      return $http.get(urlBase + "geoip/" + ip);
+    };
+
     apiFactory.getPeersByIp = function (ip) {
       return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip + "%%27");
     };
 
-    apiFactory.getRoutersByIp = function (ip) {
-      return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip + "%%27");
+    apiFactory.getPeersAndLocationsByIp = function (ip) {
+      return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip + "%%27&withgeo");
+    };
+
+    apiFactory.getPeersByLocalIp = function (ip) {
+      return $http.get(urlBase + "peer/localip/" + ip + "?limit=5");
     };
 
     apiFactory.getWhoIsASN = function (asn) {
@@ -54,10 +63,33 @@ angular.module('bmpUiApp')
       //return urlBase + "whois/asn?where=w.asn=" + asn;
     };
 
+    apiFactory.getWhoIsWhereASNLike = function (asn, lim) {
+      if(lim != undefined) lim = "&limit=" + lim;
+      return $http.get(urlBase + "whois/asn?where=w.asn%20like%20%27" + asn + "%%27" + lim);
+    };
+
+    apiFactory.getWhoIsWhereASNLikeCOUNT = function (asn) {
+      return $http.get(urlBase + "whois/asn/count?where=w.asn%20like%20%27" + asn + "%%27");
+    };
+
     apiFactory.getWhoIsName = function (name, lim) {
       if(lim === undefined) lim = limit;
 
       var uri = urlBase + "whois/asn?where=w.as_name like '%" + name + "%' or w.org_name like '%" + name + "%'&limit=" + lim;
+      var res = encodeURI(uri);
+      return $http.get(res);
+    };
+
+    apiFactory.getWhoIsASName = function (name, lim) {
+      if(lim === undefined) lim = limit;
+
+      var uri = urlBase + "whois/asn?where=w.as_name like '%" + name + "%'&limit=" + lim;
+      var res = encodeURI(uri);
+      return $http.get(res);
+    };
+
+    apiFactory.getWhoIsASNameCOUNT = function (name) {
+      var uri = urlBase + "whois/asn/count?where=w.as_name like '%" + name + "%' or w.org_name like '%" + name + "%'";
       var res = encodeURI(uri);
       return $http.get(res);
     };
@@ -84,19 +116,31 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer/prefix");
     };
 
-    apiFactory.getPeerByIp = function (peerIP){
-      return $http.get(urlBase + "peer/prefix/" + peerIP);
+    apiFactory.getPeerPrefixByHashId = function (peerHashId){
+      return $http.get(urlBase + "peer/prefix/" + peerHashId);
     };
 
-    apiFactory.getPeerHistory = function (peerIP, amount_of_entries){
-      return $http.get(urlBase + "peer/prefix/" + peerIP + '?last=' + amount_of_entries);
+    apiFactory.getPeerHistory = function (peerHashId, amount_of_entries){
+      return $http.get(urlBase + "peer/prefix/" + peerHashId + '?last=' + amount_of_entries);
     };
 
     apiFactory.getPeerDownStream = function (peer_hash_id){
       return $http.get(urlBase + "downstream/peer/" + peer_hash_id);
     };
 
-    //topology
+    apiFactory.getPeerRib = function (peer_hash_id){
+      return $http.get(urlBase + "rib/peer/" + peer_hash_id);
+    };
+
+    apiFactory.getPeerRibLookup = function (peer_hash_id,ip){
+      return $http.get(urlBase + "rib/peer/" + peer_hash_id + "/lookup/" + ip);
+    };
+
+    apiFactory.getPeerRibPrefix = function (peer_hash_id,ip){
+      return $http.get(urlBase + "rib/peer/" + peer_hash_id + "/prefix/" + ip);
+    };
+
+    //nextTopology
     apiFactory.getPeerNodes = function (peerHashId){
       return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);
     };
