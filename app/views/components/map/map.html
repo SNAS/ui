@@ -3,6 +3,10 @@
       <span class="text-light">loading...</span>
   </div>
 
+  <div ng-show="error" class="error">
+    {{error}}
+  </div>
+
   <button ng-show="selected" class="btn btn-primary map-control reset" ng-click="clearPeers(true)">
       <span class="glyphicon glyphicon-remove"></span>
       {{chosenRouter.options.RouterName}}
