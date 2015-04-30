@@ -59,33 +59,33 @@
           </div>
 
           <div class="router-peer-line"></div>
-
+        </div>
 
       </div>
 
+      <div class="col-md-4">
+
+        <!--Number Prefixes-->
+        <div class="rib-image">
+          Pre & Post Rib
+          <div class="rib-section" ng-repeat="item in ribData">
+            <div class="rib-part">
+              <!--rib icon-->
+              <div class="bmp-prerib"></div>
+              <div>{{ item[0] }}</div>
+            </div>
+
+            <div class="rib-value">
+              <!--rib value-->
+              {{ item[1] }}
+            </div>
+          </div>
+        </div>
+        
       </div>
 
       <div class="col-md-4">
         <span ng-bind-html="locationInfo"></span>
-      </div>
-
-      <div class="col-md-4">
-        <!--NEED TO BE CHANGED(pre and peer tables)-->
-        <!--Number Prefixes-->
-        <table class="ribTable">
-          <tr>
-            <th> </th>
-            <th>Number of prefixes</th>
-          </tr>
-          <tr>
-            <td>{{ ribData[0][0] }}</td>
-            <td>{{ ribData[0][1] }}</td>
-          </tr>
-          <tr>
-            <td>{{ ribData[1][0] }}</td>
-            <td>{{ ribData[1][1] }}</td>
-          </tr>
-        </table>
       </div>
 
     </div>

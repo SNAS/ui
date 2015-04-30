@@ -12,6 +12,27 @@
   width:0;
 }
 
+.rib-image {
+  color:#AFAFAF;
+  padding-top: 70px;
+  padding-left: 15px;
+  .rib-section {
+    display: table-cell;
+    .rib-part {
+    float:left;
+      .bmp-prerib {
+        font-size: 45px;
+        color:#EAA546;
+      }
+    }
+
+    .rib-value {
+      float:left;
+      padding-right: 15px;
+    }
+  }
+}
+
 .red {
   color: red;
 }
