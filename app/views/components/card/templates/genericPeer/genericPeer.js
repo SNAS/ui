@@ -7,6 +7,14 @@ angular.module('bmp.components.card')
     console.log('GenericPeer scope');
     console.log($scope);
 
+    $scope.wordCheck = function(word){
+      if(word.length > 13){
+        return word.slice(0,10) + " ...";
+      }else{
+        return word;
+      }
+    }
+
     var createLocationTable = function(){
       if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
         var type;
@@ -66,8 +74,8 @@ angular.module('bmp.components.card')
     //peer stuff here
     var peerPrefix;
     $scope.ribData = [
-      ["Pre Rib", 0],
-      ["Post Rib", 0]
+      ["Pre Rib", 0, "bmp-prerib"],
+      ["Post Rib", 0, "bmp-postrib"]
     ];
     apiFactory.getPeerPrefixByHashId($scope.data.peer_hash_id).
       success(function (result){
