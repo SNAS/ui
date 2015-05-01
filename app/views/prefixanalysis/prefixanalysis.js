@@ -55,19 +55,29 @@ angular.module('bmpUiApp')
       apiFactory.getPrefix(searchPrefix)
         .success(function(data) {
           $scope.AllPrefixOptions.data = $scope.PrefixData = data.v_routes.data;
-          createPrefixDataGrid()
+          //$scope.PrefixData = data.v_routes.data;
+          createPrefixDataGrid();
         });
     };
+
     var createPrefixDataGrid = function () {
       for (var i = 0; i < $scope.PrefixData.length; i++) {
-        $scope.PrefixData[i].router_name = $scope.PrefixData[i].RouterName;
-        $scope.PrefixData[i].peer_name = $scope.PrefixData[i].PeerName;
-        $scope.PrefixData[i].nh = $scope.PrefixData[i].NH;
-        $scope.PrefixData[i].as_path = $scope.PrefixData[i].AS_Path;
-        $scope.PrefixData[i].peer_asn = $scope.PrefixData[i].PeerASN;
-        $scope.PrefixData[i].communities = $scope.PrefixData[i].Communities;
-        $scope.PrefixData[i].med = $scope.PrefixData[i].MED;
-        $scope.PrefixData[i].last_modified = $scope.PrefixData[i].LastModified;
+        //$scope.PrefixData[i].router_name = $scope.PrefixData[i].RouterName;
+        //$scope.PrefixData[i].peer_name = $scope.PrefixData[i].PeerName;
+        //$scope.PrefixData[i].nh = $scope.PrefixData[i].NH;
+        //$scope.PrefixData[i].as_path = $scope.PrefixData[i].AS_Path;
+        //$scope.PrefixData[i].peer_asn = $scope.PrefixData[i].PeerASN;
+        //$scope.PrefixData[i].communities = $scope.PrefixData[i].Communities;
+        //$scope.PrefixData[i].med = $scope.PrefixData[i].MED;
+        //$scope.PrefixData[i].last_modified = $scope.PrefixData[i].LastModified;
+        $scope.AllPrefixOptions.data[i].router_name = $scope.PrefixData[i].RouterName;
+        $scope.AllPrefixOptions.data[i].peer_name = $scope.PrefixData[i].PeerName;
+        $scope.AllPrefixOptions.data[i].nh = $scope.PrefixData[i].NH;
+        $scope.AllPrefixOptions.data[i].as_path = $scope.PrefixData[i].AS_Path;
+        $scope.AllPrefixOptions.data[i].peer_asn = $scope.PrefixData[i].PeerASN;
+        $scope.AllPrefixOptions.data[i].communities = $scope.PrefixData[i].Communities;
+        $scope.AllPrefixOptions.data[i].med = $scope.PrefixData[i].MED;
+        $scope.AllPrefixOptions.data[i].last_modified = $scope.PrefixData[i].LastModified;
       }
       $scope.Origin_AS = $scope.PrefixData[0].Origin_AS
     };
@@ -153,6 +163,7 @@ angular.module('bmpUiApp')
         $scope.HistoryPrefixOptions.data[i].med = $scope.HisData[i].MED;
         $scope.HistoryPrefixOptions.data[i].last_modified = $scope.HisData[i].LastModified;
       }
+      $scope.getAsPathChanged($scope.originHisData);
     };
     var getPrefixHisGrid = function (searchPrefix) {
       //console.log(searchPrefix);
@@ -171,7 +182,7 @@ angular.module('bmpUiApp')
         apiFactory.getPeerHistoryPrefix(searchPrefix,$scope.peerHashId)
           .success(function(data) {
             //console.log(searchPrefix+' '+$scope.peerHashId);
-            $scope.HistoryPrefixOptions.data = $scope.HisData = data.v_routes_history.data;
+            $scope.HisData = data.v_routes_history.data;
             createPrefixHisGrid();
           });
       }
@@ -195,8 +206,6 @@ angular.module('bmpUiApp')
           .success(function(data) {
             console.log(searchPrefix+' '+$scope.peerHashId);
             $scope.HisData = data.v_routes_history.data;
-            console.log("$scope.HisData:");
-            //console.log($scope.HisData);
           });
       }
     };
@@ -227,41 +236,48 @@ angular.module('bmpUiApp')
           j++;
         }
       }
-
-      $scope.HistoryPrefixOptions.data = $scope.HisData = dataHour;
+      $scope.originHisData = $scope.HisData;
+        $scope.HistoryPrefixOptions.data = $scope.HisData = dataHour;
       createPrefixHisGrid();
     }
 
 
     $scope.getAsPathChanged = function(allHisData)
     {
-      var asPathChange = [];//store what time is change and the how many it changed
-
+      var asPathChange = new Array(24);//store what time is change and the how many it changed
+      var asPathChangePrecent = new Array();
       var j = 0;
       while(j<24)
       {
         for (var i= 0;i<allHisData.length;i++)
         {
-          console.log("allHisData[i].LastModified.substring(11,13)");
-          console.log(allHisData[i].LastModified.substring(11,13));
-
           if((allHisData[i].LastModified.substring(11,13)=='0'+j)||(allHisData[i].LastModified.substring(11,13)== j.toString()))
           {
-            if(asPathChange[j])
+            if(asPathChange[j] === undefined)
             {
-              asPathChange[j]= asPathChange[j] + 1;
+
+              asPathChange[j] = 0;
             }
             else
             {
-              asPathChange[j] = 0;
+              asPathChange[j]= asPathChange[j] + 1;
             }
           }
         }
         j++;
       }
-
-      console.log("asPathChange");
-      console.log(asPathChange);
+      for (var x = 0;x<24;x++)
+      {
+        if(asPathChange[x] === undefined)
+        {
+          asPathChangePrecent[x] = 0;
+        }
+        else
+        {
+          asPathChangePrecent[x] = asPathChange[x]/$scope.originHisData.length;
+        }
+        console.log(asPathChangePrecent);
+      }
     }
 
     //$scope.getAsPathChanged($scope.HisData);
@@ -394,7 +410,9 @@ angular.module('bmpUiApp')
             //$scope.selectChange();
             console.log('length:'+iString+' '+iString.length);
             console.log(iString);
-            $scope.getAsPathChanged($scope.HisData);
+            //$scope.getAsPathChanged($scope.HisData);
+            //$scope.getAsPathChanged($scope.originHisData);
+
           }
           else if(1 == iString.length)
           {
@@ -404,6 +422,7 @@ angular.module('bmpUiApp')
             //$scope.selectChange();
             console.log('length:'+iString+' '+iString.length);
             console.log('0'+iString);
+            //$scope.getAsPathChanged($scope.originHisData);
           }
         })
         .on("mouseover",function(d,i){
