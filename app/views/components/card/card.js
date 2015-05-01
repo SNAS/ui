@@ -57,7 +57,7 @@ angular.module('bmp.components.card',['ui.bootstrap'])
       replace: 'true',
       scope: {
         data: '=',       //data to pass to card controller
-        removable: '=?',  //optional
+        noremove: '=?',  //optional
         template: '=',   //folderName
         removecard: '&', //method to remove card
         expand: '='      //state of card (expanded or collapsed)
@@ -77,8 +77,8 @@ angular.module('bmp.components.card',['ui.bootstrap'])
         if(scope.expand !== undefined)
           scope.cardExpand = scope.expand;
 
-        if(scope.removable === undefined) //default removable = true
-          scope.removable = true;
+        if(scope.noremove === undefined) //default removable = true
+          scope.noremove = true;
 
 
         scope.changeCardState = function() {

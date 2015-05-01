@@ -97,7 +97,7 @@
     <tab heading="Graphs" select="showGraphs()">
       <div bmp-card ng-repeat="graph in graphs"
         data="{ 'peer_hash_id': data.peer_hash_id, 'visible': graphVisibility }"
-        noremove="true"
+        noremove="false"
         template="graph"
         expand="true">
       </div>
