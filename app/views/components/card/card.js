@@ -37,6 +37,7 @@
 //  data="card"
 //  noremove="false"
 //  template="folderName"
+//  expand="false"
 //  removeCard="removeCard(card)">
 //</div>
 
