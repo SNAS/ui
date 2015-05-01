@@ -45,14 +45,14 @@
           padding: 4px 4px 4px 4px;
           li{
             float: left;
-            margin-right: 15%;
+            width: 25%;
           }
-          li:first-child{
-            margin-right: 20%;
-          }
+//          li:first-child{
+//            margin-right: 20%;
+//          }
           li:last-child{
             text-align: right;
-            margin-right: 0;
+//            margin-right: 0;
           }
         }
       }

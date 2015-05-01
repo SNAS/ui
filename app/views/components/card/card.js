@@ -73,7 +73,7 @@ angular.module('bmp.components.card',['ui.bootstrap'])
           scope.templateLoc = scope.templatePath + scope.template + '/' + scope.template + '.html';
         }
 
-        scope.cardExpand = false; //default false = closed
+        scope.cardExpand = true; //default false = closed
         if(scope.expand !== undefined)
           scope.cardExpand = scope.expand;
 
