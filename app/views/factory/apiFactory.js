@@ -140,6 +140,24 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "rib/peer/" + peer_hash_id + "/prefix/" + ip);
     };
 
+
+    //For the Graphs in Card
+    apiFactory.getUpdatesOverTime = function (peer_hash_id){
+      return $http.get(urlBase + "updates/peer/" + peer_hash_id + "/top/interval/5");
+    };
+
+    apiFactory.getTopPrefixUpdates = function (peer_hash_id){
+      return $http.get(urlBase + "updates/peer/" + peer_hash_id + "/top");
+    };
+
+    apiFactory.getWithdrawsOverTime = function (peer_hash_id){
+      return $http.get(urlBase + "withdrawns/peer/" + peer_hash_id + "/top/interval/5");
+    };
+
+    apiFactory.getWithdrawnPrefixOverTime = function (peer_hash_id){
+      return $http.get(urlBase + "withdrawns/peer/" + peer_hash_id + "/top");
+    };
+
     //nextTopology
     apiFactory.getPeerNodes = function (peerHashId){
       return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);

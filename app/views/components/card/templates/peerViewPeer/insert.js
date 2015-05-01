@@ -5,12 +5,21 @@ angular.module('bmp.components.card')
 .controller('BmpCardPeerPeerInsertController', ["$scope", "apiFactory", "$timeout", function ($scope, apiFactory, $timeout) {
     window.SCOPEZ = $scope;
 
+    $scope.graphs = [];
+
     //Redraw Tables when menu state changed
     $scope.$on('menu-toggle', function(thing, args) {
       $timeout( function(){
         $scope.ribGridApi.core.handleWindowResize();
       }, 550);
     });
+
+    //this is for the graph cards.
+    $scope.graphVisibility = false;
+    $scope.showGraphs = function(){
+      $scope.graphs = ["preUpdatesGraph","preWithdrawsGraph","updatesGraph","withdrawsGraph"];
+      $scope.graphVisibility = true;
+    };
 
     //$scope.$watch('cardExpand', function(val) {
     //  if($scope.cardExpand == true){

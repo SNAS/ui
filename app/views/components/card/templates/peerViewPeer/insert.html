@@ -94,5 +94,13 @@
       </div>
 
     </tab>
+    <tab heading="Graphs" select="showGraphs()">
+      <div bmp-card ng-repeat="graph in graphs"
+        data="{ 'peer_hash_id': data.peer_hash_id, 'visible': graphVisibility }"
+        noremove="true"
+        template="graph"
+        expand="true">
+      </div>
+    </tab>
   </tabset>
 </div>
