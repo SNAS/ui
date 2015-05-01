@@ -53,7 +53,8 @@ angular.module('bmpUiApp')
       },
       linkConfig: {
         linkType: 'parallel',
-        label: 'model.label',
+        width: 2,
+        label: 'model.igp_metric',
         sourceLabel: 'model.sourceLabel',
         targetLabel: 'model.targetLabel'
       },
@@ -104,6 +105,7 @@ angular.module('bmpUiApp')
     });
 
     topo.on('enterNode', function (sender, node) {
+       //console.log("enterNode");
 //      topo.tooltipManager().openNodeTooltip(node);
     });
 
@@ -182,35 +184,52 @@ angular.module('bmpUiApp')
 
     function getLinks(result) {
       var linksData = result.v_ls_links.data;
+      var reverseLinks = [];
       for (var i = 0; i < result.v_ls_links.size; i++) {
         var source = linksData[i].local_node_hash_id;
         var target = linksData[i].remote_node_hash_id;
         var igp_metric = linksData[i].igp_metric;
         var interfaceIP = linksData[i].InterfaceIP;
+        var neighborIP = linksData[i].NeighborIP;
         if (source < target) {
           links.push(
             {
               id: i,
               source: source,
               target: target,
-              label: igp_metric,
-              interfaceIP: interfaceIP
+              igp_metric: igp_metric,
+              interfaceIP: interfaceIP,
+              neighborIP: neighborIP
+              //enable: false
             });
         }
         else {
-          for (var j = 0; j < links.length; j++) {
-            if (source == links[j].target && target == links[j].source && igp_metric != links[j].label) {
-              links[j] =
+          reverseLinks.push(
+            {
+              id: i,
+              source: source,
+              target: target,
+              igp_metric: igp_metric,
+              interfaceIP: interfaceIP,
+              neighborIP: neighborIP
+            });
+        }
+      }
+      for (var i = 0; i < reverseLinks.length; i++) {
+        for(var j = 0; j < links.length; j++){
+          if(reverseLinks[i].target == links[j].source && reverseLinks[i].source == links[j].target
+            && reverseLinks[i].neighborIP == links[j].interfaceIP && reverseLinks[i].igp_metric != links[j].igp_metric){
+            links[j] =
               {
                 id: links[j].id,
                 source: links[j].source,
                 target: links[j].target,
-                sourceLabel: links[j].label,
-                targetLabel: igp_metric,
-                interfaceIP: interfaceIP
-              }
-              break;
-            }
+                sourceLabel: links[j].igp_metric,
+                targetLabel: reverseLinks[i].igp_metric,
+                interfaceIP: links[j].interfaceIP,
+                neighborIP: links[j].neighborIP
+              };
+            break;
           }
         }
       }
@@ -306,10 +325,11 @@ angular.module('bmpUiApp')
           links: selectedLinks,
           arrow: 'cap',
           pathStyle: {
-            'stroke': '#666',
+            'stroke': '#9ec654',
             'stroke-width': '0px',
             fill: '#9ec654'
           },
+          pathWidth: 4,
           reverse: reverse
         });
 
