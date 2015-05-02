@@ -118,22 +118,25 @@ angular.module('bmp.components.card')
       });
 
       $scope.ipAmountOptions = {
-        "chart": {
-          "type": "multiBarChart",
-          "height": 250,
-          "width": 300,
-          "showControls": false,
-          "showLegend": false,
-          "margin": {
-            "top": 20,
-            "right": 20,
-            "bottom": 60,
-            "left": 45
+        chart: {
+          type: "multiBarChart",
+          height: 250,
+          width: 300,
+          showControls: false,
+          showLegend: false,
+          margin: {
+            top: 20,
+            right: 20,
+            bottom: 60,
+            left: 45
           },
-          "clipEdge": true,
-          "staggerLabels": false,
-          "transitionDuration": 500,
-          "stacked": false,
+          clipEdge: true,
+          staggerLabels: false,
+          transitionDuration: 500,
+          stacked: false,
+          tooltipContent: function (key, x, y, e, graph) {
+            return '<h5>' + x + " Addr: " +  y + '</h5>'
+          },
           "yAxis": {
             tickFormat:d3.format('d')
           }
