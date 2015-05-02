@@ -143,7 +143,7 @@ angular.module('bmp.components.card')
         }else {
           $scope.summaryPeerOptions.data = result.peerDownstreamASN.data;
         }
-        $scope.summaryPeerOptionsApi.core.handleWindowResize();
+        $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
       }).
       error(function (error){
         console.log(error.message);

@@ -110,18 +110,7 @@ angular.module('bmp.components.card')
             //  graphPoint[0] = ipAmount;
             //
             $scope.ipAmountData[index].values[0].y = ipAmount;
-            //  (
-            //  [
-            //    {x: "peer",y: ipAmount}
-            //  ]
-            //);
-
             $scope.ipAmountData[$scope.ipAmountData.length-1].values[0].y = ipTotal;
-            //  (
-            //  [
-            //    {x: "peer",y: ipTotal}
-            //  ]
-            //);
           }).
           error(function (error) {
             console.log(error.message);
@@ -210,16 +199,6 @@ angular.module('bmp.components.card')
         }
       ];
 
-      //Listen for card expand to resize the graph
-      $scope.$watch('cardExpand', function() {
-        if ($scope.cardExpand == true) {
-          //resize
-          $scope.upTimeConfig.visible = true;
-          $scope.globalViewPeerApi.core.handleWindowResize();
-        }
-      });
-      //End Router up time Graph
-
       //<!--Router Up Time-->
       var calUpTime = function () {
         //This works out uptime from data.LastModified
@@ -271,15 +250,6 @@ angular.module('bmp.components.card')
         $scope.globalViewPeerApi= gridApi;
       };
 
-      $scope.$watch('cardExpand', function(val) {
-        if($scope.cardExpand == true){
-          setTimeout(function(){
-            //$scope.peerViewPeerApi.core.handleWindowResize();
-            $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
-          },10)
-        }
-      });
-
       $scope.calGridHeight = function(grid, gridapi){
         gridapi.core.handleWindowResize();
 
@@ -292,6 +262,23 @@ angular.module('bmp.components.card')
         grid.changeHeight = height;
         gridapi.grid.gridHeight = grid.changeHeight;
       };
+
+      if($scope.cardExpand){
+        $scope.upTimeConfig.visible = true;
+      }
+
+      //Listen for card expand to resize the graph and table
+      $scope.$watch('cardExpand', function() {
+        if ($scope.cardExpand == true) {
+          //resize
+          $scope.upTimeConfig.visible = true;
+          setTimeout(function(){
+            //$scope.peerViewPeerApi.core.handleWindowResize();
+            $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
+          },10)
+        }
+      });
+      //End Router up time Graph
 
       var peersTableCreate = function() {
         //<!--R/Peers info table-->
@@ -314,11 +301,12 @@ angular.module('bmp.components.card')
                 PeerName: peersData[index].PeerName,
                 org_name: orgName
               });
+              $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
             }).
             error(function (error) {
               console.log(error.message);
             });
-        })
+        });
         $scope.globalViewPeerOptions.data = $scope.peerSummaryTable;
       };
 
