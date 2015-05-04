@@ -9,9 +9,9 @@ angular.module('bmp.components.card')
       var createLocationTable = function(){
         if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
           var type;
-          if ($scope.cardType == "global.router") {
+          if ($scope.data.type === "Router") {
             type = "BMP Router";
-          } else if ($scope.cardType == "global.peer") {
+          } else if ($scope.data.type === "Peer") {
             type = "Peer";
           } else {
             type = "None";
