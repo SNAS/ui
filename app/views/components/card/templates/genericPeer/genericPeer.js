@@ -13,7 +13,7 @@ angular.module('bmp.components.card')
       }else{
         return word;
       }
-    }
+    };
 
     var createLocationTable = function(){
       if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {

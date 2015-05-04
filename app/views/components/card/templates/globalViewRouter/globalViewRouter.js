@@ -10,6 +10,14 @@ angular.module('bmp.components.card')
         $scope.data.RouterName = $scope.data.RouterIP;
       }
 
+      $scope.wordCheck = function(word){
+        if(word.length > 13){
+          return word.slice(0,10) + " ...";
+        }else{
+          return word;
+        }
+      };
+
       var createLocationTable = function(){
         if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
           var type;
