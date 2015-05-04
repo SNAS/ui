@@ -76,19 +76,19 @@ angular.module('bmp.components.card')
         {
           key:'ips',
           values:[
-            {x: "ipv4",y: 0}
+            {x: "IPv4",y: 0}
            ]
         },
         {
           key:'ips',
           values:[
-            {x: "ipv6",y: 0}
+            {x: "IPv6",y: 0}
           ]
         },
         {
           key:'ips',
           values:[
-            {x: "ipTotal",y: 0}
+            {x: "Total",y: 0}
           ]
         }
       ];
@@ -135,7 +135,7 @@ angular.module('bmp.components.card')
           transitionDuration: 500,
           stacked: false,
           tooltipContent: function (key, x, y, e, graph) {
-            return '<h5>' + x + " Addr: " +  y + '</h5>'
+            return '<h5>' + x + " Peers: " +  y + '</h5>'
           },
           "yAxis": {
             tickFormat:d3.format('d')
