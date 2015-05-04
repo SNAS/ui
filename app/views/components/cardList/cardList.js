@@ -55,7 +55,9 @@ angular.module('bmp.components.cardList',[])
         scope.api = {
 
           removeCard: function (card){
-            var pIndex = scope.priority.indexOf(card.template);
+            var pIndex = scope.priority.indexOf(card.type);
+
+            debugger;
 
             var index = arr[pIndex].indexOf(card);
             arr[pIndex].splice(index, 1);
