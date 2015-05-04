@@ -57,19 +57,12 @@ angular.module('bmpUiApp')
           $scope.AllPrefixOptions.data = $scope.PrefixData = data.v_routes.data;
           //$scope.PrefixData = data.v_routes.data;
           createPrefixDataGrid();
+          $scope.getASInfo();
         });
     };
 
     var createPrefixDataGrid = function () {
       for (var i = 0; i < $scope.PrefixData.length; i++) {
-        //$scope.PrefixData[i].router_name = $scope.PrefixData[i].RouterName;
-        //$scope.PrefixData[i].peer_name = $scope.PrefixData[i].PeerName;
-        //$scope.PrefixData[i].nh = $scope.PrefixData[i].NH;
-        //$scope.PrefixData[i].as_path = $scope.PrefixData[i].AS_Path;
-        //$scope.PrefixData[i].peer_asn = $scope.PrefixData[i].PeerASN;
-        //$scope.PrefixData[i].communities = $scope.PrefixData[i].Communities;
-        //$scope.PrefixData[i].med = $scope.PrefixData[i].MED;
-        //$scope.PrefixData[i].last_modified = $scope.PrefixData[i].LastModified;
         $scope.AllPrefixOptions.data[i].router_name = $scope.PrefixData[i].RouterName;
         $scope.AllPrefixOptions.data[i].peer_name = $scope.PrefixData[i].PeerName;
         $scope.AllPrefixOptions.data[i].nh = $scope.PrefixData[i].NH;
@@ -152,51 +145,52 @@ angular.module('bmpUiApp')
       {name: "last_modified", displayName: 'Last_Modified', width: 150}
     ];
     var createPrefixHisGrid = function () {
-      console.log($scope.HisData);
-      for (var i = 0; i < $scope.HisData.length; i++) {
-        $scope.HistoryPrefixOptions.data[i].router_name = $scope.HisData[i].RouterName;
-        $scope.HistoryPrefixOptions.data[i].peer_name = $scope.HisData[i].PeerName;
-        $scope.HistoryPrefixOptions.data[i].nh = $scope.HisData[i].NH;
-        $scope.HistoryPrefixOptions.data[i].as_path = $scope.HisData[i].AS_Path;
-        $scope.HistoryPrefixOptions.data[i].peer_asn = $scope.HisData[i].PeerASN;
-        $scope.HistoryPrefixOptions.data[i].communities = $scope.HisData[i].Communities;
-        $scope.HistoryPrefixOptions.data[i].med = $scope.HisData[i].MED;
-        $scope.HistoryPrefixOptions.data[i].last_modified = $scope.HisData[i].LastModified;
-      }
-      $scope.getAsPathChanged($scope.originHisData);
-    };
-    var getPrefixHisGrid = function (searchPrefix) {
-      //console.log(searchPrefix);
-      debugger
-      if ("All peers" == searchPrefix)
+      if(typeof $scope.HisData != "undefined")
       {
-        apiFactory.getHistoryPrefix(searchPrefix)
-        .success(function(data) {
-          $scope.HisData = data.v_routes_history.data;
-          createPrefixHisGrid();
-        });
-      }
-      else
-      {
-        $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
-        apiFactory.getPeerHistoryPrefix(searchPrefix,$scope.peerHashId)
-          .success(function(data) {
-            //console.log(searchPrefix+' '+$scope.peerHashId);
-            $scope.HisData = data.v_routes_history.data;
-            createPrefixHisGrid();
-          });
-      }
+        console.log($scope.HisData);
+        for (var i = 0; i < $scope.HisData.length; i++) {
+          $scope.HistoryPrefixOptions.data[i].router_name = $scope.HisData[i].RouterName;
+          $scope.HistoryPrefixOptions.data[i].peer_name = $scope.HisData[i].PeerName;
+          $scope.HistoryPrefixOptions.data[i].nh = $scope.HisData[i].NH;
+          $scope.HistoryPrefixOptions.data[i].as_path = $scope.HisData[i].AS_Path;
+          $scope.HistoryPrefixOptions.data[i].peer_asn = $scope.HisData[i].PeerASN;
+          $scope.HistoryPrefixOptions.data[i].communities = $scope.HisData[i].Communities;
+          $scope.HistoryPrefixOptions.data[i].med = $scope.HisData[i].MED;
+          $scope.HistoryPrefixOptions.data[i].last_modified = $scope.HisData[i].LastModified;
+        }
+        $scope.getAsPathChanged($scope.originHisData);
+      };
+      //var getPrefixHisGrid = function (searchPrefix) {
+      //  //console.log(searchPrefix);
+      //  debugger
+      //  if ("All peers" == searchPrefix)
+      //  {
+      //    apiFactory.getHistoryPrefix(searchPrefix)
+      //      .success(function(data) {
+      //        $scope.HisData = data.v_routes_history.data;
+      //        createPrefixHisGrid();
+      //      });
+      //  }
+      //  else
+      //  {
+      //    $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
+      //    apiFactory.getPeerHistoryPrefix(searchPrefix,$scope.peerHashId)
+      //      .success(function(data) {
+      //        //console.log(searchPrefix+' '+$scope.peerHashId);
+      //        $scope.HisData = data.v_routes_history.data;
+      //        createPrefixHisGrid();
+      //      });
+      //  }
+      //}
     };   //create a new grid
 
     var getPrefixHisData = function (searchPrefix) {
-      //console.log(searchPrefix);
       debugger
       if ("All peers" == searchPrefix)
       {
         apiFactory.getHistoryPrefix(searchPrefix)
           .success(function(data) {
-            $scope.HisData = data.v_routes_history.data;
-            //console.log(data.v_routes_history.data);
+            $scope.originHisData = $scope.HisData = data.v_routes_history.data;
           });
       }
       else
@@ -205,10 +199,14 @@ angular.module('bmpUiApp')
         apiFactory.getPeerHistoryPrefix(searchPrefix,$scope.peerHashId)
           .success(function(data) {
             console.log(searchPrefix+' '+$scope.peerHashId);
-            $scope.HisData = data.v_routes_history.data;
+            $scope.originHisData = $scope.HisData = data.v_routes_history.data;
+            console.log($scope.originHisData+' '+$scope.HisData);
+            $scope.getAsPathChanged($scope.originHisData);
           });
       }
     };
+
+
     $scope.getPrefixHisDataHour = function(index)
     {
       getPrefixHisData($scope.currentValue);
@@ -218,10 +216,10 @@ angular.module('bmpUiApp')
 
       console.log(allDataHis);
 
-      allDataHis.sort(function compare(a,b)
-      {
-        return a.LastModified > b.LastModified;
-      });
+      //allDataHis.sort(function compare(a,b)
+      //{
+      //  return a.LastModified > b.LastModified;
+      //});
 
       var dataHour=[];
 
@@ -236,56 +234,101 @@ angular.module('bmpUiApp')
           j++;
         }
       }
-      $scope.originHisData = $scope.HisData;
-        $scope.HistoryPrefixOptions.data = $scope.HisData = dataHour;
+      $scope.HistoryPrefixOptions.data = $scope.HisData = dataHour;
       createPrefixHisGrid();
     }
 
 
+
     $scope.getAsPathChanged = function(allHisData)
     {
-      var asPathChange = new Array(24);//store what time is change and the how many it changed
-      var asPathChangePrecent = new Array();
-      var j = 0;
-      while(j<24)
-      {
-        for (var i= 0;i<allHisData.length;i++)
-        {
-          if((allHisData[i].LastModified.substring(11,13)=='0'+j)||(allHisData[i].LastModified.substring(11,13)== j.toString()))
-          {
-            if(asPathChange[j] === undefined)
-            {
+      console.log("execute getAsPathChanged");
 
-              asPathChange[j] = 0;
-            }
-            else
+      if(typeof allHisData == "undefined")
+      {
+        console.log("no data now");
+        return 1
+      }
+      else
+      {
+        var asPathChange = new Array(24);//store what time is change and the how many it changed
+        $scope.asPathChangePrecent = new Array();
+        var j = 0;
+        while(j<24)
+        {
+          for (var i= 0;i<allHisData.length;i++)
+          {
+            if((allHisData[i].LastModified.substring(11,13)=='0'+j)||(allHisData[i].LastModified.substring(11,13)== j.toString()))
             {
-              asPathChange[j]= asPathChange[j] + 1;
+              if(asPathChange[j] === undefined)
+              {
+
+                asPathChange[j] = 0;
+              }
+              else
+              {
+                asPathChange[j]= asPathChange[j] + 1;
+              }
             }
           }
+          j++;
         }
-        j++;
-      }
-      for (var x = 0;x<24;x++)
-      {
-        if(asPathChange[x] === undefined)
+        for (var x = 0;x<24;x++)
         {
-          asPathChangePrecent[x] = 0;
+          if(asPathChange[x] === undefined)
+          {
+            $scope.asPathChangePrecent[x] = 0;
+          }
+          else
+          {
+            $scope.asPathChangePrecent[x] = asPathChange[x]/$scope.originHisData.length;
+          }
+          console.log($scope.asPathChangePrecent);
         }
-        else
-        {
-          asPathChangePrecent[x] = asPathChange[x]/$scope.originHisData.length;
-        }
-        console.log(asPathChangePrecent);
       }
     }
 
     //$scope.getAsPathChanged($scope.HisData);
 
+    $scope.$watch($scope.originHisData,
+      $scope.getAsPathChanged($scope.originHisData)
+    );
+
+    $scope.$watch($scope.HisData,createPrefixHisGrid()
+    );
+
     $scope.selectChange = function(){
       debugger
-      getPrefixHisGrid($scope.currentValue);
+      //getPrefixHisGrid($scope.currentValue);
+      getPrefixHisData($scope.currentValue);
     }
+
+    //
+    //$scope.picColor = function(index)
+    //{
+    //  console.log(d3.scale.linear(index).range(['#848AA8','#855EF9']));
+    //  return d3.scale.linear(index).range(['#848AA8','#855EF9']);
+    //}
+    //$scope.getColor = function (i) {
+    //  c=d3.rgb("violet");
+    //  if (i <= 10) {
+    //    return c.brighter(0.1);
+    //  }
+    //  else if((i > 10) && (i <= 20))
+    //  {
+    //    return c.darker(1);
+    //  }
+    //  else if((i > 20) && (i <=30))
+    //  {
+    //    return c.brighter(0.2);
+    //  }
+    //
+    //  else {
+    //    return c.darker(2);
+    //  }
+    //
+    //};
+
   }
   ])
 
@@ -392,11 +435,19 @@ angular.module('bmpUiApp')
         .attr("width", 20)
         .attr("y", 0)
         .attr("height", 20)
-        .attr("style","fill:#FADF56")
+        .attr("style",function(d,i){
+          console.log($scope.asPathChangePrecent);
+          if(typeof $scope.asPathChangePrecent != "undefined")
+          {
+            return "fill:" + d3.scale.linear($scope.asPathChangePrecent[i]).range(['#848AA8','#855EF9']);
+          }
+          else
+          {
+            return "fill:#FFF5FF";
+          }
+        })
         .on("click",function(d,i){
           $scope.hideGrid = false;
-          //console.log($scope.hideGrid);
-          //$scope.selectChange();
 
           d3.select(this)
             .attr("style","fill:green");
@@ -410,8 +461,6 @@ angular.module('bmpUiApp')
             //$scope.selectChange();
             console.log('length:'+iString+' '+iString.length);
             console.log(iString);
-            //$scope.getAsPathChanged($scope.HisData);
-            //$scope.getAsPathChanged($scope.originHisData);
 
           }
           else if(1 == iString.length)
@@ -419,22 +468,20 @@ angular.module('bmpUiApp')
             $scope.string = '0'+iString;
             $scope.getPrefixHisDataHour($scope.string);
             debugger
-            //$scope.selectChange();
             console.log('length:'+iString+' '+iString.length);
             console.log('0'+iString);
-            //$scope.getAsPathChanged($scope.originHisData);
           }
-        })
-        .on("mouseover",function(d,i){
-          d3.select(this)
-            .attr("style","fill:blue");
-        })
-        .on("mouseout",function(d,i){
-          d3.select(this)
-            .transition()
-            .duration(500)
-            .attr("style","fill:#FADF56");
         });
+        //.on("mouseover",function(d,i){
+        //  d3.select(this)
+        //    .attr("style","fill:#FFF5FF");
+        //});
+        //.on("mouseout",function(d,i){
+        //  d3.select(this)
+        //    .transition()
+        //    .duration(500)
+        //    .attr("style","fill:#FADF56");
+        //});
 //create the last modified time
 
       var div3 = d3.select(element[0])
