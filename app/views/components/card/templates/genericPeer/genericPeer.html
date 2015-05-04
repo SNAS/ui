@@ -20,12 +20,20 @@
     <!--Peer Card in Global View-->
 
     <h3>Peer Detail</h3>
-    <span style="float: right;text-align: right;">
-      Peer Down Time
-      <span ng-class="{'red': downTime!='Up', 'green': downTime=='Up'}">
-        {{ downTime }}
-      </span>
-    </span>
+    <div style="float: right;text-align: right;">
+      <div>
+        Down Time
+        <span ng-class="{'red': downTime!='Up', 'green': downTime=='Up'}">
+          {{ downTime }}
+        </span>
+      </div>
+      <div>
+        Last Peer Down Event
+        <span class="green">
+          {{ data.LastModified }}
+        </span>
+      </div>
+    </div>
     <h4>{{ data.PeerName }}</h4>
 
 

@@ -272,13 +272,20 @@ angular.module('bmp.components.card')
       //AS Number	AS Name	Organization
       //PeerASN, PeerName, org_name
 
+
       $scope.globalViewPeerOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
         columnDefs: [
           {name: "PeerASN", displayName: 'AS Number', width: '*'},
           {name: "PeerName", displayName: 'AS Name', width: '*'},
           {name: "org_name", displayName: 'Organization', width: '*'}
         ]
       };
+      $scope.globalViewPeerOptions.multiSelect = false;
+      $scope.globalViewPeerOptions.noUnselect = false;
+      $scope.globalViewPeerOptions.modifierKeysToMultiSelect = false;
+
       var peerViewPeerDefaultData = [{"as_name":"NO DATA"}];
       $scope.globalViewPeerOptions.onRegisterApi = function (gridApi) {
         $scope.globalViewPeerApi= gridApi;

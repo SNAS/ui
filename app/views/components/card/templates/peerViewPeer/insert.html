@@ -1,7 +1,7 @@
 <div ng-controller="BmpCardPeerPeerInsertController">
   <tabset>
     <tab heading="Downstream ASes of Peer" select="downStreamTab()">
-      <div class="gridStyle" ui-grid="summaryPeerOptions" ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
+      <div class="gridStyle" ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
     </tab>
     <tab heading="Routing Table" select="getRibData()">
 

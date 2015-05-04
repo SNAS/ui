@@ -93,13 +93,19 @@ angular.module('bmp.components.card')
       });
 
     $scope.summaryPeerOptions = {
-      "columnDefs":[
+      enableRowSelection: true,
+      enableRowHeaderSelection: false,
+      columnDefs:[
         {name: "DownstreamAS", displayName: 'AS Number', width: '*'},
         {name: "as_name", displayName: 'AS Name', width: '*'},
         {name: "org_name", displayName:'Organization', width: '*'}
       ]
     };
     var summaryPeerOptionsDefaultData = [{"as_name":"-"},{"DownstreamAS":"-"},{"org_name":"-"}];
+
+    $scope.summaryPeerOptions.multiSelect = false;
+    $scope.summaryPeerOptions.modifierKeysToMultiSelect = false;
+    $scope.summaryPeerOptions.noUnselect = false;
 
     $scope.summaryPeerOptions.onRegisterApi = function (gridApi) {
       $scope.summaryPeerOptionsApi= gridApi;
