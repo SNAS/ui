@@ -246,12 +246,12 @@ angular.module('bmp.components.card')
 
         var diff = timeNow - timestmp;
 
-        var timeStrings = ["Years:", " Months:", " Days:", " Hours:", " Minutes:"];
+        var timeStrings = ["Years, ", "Months, ", " Days, ", "h", "m"];
         var times = [31622400000, 2592000000, 86400000, 3600000, 60000];
         var timeAmount = [0, 0, 0, 0, 0];
 
         var timeString = "";
-        var show = 2; //show 2 largest
+        var show = 4; //show 2 largest
         for (var i = 0; i < times.length; i++) {
           var val = diff / times[i];
           if (val > 1) {
@@ -260,7 +260,7 @@ angular.module('bmp.components.card')
             diff = diff - (round * times[i]);
             if (show == 0)
               break;
-            timeString += timeStrings[i] + timeAmount[i];
+            timeString += timeAmount[i] + timeStrings[i];
             show--;
           }
         }
