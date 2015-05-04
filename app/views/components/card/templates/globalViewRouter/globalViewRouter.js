@@ -76,26 +76,16 @@ angular.module('bmp.components.card')
         {
           key:'ips',
           values:[
-            {x: "IPv4",y: 0}
-           ]
-        },
-        {
-          key:'ips',
-          values:[
-            {x: "IPv6",y: 0}
-          ]
-        },
-        {
-          key:'ips',
-          values:[
-            {x: "Total",y: 0}
+            {label: "IPv4",value: 0},
+            {label: "IPv6",value: 0},
+            {label: "Total",value: 0}
           ]
         }
       ];
 
-
       //<!--IP's Graph-->
       var whichip = ['v4','v6'];
+
 
       var ipTotal = 0;
       var graphPoint = [0];
@@ -109,8 +99,10 @@ angular.module('bmp.components.card')
             //if(ipAmount > graphPoint[0]) //for changing graph axis
             //  graphPoint[0] = ipAmount;
             //
-            $scope.ipAmountData[index].values[0].y = ipAmount;
-            $scope.ipAmountData[$scope.ipAmountData.length-1].values[0].y = ipTotal;
+            $scope.ipAmountData[0].values[index].value = ipAmount;
+            $scope.ipAmountData[0].values[$scope.ipAmountData[0].values.length-1].value = ipTotal;
+            console.log("test");
+            console.dir($scope.ipAmountData);
           }).
           error(function (error) {
             console.log(error.message);
@@ -119,28 +111,63 @@ angular.module('bmp.components.card')
 
       $scope.ipAmountOptions = {
         chart: {
-          type: "multiBarChart",
+          type: 'discreteBarChart',
           height: 250,
           width: 300,
-          showControls: false,
-          showLegend: false,
-          margin: {
+          margin : {
             top: 20,
             right: 20,
-            bottom: 60,
-            left: 45
+            bottom: 80,
+            left: 55
           },
-          clipEdge: true,
-          staggerLabels: false,
+          x: function(d){return d.label;},
+          y: function(d){return d.value;},
+          showValues: true,
+          valueFormat: function(d){
+            return d3.format('')(d);
+          },
           transitionDuration: 500,
-          stacked: false,
           tooltipContent: function (key, x, y, e, graph) {
             return '<h5>' + x + " Peers: " +  y + '</h5>'
           },
           "yAxis": {
-            tickFormat:d3.format('d')
+            tickFormat:d3.format('d'),
+            tickValues: [0]
           }
+          //xAxis: {
+          //  axisLabel: 'Ips',
+          //  rotateLabels: -25,
+          //  rotateYLabel: true
+          //},
+          //yAxis: {
+          //  axisLabel: 'Quantity(Ip Count)',
+          //  axisLabelDistance: 30,
+          //  tickFormat:d3.format('d')
+          //}
         }
+        //chart: {
+        //  type: "multiBarChart",
+        //  height: 250,
+        //  width: 300,
+        //  showControls: false,
+        //  showLegend: false,
+        //  showValues: true,
+        //  margin: {
+        //    top: 20,
+        //    right: 20,
+        //    bottom: 60,
+        //    left: 45
+        //  },
+        //  clipEdge: true,
+        //  staggerLabels: false,
+        //  transitionDuration: 500,
+        //  tooltipContent: function (key, x, y, e, graph) {
+        //    return '<h5>' + x + " Peers: " +  y + '</h5>'
+        //  },
+        //  "yAxis": {
+        //    tickFormat:d3.format('d')
+        //  }
+        //}
       };
 
 
