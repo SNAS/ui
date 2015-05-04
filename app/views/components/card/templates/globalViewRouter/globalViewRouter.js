@@ -6,6 +6,10 @@ angular.module('bmp.components.card')
 
       console.log($scope.data);
 
+      if($scope.data.RouterName === " " || $scope.data.RouterName === ""){
+        $scope.data.RouterName = $scope.data.RouterIP;
+      }
+
       var createLocationTable = function(){
         if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
           var type;
