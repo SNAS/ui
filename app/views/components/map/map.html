@@ -40,7 +40,7 @@
             <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
           </p>
           <ul class="routers" ng-show="location.expandRouters">
-            <li ng-repeat="router in filteredRouters = (location.options.routers | filter:panelSearch)" ng-click="selectPanelRouter(router)">
+            <li ng-repeat="router in filteredRouters = (location.options.routers | filter:panelSearch)" ng-click="selectPanelRouter(location, router)">
               <div class="row">
                 <div class="col-xs-6">{{router.RouterName}}</div>
                 <div class="col-xs-6">{{router.RouterIP}}</div>
@@ -61,7 +61,7 @@
             <span class="peer-count">{{location.options.peers.length}}</span>
           </p>
           <ul class="peers" ng-show="location.options.expandPeers">
-            <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location)">
+            <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location, peer)">
               <div class="row">
                 <div class="col-xs-6">{{peer.PeerName}}</div>
                 <div class="col-xs-6">{{peer.PeerIP}}</div>

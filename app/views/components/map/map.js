@@ -133,7 +133,8 @@ angular.module('bmp.components.map', [])
                     RouterName: data[i].RouterName,
                     RouterIP: data[i].RouterIP,
                     LastModified: data[i].LastModified,
-                    isConnected: data[i].isConnected
+                    isConnected: data[i].isConnected,
+                    type: 'Router'
                 };
 
                 //concat of latlng for value (not an array)
@@ -224,7 +225,9 @@ angular.module('bmp.components.map', [])
                 var latlng = [data[i].latitude, data[i].longitude];
                 //current router data
                 var currData = {
-                    routerIP: ip,
+                    RouterIP: data[i].RouterIP,
+                    RouterName: data[i].RouterName,
+                    RouterAS: data[i].RouterAS,
                     PeerName: data[i].PeerName,
                     PeerIP: data[i].PeerIP,
                     PeerASN: data[i].PeerASN,
@@ -235,7 +238,8 @@ angular.module('bmp.components.map', [])
                     PeerPort: data[i].PeerPort,
                     isPeerIPv4: data[i].isPeerIPv4,
                     peer_hash_id: data[i].peer_hash_id,
-                    isUp: data[i].isUp
+                    isUp: data[i].isUp,
+                    type: 'Peer'
                 };
 
                 //concat of latlng for value (not an array)
@@ -478,8 +482,14 @@ angular.module('bmp.components.map', [])
     /****************************************
         Selected a panel router
     *****************************************/
-    $scope.selectPanelRouter = function(router){
+    $scope.selectPanelRouter = function(location, router){
         $scope.panelTitle = 'Router List - Peers';
+        var cardData = router;
+        cardData.country = location.options.country;
+        cardData.stateprov = location.options.stateprov;
+        cardData.city = location.options.stateprov;
+        
+        $scope.cardApi.changeCard(router);
         $scope.panelSearch = '';
         $scope.selectedRouter = router;
         if($scope.selectedLocation != undefined){
@@ -501,6 +511,7 @@ angular.module('bmp.components.map', [])
     $scope.deselectPanelRouter = function(){
         $scope.panelTitle = 'Router List';
         if($scope.selectedRouter != undefined){
+            $scope.cardApi.removeCard($scope.selectedRouter);
             $scope.selectedRouter.expandRouters = false;
             $scope.selectedRouter = undefined;
         }
@@ -525,10 +536,17 @@ angular.module('bmp.components.map', [])
     /****************************************
         Selected a panel peer
     *****************************************/
-    $scope.selectPanelPeer = function(location){
+    $scope.selectPanelPeer = function(location, peer){
         var temp = new L.featureGroup();
         temp.addLayer(location);
         $scope.map.fitBounds(temp.getBounds());
+        console.log(peer);
+
+        var cardData = peer;
+        cardData.country = location.options.country;
+        cardData.stateprov = location.options.stateprov;
+        cardData.city = location.options.city;
+        $scope.cardApi.changeCard(cardData);
     };
 
 
