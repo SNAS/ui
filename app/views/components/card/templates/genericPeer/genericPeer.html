@@ -20,21 +20,27 @@
     <!--Peer Card in Global View-->
 
     <h3>Peer Detail</h3>
-    <div style="float: right;text-align: right;">
-      <div>
-        Down Time
-        <span ng-class="{'red': downTime!='Up', 'green': downTime=='Up'}">
-          {{ downTime }}
-        </span>
+
+    <div style="float: right;">
+      <div style="display: table-cell">
+        <div>
+          Peer Status
+        </div>
+        <div>
+          {{ peerTimeText }}
+        </div>
       </div>
-      <div>
-        Last Peer Down Event
-        <span class="green">
-          {{ data.LastModified }}
-        </span>
+      <div style="display: table-cell;padding-left: 10px;">
+        <!--Down Time-->
+        <div style="font-size: 15px;" ng-class="{'red bmp-down': !data.isUp, 'green bmp-up': data.isUp}"></div>
+        <div style="padding-top: 4px;">
+          {{ peerTime }}
+        </div>
       </div>
     </div>
+
     <h4>{{ data.PeerName }}</h4>
+    <br>
 
 
     <div class="row">
@@ -87,6 +93,14 @@
               {{ item[1] }}
             </div>
           </div>
+
+          <div class="rib-section">
+            <div class="rib-part">
+              <div>Filter Rate</div>
+              <div style="font-size: 20px">{{ filterRate }}%</div>
+            </div>
+          </div>
+
         </div>
 
       </div>

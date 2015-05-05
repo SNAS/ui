@@ -71,12 +71,48 @@ angular.module('bmp.components.card')
     //  "router_hash_id":"0314f419a33ec8819e78724f51348ef9"
     // }
 
+    var calUpTime = function (time) {
+      //This works out uptime from data.LastModified
+      //Displays two largest results.
+      var timestmp = Date.parse(time); //"2015-03-22 22:23:06"
+      var timeNow = Date.now();
+
+      var d = new Date();
+      var offset = d.getTimezoneOffset() * 60000;
+      timeNow += offset;
+
+      var diff = timeNow - timestmp;
+
+      var timeStrings = ["Years, ", "Months, ", " Days, ", "h", "m"];
+      var times = [31622400000, 2592000000, 86400000, 3600000, 60000];
+      var timeAmount = [0, 0, 0, 0, 0];
+
+      var timeString = "";
+      var show = 4; //show 2 largest
+      for (var i = 0; i < times.length; i++) {
+        var val = diff / times[i];
+        if (val > 1) {
+          var round = Math.floor(val);
+          timeAmount[i] = round;
+          diff = diff - (round * times[i]);
+          if (show == 0)
+            break;
+          timeString += timeAmount[i] + timeStrings[i];
+          show--;
+        }
+      }
+      console.log("the time is ", timeString);
+      return timeString;
+    };
+
     //peer stuff here
     var peerPrefix;
     $scope.ribData = [
       ["Pre Rib", 0, "bmp-prerib"],
       ["Post Rib", 0, "bmp-postrib"]
     ];
+    $scope.filterRate = 0.00;
+
     apiFactory.getPeerPrefixByHashId($scope.data.peer_hash_id).
       success(function (result){
         peerPrefix = result.v_peer_prefix_report_last.data;
@@ -84,6 +120,8 @@ angular.module('bmp.components.card')
         try{
           $scope.ribData[0][1] = peerPrefix[0].Pre_RIB;
           $scope.ribData[1][1] = peerPrefix[0].Post_RIB;
+
+          $scope.filterRate = Math.floor((peerPrefix[0].Pre_RIB / peerPrefix[0].Post_RIB) * 100) / 100;
         }catch(err){
           //catch if RIB is undefined
         }
@@ -156,7 +194,13 @@ angular.module('bmp.components.card')
       });
 
 
-    $scope.downTime = ($scope.data.LastDownTimestamp === null)? "Up":$scope.data.LastDownTimestamp;
+    if($scope.data.isUp){
+      $scope.peerTimeText = "Peer Up Time";
+      $scope.peerTime = calUpTime($scope.data.LastModified);
+    }else{
+      $scope.peerTimeText = "Peer Down Time";
+      $scope.peerTime = calUpTime($scope.data.LastDownTimestamp);
+    }
 
     $scope.peerFullIp = $scope.data.PeerIP;
     if($scope.data.isPeerIPv4 == "1"){

@@ -146,40 +146,7 @@ angular.module('bmp.components.card')
             tickFormat:d3.format('d'),
             tickValues: [0]
           }
-          //xAxis: {
-          //  axisLabel: 'Ips',
-          //  rotateLabels: -25,
-          //  rotateYLabel: true
-          //},
-          //yAxis: {
-          //  axisLabel: 'Quantity(Ip Count)',
-          //  axisLabelDistance: 30,
-          //  tickFormat:d3.format('d')
-          //}
         }
-        //chart: {
-        //  type: "multiBarChart",
-        //  height: 250,
-        //  width: 300,
-        //  showControls: false,
-        //  showLegend: false,
-        //  showValues: true,
-        //  margin: {
-        //    top: 20,
-        //    right: 20,
-        //    bottom: 60,
-        //    left: 45
-        //  },
-        //  clipEdge: true,
-        //  staggerLabels: false,
-        //  transitionDuration: 500,
-        //  tooltipContent: function (key, x, y, e, graph) {
-        //    return '<h5>' + x + " Peers: " +  y + '</h5>'
-        //  },
-        //  "yAxis": {
-        //    tickFormat:d3.format('d')
-        //  }
-        //}
       };
 
 
