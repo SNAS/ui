@@ -57,14 +57,12 @@ angular.module('bmp.components.cardList',[])
           removeCard: function (card){
             var pIndex = scope.priority.indexOf(card.type);
 
-            debugger;
-
             var index = arr[pIndex].indexOf(card);
             arr[pIndex].splice(index, 1);
 
             //if empty then empty childs
-            if(arr[pIndex]==[]){
-              for(var i = pIndex; i > 0; i--){
+            if(arr[pIndex][0] == null){
+              for(var i = pIndex; i >= 0; i--){
                 arr[i] = [];
               }
             }
@@ -79,11 +77,17 @@ angular.module('bmp.components.cardList',[])
 
             //check card doesnt exist
             if (arr[pIndex].indexOf(card) == -1) {
-              arr[pIndex].push(card);
-              //remove oldest of the begining if list to long.
-              if (arr[pIndex].length > scope.length[pIndex]) {
+              //remove oldest of the begining if list becomes to long.
+              if (arr[pIndex].length + 1 > scope.length[pIndex]) {
                 arr[pIndex].shift();
+                //if empty then empty childs
+                if(arr[pIndex][0] == null){
+                  for(var i = pIndex; i >= 0; i--){
+                    arr[i] = [];
+                  }
+                }
               }
+              arr[pIndex].push(card);
             }
             buildList();
           }
