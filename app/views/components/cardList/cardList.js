@@ -11,10 +11,8 @@
 
 //::CHANGES::
 //------------------------------------------------------------
-//1.Need to make it so when change router to empty so replace it
-//that it will empty all the childs lists of that element.
-//
-//2.Can Select a peer without a router being selected.
+//1.Can Select a peer without a router being selected.
+//  -- to do this need to check parent isnt empty.
 //------------------------------------------------------------
 
 angular.module('bmp.components.cardList',[])
@@ -45,11 +43,6 @@ angular.module('bmp.components.cardList',[])
             buildarr = buildarr.concat(arr[i]);
           }
           scope.cards = buildarr;
-        };
-
-        //this is naughty used for when click x in card direc
-        scope.removeCard = function (card){
-          scope.api.removeCard(card);
         };
 
         scope.api = {

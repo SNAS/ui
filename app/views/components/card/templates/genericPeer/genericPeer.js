@@ -2,7 +2,7 @@
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardPeerController', ["$scope", "apiFactory", function ($scope, apiFactory) {
+  .controller('BmpCardPeerController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
 
     console.log('GenericPeer scope');
     console.log($scope);
@@ -12,42 +12,6 @@ angular.module('bmp.components.card')
         return word.slice(0,10) + " ...";
       }else{
         return word;
-      }
-    };
-
-    var createLocationTable = function(){
-      if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
-        var type;
-        if ($scope.data.type === "Router") {
-          type = "BMP Router";
-        } else if ($scope.data.type === "Peer") {
-          type = "Peer";
-        } else {
-          type = "None";
-        }
-        $scope.locationInfo = (
-        '<table class="table">' +
-        ' <tr>' +
-        '   <td>Type</td>' +
-        '   <td>' + type + '</td>' +
-        ' </tr>' +
-        ' <tr>' +
-        '   <td>Location</td>' +
-        '   <td>' + $scope.data.city + '</td>' +
-        ' </tr>' +
-        ' <tr>' +
-        '   <td>State</td>' +
-        '   <td>' + $scope.data.stateprov + '</td>' +
-        ' </tr>' +
-        ' <tr>' +
-        '   <td>Country</td>' +
-        '   <td>' + $scope.data.country + '</td>' +
-        ' </tr>' +
-        '</table>'
-        );
-      } else {
-        //DEFAULT Data
-        $scope.locationInfo = "<table class='routerLoc noRouterLoc'><tr><td>There is no Location Data ...</td></tr></table>";
       }
     };
 
@@ -70,40 +34,6 @@ angular.module('bmp.components.card')
     //  "peer_hash_id":"c33f36c12036e98d89ae3ea54cce0be2",
     //  "router_hash_id":"0314f419a33ec8819e78724f51348ef9"
     // }
-
-    var calUpTime = function (time) {
-      //This works out uptime from data.LastModified
-      //Displays two largest results.
-      var timestmp = Date.parse(time); //"2015-03-22 22:23:06"
-      var timeNow = Date.now();
-
-      var d = new Date();
-      var offset = d.getTimezoneOffset() * 60000;
-      timeNow += offset;
-
-      var diff = timeNow - timestmp;
-
-      var timeStrings = ["Years, ", "Months, ", " Days, ", "h", "m"];
-      var times = [31622400000, 2592000000, 86400000, 3600000, 60000];
-      var timeAmount = [0, 0, 0, 0, 0];
-
-      var timeString = "";
-      var show = 4; //show 2 largest
-      for (var i = 0; i < times.length; i++) {
-        var val = diff / times[i];
-        if (val > 1) {
-          var round = Math.floor(val);
-          timeAmount[i] = round;
-          diff = diff - (round * times[i]);
-          if (show == 0)
-            break;
-          timeString += timeAmount[i] + timeStrings[i];
-          show--;
-        }
-      }
-      console.log("the time is ", timeString);
-      return timeString;
-    };
 
     //peer stuff here
     var peerPrefix;
@@ -196,10 +126,10 @@ angular.module('bmp.components.card')
 
     if($scope.data.isUp){
       $scope.peerTimeText = "Peer Up Time";
-      $scope.peerTime = calUpTime($scope.data.LastModified);
+      $scope.peerTime = timeFactory.calTimeFromNow($scope.data.LastModified);
     }else{
       $scope.peerTimeText = "Peer Down Time";
-      $scope.peerTime = calUpTime($scope.data.LastDownTimestamp);
+      $scope.peerTime = timeFactory.calTimeFromNow($scope.data.LastDownTimestamp);
     }
 
     $scope.peerFullIp = $scope.data.PeerIP;
@@ -208,5 +138,10 @@ angular.module('bmp.components.card')
       $scope.peerFullIp = $scope.data.PeerIP + ":" + $scope.data.PeerPort;
     }
 
-    createLocationTable();
+    $scope.locationInfo = cardFactory.createLocationTable({
+        stateprov: $scope.data.stateprov,
+        city: $scope.data.city,
+        country: $scope.data.country,
+        type: $scope.data.type
+    });
   }]);
