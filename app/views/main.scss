@@ -88,6 +88,14 @@ a{
 @import "summary/summary";
 @import "bmpglyph";
 
+icon.bmp-up {
+	color: #7ec35c;
+}
+
+icon.bmp-down {
+	color: #f2732d;
+}
+
 //test pages
 @import "cardChanges/cardChanges";
 
