@@ -11,10 +11,8 @@
 
 //::CHANGES::
 //------------------------------------------------------------
-//1.Need to make it so when change router to empty so replace it
-//that it will empty all the childs lists of that element.
-//
-//2.Can Select a peer without a router being selected.
+//1.Can Select a peer without a router being selected.
+//  -- to do this need to check parent isnt empty.
 //------------------------------------------------------------
 
 angular.module('bmp.components.cardList',[])
@@ -47,22 +45,17 @@ angular.module('bmp.components.cardList',[])
           scope.cards = buildarr;
         };
 
-        //this is naughty used for when click x in card direc
-        scope.removeCard = function (card){
-          scope.api.removeCard(card);
-        };
-
         scope.api = {
 
           removeCard: function (card){
-            var pIndex = scope.priority.indexOf(card.template);
+            var pIndex = scope.priority.indexOf(card.type);
 
             var index = arr[pIndex].indexOf(card);
             arr[pIndex].splice(index, 1);
 
             //if empty then empty childs
-            if(arr[pIndex]==[]){
-              for(var i = pIndex; i > 0; i--){
+            if(arr[pIndex][0] == null){
+              for(var i = pIndex; i >= 0; i--){
                 arr[i] = [];
               }
             }
@@ -77,11 +70,17 @@ angular.module('bmp.components.cardList',[])
 
             //check card doesnt exist
             if (arr[pIndex].indexOf(card) == -1) {
-              arr[pIndex].push(card);
-              //remove oldest of the begining if list to long.
-              if (arr[pIndex].length > scope.length[pIndex]) {
+              //remove oldest of the begining if list becomes to long.
+              if (arr[pIndex].length + 1 > scope.length[pIndex]) {
                 arr[pIndex].shift();
+                //if empty then empty childs
+                if(arr[pIndex][0] == null){
+                  for(var i = pIndex; i >= 0; i--){
+                    arr[i] = [];
+                  }
+                }
               }
+              arr[pIndex].push(card);
             }
             buildList();
           }

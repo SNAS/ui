@@ -1,4 +1,5 @@
 <div ng-controller="BmpCardGlobalPeerInsertController">
   <!--Peer info table-->
-  <div class="gridStyle" ui-grid="summaryPeerOptions" ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
+  <h4>Downstream ASes of Peer {{ data.PeerName }}</h4>
+  <div class="gridStyle" ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
 </div>

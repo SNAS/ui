@@ -2,44 +2,16 @@
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardPeerController', ["$scope", "apiFactory", function ($scope, apiFactory) {
+  .controller('BmpCardPeerController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
 
     console.log('GenericPeer scope');
     console.log($scope);
 
-    var createLocationTable = function(){
-      if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
-        var type;
-        if ($scope.data.type === "Router") {
-          type = "BMP Router";
-        } else if ($scope.data.type === "Peer") {
-          type = "Peer";
-        } else {
-          type = "None";
-        }
-        $scope.locationInfo = (
-        '<table class="table">' +
-        ' <tr>' +
-        '   <td>Type</td>' +
-        '   <td>' + type + '</td>' +
-        ' </tr>' +
-        ' <tr>' +
-        '   <td>Location</td>' +
-        '   <td>' + $scope.data.city + '</td>' +
-        ' </tr>' +
-        ' <tr>' +
-        '   <td>State</td>' +
-        '   <td>' + $scope.data.stateprov + '</td>' +
-        ' </tr>' +
-        ' <tr>' +
-        '   <td>Country</td>' +
-        '   <td>' + $scope.data.country + '</td>' +
-        ' </tr>' +
-        '</table>'
-        );
-      } else {
-        //DEFAULT Data
-        $scope.locationInfo = "<table class='routerLoc noRouterLoc'><tr><td>There is no Location Data ...</td></tr></table>";
+    $scope.wordCheck = function(word){
+      if(word.length > 13){
+        return word.slice(0,10) + " ...";
+      }else{
+        return word;
       }
     };
 
@@ -66,9 +38,11 @@ angular.module('bmp.components.card')
     //peer stuff here
     var peerPrefix;
     $scope.ribData = [
-      ["Pre Rib", 0],
-      ["Post Rib", 0]
+      ["Pre Rib", 0, "bmp-prerib"],
+      ["Post Rib", 0, "bmp-postrib"]
     ];
+    $scope.filterRate = 0.00;
+
     apiFactory.getPeerPrefixByHashId($scope.data.peer_hash_id).
       success(function (result){
         peerPrefix = result.v_peer_prefix_report_last.data;
@@ -76,6 +50,8 @@ angular.module('bmp.components.card')
         try{
           $scope.ribData[0][1] = peerPrefix[0].Pre_RIB;
           $scope.ribData[1][1] = peerPrefix[0].Post_RIB;
+
+          $scope.filterRate = Math.floor((peerPrefix[0].Pre_RIB / peerPrefix[0].Post_RIB) * 100) / 100;
         }catch(err){
           //catch if RIB is undefined
         }
@@ -85,13 +61,19 @@ angular.module('bmp.components.card')
       });
 
     $scope.summaryPeerOptions = {
-      "columnDefs":[
+      enableRowSelection: true,
+      enableRowHeaderSelection: false,
+      columnDefs:[
         {name: "DownstreamAS", displayName: 'AS Number', width: '*'},
         {name: "as_name", displayName: 'AS Name', width: '*'},
         {name: "org_name", displayName:'Organization', width: '*'}
       ]
     };
     var summaryPeerOptionsDefaultData = [{"as_name":"-"},{"DownstreamAS":"-"},{"org_name":"-"}];
+
+    $scope.summaryPeerOptions.multiSelect = false;
+    $scope.summaryPeerOptions.modifierKeysToMultiSelect = false;
+    $scope.summaryPeerOptions.noUnselect = false;
 
     $scope.summaryPeerOptions.onRegisterApi = function (gridApi) {
       $scope.summaryPeerOptionsApi= gridApi;
@@ -135,14 +117,20 @@ angular.module('bmp.components.card')
         }else {
           $scope.summaryPeerOptions.data = result.peerDownstreamASN.data;
         }
-        $scope.summaryPeerOptionsApi.core.handleWindowResize();
+        $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
       }).
       error(function (error){
         console.log(error.message);
       });
 
 
-    $scope.downTime = ($scope.data.LastDownTimestamp === null)? "Up":$scope.data.LastDownTimestamp;
+    if($scope.data.isUp){
+      $scope.peerTimeText = "Peer Up Time";
+      $scope.peerTime = timeFactory.calTimeFromNow($scope.data.LastModified);
+    }else{
+      $scope.peerTimeText = "Peer Down Time";
+      $scope.peerTime = timeFactory.calTimeFromNow($scope.data.LastDownTimestamp);
+    }
 
     $scope.peerFullIp = $scope.data.PeerIP;
     if($scope.data.isPeerIPv4 == "1"){
@@ -150,5 +138,10 @@ angular.module('bmp.components.card')
       $scope.peerFullIp = $scope.data.PeerIP + ":" + $scope.data.PeerPort;
     }
 
-    createLocationTable();
+    $scope.locationInfo = cardFactory.createLocationTable({
+        stateprov: $scope.data.stateprov,
+        city: $scope.data.city,
+        country: $scope.data.country,
+        type: $scope.data.type
+    });
   }]);

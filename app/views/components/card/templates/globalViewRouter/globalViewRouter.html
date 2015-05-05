@@ -43,6 +43,9 @@
       <div class="col-md-4">
 
         <div class="peer-amount-icon" style="padding-top: 70px;padding-left: 30px;">
+
+          <div style="color:#AFAFAF;width: 120px; text-align: center; " tooltip="{{ data.RouterName }}">{{ wordCheck(data.RouterName) }}</div>
+
           <div class="peers-amount-img">
 
             <div class="left-section">
@@ -73,7 +76,8 @@
       </div>
 
       <!--IP's Graph-->
-      <div class="col-md-4">
+      <div class="col-md-4" style="text-align: center">
+        Peer Types
         <nvd3 options="ipAmountOptions" data="ipAmountData"></nvd3>
       </div>
 
@@ -89,8 +93,9 @@
       <nvd3 options="upTimeOptions" data="upTimeData" config="upTimeConfig"></nvd3>
     </div>
 
+    <h4>Downstream ASes of Router {{ data.RouterName }}</h4>
     <!--R/Peers info table-->
-    <div class="gridStyle" ui-grid="globalViewPeerOptions" ng-style="{'height':globalViewPeerOptions.changeHeight}"></div>
+    <div class="gridStyle" ui-grid="globalViewPeerOptions" ui-grid-selection ng-style="{'height':globalViewPeerOptions.changeHeight}"></div>
 
     <br>
     <!--end router card-->
