@@ -35,4 +35,18 @@ angular.module('bmpUiApp')
         });
     };
 
+    //$scope.rpIconData = {
+    //  RouterName: data.RouterName,
+    //  RouterIP: data.RouterIP,
+    //  PeerName: data.PeerName,
+    //  peerFullIp: data.peerFullIp
+    //}
+
+    $scope.rpIconData = {
+      RouterName: "1.1.1.1",
+      RouterIP: "test",
+      PeerName: "hmmm",
+      peerFullIp: "oooo"
+    }
+
   }]);
