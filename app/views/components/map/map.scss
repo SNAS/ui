@@ -1,5 +1,33 @@
 @import "compass/css3";
 
+.leaflet-container .leaflet-control-zoomslider-body {
+  -webkit-box-sizing: content-box !important;
+  -moz-box-sizing: content-box !important;
+  box-sizing: content-box !important;
+  background-color: #aaa !important;
+  border: solid #FFFFFF !important;
+}
+
+.leaflet-control-zoomslider {
+      box-shadow: rgba(0,0,0,0.2) 0 2px 5px !important;
+    a{
+        color: #aaa !important;
+    }
+}
+
+.leaflet-control-zoomslider-knob {
+  width: 14px !important;
+  height: 6px !important;
+  border: 1px solid #aaa !important;
+  background-color: #efefef !important;
+}
+
+.leaflet-bar{
+    background-color: #fff !important;
+    border: 1px solid #fff !important;
+    border-color: rgba(0,0,0,0.2) !important;
+}
+
 .loading{
     width: 100%;
     height: 40px;
@@ -32,7 +60,7 @@
     z-index: 1;
     top: 10px;
     opacity: 0.6;
-    @include single-transition(opacity, 0.15s);
+    transition: opacity 0.15s;
     position: absolute;
 
     &.search-loading{
@@ -101,6 +129,189 @@
         &:focus{
             opacity: 1;
             outline: none;
+        }
+    }
+    &.router-list{
+        right: 0;
+        width: 160px;
+        transition: opacity 0.15s, width 0.5s;
+        background-color: #0386D2;
+        color: white;
+        box-shadow: rgba(0,0,0,0.2) 0 2px 10px;
+
+        .search{
+            width: 0px;
+            opacity: 0;
+            margin-left: 10px;
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            z-index: 5;
+            color: #aaa;
+            transition: width 0.5s, opacity 0.5s;
+        }
+
+        .row{
+            width: 100%;
+            display: inline-block;
+            div{
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+            }
+        }
+
+        &.active-location{
+            opacity: 1;
+        }
+
+        .pointer{
+            display: inline-block;
+            transition: transform 0.5s;
+        }
+
+        .panel-header{
+            padding: 8px;
+            margin: 0;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 2px 8px;
+            cursor: pointer;
+            z-index: 2;
+            position: relative;
+
+            &.selected-router{
+                height: 40px;
+                padding: 12px 22px 12px 30px;
+                position: absolute;
+                background-color: rgb(3, 134, 210);
+                z-index: 1;
+                width: 100%;
+                cursor: default;
+
+                .remove-router{
+                    position: absolute;
+                    color: #B0DBF4;
+                    top: 12px;
+                    left: 5px;
+                    font-size: 16pt;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 10px;
+                    text-align: center;
+                    line-height: 18px;
+                    transition: background-color 0.3s;
+                    cursor: pointer;
+                    &:hover{
+                        background-color: rgba(255, 255, 255, 0.20);
+                    }
+                }
+            }
+        }
+        .main {
+            background-color: white;
+            color: #555;
+            overflow: hidden;
+            height: 0;
+            transition: height 0.5s;
+            &.expanded{
+                transition-delay: 0.5s;
+                height: 410px;
+                background-color: #f7f7f7;
+            }
+
+            ul{
+                &.locations{
+                    height: 100%;
+                    overflow-y: scroll;
+                }
+            }
+
+            .routers, .peers{
+                padding: 0;
+                margin: 0;
+                list-style-type: none;
+                cursor: pointer;
+                background-color: white;
+                li{
+                    padding: 8px 0 8px 30px;
+                    transition: background-color 0.1s;
+                    border-bottom: 1px solid #eee;
+                    position: relative;
+                    &:hover{
+                        padding-left: 40px;
+                    }
+
+                    transition: padding-left 0.5s;
+                }
+                .is-up{
+                    position: absolute;
+                    right: 10px;
+                    top: 13px;
+
+                    icon{
+                        font-size: 12pt;
+                    }
+                }
+            }
+
+            .locations{
+                padding: 0;
+                margin: 0;
+                list-style-type: none;
+            }
+
+            .router-list-city{
+                cursor: pointer;
+                padding: 10px;
+                margin: 0;
+                transition: background-color 0.1s;
+
+                .peer-count{
+                    text-align: right;
+                    float: right;
+                    color: #bbb;
+                }
+
+                .glyphicon{
+                    width: 1em;
+                    margin-right: 8px;
+                    font-size: 75%;
+                    top: 0;
+                    transition: transform 0.25s;
+                }
+
+                &.expanded, &.expanded-by-map{
+                    .glyphicon{
+                        transform: rotate(90deg);
+                    }
+                }
+
+                &:hover, &.expanded, &.expanded-by-map{
+                    background-color: #EFEFEF;
+                    color: rgb(42, 42, 42);
+                }
+            }
+        }
+        &.expanded{
+            width: 380px;
+            .search{
+                width: 110px;
+                opacity: 1;
+            }
+            .pointer{
+                transform: rotate(180deg);
+            }
+        }
+        &.with-router{
+            width: 380px !important;
+            .main{
+                padding-top: 40px;
+            }
+            .pointer{
+                transform: rotate(180deg);
+            }
+            &.expanded .pointer{
+                transform: rotate(270deg);
+            }
         }
     }
     &:hover{
