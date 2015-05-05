@@ -22,6 +22,11 @@ angular.module('bmpUiApp')
     var links = [];
     var SPFdata;
 
+    var latitudes = [63.391326, 47.6062, 29.7633, 41.85, 33.7861178428426, 44.98, 34.0522, 39.0997, 40.7879, 38.8951,
+      45.5234, 42.6526, 25.7743, 32.7153, 42.3584, 36.137242513163];
+    var longitudes = [-149.8286774, -122.332, -95.3633, -87.65, -84.1959236252621, -93.2638, -118.244, -94.5786,
+      -74.0143, -77.0364, -122.676, -73.7562, -80.1937, -117.157, -71.0598, -120.754451723841];
+
     //var topologyData = {
     //  nodes: [
     //    {"id": 0, "x": 410, "y": 100, "name": "12K-1"},
@@ -58,6 +63,7 @@ angular.module('bmpUiApp')
       // width: 800,
       // height: 500,
       nodeConfig: {
+       // label: 'model.index',
         label: 'model.routerId',
         iconType: 'router'
       },
@@ -69,6 +75,10 @@ angular.module('bmpUiApp')
         sourceLabel: 'model.sourceLabel',
         targetLabel: 'model.targetLabel'
       },
+      nodeSetConfig: {
+        label: 'model.id',
+        iconType: 'model.iconType'
+      },
       tooltipManagerConfig: {
         showNodeTooltip: false
       },
@@ -76,6 +86,13 @@ angular.module('bmpUiApp')
       identityKey: 'id',
       adaptive: true,
       showIcon: true,
+      layoutType: 'USMap',
+      //layoutType: 'WorldMap',
+      layoutConfig: {
+        //worldTopoJson: 'lib/world-50m.json',
+        longitude: 'model.longitude',
+        latitude: 'model.latitude'
+      },
       linkInstanceClass: 'ExtendLink'
       //}
       //    }
@@ -162,7 +179,17 @@ angular.module('bmpUiApp')
 
           var topologyData = {
             nodes: nodes,
-            links: links
+            links: links,
+            nodeSet: [{
+              id: 1,
+              type: 'nodeSet',
+              nodes: [nodes[8].id, nodes[9].id],
+              root: nodes[8].id,
+              latitude: nodes[8].latitude,
+              longitude: nodes[8].longitude,
+              name: "Node set 1",
+              iconType: 'server'
+            }]
           };
           topo.data(topologyData);
 
@@ -176,21 +203,21 @@ angular.module('bmpUiApp')
       });
     };
 
-    $(function() {
+    $(function () {
       var app = new nx.ui.Application();
       app.container(document.getElementById('topology'));
       topo.attach(app);
 
       //hierarchical Layout
-      var layout = topo.getLayout('hierarchicalLayout');
-      layout.direction('horizontal');
-      // layout.sortOrder(['Core', 'Distribution', 'Access']);
-      layout.levelBy(function (node, model) {
-        var level = model._data.level % 3;
-        //   var level = Math.floor(model._data.level/5);
-        return level;
-      });
-      topo.activateLayout('hierarchicalLayout');
+      //var layout = topo.getLayout('hierarchicalLayout');
+      //layout.direction('horizontal');
+      //// layout.sortOrder(['Core', 'Distribution', 'Access']);
+      //layout.levelBy(function (node, model) {
+      //  var level = model._data.level % 3;
+      //  //   var level = Math.floor(model._data.level/5);
+      //  return level;
+      //});
+      //topo.activateLayout('hierarchicalLayout');
 
       $scope.selectChange();
     });
@@ -212,6 +239,8 @@ angular.module('bmpUiApp')
           {
             id: hash_id,
             routerId: routerId,
+            latitude: latitudes[i],
+            longitude: longitudes[i],
             level: i
           });
       }
@@ -290,7 +319,7 @@ angular.module('bmpUiApp')
         for (var j = 0; j < path_hash_ids.length - 1; j++) {
           var selectedLink = findLink(path_hash_ids[j], path_hash_ids[j + 1], neighbor_addr);
           // nx.extend(linksObj, _linksObj);
-          if (selectedLinks.indexOf(selectedLink) == -1){
+          if (selectedLinks.indexOf(selectedLink) == -1) {
             selectedLinks.push(selectedLink);
           }
         }
@@ -301,6 +330,9 @@ angular.module('bmpUiApp')
     //draw the path
     $scope.drawPath = function (path_hash_ids, neighbor_addr) {
       var pathLayer = topo.getLayer("paths");
+      nx.each(pathLayer.paths(), function (path) {
+        path.dispose();
+      });
       pathLayer.clear();
 
       var selectedNodes = path_hash_ids.split(",");
@@ -356,6 +388,9 @@ angular.module('bmpUiApp')
       linksLayerHighlightElements.clear();
 
       var pathLayer = topo.getLayer("paths");
+      nx.each(pathLayer.paths(), function (path) {
+        path.dispose();
+      });
       pathLayer.clear();
     }
 
