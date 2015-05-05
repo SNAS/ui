@@ -23,7 +23,6 @@ angular
     'ui.grid.autoResize',
     'bmp.components.cardList',
     'bmp.components.card',
-    //'ui.bootstrap.tabs',
     'ui.bootstrap',
     'bgDirectives',
     'leaflet-directive',

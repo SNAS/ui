@@ -94,6 +94,10 @@ angular.module('bmp.components.card')
       apiFactory.getPeerGeo($scope.values.Prefix).
         success(function (result) {
           $scope.values.geo = result.v_geo_ip.data[0];
+          $scope.latLong = {
+            latitude: $scope.values.geo.latitude,
+            longitude: $scope.values.geo.longitude
+          };
         }).
         error(function (error) {
           console.log(error.message);
@@ -104,6 +108,7 @@ angular.module('bmp.components.card')
     //--------------------------------------- SEARCH --------------------------------------------//
 
     //TODO - ATM IPV6 with XXXX:0:  not accepted need to add place to fill zero's
+    //TODO - also XXXX::XXXX: is accepted for some reason
 
     //Loop through data selecting and altering relevant data.
     var searchValue = function (value, init) {
