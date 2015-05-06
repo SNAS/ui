@@ -14,12 +14,13 @@ angular.module('bmp.components.card')
 
         console.log(scope);
 
+        var default_dat = "No data";
         if(scope.data === undefined){
           scope.data = {};
-          scope.data.RouterName= "1.1.1.1";
-          scope.data.RouterIP= "test";
-          scope.data.PeerName= "hmmm";
-          scope.data.peerFullIp= "oooo";
+          scope.data.RouterName= default_dat;
+          scope.data.RouterIP= default_dat;
+          scope.data.PeerName= default_dat;
+          scope.data.peerFullIp= default_dat;
         }
 
         scope.wordCheck = function(word){

@@ -90,6 +90,7 @@ angular.module('bmp.components.card')
     };
 
     $scope.ribGridSelection = function(){
+      console.log("test");
       $scope.values = $scope.ribGridApi.selection.getSelectedRows()[0];
       apiFactory.getPeerGeo($scope.values.Prefix).
         success(function (result) {
@@ -98,6 +99,14 @@ angular.module('bmp.components.card')
             latitude: $scope.values.geo.latitude,
             longitude: $scope.values.geo.longitude
           };
+          $scope.rpiconData = {
+            RouterName: $scope.values.Origin_AS,
+            RouterIP: $scope.data.RouterIP,
+            PeerName: $scope.values.PeerName,
+            peerFullIp: $scope.values.PeerAddress
+          };
+          console.log($scope.rpiconData);
+
         }).
         error(function (error) {
           console.log(error.message);
