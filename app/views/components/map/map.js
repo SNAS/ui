@@ -69,8 +69,9 @@ angular.module('bmp.components.map', [])
     });
 
 
-    $scope.$watch('plotMarker', function() {
-        $scope.init();
+    $scope.$watch('plotMarker', function(val) {
+        if(val != undefined)
+            $scope.init();
     });
 
 
