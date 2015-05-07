@@ -1,42 +1,43 @@
  <!------------------PREFIXANALYSIS---------------->
 
 
-  <h1>prefix analysis</h1>
-  <hr>
-  <label>Prefix Number:</label>
+ <h1>prefix analysis</h1>
+ <hr>
+ <label>Prefix Number:</label>
 
-  <p>
-  <input type="text" ng-change="enterValue(searchPrefix)" ng-model="searchPrefix" placeholder="Search ..." />
-  <!--<button ng-click="getASInfo()">Get it!</button>-->
-  <p class="help-block">Example: 202.70.64.0/21</p>
-  <hr>
-  <div class="detailsPanel">
-    <pre ng-bind-html="showValues"></pre>
-  </div>
-  <hr>
-  <label>All entries for prefix {{searchPrefix}}  stored in DB:</label>
-  <hr>
-  <!--Angular Grid added here-->
-  <div ui-grid="AllPrefixOptions" ></div>
-  <hr>
-  <label>History of prefix: {{searchPrefix}} </label>
-  <hr>
+ <p>
+   <input type="text" ng-change="enterValue(value)" ng-model="value" placeholder="Search ..."/>
+ <p class="help-block">Example: 202.70.64.0/21</p>
+ <hr>
+ <div class="detailsPanel">
+   <pre ng-bind-html="showValues"></pre>
+ </div>
+ <hr>
+ <label>All entries for prefix {{searchPrefix}} stored in DB:</label>
+ <hr>
+ <!--Angular Grid added here-->
+ <div ui-grid="AllPrefixOptions"></div>
+ <hr>
+ <label>History of prefix: {{searchPrefix}} </label>
+ <hr>
 
-  <div>
-    Selects BGP Peer please:
-    <p>
-      <select ng-model="peerData.selectPeer" ng-options="peer.PeerName for peer in peerData" ng-change="selectChange()">
-        <option value="">All peers</option>
-      </select>
-    <hr>
-      <d3-directive> </d3-directive>
-    <hr>
-  </div>
-  <div  ng-hide="hideGrid" ui-grid="HistoryPrefixOptions"  ui-grid-resize-columns="true"></div>
+ <div>
+   Selects BGP Peer please:
+   <p>
+     <select ng-model="peerData.selectPeer" ng-options="peer.PeerName for peer in peerData" ng-change="selectChange()">
+       <option value="">All peers</option>
+     </select>
+   <hr>
+   <!--data="[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"-->
+   <d3-directive ng-model="data"></d3-directive>
+   <hr>
+ </div>
+ <div ng-show="showGrid" ui-grid="HistoryPrefixOptions" ui-grid-resize-columns="true"></div>
+ <!--ng-show="showGrid"-->
  <p></p>
  <br>
 
-</div>
+ </div>
 
 
 
