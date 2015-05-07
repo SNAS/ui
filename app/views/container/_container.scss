@@ -25,20 +25,44 @@
 }
 
 #wrapper .main .navbar.navbar-default{
-    margin: 0;
-    border: none;
-    border-radius: 0;
+  margin: 0;
+  box-shadow: rgba(0,0,0,0.3) 0 2px 5px;
+  z-index: 2;
 }
 
 .navbar{
   border: 0;
   border-radius: 0;
-  background-color: #15bdf4;
+  background-color: #0386d2;
   font-family: 'Helvetica Neue';
   font-style: normal;
   font-variant: normal;
   font-weight: 100;
 
+  .main-header{
+    width: 60%;
+    text-align: center;
+    float: left;
+    a{
+      color: white;
+      font-size: 25pt;
+      letter-spacing: 1px;
+      font-weight: 400;
+      transition: all 0.15s;
+      text-transform: capitalize;
+      &:hover{
+        text-decoration: none;
+      }
+    }
+  }
+
+  .navbar-brand{
+    width: 20%;
+    img{
+      width:30px;
+      margin-right: 5px;
+    }
+  }
 
   .account{
     text-align: right;

@@ -135,7 +135,6 @@ angular.module('bmp.components.map', [])
             }
 
             for(var i = 0; i < data.length; i++){
-                //current location
                 var latlng = [data[i].latitude, data[i].longitude];
                 //current router data
                 var currData = {
@@ -426,27 +425,27 @@ angular.module('bmp.components.map', [])
         if(location.options.type === 'Router'){
             console.log('758cab')
             $scope.map.setView(location.getLatLng());
-            if($scope.selectedLocation){
+            if($scope.selectedLocation != undefined){
                 $scope.selectedLocation.closePopup();
                 $scope.selectedLocation.options.zIndexOffset = 0;
                 setIcon($scope.selectedLocation, 'default');
             } 
             $scope.selectedLocation = location;
-            $scope.selectedLocation.openPopup();
             $scope.selectedLocation.options.zIndexOffset = 1000;
             setIcon($scope.selectedLocation, 'active');
+            $scope.selectedLocation.openPopup();
         }
         else{
             $scope.map.setView(location.getLatLng());
-            if($scope.selectedLocation){
+            if($scope.selectedLocation != undefined){
                 $scope.selectedLocation.closePopup();
                 $scope.selectedLocation.options.zIndexOffset = 0;
                 setIcon($scope.selectedLocation, 'default');
             } 
             $scope.selectedLocation = location;
-            $scope.selectedLocation.openPopup();
             $scope.selectedLocation.options.zIndexOffset = 1000;
             setIcon($scope.selectedLocation, 'active');
+            $scope.selectedLocation.openPopup();
         }
     }
 
@@ -575,7 +574,9 @@ angular.module('bmp.components.map', [])
         var temp = new L.featureGroup();
         temp.addLayer(location);
         $scope.map.fitBounds(temp.getBounds());
-
+        if($scope.selectedLocation != undefined){
+            $scope.selectedLocation.closePopup();
+        }
         var cardData = peer;
         cardData.country = location.options.country;
         cardData.stateprov = location.options.stateprov;
