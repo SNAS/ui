@@ -533,8 +533,8 @@ angular.module('bmp.components.map', [])
         $scope.panelSearch = '';
         $scope.selectedRouter = router;
         if($scope.selectedLocation != undefined){
-            setIcon($scope.selectedLocation, 'default');
             $scope.selectedLocation.closePopup();
+            setIcon($scope.selectedLocation, 'default');
             $scope.selectedLocation = undefined;
         }
         $scope.expandList = false;
@@ -563,6 +563,7 @@ angular.module('bmp.components.map', [])
         $scope.selectedPeerLocations = [];
         $scope.map.removeLayer($scope.peerLayer);
         $scope.map.addLayer($scope.routerLayer);
+        setInfo('Card list cleared');
         $scope.fitMap('routers');
     }
 
