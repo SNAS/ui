@@ -12,7 +12,10 @@ angular.module('bmp.components.card')
             top: 20,
             right: 20,
             bottom: 80,
-            left: 55
+            left: 70
+          },
+          color: function (d, i) {
+            return "#EAA546"
           },
           x: function(d){return d.label;},
           y: function(d){return d.value;},
@@ -28,7 +31,6 @@ angular.module('bmp.components.card')
               '<p>' +  y + ' on ' + x + '</p>';
           },
           xAxis: {
-            axisLabel: 'Ips',
             rotateLabels: -25,
             rotateYLabel: true
           },

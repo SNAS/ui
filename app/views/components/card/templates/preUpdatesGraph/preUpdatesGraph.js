@@ -14,6 +14,9 @@ angular.module('bmp.components.card')
             bottom: 90,
             left: 80
           },
+          color: function (d, i) {
+            return "#EAA546"
+          },
           x: function(d){return d[0];},
           y: function(d){return d[1];},
           useVoronoi: true,
@@ -23,7 +26,6 @@ angular.module('bmp.components.card')
           showLegend: false,
           showControls: false,
           xAxis: {
-            axisLabel: 'Time',
             showMaxMin: false,
             rotateLabels: -20,
             rotateYLabel: true,

@@ -14,6 +14,9 @@ angular.module('bmp.components.card')
             bottom: 100,
             left: 80
           },
+          color: function (d, i) {
+            return "#4b84ca"
+          },
           x: function(d){return d[0];},
           y: function(d){return d[1];},
           useVoronoi: true,
@@ -26,7 +29,6 @@ angular.module('bmp.components.card')
             showMaxMin: false,
             rotateLabels: -20,
             rotateYLabel: true,
-            axisLabel: 'Time',
             tickFormat: function(d) {
               return new Date(d).toLocaleString()
             }

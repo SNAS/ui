@@ -16,6 +16,9 @@ angular.module('bmp.components.card')
             bottom: 80,
             left: 55
           },
+          color: function (d, i) {
+            return "#4b84ca"
+          },
           x: function(d){return d.label;},
           y: function(d){return d.value;},
           showValues: true,
@@ -29,7 +32,6 @@ angular.module('bmp.components.card')
               '<p>' +  y + ' on ' + x + '</p>';
           },
           xAxis: {
-            axisLabel: 'Ips',
             rotateLabels: -25,
             rotateYLabel: true
           },
@@ -65,7 +67,7 @@ angular.module('bmp.components.card')
         var data = result.log.data;
         var len = data.length;
         var gData = [];
-        for(var i = 0; i < len; i++){
+        for(var i = len - 1; i > 0; i--){
           gData.push({
             label:data[i].Prefix, value:parseInt(data[i].Count)
           });
