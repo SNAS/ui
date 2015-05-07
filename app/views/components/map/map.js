@@ -12,15 +12,23 @@ angular.module('bmp.components.map', [])
 
     window.SCOPEMAP = $scope;
 
-    /************** START MAP **************/
     $scope.chosenIndex = -1;
     $scope.loading = true;
     $scope.selected = false;
     $scope.error;
+    $scope.info;
 
     $scope.activeMarker;
 
-    $scope.panelTitle = "Router List";
+    /************************************
+        Change panel based on location
+    *************************************/
+    if($scope.location === 'globalView')
+        $scope.panelTitle = "Router List";
+    else{
+        $scope.panelTitle = "Peer List";
+        $scope.selectedRouter = true;
+    }
 
     $scope.locations = [];
     $scope.peers = [];
@@ -61,26 +69,26 @@ angular.module('bmp.components.map', [])
     });
 
 
+    $scope.$watch('plotMarker', function() {
+        $scope.init();
+    });
+
+
     /****************************************
         Initialise map based on location
     *****************************************/
     $scope.init = function(){
         if($scope.location === 'peerView'){
-            $scope.getPeers($scope.ip);
-            $scope.map.addLayer($scope.peerLayer);
+            $scope.getPeers();
         }
         else if($scope.location === 'globalView'){
             $scope.getRouters();
-            $scope.map.addLayer($scope.routerLayer);
-            //update icons to show selection
-            $scope.routerLayer.on('animationend', function (e) {
-                e.target._featureGroup.eachLayer(function (l){
-                    l._iconNeedsUpdate = true;
-                })
-            });
         }
         else if($scope.location === 'peerCard'){
             if($scope.plotMarker != undefined){
+                if($scope.singlePoint != undefined){
+                    $scope.map.removeLayer($scope.singlePoint);
+                }
                 $scope.map.invalidateSize();
                 $scope.loading = false;
                 var latlng = [$scope.plotMarker.latitude, $scope.plotMarker.longitude];
@@ -90,8 +98,9 @@ angular.module('bmp.components.map', [])
                         'marker-size': 'medium'
                     })
                 }
-                var marker = new L.Marker(latlng, options);
-                $scope.map.addLayer(marker);
+                $scope.singlePoint = new L.Marker(latlng, options);
+                $scope.map.addLayer($scope.singlePoint);
+                $scope.fitMap('single');
             }
         }
     }
@@ -114,7 +123,7 @@ angular.module('bmp.components.map', [])
                 data = result.routers.data;
             } catch(e) {
                 console.log(e);
-                $scope.error = e;
+                $scope.error = typeof e !== undefined ? e : 'Generic Server Error';
                 $scope.loading = false;
                 return false;
             }
@@ -144,12 +153,7 @@ angular.module('bmp.components.map', [])
                 if(pos >= 0){
                     var curr = $scope.locations[pos];
                     curr.options.routers.push(currData);
-                    //update icon to show the new router length
-                    curr.setIcon(new L.mapbox.marker.icon({
-                            'marker-symbol': curr.options.routers.length,
-                            'marker-color': '#758CAB',
-                            'marker-size': 'medium'
-                        }));
+                    setIcon(curr, 'default');
                     //update popup content
                     curr = setPopup(curr);
                     $scope.locations[pos] = curr;
@@ -164,14 +168,14 @@ angular.module('bmp.components.map', [])
                         city: data[i].city,
                         routers: [currData],
                         peers: [],
-                        selected: false,
                         expandRouters: false,
-                        expandPeers: true,
+                        expandPeers: false,
                         type: 'Router',
-                        icon:   L.mapbox.marker.icon({
-                                'marker-symbol': '1',
-                                'marker-color': '#758CAB',
-                                'marker-size': 'medium'})
+                        icon: L.divIcon({
+                            html: '<div><span>1</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+758CAB.png"/></div>',
+                            className: 'marker',
+                            iconSize: [30, 70]
+                        })
                     };
 
                     var marker = new L.Marker(latlng, options);
@@ -181,6 +185,7 @@ angular.module('bmp.components.map', [])
                 }
             }
 
+            $scope.map.addLayer($scope.routerLayer);
             $scope.loading = false;
             $scope.fitMap('routers');
         }).
@@ -197,6 +202,8 @@ angular.module('bmp.components.map', [])
     *******************************/
     $scope.selectedPeerLocations= [];
     $scope.getPeers = function (ip){
+        if(ip === undefined)
+            ip = '';
         $scope.peerLayer = new L.FeatureGroup({
             selected: false
         });
@@ -209,7 +216,7 @@ angular.module('bmp.components.map', [])
                 data = result.v_peers.data;
             } catch(e) {
                 console.log(e);
-                $scope.error = e;
+                $scope.error = typeof e !== undefined ? e : 'Generic Server Error';
                 $scope.loading = false;
                 return false;
             }
@@ -250,37 +257,7 @@ angular.module('bmp.components.map', [])
                     var curr = $scope.selectedPeerLocations[pos];
                     //Add this peer to the router's peer list
                     curr.options.peers.push(currData);
-
-                    //Peers and Routers
-                    if(curr.options.routers.length > 0)
-                        //Array too large to have numbers
-                        if(curr.options.routers.length + curr.options.peers.length > 99)
-                            curr.setIcon(new L.mapbox.marker.icon({
-                                    'marker-symbol': 'danger',
-                                    'marker-color': '#000',
-                                    'marker-size': 'medium'
-                                }));
-                        else
-                            curr.setIcon(new L.mapbox.marker.icon({
-                                    'marker-symbol': curr.options.routers.length + curr.options.peers.length,
-                                    'marker-color': '#000',
-                                    'marker-size': 'medium'
-                                }));
-                    //Peers only
-                    else
-                        //Array too large to have numbers
-                        if(curr.options.peers.length > 99)
-                            curr.setIcon(new L.mapbox.marker.icon({
-                                    'marker-symbol': 'danger',
-                                    'marker-color': '#DFC089',
-                                    'marker-size': 'medium'
-                                }));
-                        else
-                            curr.setIcon(new L.mapbox.marker.icon({
-                                    'marker-symbol': curr.options.peers.length,
-                                    'marker-color': '#DFC089',
-                                    'marker-size': 'medium'
-                                }));
+                    setIcon(curr, 'default');
                     //update popup content
                     curr = setPopup(curr);
                     $scope.selectedPeerLocations[pos] = curr;
@@ -295,21 +272,19 @@ angular.module('bmp.components.map', [])
                         city: data[i].city,
                         routers: [],
                         peers: [currData],
-                        selected: false,
                         expandRouters: false,
-                        expandPeers: true,
+                        expandPeers: false,
                         type: 'Peer',
-                        icon:   L.mapbox.marker.icon({
-                                'marker-symbol': '1',
-                                'marker-color': '#DFC089',
-                                'marker-size': 'medium'})
+                        icon: L.divIcon({
+                            html: '<div><span>1</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+DFC089.png"/></div>',
+                            className: 'marker',
+                            iconSize: [30, 70]
+                        })
                     };
 
                     var marker = new L.Marker(latlng, options);
                     marker = setPopup(marker);
-
                     $scope.peerLayer.addLayer(marker);
-
                     $scope.selectedPeerLocations.push(marker);
                 }
             }
@@ -329,27 +304,21 @@ angular.module('bmp.components.map', [])
 
 
     /************************************
-        Set marker's popup content
+        Set marker's click events
     *************************************/
     var openTimer;
     var closeTimer;
     var target;
     function setPopup(marker){
-        //contents of popup window
-        var content =   '<span><p><strong>Routers: </strong>' + marker.options.routers.length + 
-                        '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong> Peers: </strong>' + marker.options.peers.length + 
-                        "</p><p><strong>Location:</strong><br>" + marker.options.country + 
-                        "<br>" + marker.options.stateprov + 
-                        "<br>" + marker.options.city + "</p></span>";
-
-        //compile the html into angular-ready HTML
-        var linkFunction = $compile(angular.element(content));
-        //bind the compiled HTML to the popup
-        var popup = L.popup({type: 'router', minWidth: 200, className: 'router-popup'})
-        .setContent(linkFunction($scope)[0]);
-        marker.bindPopup(popup);
-
         //marker mouse events
+        if(marker.options.type === 'Router')
+            marker.on('click', function(e){
+                $scope.selectMapLocation(e.target);
+            });
+        else
+            marker.on('click', function(e){
+                $scope.selectMapPeerLocation(e.target);
+            });
         marker.on('mouseover', function (e) {
             target = e.target;
             $timeout.cancel(closeTimer);
@@ -358,7 +327,6 @@ angular.module('bmp.components.map', [])
             }
             openTimer= $timeout(function(){
                 target.openPopup();
-                $scope.activeMarker = target;
             }, 500)
         });
         marker.on('mouseout', function (e) {
@@ -372,31 +340,121 @@ angular.module('bmp.components.map', [])
             }, 1000);
         });
 
-        if(marker.options.type === 'Router')
-            marker.on('click', function(e){
-                $scope.selectMapLocation(e.target);
-            });
-        else
-            marker.on('click', function(e){
-                $scope.selectMapPeerLocation(e.target);
-            });
+        marker = setPopupContent(marker);
+        return marker;
+    }
+
+
+    /************************************
+        Set marker's popup content
+    *************************************/
+    function setPopupContent(marker){
+        //contents of popup window
+        if(marker.options.type === "Router")
+            var content =   '<span><p><strong>Location:</strong><br>' + marker.options.city + 
+                            ', ' + marker.options.stateprov + 
+                            ', ' + marker.options.country + '</p>' + 
+                            '<p><strong>Routers at location: </strong>' + marker.options.routers.length +
+                            '</p></span>';
+        else{
+            var content =   '<span><p><strong>Location:</strong><br>' + marker.options.city + 
+                            ', ' + marker.options.stateprov + 
+                            ', ' + marker.options.country + '</p>' + 
+                            '<p><strong>Peers at location: </strong>' + marker.options.peers.length +
+                            '</p></span>';
+        }
+        //compile the html into angular-ready HTML
+        var linkFunction = $compile(angular.element(content));
+        marker.bindPopup(linkFunction($scope)[0], {offset: new L.Point(0, -26)});
 
         return marker;
     }
 
 
+
+    /************************************
+        Set marker's icon
+    *************************************/
+    function setIcon(marker, state){
+        if(marker.options.type === 'Peer')
+            if(state === 'default')
+                marker.setIcon(new L.divIcon({
+                    html: '<div><span>' + marker.options.peers.length + '</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+DFC089.png"/></div>',
+                    className: 'marker',
+                    iconSize: [30, 70]
+                }));
+            else
+                marker.setIcon(new L.divIcon({
+                    html: '<div><span>' + marker.options.peers.length + '</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+F7C875.png"/></div>',
+                    className: 'marker',
+                    iconSize: [30, 70]
+                }));
+        else if(marker.options.type === 'Router')
+            if(state === 'default')
+                marker.setIcon(new L.divIcon({
+                    html: '<div><span>' + marker.options.routers.length + '</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+758CAB.png"/></div>',
+                    className: 'marker',
+                    iconSize: [30, 70]
+                }));
+            else
+                marker.setIcon(new L.divIcon({
+                    html: '<div><span>' + marker.options.routers.length + '</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+0386D2.png"/></div>',
+                    className: 'marker',
+                    iconSize: [30, 70]
+                }));
+        //Reset popup content for offset calculation
+        marker = setPopupContent(marker);
+    }
+
+
+    /************************************
+        Briefly set info content on map
+    *************************************/
+    function setInfo(message){
+        $scope.info = message;
+        $scope.activeInfo = true;
+        $timeout(function(){
+            $scope.activeInfo = false;
+        }, 2000);
+    }
+
+
     /*******************************
-        Update card
+        Pan map to location
     *******************************/
-    $scope.updateSelected = function(){
-        $scope.cardApi.changeCard($scope.activeMarker.options);
+    $scope.goto = function(location){
+        if(location.options.type === 'Router'){
+            console.log('758cab')
+            $scope.map.setView(location.getLatLng());
+            if($scope.selectedLocation){
+                $scope.selectedLocation.closePopup();
+                $scope.selectedLocation.options.zIndexOffset = 0;
+                setIcon($scope.selectedLocation, 'default');
+            } 
+            $scope.selectedLocation = location;
+            $scope.selectedLocation.openPopup();
+            $scope.selectedLocation.options.zIndexOffset = 1000;
+            setIcon($scope.selectedLocation, 'active');
+        }
+        else{
+            $scope.map.setView(location.getLatLng());
+            if($scope.selectedLocation){
+                $scope.selectedLocation.closePopup();
+                $scope.selectedLocation.options.zIndexOffset = 0;
+                setIcon($scope.selectedLocation, 'default');
+            } 
+            $scope.selectedLocation = location;
+            $scope.selectedLocation.openPopup();
+            $scope.selectedLocation.options.zIndexOffset = 1000;
+            setIcon($scope.selectedLocation, 'active');
+        }
     }
 
 
     /*******************************
         Fit map to marker bounds
     *******************************/
-    $scope.fitMap = function(type, marker) {
+    $scope.fitMap = function(type) {
         //keep the chosen router in view with peers
         if(type === 'both'){
             //create temp layer to add peers and router to
@@ -415,6 +473,11 @@ angular.module('bmp.components.map', [])
         else if(type === 'routers'){
             $scope.map.fitBounds($scope.routerLayer.getBounds());
         }
+        else if(type === 'single'){
+            var temp = L.featureGroup();
+            temp.addLayer($scope.singlePoint);
+            $scope.map.fitBounds(temp.getBounds(), {maxZoom: 10});
+        }
     };
 
 
@@ -431,18 +494,10 @@ angular.module('bmp.components.map', [])
         location.expandRouters = true;
         
         if($scope.selectedLocation != undefined)
-            $scope.selectedLocation.setIcon(new L.mapbox.marker.icon({
-                'marker-symbol': $scope.selectedLocation.options.routers.length,
-                'marker-color': '#758CAB',
-                'marker-size': 'medium'
-            }));
+            setIcon($scope.selectedLocation, 'default');
 
         $scope.selectedLocation = location;
-        location.setIcon(new L.mapbox.marker.icon({
-            'marker-symbol': $scope.selectedLocation.options.routers.length,
-            'marker-color': '#0386D2',
-            'marker-size': 'large'
-        }));
+        setIcon($scope.selectedLocation, 'active');
     }
 
 
@@ -457,25 +512,11 @@ angular.module('bmp.components.map', [])
             $scope.selectedPeerLocations[i].options.expandPeers = false;
         }
         location.options.expandPeers = true;
-        
         if($scope.selectedLocation != undefined){
-            var len = $scope.selectedLocation.options.peers.length
-            var oversize = len > 99;
-            $scope.selectedLocation.setIcon(new L.mapbox.marker.icon({
-                'marker-symbol': oversize ? 'danger' : len,
-                'marker-color': '#DFC089',
-                'marker-size': 'medium'
-            }));
+            setIcon($scope.selectedLocation, 'default');
         }
-
         $scope.selectedLocation = location;
-        var len = $scope.selectedLocation.options.peers.length
-        var oversize = len > 99;
-        location.setIcon(new L.mapbox.marker.icon({
-            'marker-symbol': oversize ? 'danger' : len,
-            'marker-color': '#F7C875',
-            'marker-size': 'large'
-        }));
+        setIcon($scope.selectedLocation, 'active');
     }
 
 
@@ -483,7 +524,7 @@ angular.module('bmp.components.map', [])
         Selected a panel router
     *****************************************/
     $scope.selectPanelRouter = function(location, router){
-        $scope.panelTitle = 'Router List - Peers';
+        $scope.panelTitle = 'Peer List';
         var cardData = router;
         cardData.country = location.options.country;
         cardData.stateprov = location.options.stateprov;
@@ -493,15 +534,13 @@ angular.module('bmp.components.map', [])
         $scope.panelSearch = '';
         $scope.selectedRouter = router;
         if($scope.selectedLocation != undefined){
-            $scope.selectedLocation.setIcon(new L.mapbox.marker.icon({
-                'marker-symbol': $scope.selectedLocation.options.routers.length,
-                'marker-color': '#758CAB',
-                'marker-size': 'medium'
-            }));
+            setIcon($scope.selectedLocation, 'default');
+            $scope.selectedLocation.closePopup();
             $scope.selectedLocation = undefined;
         }
+        $scope.expandList = false;
         $scope.getPeers(router.RouterIP);
-        $scope.map.addLayer($scope.peerLayer);
+        setInfo('Router added to card list');
     };
 
 
@@ -516,11 +555,7 @@ angular.module('bmp.components.map', [])
             $scope.selectedRouter = undefined;
         }
         if($scope.selectedLocation != undefined){
-            $scope.selectedLocation.setIcon(new L.mapbox.marker.icon({
-                'marker-symbol': $scope.selectedLocation.options.routers.length,
-                'marker-color': '#758CAB',
-                'marker-size': 'medium'
-            }));
+            setIcon($scope.selectedLocation, 'default');
             $scope.selectedLocation.expandRouters = false;
             $scope.selectedLocation.options.expandPeers = false;
 
@@ -540,13 +575,13 @@ angular.module('bmp.components.map', [])
         var temp = new L.featureGroup();
         temp.addLayer(location);
         $scope.map.fitBounds(temp.getBounds());
-        console.log(peer);
 
         var cardData = peer;
         cardData.country = location.options.country;
         cardData.stateprov = location.options.stateprov;
         cardData.city = location.options.city;
         $scope.cardApi.changeCard(cardData);
+        setInfo('Peer added to card list');
     };
 
 
@@ -556,11 +591,7 @@ angular.module('bmp.components.map', [])
     $scope.selectPanelLocation = function(location){
         location.expandRouters = !location.expandRouters;
         if($scope.selectedLocation != undefined)
-            $scope.selectedLocation.setIcon(new L.mapbox.marker.icon({
-                'marker-symbol': $scope.selectedLocation.options.routers.length,
-                'marker-color': '#758CAB',
-                'marker-size': 'medium'
-            }));
+            setIcon($scope.selectedLocation, 'default');
         $scope.selectedLocation = undefined;
     }
 
@@ -571,11 +602,7 @@ angular.module('bmp.components.map', [])
     $scope.selectPanelPeerLocation = function(location){
         location.options.expandPeers = !location.options.expandPeers;
         if($scope.selectedLocation != undefined)
-            $scope.selectedLocation.setIcon(new L.mapbox.marker.icon({
-                'marker-symbol': $scope.selectedLocation.options.peers.length,
-                'marker-color': '#DFC089',
-                'marker-size': 'medium'
-            }));
+            setIcon($scope.selectedLocation, 'default');
         $scope.selectedLocation = undefined;
     }
 
@@ -593,145 +620,6 @@ angular.module('bmp.components.map', [])
                 $scope.locations[i].expandRouters = true;
             }
     }
-    /************** END MAP **************/
-
-
-    /*********** START SEARCH ************/
-    $scope.peer;
-    $scope.extra = undefined;
-
-    $scope.search;
-    $scope.filters = [];
-    $scope.filteredPeers = [];
-    $scope.suggestions = [];
-
-    var timer;
-    $scope.searchLoading = false;
-    $scope.suggest = true;
-
-    $scope.$watch('search', function (val) {
-        if(!$scope.suggest){
-            $scope.suggest = !$scope.suggest;
-            return;
-        }
-
-        if(val === undefined || val.length == 0){
-            $scope.suggestions = [];
-            $scope.extra = undefined;
-            $timeout.cancel(timer);
-            return;
-        }
-
-        if(timer){
-            $timeout.cancel(timer);
-        }
-        timer= $timeout(function(){
-            $scope.searchLoading = true;
-            var type = "";
-
-            if(val.indexOf('.') > -1){
-                type = 'PeerIP';
-            }
-            else if(val.indexOf(':') > -1){
-                type = 'PeerIP';
-            }
-            else if(parseInt(val)){
-                type = 'PeerASN';
-            }
-            else if(typeof(val) === 'string' && val.length >= 3){
-                type = 'PeerASName';
-            }
-            else{
-                $scope.suggestions = [];
-                $scope.extra = undefined;
-                $scope.searchLoading = false;
-                return;
-            }
-
-            getSuggestedPeers(type, val);
-        }, 500);
-    });
-
-    function getSuggestedPeers(type, val){
-        $scope.suggestions = [];
-        $scope.extra = undefined;
-        var count = 0;
-        val = val.toUpperCase();
-        var array;
-
-        if($scope.filtered){
-            array = $scope.filteredPeers;
-        }
-        else{
-            array = $scope.peers;
-        }
-
-        for(var i = 0; i < array.length; i++){
-            if(array[i].options[type] === null)
-                continue;
-            var curr = array[i].options[type].toString();
-            if(curr.toUpperCase().lastIndexOf(val, 0) === 0){
-                count ++;
-
-                var sugLength = $scope.suggestions.length;
-                if(sugLength < 5){
-                    var duplicate = false;
-                    for(var j = 0; j < sugLength; j++){
-                        if($scope.suggestions[j].content.toUpperCase() === curr.toUpperCase()){
-                            //We already have this result in the autocomplete, add to the list
-                            $scope.suggestions[j].object.push(array[i]);
-                            var duplicate = true;
-                            break;
-                        }
-                    }
-                    if(!duplicate){
-                        $scope.suggestions.push({'type': type, 'content': curr, 'object': [array[i]]});
-                    }
-                }
-            }
-        }
-        if(count > 5)
-            $scope.extra = count-5 + ' more result(s); refine search';
-        else if(count === 0)
-            $scope.extra = 'no results';
-
-        $scope.searchLoading = false;
-    }
-
-    $scope.getData = function(type, object, content){
-        $scope.loading = true;
-        $scope.filteredPeers = [];
-
-        for(var i = 0; i < object.length; i++){
-             $scope.filteredPeers.push(object[i]);
-        }
-
-        $scope.loading = false;
-
-        $scope.searchTerm = content;
-        $scope.search = "";
-
-        $scope.peerLayer.clearLayers();
-        $scope.peerLayer.addLayers($scope.filteredPeers);
-        $scope.fitMap('peers');
-
-        $scope.filters.push(content);
-        $scope.filtered = true;
-
-        $scope.suggestions = [];
-        $scope.extra = undefined;
-    }
-
-    $scope.clearSearch = function(){
-        $scope.searchTerm = undefined;
-        $scope.filters = [];
-        $scope.filtered = false;
-        $scope.peerLayer.clearLayers();
-        $scope.peerLayer.addLayers($scope.peers);
-        $scope.search = "";
-        $scope.fitMap('peers');
-    }
-    /************** END SEARCH **************/
 })
 .directive('map', function () {
     return {

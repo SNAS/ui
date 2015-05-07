@@ -1,5 +1,9 @@
 @import "compass/css3";
 
+.angular-leaflet-map {
+  border-bottom: 6px solid rgb(170, 170, 170);
+}
+
 .leaflet-container .leaflet-control-zoomslider-body {
   -webkit-box-sizing: content-box !important;
   -moz-box-sizing: content-box !important;
@@ -63,74 +67,32 @@
     transition: opacity 0.15s;
     position: absolute;
 
-    &.search-loading{
-        top: 18px;
-        left: 210px;
-        color: #aaa;
-        @keyframes spin{
-            from{
-                @include rotateZ(0);
-            }
-            to{
-                @include rotateZ(359deg);
-            }
-        }
-        @include animation(spin 1s linear infinite);
-    }
-    &.search.suggestions{
-        list-style-type: none;
-        width: 180px;
-        top: 40px;
-        padding: 0;
-        opacity: 1;
-        transition : none;
-        background-color: #FFF;
-
-        li{
-            padding: 5px;
-            cursor: pointer;
-            border-radius: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-
-            &.extra{
-                color: #999;
-                font-style: italic;
-                font-size: 8pt;
-                cursor: default;
-                &:hover{
-                    background-color: #FFF;
-                }
-            }
-
-            &:hover{
-                background-color: #EEE;
-            }
-        }
-    }
-    &.peer-buttons{
-        right: 10px;
-        
-        .reset{
-            margin-left: 5px;
-        }
-    }
-    &.reset {
-        right: 10px;
-    }
-    &.search {
-        border-radius: 8px;
-        left: 50px;
-        border: 1px solid #CCC;
-        padding: 5px;
-        width: 180px;
-        padding-right: 30px;
-        &:focus{
+    &.info{
+        bottom: 40px;
+        top: initial;
+        width: 100%;
+        opacity: 0;
+        transform: translateY(100%);
+        transition: opacity 0.6s, transform 0.6s;
+        text-align: center;
+        span{
+            text-align: center;
+            background-color: #333;
             opacity: 1;
-            outline: none;
+            color: #fff;
+            padding: 12px;
+            border-radius: 17px;
+            box-shadow: rgba(0,0,0,0.5) 0 2px 8px;
+        }
+        &.active{
+            transform: translateY(0);
+            opacity: 1;
+        }
+        &:hover{
+            opacity: 0;
         }
     }
+    
     &.router-list{
         right: 0;
         width: 160px;
@@ -142,6 +104,10 @@
         .search{
             width: 0px;
             opacity: 0;
+            border: none;
+            padding: 4px;
+            font-size: 9pt;
+            border-radius: 2px;
             margin-left: 10px;
             position: absolute;
             right: 10px;
@@ -154,7 +120,7 @@
         .row{
             width: 100%;
             display: inline-block;
-            div{
+            div, h3{
               white-space: nowrap;
               text-overflow: ellipsis;
               overflow: hidden;
@@ -177,15 +143,21 @@
             cursor: pointer;
             z-index: 2;
             position: relative;
+            font-size: 16pt;
 
             &.selected-router{
-                height: 40px;
+                height: 42px;
                 padding: 12px 22px 12px 30px;
                 position: absolute;
                 background-color: rgb(3, 134, 210);
                 z-index: 1;
                 width: 100%;
                 cursor: default;
+
+                h3{
+                    font-size: 13pt;
+                    margin: 0 0 5px 0;
+                }
 
                 .remove-router{
                     position: absolute;
@@ -233,14 +205,13 @@
                 background-color: white;
                 li{
                     padding: 8px 0 8px 30px;
-                    transition: background-color 0.1s;
                     border-bottom: 1px solid #eee;
                     position: relative;
                     &:hover{
                         padding-left: 40px;
                     }
 
-                    transition: padding-left 0.5s;
+                    transition: padding-left 0.5s, background-color 0.1s;
                 }
                 .is-up{
                     position: absolute;
@@ -253,10 +224,40 @@
                 }
             }
 
+            .peers li:active{
+                background-color: #FFF8ED;
+            }
+
+            .routers li:active{
+                background-color: #E5F6FF;
+            }
+
             .locations{
                 padding: 0;
                 margin: 0;
                 list-style-type: none;
+                li{
+                    position:relative;
+                }
+            }
+
+            .go-to-location{
+                  font-size: 13pt;
+                  padding: 4px;
+                  color: #999;
+                  z-index: 2;
+                  position: absolute;
+                  top: 8px;
+                  right: 6px;
+                  width: 25px;
+                  height: 25px;
+                  border-radius: 14px;
+                  text-align: center;
+                  transition: background-color 0.25s;
+                  cursor: pointer;
+                  &:hover{
+                    background-color: #ddd;
+                  }
             }
 
             .router-list-city{
@@ -265,13 +266,12 @@
                 margin: 0;
                 transition: background-color 0.1s;
 
-                .peer-count{
+                .count{
                     text-align: right;
-                    float: right;
                     color: #bbb;
                 }
 
-                .glyphicon{
+                .glyphicon-play{
                     width: 1em;
                     margin-right: 8px;
                     font-size: 75%;
@@ -292,7 +292,7 @@
             }
         }
         &.expanded{
-            width: 380px;
+            width: 380px !important;
             .search{
                 width: 110px;
                 opacity: 1;
@@ -302,9 +302,16 @@
             }
         }
         &.with-router{
-            width: 380px !important;
+            width: 380px;
+            background-color: #DFC089;
+            &.peers-only{
+                width: 160px;
+            }
             .main{
                 padding-top: 40px;
+                &.peers-only{
+                    padding-top: 0;
+                }
             }
             .pointer{
                 transform: rotate(180deg);
@@ -323,7 +330,26 @@
     font-size: 7pt;
 }
 
+.marker{
+    icon{
+        color: #DFC089;
+    }
+    span{
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        text-shadow: -1px -1px 0 rgba(0,0,0,0.2), 1px -1px 0 rgba(0,0,0,0.2), -1px 1px 0 rgba(0,0,0,0.2), 1px 1px 0 rgba(0,0,0,0.2);
+        font-size: 8pt;
+        font-family: 'Helvetica', arial, sans-serif;
+        top: 3px;
+        color: white;
+    }
+}
+
 .leaflet-popup{
+    .leaflet-popup-content{
+        padding-bottom: 5px;
+    }
     .leaflet-popup-tip {
         background-color: transparent;
         @include transform(none);

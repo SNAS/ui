@@ -11,6 +11,10 @@
   font-weight: 100;
 }
 
+.global-view, .peer-view{
+  padding: 0;
+}
+
 .navbar-header {
   color: #fff;
   float: left;
@@ -18,6 +22,12 @@
 
 .text-light{
   color: #222;
+}
+
+#wrapper .main .navbar.navbar-default{
+    margin: 0;
+    border: none;
+    border-radius: 0;
 }
 
 .navbar{

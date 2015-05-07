@@ -30,8 +30,9 @@ angular.module('bmpUiApp')
         var path = element.context.children[0].href;
         if(path === '')
           return;
-        path = path.match('\#(.*)')[1]; //loose everything up to the hash
+        path = path.match('\#(.*)')[1]; //lose everything up to the hash
 
+        $scope.page = $location.path().substring(1)
         $scope.location = $location;
         $scope.$watch('location.path()', function(newPath) {
           if (path === newPath) {
