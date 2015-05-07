@@ -60,8 +60,8 @@ angular.module('bmpUiApp')
     //      type: 'nx.graphic.Topology',
     //      props: {
     var topo = new nx.graphic.Topology({
-      // width: 800,
-      // height: 500,
+       width: 1000,
+       height: 500,
       nodeConfig: {
        // label: 'model.index',
         label: 'model.routerId',
@@ -84,7 +84,7 @@ angular.module('bmpUiApp')
       },
       dataProcessor: 'force',
       identityKey: 'id',
-      adaptive: true,
+      //adaptive: true,
       showIcon: true,
       layoutType: 'USMap',
       //layoutType: 'WorldMap',
