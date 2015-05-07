@@ -7,7 +7,7 @@
  * # DashboardController
  * Controller of the Dashboard page
  */
-angular.module('bmp.components.map', [])
+angular.module('bmp.components.map', ['ui.bootstrap'])
 .controller('MapController', function ($scope, $state, $q, $http, $timeout, apiFactory, leafletData, $compile, $filter) {
 
     window.SCOPEMAP = $scope;
@@ -371,7 +371,6 @@ angular.module('bmp.components.map', [])
     }
 
 
-
     /************************************
         Set marker's icon
     *************************************/
@@ -425,6 +424,7 @@ angular.module('bmp.components.map', [])
     $scope.goto = function(location){
         $scope.map.setView(location.getLatLng());
         if(location.options.type === 'Router'){
+            location.expandRouters = true;
             if($scope.selectedLocation != undefined){
                 $scope.selectedLocation.closePopup();
                 $scope.selectedLocation.options.zIndexOffset = 0;
@@ -436,11 +436,12 @@ angular.module('bmp.components.map', [])
             $scope.selectedLocation.openPopup();
         }
         else{
-            // if($scope.selectedLocation != undefined){
-            //     $scope.selectedLocation.closePopup();
-            //     $scope.selectedLocation.options.zIndexOffset = 0;
-            //     setIcon($scope.selectedLocation, 'default');
-            // } 
+            location.options.expandPeers = true;
+            if($scope.selectedLocation != undefined){
+                $scope.selectedLocation.closePopup();
+                $scope.selectedLocation.options.zIndexOffset = 0;
+                setIcon($scope.selectedLocation, 'default');
+            } 
             $scope.selectedLocation = location;
             $scope.selectedLocation.options.zIndexOffset = 1000;
             setIcon($scope.selectedLocation, 'active');
@@ -586,6 +587,16 @@ angular.module('bmp.components.map', [])
         setInfo('Peer added to card list');
     };
 
+    var hoverTimer;
+    $scope.hoverPanelPeer = function(location, peer){
+        if(hoverTimer){
+            $timeout.cancel(hoverTimer)
+        }
+        hoverTimer = $timeout(function(){
+            console.log('ooft');
+        }, 1000);
+    };
+
 
     /****************************************
         Location show/hide select
@@ -603,8 +614,10 @@ angular.module('bmp.components.map', [])
     *****************************************/
     $scope.selectPanelPeerLocation = function(location){
         location.options.expandPeers = !location.options.expandPeers;
-        if($scope.selectedLocation != undefined)
+        if($scope.selectedLocation != undefined){
+            $scope.selectedLocation.closePopup();
             setIcon($scope.selectedLocation, 'default');
+        }
         $scope.selectedLocation = undefined;
     }
 

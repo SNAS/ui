@@ -52,7 +52,7 @@
           </p>
           <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
           <ul class="peers" ng-show="location.options.expandPeers">
-            <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location, peer)">
+            <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location, peer)" tooltip-popup-delay="1000" tooltip="Router: {{peer.RouterName}}" tooltip-placement="bottom">
               <div class="row">
                 <div class="col-xs-6">{{peer.PeerName}}</div>
                 <div class="col-xs-6">{{peer.PeerIP}}</div>
