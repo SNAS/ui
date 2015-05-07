@@ -7,26 +7,70 @@
     {{error}}
   </div>
 
-  <button ng-show="selected" class="btn btn-primary map-control reset" ng-click="clearPeers(true)">
-      <span class="glyphicon glyphicon-remove"></span>
-      {{chosenRouter.options.RouterName}}
-  </button>
+  <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}">
+    <input type="text" placeholder="Search" class="search" ng-model="panelSearch" ng-click="expandPanelLocations()"/>
+    <h3 class="panel-header" ng-init="expandList = false" ng-click="expandList = !expandList">
+      <strong class="pointer">&lt;</strong> {{panelTitle}}
+    </h3>
 
-  <div ng-show="searchTerm" ng-click="clearSearch()" class="map-control peer-buttons">
-    <span class="glyphicon glyphicon-remove"></span>
-    <button ng-repeat="f in filters" class="btn btn-warning reset">
-        {{f}}
-    </button>
+    <div ng-show="selectedRouter != undefined && selectedRouter != true" class="panel-header selected-router">
+      <div class="row">
+        <div class="col-xs-6"><h3>{{selectedRouter.RouterName}}</h3></div>
+        <div class="col-xs-6"><h3>{{selectedRouter.RouterIP}}</h3></div>
+        <span ng-click="deselectPanelRouter()" class="remove-router">x</span>
+      </div>
+    </div>
+
+    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true}">
+      <ul class="locations" ng-hide="selectedRouter">
+        <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
+          <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
+            <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
+            <span class="count">({{location.options.routers.length}})</span>
+          </p>
+          <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
+          <ul class="routers" ng-show="location.expandRouters">
+            <li ng-repeat="router in filteredRouters = (location.options.routers | filter:panelSearch)" ng-click="selectPanelRouter(location, router)">
+              <div class="row">
+                <div class="col-xs-6">{{router.RouterName}}</div>
+                <div class="col-xs-6">{{router.RouterIP}}</div>
+              </div>
+              <span class="is-up">
+                <icon ng-show="router.isConnected" class="bmp-up"></icon>
+                <icon ng-show="!router.isConnected" class="bmp-down"></icon>
+              </span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <ul class="locations" ng-show="selectedRouter">
+        <li ng-repeat="location in selectedPeerLocations | orderBy: 'options.city'" ng-show="filteredPeers.length">
+          <p class="router-list-city" ng-class="{expanded: location.options.expandPeers}" ng-click="selectPanelPeerLocation(location)">
+            <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
+            <span class="count">({{location.options.peers.length}})</span>
+          </p>
+          <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
+          <ul class="peers" ng-show="location.options.expandPeers">
+            <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location, peer)">
+              <div class="row">
+                <div class="col-xs-6">{{peer.PeerName}}</div>
+                <div class="col-xs-6">{{peer.PeerIP}}</div>
+              </div>
+              <span class="is-up">
+                <icon ng-show="peer.isUp" class="bmp-up"></icon>
+                <icon ng-show="!peer.isUp" class="bmp-down"></icon>
+              </span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
   </div>
 
-  <input ng-show="location === 'peerView'" type="text" ng-model="search" class="map-control search" placeholder="Search"/>
-
-  <span ng-show="searchLoading" class="map-control search-loading glyphicon glyphicon-refresh"></span>
-
-  <ul ng-show="suggestions.length > 0 || extra" class="map-control search suggestions">
-      <li ng-class="{extra: s.type === 'extra'}" ng-click="getData(s.type, s.object, s.content)" ng-repeat="s in suggestions">{{s.content}}</li>
-      <li ng-show="extra" class="extra">{{extra}}</li>
-  </ul>
+  <div ng-class="{active: activeInfo}" class="map-control info">
+    <span>{{info}}</span>
+  </div>
 
   <leaflet ng-attr-id="{{id}}" defaults="defaults" height="480px" width="100%"></leaflet>
 </div>

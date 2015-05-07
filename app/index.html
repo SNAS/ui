@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css">
 
     <!--next.js-->
-    <link rel="stylesheet" href="views/components/NeXt_0.7.3/next/css/next-blue.css">
+    <!--<link rel="stylesheet" href="views/components/NeXt_0.7.3/next/css/next-blue.css">-->
     <link rel="stylesheet" href="views/components/NeXt_0.7.3/next-topology/css/next-topology.css">
 
   </head>
@@ -107,6 +107,10 @@
       <script src="views/components/card/templates/preWithdrawsGraph/preWithdrawsGraph.js"></script>
       <script src="views/components/card/templates/updatesGraph/updatesGraph.js"></script>
       <script src="views/components/card/templates/withdrawsGraph/withdrawsGraph.js"></script>
+
+      <!-- /components CARD components-->
+      <script src="views/components/card/components/routerPeerIcon/routerPeerIcon.js"></script>
+
     <!--End Card Templates-->
 
     <!--<script src="views/components/card/templates/peerViewPeer/peerViewPeer.js"></script>-->
@@ -129,8 +133,12 @@
     <script src="views/peerView/peerView.js"></script>
     <script src="views/whoIs/whoIs.js"></script>
     <script src="views/container/container.js"></script>
-    <script src="views/factory/apiFactory.js"></script>
     <script src="views/linkState/linkState.js"></script>
+
+    <!--Factories-->
+    <script src="views/factory/apiFactory.js"></script>
+    <script src="views/factory/timeFactory.js"></script>
+    <script src="views/factory/cardFactory.js"></script>
 
     <!--TEST-->
     <script src="views/cardTest/cardTest.js"></script>
@@ -138,10 +146,11 @@
     <!--END TEST-->
 
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>
-
     <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
-
     <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />
+
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-zoomslider/v0.7.0/L.Control.Zoomslider.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-zoomslider/v0.7.0/L.Control.Zoomslider.css' rel='stylesheet' />
 
     <!-- endbuild -->
 </body>

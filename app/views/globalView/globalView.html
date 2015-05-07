@@ -1,38 +1,6 @@
 <div class="relative">
 
-    <h1 class="page-header">Global View</h1>
-
     <map name="global-view-map" type="routers" card-api="cardApi" location="location"/>
-
-    <!--This is the Router/Peers 'Card' so can use this aswell as the map-->
-    <span ng-init="expand=false;" class="glyphicon" ng-class="{'glyphicon-plus': expand, 'glyphicon-minus': !expand}"
-          ng-click="expand=!expand;">
-    </span>Routers
-    <div ng-hide="expand" style="padding-left: 20px;">
-      <!--show routers-->
-      <div ng-repeat="router in routerList track by $index">
-          <span ng-init="expanded=false;" class="glyphicon" ng-class="{'glyphicon-plus': !expanded, 'glyphicon-minus': expanded}"
-                ng-click="expanded=!expanded;">
-          </span>
-          <span
-            class="selectable"
-            ng-click="router.type='Router';cardApi.changeCard(router)">
-            {{ router.RouterName }} || {{ router.RouterIP }} || {{ router.RouterAS }}
-          </span>
-        <!--show router peers-->
-        <div ng-show="expanded" style="padding-left: 20px;">
-            <span ng-init="getRouterPeers($index,router.RouterIP)">
-              <div ng-repeat="peer in routerPeers[$index]">
-                <span
-                  class="selectable"
-                  ng-click="peer.type='Peer';cardApi.changeCard(peer)">
-                  {{ peer.PeerName }} || {{ peer.PeerIP }} || {{ peer.PeerASN }}
-                </span>
-              </div>
-            </span>
-        </div>
-      </div>
-    </div>
 
     <!--This is card Controller-->
     <!--Cards are drawn in here-->

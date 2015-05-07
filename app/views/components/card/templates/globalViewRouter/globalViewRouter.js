@@ -2,7 +2,7 @@
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardGlobalRouterController', ["$scope", "apiFactory", function ($scope, apiFactory) {
+  .controller('BmpCardGlobalRouterController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
 
       console.log($scope.data);
 
@@ -15,45 +15,6 @@ angular.module('bmp.components.card')
           return word.slice(0,10) + " ...";
         }else{
           return word;
-        }
-      };
-
-      var createLocationTable = function(){
-        if ($scope.data.stateprov !== undefined || $scope.data.city !== undefined || $scope.data.country !== undefined) {
-          var type;
-          if ($scope.data.type === "Router") {
-            type = "BMP Router";
-          } else if ($scope.data.type === "Peer") {
-            type = "Peer";
-          } else {
-            type = "None";
-          }
-          $scope.locationInfo = (
-          '<table class="table">' +
-          ' <tr>' +
-          '   <th>' + $scope.data.RouterName + '</th>' +
-          ' </tr>' +
-          ' <tr>' +
-          '   <td>Type</td>' +
-          '   <td>' + type + '</td>' +
-          ' </tr>' +
-          ' <tr>' +
-          '   <td>Location</td>' +
-          '   <td>' + $scope.data.city + '</td>' +
-          ' </tr>' +
-          ' <tr>' +
-          '   <td>State</td>' +
-          '   <td>' + $scope.data.stateprov + '</td>' +
-          ' </tr>' +
-          ' <tr>' +
-          '   <td>Country</td>' +
-          '   <td>' + $scope.data.country + '</td>' +
-          ' </tr>' +
-          '</table>'
-          );
-        } else {
-          //DEFAULT Data
-          $scope.locationInfo = "<table class='routerLoc noRouterLoc'><tr><td>There is no Location Data ...</td></tr></table>";
         }
       };
 
@@ -146,40 +107,7 @@ angular.module('bmp.components.card')
             tickFormat:d3.format('d'),
             tickValues: [0]
           }
-          //xAxis: {
-          //  axisLabel: 'Ips',
-          //  rotateLabels: -25,
-          //  rotateYLabel: true
-          //},
-          //yAxis: {
-          //  axisLabel: 'Quantity(Ip Count)',
-          //  axisLabelDistance: 30,
-          //  tickFormat:d3.format('d')
-          //}
         }
-        //chart: {
-        //  type: "multiBarChart",
-        //  height: 250,
-        //  width: 300,
-        //  showControls: false,
-        //  showLegend: false,
-        //  showValues: true,
-        //  margin: {
-        //    top: 20,
-        //    right: 20,
-        //    bottom: 60,
-        //    left: 45
-        //  },
-        //  clipEdge: true,
-        //  staggerLabels: false,
-        //  transitionDuration: 500,
-        //  tooltipContent: function (key, x, y, e, graph) {
-        //    return '<h5>' + x + " Peers: " +  y + '</h5>'
-        //  },
-        //  "yAxis": {
-        //    tickFormat:d3.format('d')
-        //  }
-        //}
       };
 
 
@@ -242,40 +170,7 @@ angular.module('bmp.components.card')
       ];
 
       //<!--Router Up Time-->
-      var calUpTime = function () {
-        //This works out uptime from data.LastModified
-        //Displays two largest results.
-        var timestmp = Date.parse($scope.data.LastModified); //"2015-03-22 22:23:06"
-        var timeNow = Date.now();
-
-        var d = new Date();
-        var offset = d.getTimezoneOffset() * 60000;
-        timeNow += offset;
-
-        var diff = timeNow - timestmp;
-
-        var timeStrings = ["Years, ", "Months, ", " Days, ", "h", "m"];
-        var times = [31622400000, 2592000000, 86400000, 3600000, 60000];
-        var timeAmount = [0, 0, 0, 0, 0];
-
-        var timeString = "";
-        var show = 4; //show 2 largest
-        for (var i = 0; i < times.length; i++) {
-          var val = diff / times[i];
-          if (val > 1) {
-            var round = Math.floor(val);
-            timeAmount[i] = round;
-            diff = diff - (round * times[i]);
-            if (show == 0)
-              break;
-            timeString += timeAmount[i] + timeStrings[i];
-            show--;
-          }
-        }
-        console.log("the time is ", timeString);
-        $scope.upTime = timeString;
-      };
-      calUpTime();
+      $scope.upTime = timeFactory.calTimeFromNow($scope.data.LastModified);
 
       //AS Number	AS Name	Organization
       //PeerASN, PeerName, org_name
@@ -360,7 +255,12 @@ angular.module('bmp.components.card')
       };
 
       $scope.isUP = ($scope.data.isConnected=='1')? '⬆':'⬇';
-      createLocationTable();
+      $scope.locationInfo =  cardFactory.createLocationTable({
+        stateprov: $scope.data.stateprov,
+        city: $scope.data.city,
+        country: $scope.data.country,
+        type: $scope.data.type
+      });
 
       console.dir($scope);
   }]);

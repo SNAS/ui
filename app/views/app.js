@@ -23,7 +23,6 @@ angular
     'ui.grid.autoResize',
     'bmp.components.cardList',
     'bmp.components.card',
-    //'ui.bootstrap.tabs',
     'ui.bootstrap',
     'bgDirectives',
     'leaflet-directive',
@@ -75,7 +74,7 @@ angular
         controller: 'GlobalViewController'
       })
       .state('app.peerView', {
-        url: '/peer-view/{RouterIP}',
+        url: '/peer-view',
         templateUrl: 'views/peerView/peerView.html',
         controller: 'PeerViewController'
       })

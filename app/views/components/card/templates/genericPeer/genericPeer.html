@@ -20,52 +20,35 @@
     <!--Peer Card in Global View-->
 
     <h3>Peer Detail</h3>
-    <div style="float: right;text-align: right;">
-      <div>
-        Down Time
-        <span ng-class="{'red': downTime!='Up', 'green': downTime=='Up'}">
-          {{ downTime }}
-        </span>
+
+    <div style="float: right;">
+      <div style="display: table-cell">
+        <div>
+          Peer Status
+        </div>
+        <div>
+          {{ peerTimeText }}
+        </div>
       </div>
-      <div>
-        Last Peer Down Event
-        <span class="green">
-          {{ data.LastModified }}
-        </span>
+      <div style="display: table-cell;padding-left: 10px;">
+        <!--Down Time-->
+        <div style="font-size: 15px;" ng-class="{'red bmp-down': !data.isUp, 'green bmp-up': data.isUp}"></div>
+        <div style="padding-top: 4px;">
+          {{ peerTime }}
+        </div>
       </div>
     </div>
+
     <h4>{{ data.PeerName }}</h4>
+    <br>
 
 
     <div class="row">
 
       <div class="col-md-4">
 
-        <div class="peer-amount-icon" style="padding-top: 70px;padding-left: 30px;width:100%;height:200px">
-          <div class="peers-amount-img">
-            <div class="left-section">
-              <div class="centre">
-                <div class="router-name-text" tooltip="{{ data.RouterName }}">{{ wordCheck(data.RouterName) }}</div>
-                <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
-                <div class="router-name-text" tooltip="{{data.RouterIP}}" tooltip-placement="bottom">{{ wordCheck(data.RouterIP) }}</div>
-              </div>
-            </div>
-
-            <span class="middle-section"></span>
-
-            <div class="left-section">
-              <div class="centre">
-                <div class="router-name-text" tooltip="{{ data.PeerName }}">{{ wordCheck(data.PeerName) }}</div>
-                <div class="bmp-peer_router10-17 peer bmp-outline-route"></div>
-                <div class="router-name-text" tooltip="{{ peerFullIp }}" tooltip-placement="bottom">{{ wordCheck(peerFullIp) }}</div>
-              </div>
-            </div>
-            <!--ASN's not used yet-->
-            <!--{{data.LocalASN}}-->
-            <!--{{data.PeerASN}}-->
-          </div>
-
-          <div class="router-peer-line"></div>
+        <div bmp-card-router-peer-icon
+             data="rpIconData">
         </div>
 
       </div>
@@ -87,6 +70,14 @@
               {{ item[1] }}
             </div>
           </div>
+
+          <div class="rib-section">
+            <div class="rib-part">
+              <div>Filter Rate</div>
+              <div style="font-size: 20px">{{ filterRate }}%</div>
+            </div>
+          </div>
+
         </div>
 
       </div>

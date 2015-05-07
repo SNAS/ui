@@ -36,29 +36,32 @@
 <!-- CONTENT -->
 <div class="main">
 
-    <!-- HEADER -->
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <!--<div class="navbar-header">-->
-        <!--<button type="button" ng-click="toggleMenu()" id="menu-toggle" class="navbar-toggle">-->
-            <!--<span class="sr-only">Toggle navigation</span>-->
-            <!--<span class="icon-bar" id="bar-one"></span>-->
-            <!--<span class="icon-bar" id="bar-two"></span>-->
-            <!--<span class="icon-bar" id="bar-three"></span>-->
-        <!--</button>-->
-        <a class="navbar-brand" ui-sref="app.globalView">CISCO ROUTING ANALYTICS</a>
-    <!--</div>-->
-    <div class="navbar-right account">
-      <span class="text-white">Hello, {{username}}</span>
-      <br>
-      <a class="text-white" ng-click="logout()" href="#">Log out</a>
-  </div>
-</div>
-</nav>
-<!-- END HEADER -->
+  <!-- HEADER -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!--<div class="navbar-header">-->
+      <!--<button type="button" ng-click="toggleMenu()" id="menu-toggle" class="navbar-toggle">-->
+          <!--<span class="sr-only">Toggle navigation</span>-->
+          <!--<span class="icon-bar" id="bar-one"></span>-->
+          <!--<span class="icon-bar" id="bar-two"></span>-->
+          <!--<span class="icon-bar" id="bar-three"></span>-->
+      <!--</button>-->
+      <a class="navbar-left navbar-brand" ui-sref="app.globalView"><img src="../images/logo.png"/> Routing Analytics</a>
+      <!--</div>-->
+      <div class="main-header">
+        <a>{{title}}</a>
+      </div>
+      <div class="navbar-right account">
+        <span class="text-white">Hello, {{username}}</span>
+        <br>
+        <a class="text-white" ng-click="logout()" href="#">Log out</a>
+      </div>
+    </div>
+  </nav>
+  <!-- END HEADER -->
 
 <!-- MAIN -->
-<div class="container-fluid">
+<div class="container-fluid" ng-class="page">
   <div ui-view></div>
 
   <!-- FOOTER -->

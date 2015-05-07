@@ -62,7 +62,7 @@ angular.module('bmp.components.card',['ui.bootstrap'])
         removecard: '&', //method to remove card
         expand: '='      //state of card (expanded or collapsed)
       },
-      link: function(scope, $rootScope) {
+      link: function(scope) {
         var generics = ['Peer']; //all generic card
         scope.templatePath = 'views/components/card/templates/';
 

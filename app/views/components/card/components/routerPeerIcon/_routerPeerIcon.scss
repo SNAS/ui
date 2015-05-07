@@ -1,0 +1,86 @@
+$router-color: #5795DC;
+$peer-color: #EAA546;
+$connector-color: #AFAFAF;
+$peer-text-color: #FFFFFF;
+
+.peers-amount-img {
+  width: 300px;
+  height: 100px;
+  position: absolute;
+
+  .rib-icon {
+    font-size: 45px;
+    color: #EAA546;
+  }
+
+  .left-section {
+    width: 141px;
+    height:50px;
+    display:table-cell;
+    .centre {
+      text-align: center;
+      .bmp-outline-route {
+        color:$router-color;
+        font-size:50px;
+      }
+      .peer {
+        color: #EAA546;
+      }
+      .router-name-text{
+        color: $connector-color;
+      }
+    }
+  }
+
+  .middle-section {
+    width:50px;
+    height:50px;
+    display:table-cell;
+  }
+
+  .right-section {
+    width: 50px;
+    height: 50px;
+    display: table-cell;
+    color: $peer-color;
+    .peers-amount {
+      text-align: center;
+      .bmp-openrouter {
+        position: relative;
+        font-size: 50px;
+        color: $connector-color;
+      }
+      .inner-circle {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        background-color: $peer-color;
+        border-radius: 25px;
+        margin: 0 auto;
+        margin-top: -47px;
+        margin-bottom: 10px;
+      }
+      .peers-amount-text {
+        position: relative;
+        margin-top: -75%;
+        margin-bottom: 15px;
+        color: $peer-text-color;
+      }
+    }
+
+    .bmp-peer_label {
+      text-align: center;
+      font-size: 18px;
+      position: relative;
+    }
+  }
+}
+
+.router-peer-line {
+  position: relative;
+  background-color:$connector-color;
+  height: 1px;
+  top: 45px;
+  width: 142px;
+  left: 109px;
+}
