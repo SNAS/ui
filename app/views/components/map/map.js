@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-.controller('MapController', function ($scope, $state, $q, $http, $timeout, apiFactory, leafletData, $compile, $filter) {
+.controller('MapController', function ($scope, $http, $timeout, apiFactory, leafletData, $compile, $filter, $location, $anchorScroll) {
 
     window.SCOPEMAP = $scope;
 
@@ -156,7 +156,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                     curr.options.routers.push(currData);
                     setIcon(curr, 'default');
                     //update popup content
-                    curr = setPopup(curr);
+                    curr = setPopupContent(curr);
                     $scope.locations[pos] = curr;
                 }
                 //we do not have a marker at this location
@@ -263,7 +263,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                     curr.options.peers.push(currData);
                     setIcon(curr, 'default');
                     //update popup content
-                    curr = setPopup(curr);
+                    curr = setPopupContent(curr);
                     $scope.selectedPeerLocations[pos] = curr;
                 }
                 //we do not have a marker at this location
@@ -508,7 +508,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         $scope.expandList = true;
 
         for(var i = 0; i < $scope.selectedPeerLocations.length; i++){
-            $scope.selectedPeerLocations[i].options.expandPeers = false;
+            //$scope.selectedPeerLocations[i].options.expandPeers = false;
         }
         location.options.expandPeers = true;
         if($scope.selectedLocation != undefined){
@@ -516,6 +516,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }
         $scope.selectedLocation = location;
         setIcon($scope.selectedLocation, 'active');
+        
+        angular.element(".locations").animate({ scrollTop: angular.element('#'+location.$$hashKey).position().top - 84 }, 1000);
     }
 
 

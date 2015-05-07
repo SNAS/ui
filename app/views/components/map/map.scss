@@ -40,6 +40,9 @@
     z-index: 1001;
     position: absolute;
     padding-top: 15%;
+    opacity:0;
+    transition: opacity 0.2s;
+    pointer-events: none;
 
     @keyframes spin {
         from{
@@ -55,6 +58,9 @@
         font-size: 80pt;
         color: #ddd;
         text-shadow: 1px 1px #C3C3C3;
+    }
+    &.active{
+        opacity: 1;
     }
 }
 
@@ -90,6 +96,7 @@
         transform: translateY(100%);
         transition: opacity 0.6s, transform 0.6s;
         text-align: center;
+        z-index: 1002;
         span{
             text-align: center;
             background-color: #333;
