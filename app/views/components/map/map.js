@@ -422,9 +422,8 @@ angular.module('bmp.components.map', [])
         Pan map to location
     *******************************/
     $scope.goto = function(location){
+        $scope.map.setView(location.getLatLng());
         if(location.options.type === 'Router'){
-            console.log('758cab')
-            $scope.map.setView(location.getLatLng());
             if($scope.selectedLocation != undefined){
                 $scope.selectedLocation.closePopup();
                 $scope.selectedLocation.options.zIndexOffset = 0;
@@ -436,12 +435,11 @@ angular.module('bmp.components.map', [])
             $scope.selectedLocation.openPopup();
         }
         else{
-            $scope.map.setView(location.getLatLng());
-            if($scope.selectedLocation != undefined){
-                $scope.selectedLocation.closePopup();
-                $scope.selectedLocation.options.zIndexOffset = 0;
-                setIcon($scope.selectedLocation, 'default');
-            } 
+            // if($scope.selectedLocation != undefined){
+            //     $scope.selectedLocation.closePopup();
+            //     $scope.selectedLocation.options.zIndexOffset = 0;
+            //     setIcon($scope.selectedLocation, 'default');
+            // } 
             $scope.selectedLocation = location;
             $scope.selectedLocation.options.zIndexOffset = 1000;
             setIcon($scope.selectedLocation, 'active');
@@ -550,14 +548,15 @@ angular.module('bmp.components.map', [])
         $scope.panelTitle = 'Router List';
         if($scope.selectedRouter != undefined){
             $scope.cardApi.removeCard($scope.selectedRouter);
-            $scope.selectedRouter.expandRouters = false;
+            $scope.selectedRouter = false;
             $scope.selectedRouter = undefined;
         }
         if($scope.selectedLocation != undefined){
+            console.log($scope.selectedLocation);
+            $scope.selectedLocation.closePopup();
             setIcon($scope.selectedLocation, 'default');
             $scope.selectedLocation.expandRouters = false;
             $scope.selectedLocation.options.expandPeers = false;
-
             $scope.selectedLocation = undefined;
         }
         $scope.selectedPeerLocations = [];
