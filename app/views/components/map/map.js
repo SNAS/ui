@@ -113,6 +113,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     //Array of current marker points
     $scope.allLocations = [];
     $scope.getRouters = function() {
+        $scope.loading = true;
         $scope.routerLayer = new L.FeatureGroup({
             selected: false
         });
@@ -202,8 +203,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *******************************/
     $scope.selectedPeerLocations= [];
     $scope.getPeers = function (ip){
+        $scope.loading = true;
         if(ip === undefined)
             ip = '';
+        if($scope.routerLayer)
+                $scope.map.removeLayer($scope.routerLayer);
         $scope.peerLayer = new L.FeatureGroup({
             selected: false
         });
@@ -288,9 +292,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                     $scope.selectedPeerLocations.push(marker);
                 }
             }
-
-            if($scope.routerLayer)
-                $scope.map.removeLayer($scope.routerLayer);
             $scope.map.addLayer($scope.peerLayer);
             $scope.loading = false;
             $scope.fitMap('peers');
@@ -536,7 +537,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             setIcon($scope.selectedLocation, 'default');
             $scope.selectedLocation = undefined;
         }
-        $scope.expandList = false;
         $scope.getPeers(router.RouterIP);
         setInfo('Router added to card list');
     };
