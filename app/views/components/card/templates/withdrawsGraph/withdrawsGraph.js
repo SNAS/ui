@@ -23,6 +23,11 @@ angular.module('bmp.components.card')
             return d3.format('')(d);
           },
           transitionDuration: 500,
+          tooltipContent: function (key, x, y, e, graph) {
+            hoverValue(x);
+            return '<h3>' + key + '</h3>' +
+              '<p>' +  y + ' on ' + x + '</p>';
+          },
           xAxis: {
             axisLabel: 'Ips',
             rotateLabels: -25,
@@ -35,6 +40,11 @@ angular.module('bmp.components.card')
           }
         }
       };
+
+    var hoverValue = function(y){
+      $scope.hover = y;
+      $scope.$apply();
+    };
 
     $scope.withdrawsConfig = {
       visible: $scope.data.visible // default: true

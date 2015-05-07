@@ -87,6 +87,7 @@ a{
 @import "peerView/peerView";
 @import "summary/summary";
 @import "bmpglyph";
+@import "linkState/linkState";
 
 icon.bmp-up {
 	color: #7ec35c;
@@ -104,6 +105,8 @@ icon.bmp-down {
 //===================================================================================
 
 //card imports
+@import "components/card/components/routerPeerIcon/routerPeerIcon";
+
 @import "components/card/card";
 @import "components/card/templates/globalViewRouter/globalViewRouter";
 @import "components/card/templates/genericPeer/genericPeer";

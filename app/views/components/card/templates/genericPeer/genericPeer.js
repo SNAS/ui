@@ -4,16 +4,14 @@ angular.module('bmp.components.card')
 
   .controller('BmpCardPeerController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
 
-    console.log('GenericPeer scope');
-    console.log($scope);
+    //$scope.wordCheck = function(word){
+    //  if(word.length > 13){
+    //    return word.slice(0,10) + " ...";
+    //  }else{
+    //    return word;
+    //  }
+    //};
 
-    $scope.wordCheck = function(word){
-      if(word.length > 13){
-        return word.slice(0,10) + " ...";
-      }else{
-        return word;
-      }
-    };
 
     //  PEER DATA
     //  {
@@ -137,6 +135,13 @@ angular.module('bmp.components.card')
       //is ipv4 so add ' :<port'
       $scope.peerFullIp = $scope.data.PeerIP + ":" + $scope.data.PeerPort;
     }
+
+    $scope.rpIconData = {
+      RouterName: $scope.data.RouterName,
+      RouterIP: $scope.data.RouterIP,
+      PeerName: $scope.data.PeerName,
+      peerFullIp: $scope.peerFullIp
+    };
 
     $scope.locationInfo = cardFactory.createLocationTable({
         stateprov: $scope.data.stateprov,
