@@ -7,7 +7,7 @@
     {{error}}
   </div>
 
-  <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}">
+  <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined && selectedRouter != true, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}">
     <input type="text" placeholder="Search" class="search" ng-model="panelSearch" ng-click="expandPanelLocations()"/>
     <h3 class="panel-header" ng-init="expandList = false" ng-click="expandList = !expandList">
       <strong class="pointer">&lt;</strong> {{panelTitle}}

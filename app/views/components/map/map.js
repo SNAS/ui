@@ -505,7 +505,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *****************************************/
     $scope.selectMapPeerLocation = function(location){
         $scope.expandList = true;
-        $scope.selectedPeer = undefined;
 
         for(var i = 0; i < $scope.selectedPeerLocations.length; i++){
             $scope.selectedPeerLocations[i].options.expandPeers = false;
@@ -559,7 +558,10 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             setIcon($scope.selectedLocation, 'default');
             $scope.selectedLocation.expandRouters = false;
             $scope.selectedLocation.options.expandPeers = false;
-            $scope.selectedLocation = undefined;
+            /*********************************************************************************
+                BUG - THIS CODE CAUSES THE PANEL TO STILL SHOW A SELECTED ROUTER ON DESELECT
+            *********************************************************************************/
+            //$scope.selectedLocation = undefined;
         }
         $scope.selectedPeerLocations = [];
         $scope.map.removeLayer($scope.peerLayer);
@@ -585,16 +587,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         cardData.city = location.options.city;
         $scope.cardApi.changeCard(cardData);
         setInfo('Peer added to card list');
-    };
-
-    var hoverTimer;
-    $scope.hoverPanelPeer = function(location, peer){
-        if(hoverTimer){
-            $timeout.cancel(hoverTimer)
-        }
-        hoverTimer = $timeout(function(){
-            console.log('ooft');
-        }, 1000);
     };
 
 
