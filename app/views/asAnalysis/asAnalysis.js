@@ -2,10 +2,10 @@
 
 /**
  * @ngdoc function
- * @name bmpUiApp.controller:AnalysisController
+ * @name bmpUiApp.controller:ASAnalysisController
  * @description
- * # AnalysisController
- * Controller of the login page
+ * # ASAnalysisController
+ * Controller of the AS Analysis page
  */
 angular.module('bmpUiApp')
   .controller('ASAnalysisController',['$scope', 'apiFactory', function ($scope, apiFactory) {

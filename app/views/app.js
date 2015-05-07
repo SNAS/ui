@@ -78,6 +78,16 @@ angular
         templateUrl: 'views/peerView/peerView.html',
         controller: 'PeerViewController'
       })
+      .state('app.asView', {
+        url: '/asView',
+        templateUrl: 'views/asView/asView.html',
+        controller: 'ASViewController',
+      })
+      .state('app.linkState', {
+        url: '/linkState',
+        templateUrl: 'views/linkState/linkState.html',
+        controller: 'linkStateController',
+      })
       .state('app.peerAnalysis', {
         url: '/peer-analysis',
         templateUrl: 'views/peerAnalysis/peerAnalysis.html',
@@ -87,14 +97,6 @@ angular
         url: '/as-analysis',
         templateUrl: 'views/asAnalysis/asAnalysis.html',
         controller: 'ASAnalysisController'
-      })
-      .state('app.linkState', {
-        url: '/linkState',
-        templateUrl: 'views/linkState/linkState.html',
-        controller: 'linkStateController',
-        data: {
-          requireLogin: true
-        }
       })
       /*.state('app.aggregationAnalysis', {
         url: '/aggregation-analysis',

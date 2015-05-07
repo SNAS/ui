@@ -80,8 +80,8 @@ angular.module('bmpUiApp')
 
               //  peers[i].Status = ((peers[i].isUp === 1) && (peers[i].isBMPConnected === 1)) ? "Up" : "Down";
                 peers[i].IPv = (peers[i].isPeerIPv4 === 1) ? '4' : '6';
-                peers[i].Pre_RIB = (prefix == null ) ? '0' : prefix.Pre_RIB;
-                peers[i].Post_RIB = (prefix == null ) ? '0' : prefix.Post_RIB;
+                peers[i].Pre_RIB = (prefix == null ) ? 0 : prefix.Pre_RIB;
+                peers[i].Post_RIB = (prefix == null ) ? 0 : prefix.Post_RIB;
               }
 
               $scope.peerTableOptions.data = peers;
