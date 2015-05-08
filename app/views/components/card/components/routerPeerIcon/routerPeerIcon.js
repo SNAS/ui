@@ -12,8 +12,6 @@ angular.module('bmp.components.card')
       },
       link: function(scope) {
 
-        console.log(scope);
-
         var default_dat = "No data";
         if(scope.data === undefined){
           scope.data = {};
