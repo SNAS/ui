@@ -116,6 +116,12 @@
     }
     
     &.router-list{
+        .tooltip-inner {
+          text-overflow: initial !important;
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+        
         right: 0;
         width: 160px;
         transition: opacity 0.15s, width 0.5s;

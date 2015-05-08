@@ -32,7 +32,7 @@
           <ul class="routers" ng-show="location.expandRouters">
             <li ng-repeat="router in filteredRouters = (location.options.routers | filter:panelSearch)" ng-click="selectPanelRouter(location, router)">
               <div class="row">
-                <div class="col-xs-6">{{router.RouterName}}</div>
+                <div class="col-xs-6" tooltip-popup-delay="1000" tooltip="Name: {{router.RouterName}}" tooltip-placement="top">{{router.RouterName}}</div>
                 <div class="col-xs-6">{{router.RouterIP}}</div>
               </div>
               <span class="is-up">
@@ -54,7 +54,7 @@
           <ul class="peers" ng-show="location.options.expandPeers">
             <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location, peer)" tooltip-popup-delay="1000" tooltip="Router: {{peer.RouterName}}" tooltip-placement="bottom">
               <div class="row">
-                <div class="col-xs-6">{{peer.PeerName}}</div>
+                <div class="col-xs-6" tooltip-popup-delay="1000" tooltip="Name: {{peer.PeerName}}" tooltip-placement="top">{{peer.PeerName}}</div>
                 <div class="col-xs-6">{{peer.PeerIP}}</div>
               </div>
               <span class="is-up">
