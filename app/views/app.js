@@ -70,32 +70,32 @@ angular
         }
       })
       .state('app.globalView', {
-        url: '/Global-View',
+        url: '/global-view',
         templateUrl: 'views/globalView/globalView.html',
         controller: 'GlobalViewController'
       })
       .state('app.peerView', {
-        url: '/Peer-View',
+        url: '/peer-view',
         templateUrl: 'views/peerView/peerView.html',
         controller: 'PeerViewController'
       })
       .state('app.asView', {
-        url: '/AS-View',
+        url: '/AS-view',
         templateUrl: 'views/asView/asView.html',
         controller: 'ASViewController',
       })
       .state('app.linkState', {
-        url: '/Link-State-View',
+        url: '/link-state-view',
         templateUrl: 'views/linkState/linkState.html',
         controller: 'linkStateController',
       })
       .state('app.peerAnalysis', {
-        url: '/Peer-Analysis',
+        url: '/peer-analysis',
         templateUrl: 'views/peerAnalysis/peerAnalysis.html',
         controller: 'PeerAnalysisController'
       })
       .state('app.asAnalysis', {
-        url: '/AS-Analysis',
+        url: '/AS-analysis',
         templateUrl: 'views/asAnalysis/asAnalysis.html',
         controller: 'ASAnalysisController'
       })
@@ -105,28 +105,28 @@ angular
         controller: 'AggregationAnalysisController'
       })*/
       .state('app.prefixAnalysis', {
-        url: '/Prefix-Analysis',
+        url: '/prefix-analysis',
         templateUrl: 'views/prefixAnalysis/prefixAnalysis.html',
         controller: 'PrefixAnalysisController'
       })
       .state('app.whoIs', {
-        url: '/Who-Is',
+        url: '/whois',
         templateUrl: 'views/whoIs/whoIs.html',
         controller: 'WhoIsController'
       })
       .state('app.collectionServer', {
-        url: '/Collection-Server',
+        url: '/collection-server',
         templateUrl: 'views/collectionServer/collectionServer.html',
         controller: 'CollectionServerController'
 
       })
       .state('app.preferences', {
-        url: '/Preferences',
+        url: '/preferences',
         templateUrl: 'views/preferences/preferences.html',
         controller: 'PreferencesController'
       })
       .state('app.aggregationanalysis', {
-        url: '/Aggregation-Analysis',
+        url: '/aggregation-analysis',
         templateUrl: 'views/aggregationanalysis/aggregationanalysis.html',
         controller: 'aggregationanalysisController'
       });
