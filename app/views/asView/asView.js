@@ -11,6 +11,7 @@ angular.module('bmpUiApp')
   .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
     var upstreamData, upstreamAmount, downstreamData, downstreamAmount;
+
     $scope.success = false;
     $scope.nodata = false;
 
@@ -51,8 +52,8 @@ angular.module('bmpUiApp')
           if (result.w.size != 0) {
             getDetails(result.w.data[0]);
             getUpstream();
-            getDownstream();
-            drawTopology();
+            $timeout(getDownstream(),1000);
+           // drawTopology();
             $scope.nodata = false;
             $scope.success = true;
           }
@@ -93,8 +94,11 @@ angular.module('bmpUiApp')
       $scope.details = showValues;
     }
 
+    var upstreamPromise;
+
     function getUpstream() {
-      apiFactory.getUpstreamCount($scope.searchValue).success(function (result) {
+      upstreamPromise = apiFactory.getUpstreamCount($scope.searchValue);
+      upstreamPromise.success(function (result) {
         upstreamData = result.upstreamASNCount.data.data;
         $scope.upstreamGridOptions.data = upstreamData;
         upstreamAmount = result.upstreamASNCount.data.size;
@@ -110,6 +114,11 @@ angular.module('bmpUiApp')
         downstreamData = result.downstreamASNCount.data.data;
         $scope.downstreamGridOptions.data = downstreamData;
         downstreamAmount = result.downstreamASNCount.data.size;
+
+        upstreamPromise.success(function (){
+          //console.log("get upstream data second");
+          drawTopology();
+        });
       }).
         error(function (error) {
           alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -119,6 +128,7 @@ angular.module('bmpUiApp')
 
     // draw AS topology with current AS in the middle
     function drawTopology() {
+      console.log('upstreamData changed');
       var w = 500;
 
       var space1 = w / (upstreamAmount - 1)
@@ -131,7 +141,7 @@ angular.module('bmpUiApp')
             "id": 0,
             "x": 250,
             "y": 100,
-            "name": "AS" + $('#as_number').val(),
+            "name": "AS" + $scope.searchValue,
             iconType: 'groupS'
           }
         ],

@@ -85,13 +85,13 @@ angular.module('bmp.components.card')
       $scope.ipAmountOptions = {
         chart: {
           type: 'discreteBarChart',
-          height: 250,
-          width: 300,
+          height: 170,
+          width: 285,
           margin : {
             top: 20,
-            right: 20,
-            bottom: 80,
-            left: 55
+            right: 10,
+            bottom: 40,
+            left: 10
           },
           x: function(d){return d.label;},
           y: function(d){return d.value;},
@@ -120,12 +120,12 @@ angular.module('bmp.components.card')
           "showYAxis":false,
           "showLegend": false,
           "type": "lineChart",
-          "height": 100,
+          "height": 180,
           "margin": {
             "top": 20,
-            "right": 20,
+            "right": 10,
             "bottom": 40,
-            "left": 55
+            "left": 10
           },
           "useInteractiveGuideline": false,
           "tooltips": false,
@@ -198,8 +198,8 @@ angular.module('bmp.components.card')
         gridapi.core.handleWindowResize();
 
         var height;
-        if(grid.data.length > 10){
-          height = ((10 * 30) + 30);
+        if(grid.data.length > 4){
+          height = ((4 * 30) + 30);
         }else{
           height = ((grid.data.length * 30) + 50);
         }

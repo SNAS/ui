@@ -48,3 +48,24 @@ svg.title {
     text-align: right;
   }
 }
+
+.icon-container{
+  padding: 0px 30px 30px;
+  margin: 0;
+  background-color: #fff;
+  border: 1px solid #f1f1f1;
+  height: 250px;
+  h4{
+    text-align: center; 
+    margin: 20px 0;
+  }
+}
+
+.template-content{
+  opacity: 0;
+  transition: opacity 0.25s 0.6s;
+  &.expanded{
+    opacity: 1;
+    transition-delay: 0;
+  }
+}

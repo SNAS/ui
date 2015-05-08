@@ -21,6 +21,7 @@ angular
     'ui.grid',
     'ui.grid.selection',
     'ui.grid.autoResize',
+    'ui.grid.resizeColumns',
     'bmp.components.cardList',
     'bmp.components.card',
     'ui.bootstrap',
@@ -79,12 +80,12 @@ angular
         controller: 'PeerViewController'
       })
       .state('app.asView', {
-        url: '/asView',
+        url: '/AS-view',
         templateUrl: 'views/asView/asView.html',
         controller: 'ASViewController',
       })
       .state('app.linkState', {
-        url: '/linkState',
+        url: '/link-state-view',
         templateUrl: 'views/linkState/linkState.html',
         controller: 'linkStateController',
       })
@@ -94,12 +95,12 @@ angular
         controller: 'PeerAnalysisController'
       })
       .state('app.asAnalysis', {
-        url: '/as-analysis',
+        url: '/AS-analysis',
         templateUrl: 'views/asAnalysis/asAnalysis.html',
         controller: 'ASAnalysisController'
       })
       /*.state('app.aggregationAnalysis', {
-        url: '/aggregation-analysis',
+        url: '/Aggregation-Analysis',
         templateUrl: 'views/aggregationAnalysis/aggregationAnalysis.html',
         controller: 'AggregationAnalysisController'
       })*/
@@ -109,7 +110,7 @@ angular
         controller: 'PrefixAnalysisController'
       })
       .state('app.whoIs', {
-        url: '/who-is',
+        url: '/whois',
         templateUrl: 'views/whoIs/whoIs.html',
         controller: 'WhoIsController'
       })

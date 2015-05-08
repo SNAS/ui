@@ -5,8 +5,7 @@ $peer-text-color: #FFFFFF;
 
 .peers-amount-img {
   width: 300px;
-  height: 100px;
-  position: absolute;
+  height: 70px;
 
   .rib-icon {
     font-size: 45px;
@@ -78,9 +77,9 @@ $peer-text-color: #FFFFFF;
 
 .router-peer-line {
   position: absolute;
-  background-color:$connector-color;
+  background-color: $connector-color;
   height: 1px;
-  top: 65px;
-  width: 120px;
-  left: 103px;
+  top: 50%;
+  width: 83px;
+  left: 39%;
 }
