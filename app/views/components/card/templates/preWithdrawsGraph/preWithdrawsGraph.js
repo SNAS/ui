@@ -12,7 +12,10 @@ angular.module('bmp.components.card')
             top: 20,
             right: 20,
             bottom: 80,
-            left: 55
+            left: 70
+          },
+          color: function (d, i) {
+            return "#EAA546"
           },
           x: function(d){return d.label;},
           y: function(d){return d.value;},
@@ -21,8 +24,13 @@ angular.module('bmp.components.card')
             return d3.format('')(d);
           },
           transitionDuration: 500,
+          tooltipContent: function (key, x, y, e, graph) {
+            //hover = y;
+            hoverValue(x);
+            return '<h3>' + key + '</h3>' +
+              '<p>' +  y + ' on ' + x + '</p>';
+          },
           xAxis: {
-            axisLabel: 'Ips',
             rotateLabels: -25,
             rotateYLabel: true
           },
@@ -33,6 +41,11 @@ angular.module('bmp.components.card')
           }
         }
       };
+
+    var hoverValue = function(y){
+      $scope.hover = y;
+      $scope.$apply();
+    };
 
     $scope.preWithdrawsConfig = {
       visible: $scope.data.visible // default: true

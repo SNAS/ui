@@ -74,7 +74,7 @@ angular
         controller: 'GlobalViewController'
       })
       .state('app.peerView', {
-        url: '/peer-view/{RouterIP}',
+        url: '/peer-view',
         templateUrl: 'views/peerView/peerView.html',
         controller: 'PeerViewController'
       })

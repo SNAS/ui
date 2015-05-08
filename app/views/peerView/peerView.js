@@ -8,9 +8,6 @@
  * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
-    .controller('PeerViewController', function ($scope, $stateParams, $q, $http, $timeout, apiFactory, leafletData) {
-        window.SCOPE = $scope;
-
+    .controller('PeerViewController', function ($scope) {
         $scope.location = "peerView";
-        $scope.parameterIP = $stateParams.RouterIP;
     });

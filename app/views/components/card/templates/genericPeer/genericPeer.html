@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <h4>{{ data.PeerName }}</h4>
+    <h4>{{ data.PeerName }}</h4> - hash: {{ data.peer_hash_id }}
     <br>
 
 
@@ -57,7 +57,9 @@
 
         <!--Number Prefixes-->
         <div class="rib-image">
-          Number Of Prefixes
+          <div style="margin-bottom:10px;">
+            Number Of Prefixes
+          </div>
           <div class="rib-section" ng-repeat="item in ribData">
             <div class="rib-part">
               <!--rib icon-->

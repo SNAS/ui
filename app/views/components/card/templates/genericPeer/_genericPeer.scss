@@ -1,20 +1,8 @@
 .peer-card {
-  //override icon method
-  .router-peer-line{
-    top: 45px;
-    width: 135px;
-    left: 109px;
-  }
-
-  .left-section{
-    width: 141px;
-  }
-
   .rib-icon {
     font-size: 45px;
     color: #EAA546;
   }
-  //end
 
   .peerCard {
     .routerLoc{
@@ -28,6 +16,7 @@
   }
 
   .rib-image {
+    text-align: center;
     color:#AFAFAF;
     padding-top: 70px;
     padding-left: 15px;

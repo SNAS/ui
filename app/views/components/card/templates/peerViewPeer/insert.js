@@ -58,11 +58,12 @@ angular.module('bmp.components.card')
 
     $scope.ribGridOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: false
+      enableRowHeaderSelection: true
     };
-    //
+
     $scope.ribGridOptions.columnDefs = [
       {name: "Prefix", displayName: 'Prefix', width: "15%"},
+      {name: "PrefixLen", displayName: 'Pre Len', width: "7%"},
       {name: "NH", displayName: 'NH', width: "15%"},
       {name: "AS_Path", displayName: 'AS Path'},
       {name: "MED", displayName: 'MED', width: "10%"},
@@ -90,6 +91,7 @@ angular.module('bmp.components.card')
     };
 
     $scope.ribGridSelection = function(){
+      console.log("test");
       $scope.values = $scope.ribGridApi.selection.getSelectedRows()[0];
       apiFactory.getPeerGeo($scope.values.Prefix).
         success(function (result) {
@@ -98,6 +100,18 @@ angular.module('bmp.components.card')
             latitude: $scope.values.geo.latitude,
             longitude: $scope.values.geo.longitude
           };
+
+          $scope.rpiconData = {
+            RouterName: $scope.values.Origin_AS,
+            RouterIP: $scope.data.RouterIP,
+            RouterASN: $scope.data.LocalASN,
+            PeerName: $scope.values.PeerName,
+            PeerIP: $scope.values.PeerAddress,
+            PeerASN: $scope.data.PeerASN
+          };
+
+          console.log($scope.rpiconData);
+
         }).
         error(function (error) {
           console.log(error.message);

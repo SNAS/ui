@@ -11,10 +11,15 @@ angular.module('bmp.components.card')
           margin: {
             top: 20,
             right: 20,
-            bottom: 60,
-            left: 40
+            bottom: 100,
+            left: 80
           },
-          useVoronoi: false,
+          color: function (d, i) {
+            return "#4b84ca"
+          },
+          x: function(d){return d[0];},
+          y: function(d){return d[1];},
+          useVoronoi: true,
           clipEdge: true,
           transitionDuration: 500,
           useInteractiveGuideline: true,
@@ -22,12 +27,15 @@ angular.module('bmp.components.card')
           showControls: false,
           xAxis: {
             showMaxMin: false,
+            rotateLabels: -20,
+            rotateYLabel: true,
             tickFormat: function(d) {
-              return d3.time.format('%x')(new Date(d))
+              return new Date(d).toLocaleString()
             }
           },
           yAxis: {
-            tickFormat:d3.format('d')
+            tickFormat:d3.format('d'),
+            axisLabel: 'Updates'
           }
         }
       };
@@ -39,7 +47,7 @@ angular.module('bmp.components.card')
 
     $scope.updatesData = [
       {
-        key: "test",
+        key: "Withdrawns",
         values:[],
         area: true
       }
@@ -50,13 +58,13 @@ angular.module('bmp.components.card')
         var data = result.table.data;
         var len = data.length;
         var gData = [];
-        for(var i = 0; i < len; i++){
+        for(var i = len -1; i > 0; i--){
 
           var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
 
-          gData.push({
-            x:parseInt(timestmp), y:parseInt(data[i].Count)
-          });
+          gData.push([
+            timestmp, data[i].Count
+          ]);
         }
         $scope.updatesData[0].values = gData;
       })

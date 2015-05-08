@@ -4,17 +4,22 @@ angular.module('bmp.components.card')
 
   .controller('BmpCardPreUpdatesGraphController', ["$scope", "apiFactory", function ($scope, apiFactory) {
 
-      $scope.preUpdatesGraph = {
+    $scope.preUpdatesGraph = {
         chart: {
           type: "stackedAreaChart",
           height: 450,
           margin: {
             top: 20,
             right: 20,
-            bottom: 60,
-            left: 40
+            bottom: 90,
+            left: 80
           },
-          useVoronoi: false,
+          color: function (d, i) {
+            return "#EAA546"
+          },
+          x: function(d){return d[0];},
+          y: function(d){return d[1];},
+          useVoronoi: true,
           clipEdge: true,
           transitionDuration: 500,
           useInteractiveGuideline: true,
@@ -22,11 +27,14 @@ angular.module('bmp.components.card')
           showControls: false,
           xAxis: {
             showMaxMin: false,
+            rotateLabels: -20,
+            rotateYLabel: true,
             tickFormat: function(d) {
-              return d3.time.format('%x')(new Date(d))
+              return new Date(d).toLocaleString()
             }
           },
           yAxis: {
+            axisLabel: 'Updates',
             tickFormat:d3.format('d')
           }
         }
@@ -38,9 +46,8 @@ angular.module('bmp.components.card')
 
     $scope.preUpdatesData = [
       {
-        key: "test",
-        values:[],
-        area: true
+        key: "Updates",
+        values:[]
       }
     ];
 
@@ -51,13 +58,13 @@ angular.module('bmp.components.card')
         var len = result.table.data.length;
         var data = result.table.data;
         var gData = [];
-        for(var i = 0; i < len; i++){
+        for(var i = len -1; i > 0 ; i--){
 
           var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
 
-          gData.push({
-            x:parseInt(timestmp), y:parseInt(data[i].Count)
-          });
+          gData.push([
+            timestmp, data[i].Count
+          ]);
         }
         $scope.preUpdatesData[0].values = gData;
       })
