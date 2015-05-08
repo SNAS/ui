@@ -1,6 +1,6 @@
 <div class="relative">
-  <div class="loading" ng-show="loading">
-      <span class="text-light">loading...</span>
+  <div class="loading" ng-class="{active: loading}">
+      <span class="glyphicon glyphicon-refresh"></span>
   </div>
 
   <div ng-show="error" class="error">
@@ -45,14 +45,14 @@
       </ul>
 
       <ul class="locations" ng-show="selectedRouter">
-        <li ng-repeat="location in selectedPeerLocations | orderBy: 'options.city'" ng-show="filteredPeers.length">
+        <li ng-attr-id="{{location.$$hashKey}}" ng-repeat="location in selectedPeerLocations | orderBy: 'options.city'" ng-show="filteredPeers.length">
           <p class="router-list-city" ng-class="{expanded: location.options.expandPeers}" ng-click="selectPanelPeerLocation(location)">
             <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
             <span class="count">({{location.options.peers.length}})</span>
           </p>
           <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
           <ul class="peers" ng-show="location.options.expandPeers">
-            <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location, peer)">
+            <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location, peer)" tooltip-popup-delay="1000" tooltip="Router: {{peer.RouterName}}" tooltip-placement="bottom">
               <div class="row">
                 <div class="col-xs-6">{{peer.PeerName}}</div>
                 <div class="col-xs-6">{{peer.PeerIP}}</div>

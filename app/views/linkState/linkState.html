@@ -1,5 +1,5 @@
-<div>
-  <h1 class="pgtitle">Link State View</h1>
+<br>
+  <!--<h1 class="pgtitle">Link State View</h1>-->
   <div style="padding-bottom:12px">
     Select Peer
     <select ng-model="selectedPeer" ng-options="peer.peerHashId for peer in peerData" ng-change="selectChange()">
@@ -9,5 +9,6 @@
   <!--<nextTopology data="topologyData" options="topologyOptions" protocol="protocol" peer-hash-id="peerHashId" get-spf-table="getSPFtable" path="path"></nextTopology>-->
   <!--<topology></topology>-->
   <div id="topology"></div>
+  <br></br>
   <div id="SPFtable" class="grid" ng-show="show===true" ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
 </div>

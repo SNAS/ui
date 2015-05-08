@@ -7,8 +7,8 @@
  * # DashboardController
  * Controller of the Dashboard page
  */
-angular.module('bmp.components.map', [])
-.controller('MapController', function ($scope, $state, $q, $http, $timeout, apiFactory, leafletData, $compile, $filter) {
+angular.module('bmp.components.map', ['ui.bootstrap'])
+.controller('MapController', function ($scope, $http, $timeout, apiFactory, leafletData, $compile, $filter, $location, $anchorScroll) {
 
     window.SCOPEMAP = $scope;
 
@@ -69,8 +69,9 @@ angular.module('bmp.components.map', [])
     });
 
 
-    $scope.$watch('plotMarker', function() {
-        $scope.init();
+    $scope.$watch('plotMarker', function(val) {
+        if(val != undefined)
+            $scope.init();
     });
 
 
@@ -112,6 +113,7 @@ angular.module('bmp.components.map', [])
     //Array of current marker points
     $scope.allLocations = [];
     $scope.getRouters = function() {
+        $scope.loading = true;
         $scope.routerLayer = new L.FeatureGroup({
             selected: false
         });
@@ -154,7 +156,7 @@ angular.module('bmp.components.map', [])
                     curr.options.routers.push(currData);
                     setIcon(curr, 'default');
                     //update popup content
-                    curr = setPopup(curr);
+                    curr = setPopupContent(curr);
                     $scope.locations[pos] = curr;
                 }
                 //we do not have a marker at this location
@@ -201,8 +203,11 @@ angular.module('bmp.components.map', [])
     *******************************/
     $scope.selectedPeerLocations= [];
     $scope.getPeers = function (ip){
+        $scope.loading = true;
         if(ip === undefined)
             ip = '';
+        if($scope.routerLayer)
+                $scope.map.removeLayer($scope.routerLayer);
         $scope.peerLayer = new L.FeatureGroup({
             selected: false
         });
@@ -258,7 +263,7 @@ angular.module('bmp.components.map', [])
                     curr.options.peers.push(currData);
                     setIcon(curr, 'default');
                     //update popup content
-                    curr = setPopup(curr);
+                    curr = setPopupContent(curr);
                     $scope.selectedPeerLocations[pos] = curr;
                 }
                 //we do not have a marker at this location
@@ -287,9 +292,6 @@ angular.module('bmp.components.map', [])
                     $scope.selectedPeerLocations.push(marker);
                 }
             }
-
-            if($scope.routerLayer)
-                $scope.map.removeLayer($scope.routerLayer);
             $scope.map.addLayer($scope.peerLayer);
             $scope.loading = false;
             $scope.fitMap('peers');
@@ -370,7 +372,6 @@ angular.module('bmp.components.map', [])
     }
 
 
-
     /************************************
         Set marker's icon
     *************************************/
@@ -424,6 +425,7 @@ angular.module('bmp.components.map', [])
     $scope.goto = function(location){
         $scope.map.setView(location.getLatLng());
         if(location.options.type === 'Router'){
+            location.expandRouters = true;
             if($scope.selectedLocation != undefined){
                 $scope.selectedLocation.closePopup();
                 $scope.selectedLocation.options.zIndexOffset = 0;
@@ -435,11 +437,12 @@ angular.module('bmp.components.map', [])
             $scope.selectedLocation.openPopup();
         }
         else{
-            // if($scope.selectedLocation != undefined){
-            //     $scope.selectedLocation.closePopup();
-            //     $scope.selectedLocation.options.zIndexOffset = 0;
-            //     setIcon($scope.selectedLocation, 'default');
-            // } 
+            location.options.expandPeers = true;
+            if($scope.selectedLocation != undefined){
+                $scope.selectedLocation.closePopup();
+                $scope.selectedLocation.options.zIndexOffset = 0;
+                setIcon($scope.selectedLocation, 'default');
+            } 
             $scope.selectedLocation = location;
             $scope.selectedLocation.options.zIndexOffset = 1000;
             setIcon($scope.selectedLocation, 'active');
@@ -503,10 +506,9 @@ angular.module('bmp.components.map', [])
     *****************************************/
     $scope.selectMapPeerLocation = function(location){
         $scope.expandList = true;
-        $scope.selectedPeer = undefined;
 
         for(var i = 0; i < $scope.selectedPeerLocations.length; i++){
-            $scope.selectedPeerLocations[i].options.expandPeers = false;
+            //$scope.selectedPeerLocations[i].options.expandPeers = false;
         }
         location.options.expandPeers = true;
         if($scope.selectedLocation != undefined){
@@ -514,6 +516,8 @@ angular.module('bmp.components.map', [])
         }
         $scope.selectedLocation = location;
         setIcon($scope.selectedLocation, 'active');
+        
+        angular.element(".locations").animate({ scrollTop: angular.element('#'+location.$$hashKey).position().top - 84 }, 1000);
     }
 
 
@@ -535,7 +539,6 @@ angular.module('bmp.components.map', [])
             setIcon($scope.selectedLocation, 'default');
             $scope.selectedLocation = undefined;
         }
-        $scope.expandList = false;
         $scope.getPeers(router.RouterIP);
         setInfo('Router added to card list');
     };
@@ -557,7 +560,10 @@ angular.module('bmp.components.map', [])
             setIcon($scope.selectedLocation, 'default');
             $scope.selectedLocation.expandRouters = false;
             $scope.selectedLocation.options.expandPeers = false;
-            $scope.selectedLocation = undefined;
+            /*********************************************************************************
+                BUG - THIS CODE CAUSES THE PANEL TO STILL SHOW A SELECTED ROUTER ON DESELECT
+            *********************************************************************************/
+            //$scope.selectedLocation = undefined;
         }
         $scope.selectedPeerLocations = [];
         $scope.map.removeLayer($scope.peerLayer);
@@ -602,8 +608,10 @@ angular.module('bmp.components.map', [])
     *****************************************/
     $scope.selectPanelPeerLocation = function(location){
         location.options.expandPeers = !location.options.expandPeers;
-        if($scope.selectedLocation != undefined)
+        if($scope.selectedLocation != undefined){
+            $scope.selectedLocation.closePopup();
             setIcon($scope.selectedLocation, 'default');
+        }
         $scope.selectedLocation = undefined;
     }
 

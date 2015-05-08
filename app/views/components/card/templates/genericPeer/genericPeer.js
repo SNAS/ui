@@ -4,14 +4,8 @@ angular.module('bmp.components.card')
 
   .controller('BmpCardPeerController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
 
-    //$scope.wordCheck = function(word){
-    //  if(word.length > 13){
-    //    return word.slice(0,10) + " ...";
-    //  }else{
-    //    return word;
-    //  }
-    //};
 
+    window.GPEERSCO = $scope;
 
     //  PEER DATA
     //  {
@@ -49,7 +43,11 @@ angular.module('bmp.components.card')
           $scope.ribData[0][1] = peerPrefix[0].Pre_RIB;
           $scope.ribData[1][1] = peerPrefix[0].Post_RIB;
 
-          $scope.filterRate = Math.floor((peerPrefix[0].Pre_RIB / peerPrefix[0].Post_RIB) * 100) / 100;
+          if(peerPrefix[0].Post_RIB == peerPrefix[0].Pre_RIB)
+            $scope.filerRate = 0.00;
+          else
+            $scope.filterRate = Math.floor(((peerPrefix[0].Post_RIB/ peerPrefix[0].Pre_RIB ) * 100) * 100) / 100;
+
         }catch(err){
           //catch if RIB is undefined
         }
@@ -67,7 +65,7 @@ angular.module('bmp.components.card')
         {name: "org_name", displayName:'Organization', width: '*'}
       ]
     };
-    var summaryPeerOptionsDefaultData = [{"as_name":"-"},{"DownstreamAS":"-"},{"org_name":"-"}];
+    var summaryPeerOptionsDefaultData = [{"as_name":"-","DownstreamAS":"-","org_name":"-"}];
 
     $scope.summaryPeerOptions.multiSelect = false;
     $scope.summaryPeerOptions.modifierKeysToMultiSelect = false;
@@ -114,6 +112,7 @@ angular.module('bmp.components.card')
           $scope.summaryPeerOptions.data = summaryPeerOptionsDefaultData;
         }else {
           $scope.summaryPeerOptions.data = result.peerDownstreamASN.data;
+          console.log('downstreamData: ', $scope.summaryPeerOptions);
         }
         $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
       }).
@@ -139,8 +138,10 @@ angular.module('bmp.components.card')
     $scope.rpIconData = {
       RouterName: $scope.data.RouterName,
       RouterIP: $scope.data.RouterIP,
+      RouterASN: $scope.data.LocalASN,
       PeerName: $scope.data.PeerName,
-      peerFullIp: $scope.peerFullIp
+      PeerIP: $scope.peerFullIp,
+      PeerASN: $scope.data.PeerASN
     };
 
     $scope.locationInfo = cardFactory.createLocationTable({

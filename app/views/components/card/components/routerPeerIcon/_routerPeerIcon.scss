@@ -77,10 +77,10 @@ $peer-text-color: #FFFFFF;
 }
 
 .router-peer-line {
-  position: relative;
+  position: absolute;
   background-color:$connector-color;
   height: 1px;
-  top: 45px;
-  width: 142px;
-  left: 109px;
+  top: 65px;
+  width: 120px;
+  left: 103px;
 }

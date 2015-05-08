@@ -158,7 +158,7 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "withdrawns/peer/" + peer_hash_id + "/top");
     };
 
-    //nextTopology
+    //topology
     apiFactory.getPeerNodes = function (peerHashId){
       return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);
     };
@@ -206,6 +206,15 @@ angular.module('bmpUiApp')
 
     apiFactory.getAsnInfo = function (asn,prefix_amount) {
       return $http.get(urlBase + "rib/asn/" + asn + "?limit=" + prefix_amount);
+    };
+
+    //AS View
+    apiFactory.getUpstreamCount = function (asn) {
+      return $http.get(urlBase + "upstream/" + asn + "/count");
+    };
+
+    apiFactory.getDownstreamCount = function (asn) {
+      return $http.get(urlBase + "downstream/" + asn + "/count");
     };
 
     return apiFactory;
