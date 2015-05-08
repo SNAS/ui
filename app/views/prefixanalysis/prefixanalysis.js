@@ -32,7 +32,7 @@ angular.module('bmpUiApp')
       {name: "PeerName", displayName: 'PeerName', width: 100},
       {name: "NH", displayName: 'NH', width: 100},
       {name: "AS_Path", displayName: 'AS_Path'},
-      {name: "PeerASN", displayName: 'Peer_ASN', width: 130},
+      {name: "PeerASN", displayName: 'Peer_ASN', width: 80},
       {name: "MED", displayName: 'MED', width: 60},
       {name: "Communities", displayName: 'Communities'},
       {name: "LastModified", displayName: 'Last_Modified', width: 150}
@@ -50,6 +50,21 @@ angular.module('bmpUiApp')
       }, 500);
     };
 
+    var filterUnique = function(input, key) {
+      var unique = {};
+      var uniqueList = [];
+      console.log("unique:" + unique);
+
+      for(var i = 0; i < input.length; i++){
+        if(typeof unique[input[i][key]] == "undefined"){
+          unique[input[i][key]] = "";
+          uniqueList.push(input[i]);
+          console.log("uniqueList:" + uniqueList);
+        }
+      }
+      return uniqueList;
+    };
+
     // get the prefix grid and table data ,call createPrefixGridTable() to create a table
     var getPrefixDataGrid = function (value) {
       apiFactory.getPrefix(value)
@@ -58,6 +73,8 @@ angular.module('bmpUiApp')
           $scope.AllPrefixOptions.data = $scope.PrefixData = data.v_routes.data;
           //$scope.PrefixData = data.v_routes.data;
           //console.log($scope.PrefixData);
+          var peerDataOriginal = data.v_routes.data;
+          $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
           createPrefixGridTable();
         });
     };
@@ -104,18 +121,6 @@ angular.module('bmpUiApp')
       });
     };
 
-
-    //  this function is for getting peer information and return a drop-down list
-    var getPeers = function () {
-      apiFactory.getPeers()
-        .success(function (result) {
-          $scope.peerData = result.v_peers.data;
-        });
-    }
-    getPeers();
-
-    //from here it 's gonna be the History prefix part
-
     //deal with the data from History of prefix
     $scope.HistoryPrefixOptions = {
       enableRowSelection: false,
@@ -129,7 +134,7 @@ angular.module('bmpUiApp')
       {name: "NH", displayName: 'NH', width: 100},
       {name: "AS_Path", displayName: 'AS_Path'},
       {name: "PeerASN", displayName: 'Peer_ASN', width: 130},
-      //{name: "MED", displayName: 'MED', width: 60},
+      {name: "MED", displayName: 'MED', width: 60},
       {name: "Communities", displayName: 'Communities'},
       {name: "LastModified", displayName: 'Last_Modified', width: 150}
     ];
@@ -140,11 +145,16 @@ angular.module('bmpUiApp')
       if (typeof $scope.HisData != "undefined") {
         $scope.HistoryPrefixOptions.data = [];
         $scope.HistoryPrefixOptions.data = $scope.HisData[hour];
-        $scope.$apply();
+
         //if(!$scope.$$phase) {
         //  //$digest or $apply
         //  $scope.$apply();
         //}
+        $scope.$apply();
+
+        $location.hash('bottom');
+        $anchorScroll();
+
       }
       ;
     };
@@ -189,7 +199,7 @@ angular.module('bmpUiApp')
       $scope.asPathChangeAS_PATH = new Array(24);//this is for AS_PATH
       $scope.asPathChangeHP = new Array(24);//this is for HP
       $scope.asPathChangeCommunites = new Array(24);//this is for Communites
-
+      $scope.asPathChangeMED = new Array(24);
 
       //init the data of asPathChangeNumber
       for(var i = 0; i < 24; i++)
@@ -197,6 +207,7 @@ angular.module('bmpUiApp')
         $scope.asPathChangeAS_PATH[i] = 0;
         $scope.asPathChangeHP[i] = 0;
         $scope.asPathChangeCommunites[i] = 0;
+        $scope.asPathChangeMED[i] = 0;
       }
 
       console.log($scope.asPathChangeHP);
@@ -235,13 +246,15 @@ angular.module('bmpUiApp')
           if($scope.HisData[i][j-1].Communities != $scope.HisData[i][j].Communities){
             $scope.asPathChangeCommunites[i] = $scope.asPathChangeCommunites[i] + 1;
           }
+          if($scope.HisData[i][j-1].MED != $scope.HisData[i][j].MED){
+            $scope.asPathChangeMED[i] = $scope.asPathChangeMED[i] + 1;
         }
       }
       //console.log($scope.asPathChangeAS_PATH);
       //console.log($scope.asPathChangeHP);
       //console.log($scope.asPathChangeCommunites);
       $scope.asPathChange = new Array();
-      $scope.asPathChange[0] = $scope.asPathChangeNumber;
+      $scope.asPathChange[0] = $scope.asPathChangeMED ;
       $scope.asPathChange[1] = $scope.asPathChangeAS_PATH;
       $scope.asPathChange[2] = $scope.asPathChangeHP;
       $scope.asPathChange[3] = $scope.asPathChangeCommunites;
@@ -250,6 +263,7 @@ angular.module('bmpUiApp')
         //$digest or $apply
         $scope.$apply();
       }
+    }
     }
 
     //should be put into init()
@@ -267,6 +281,12 @@ angular.module('bmpUiApp')
 
       console.log("selectChange has been executed")
       getPrefixHisData($scope.currentValue);
+
+      if(!$scope.$$phase) {
+        //$digest or $apply
+        $scope.$apply();
+      }
+
     }
   }])
   .directive('d3Directive',function(){
@@ -279,19 +299,31 @@ angular.module('bmpUiApp')
 
         //var color = d3.scale.linear().domain([0,100]).range(['#848AA8','#855EF9']);
         var color = new Array();
-        color[0] = d3.scale.linear().domain([0,600]).range(['#e9ebf1','#848ba9']);
-        color[1] = d3.scale.linear().domain([0,600]).range(['#e9f8ff','#5ec7fd']);
-        color[2] = d3.scale.linear().domain([0,600]).range(['#e7e2ef','#a691c6']);
-        color[3] = d3.scale.linear().domain([0,600]).range(['#f2e2f4','#c65ed8']);
+        color[0] = d3.scale.linear().domain([0,50]).range(['#e9ebf1','#848ba9']);
+        color[1] = d3.scale.linear().domain([0,50]).range(['#e9f8ff','#5ec7fd']);
+        color[2] = d3.scale.linear().domain([0,50]).range(['#e7e2ef','#a691c6']);
+        color[3] = d3.scale.linear().domain([0,50]).range(['#f2e2f4','#c65ed8']);
 
         return "fill:" + color[number](x);
+      }
+      var textchoser = function(number){
+        if (0 == number){return "MED"}
+        else if(1 == number){return "As Path"}
+        else if(2 == number){return "Next Hop"}
+        else if(3 == number){return "Communites"}
       }
 
       var drawRect = function(index)
       {
         var number = index;
+
         var div2 = d3.select(element[0])
           .append("div");
+
+        div2.append("text")
+          .text(function(){ return textchoser(number);})
+          .style("text-anchor", "middle")
+          .attr("x",10);
 
         var svg2 = div2
           .append("svg")
@@ -319,13 +351,21 @@ angular.module('bmpUiApp')
             $scope.createPrefixHisGrid(i);
             $scope.showGrid = "true";
 
-            $scope.$apply();
+            $location.hash('bottom');
+            $anchorScroll();
+            //$scope.$apply();
 
           })
           .on("mouseout",function(d,i){
             d3.select(this)
               .attr("style",function(){ return colorPicker(number,d);})
+
           });
+
+        if(!$scope.$$phase) {
+          //$digest or $apply
+          $scope.$apply();
+        }
         //$scope.$apply();
       }
 
@@ -337,23 +377,22 @@ angular.module('bmpUiApp')
       var removeSvg = function()
       {
         //d3.select("svg").selectAll("*").remove();
-        d3.select("svg").remove();
-        d3.select("svg").remove();
-        d3.select("svg").remove();
-        d3.select("svg").remove();
+        d3.selectAll("svg").remove();
+        //d3.select("svg").remove();
+        d3.selectAll("text").remove();
         //svg.selectAll("*").remove();
         //d3.select("text").selectAll("*").remove();
       }
 
       $scope.$watch('asPathChange',function(newVal,oldVal) {
-        //$scope.asPathChange[0] = $scope.asPathChangeNumber;
+        //$scope.asPathChangeMED[0] = $scope.asPathChangeMED;
         //$scope.asPathChange[1] = $scope.asPathChangeAS_PATH;
         //$scope.asPathChange[2] = $scope.asPathChangeHP;
         //$scope.asPathChange[3] = $scope.asPathChangeCommunites;
 
         console.log(newVal,oldVal);
-        if(typeof(newVal)!="undefined")
-        {
+        //if(typeof(newVal)!="undefined")
+        //{
           data = newVal[0];
           removeSvg();
           drawRect(0);
@@ -361,20 +400,14 @@ angular.module('bmpUiApp')
           data = newVal[1];
           drawRect(1);
 
-          data = newVal[2];
-          drawRect(2);
-
           data = newVal[3];
           drawRect(3);
 
-          //data = newVal[1];
-          //removeSvg();
-          //drawRect();
-        }
-        else
-        {
-          data = "[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
-        }
+          data = newVal[2];
+          drawRect(2);
+
+          $scope.$apply();
+        //}
       },true)
 
     }

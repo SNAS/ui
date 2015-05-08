@@ -21,6 +21,7 @@ angular
     'ui.grid',
     'ui.grid.selection',
     'ui.grid.autoResize',
+    'ui.grid.resizeColumns',
     'bmp.components.cardList',
     'bmp.components.card',
     'ui.bootstrap',
