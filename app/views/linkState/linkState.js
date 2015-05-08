@@ -60,10 +60,10 @@ angular.module('bmpUiApp')
     //      type: 'nx.graphic.Topology',
     //      props: {
     var topo = new nx.graphic.Topology({
-       //width: 1000,
-       //height: 500,
+      //width: 1000,
+      //height: 500,
       nodeConfig: {
-       // label: 'model.index',
+        // label: 'model.index',
         label: 'model.routerId',
         iconType: 'router'
       },
@@ -170,13 +170,19 @@ angular.module('bmpUiApp')
     });
 
     $scope.selectChange = function () {
-      apiFactory.getPeerNodes($scope.selectedPeer.peerHashId).success(function (result) {
+      var nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peerHashId);
+      nodesPromise.success(function (result) {
         nodes = [];
         getNodes(result);
-        apiFactory.getPeerLinks($scope.selectedPeer.peerHashId).success(function (result) {
-          links = [];
-          getLinks(result);
+      }).error(function (error) {
+        console.log(error.message);
+      });
 
+      apiFactory.getPeerLinks($scope.selectedPeer.peerHashId).success(function (result) {
+        links = [];
+        getLinks(result);
+
+        nodesPromise.success(function () {
           var topologyData = {
             nodes: nodes,
             links: links,
@@ -195,8 +201,6 @@ angular.module('bmpUiApp')
 
           $scope.SPFtableOptions.data = {};
           $scope.show = false;
-        }).error(function (error) {
-          console.log(error.message);
         });
       }).error(function (error) {
         console.log(error.message);
@@ -876,5 +880,6 @@ angular.module('bmpUiApp')
     //
     //    }
     //  }
-  }])
+  }
+  ])
 ;
