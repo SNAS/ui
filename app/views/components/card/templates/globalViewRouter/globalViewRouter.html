@@ -1,7 +1,7 @@
 <div ng-controller="BmpCardGlobalRouterController">
-  <!--COLLAPSED view-->
+  <!--
   <div ng-hide="cardExpand" class="collapsed">
-    <!--Router Card-->
+    
     <icon class="bmp-outline_router" style="font-size:36px;color:#6197d1"></icon>
     <div class="collapsedContent">
       <ul class="collContentItems">
@@ -18,85 +18,106 @@
         </li>
       </ul>
     </div>
-  </div>
+  </div> -->
 
   <!--EXPANDED view-->
-  <div ng-show="cardExpand">
-    <br>
-    <!--Router Card-->
-    <h3>BMP Router</h3>
-
-    <!--Router Up Time-->
-    <!--ADD A HELP-->
-    <span style="float: right;text-align: right;">
-      BMP Up Time
-      <span class="green">
-        {{ upTime }}
+  <div class="card-expand row">
+    <span class="col-md-1">
+        <icon class="bmp-outline_router" style="  font-size: 26px; color: #6197d1; margin-left: 30px;"></icon>
+    </span>
+    <span class="col-md-2">
+        <h4>BMP Router</h4>
+    </span>
+    <span class="col-md-4">
+        <h5>{{data.RouterName}}</h5>
+    </span>
+    <span class="col-md-2">
+      <h5>{{data.RouterIP}}</h5>
+    </span>
+    <span class="col-md-3">
+      <span style="float: right;text-align: right;margin-top: 3px;">
+        <h5>BMP Up Time</h5>
+        <span class="green ng-binding">
+          {{upTime}}
+        </span>
+        <icon ng-class="{'bmp-down': data.isConnected!='1', 'bmp-up': data.isConnected=='1'}" ng-style="data.isConnected != '1' &amp;&amp; {'color': '#f2732d'} || data.isConnected == '1' &amp;&amp; {'color': '#7ec35c'}" style="font-size: 18px; color: rgb(126, 195, 92);" class="bmp-up">
+        </icon>
       </span>
     </span>
-
-    <h4>{{ data.RouterName }}</h4>
-    <br>
-
+  </div>
+  <br>
+  <div class="template-content" ng-class="{expanded: cardExpand}">
     <div class="row">
-
       <div class="col-md-4">
-
-        <div class="peer-amount-icon" style="padding-top: 70px;padding-left: 30px;">
-
-          <div style="color:#AFAFAF;width: 120px; text-align: center; " tooltip="{{ data.RouterName }}">{{ wordCheck(data.RouterName) }}</div>
-
-          <div class="peers-amount-img">
-
-            <div class="left-section">
-              <div class="centre">
-                <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
-                <div class="router-name-text">{{ data.RouterIP }}</div>
-              </div>
+      <div class="icon-container">
+        <h4>
+          Router - Peer Diagram
+        </h4>
+        <div class="peer-amount-icon" style="position: relative;width: 280px;  margin: 50px auto 0;">
+            <div style="color:#AFAFAF;width: 135px; text-align: center; " tooltip="{{ data.RouterName }}">
+              {{ wordCheck(data.RouterName) }}
             </div>
-
-            <span class="middle-section"></span>
-
-            <div class="right-section">
-              <div class="peers-amount">
-                <icon class="bmp-openrouter"></icon>
-                <div class="inner-circle"></div>
-                <div class="peers-amount-text">
-                  {{ peersAmount }}
+            <div class="peers-amount-img">
+              <div class="left-section">
+                <div class="centre">
+                  <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
+                  <div class="router-name-text">{{ data.RouterIP }}</div>
                 </div>
               </div>
-              <icon class="bmp-peer_label"></icon>
+
+              <span class="middle-section"></span>
+
+              <div class="right-section">
+                <div class="peers-amount">
+                  <icon class="bmp-openrouter"></icon>
+                  <div class="inner-circle"></div>
+                  <div class="peers-amount-text">
+                    {{ peersAmount }}
+                  </div>
+                </div>
+                <icon class="bmp-peer_label"></icon>
+              </div>
             </div>
-
+            <div class="router-peer-line"></div>
           </div>
-
-          <div class="router-peer-line"></div>
         </div>
-
       </div>
 
       <!--IP's Graph-->
       <div class="col-md-4" style="text-align: center">
-        Peer Types
-        <nvd3 options="ipAmountOptions" data="ipAmountData"></nvd3>
+        <div class="icon-container">
+          <h4>Peer Types</h4>
+          <nvd3 options="ipAmountOptions" data="ipAmountData"></nvd3>
+        </div>
       </div>
 
       <!--Location table-->
       <div class="col-md-4">
-        <span ng-bind-html="locationInfo"></span>
+        <div class="icon-container">
+          <h4>Location Information</h4>
+          <span ng-bind-html="locationInfo"></span>
+        </div>
       </div>
 
     </div>
 
     <!--ROUTER up time graph-->
-    <div>
-      <nvd3 options="upTimeOptions" data="upTimeData" config="upTimeConfig"></nvd3>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="icon-container">
+          <div>
+            <nvd3 options="upTimeOptions" data="upTimeData" config="upTimeConfig"></nvd3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="icon-container">
+          <h4>Downstream ASes of Router {{ data.RouterName }}</h4>
+          <!--R/Peers info table-->
+          <div class="gridStyle" ui-grid="globalViewPeerOptions" ui-grid-selection ng-style="{'height':globalViewPeerOptions.changeHeight}"></div>
+        </div>
+      </div>
     </div>
-
-    <h4>Downstream ASes of Router {{ data.RouterName }}</h4>
-    <!--R/Peers info table-->
-    <div class="gridStyle" ui-grid="globalViewPeerOptions" ui-grid-selection ng-style="{'height':globalViewPeerOptions.changeHeight}"></div>
-
     <br>
     <!--end router card-->
   </div>
