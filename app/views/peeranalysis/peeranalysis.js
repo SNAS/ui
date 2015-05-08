@@ -45,6 +45,7 @@ angular.module('bmpUiApp')
 
       rowTemplate :
         '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
+
       onRegisterApi : function (gridApi) {
         $scope.gridApi = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope,function(row) {
@@ -67,14 +68,11 @@ angular.module('bmpUiApp')
         function (result) {
           var peer_prefix;
           peer_prefix = result.v_peer_prefix_report_last.data;
-          console.log(peer_prefix);
 
           apiFactory.getPeers().success(
             function (result) {
               peers = result.v_peers.data;
-              console.log(peers);
 
-              // load peers in combo box
               for (var i = 0; i < peers.length; i++) {
                 var prefix = getPrefix(i, peers, peer_prefix);
 

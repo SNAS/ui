@@ -5,7 +5,7 @@
  * @name bmpUiApp.controller:WhoIsController
  * @description
  * # WhoIsController
- * Controller of the Login page
+ * Controller of the Whois page
  */
 angular.module('bmpUiApp')
   .controller('WhoIsController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', function ($scope, apiFactory, $http, $timeout, $interval) {
@@ -14,25 +14,36 @@ angular.module('bmpUiApp')
     window.SCOPE = $scope;
 
     //Redraw Tables when menu state changed
-    $scope.$on('menu-toggle', function (thing, args) {
-      $timeout(function () {
-        resize();
-      }, 550);
-    });
+    //$scope.$on('menu-toggle', function (thing, args) {
+    //  $timeout(function () {
+    //    resize();
+    //  }, 550);
+    //});
 
     $scope.whoIsGridOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
-      rowHeight: 25
-    };
+      rowHeight: 25,
+      multiSelect: false,
+      noUnselect: true,
+      modifierKeysToMultiSelect: false,
+      rowTemplate:
+        '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
 
-    $scope.whoIsGridOptions.columnDefs = [
+      onRegisterApi: function (gridApi) {
+        $scope.whoIsGridApi = gridApi;
+        $scope.whoIsGridApi.selection.on.rowSelectionChanged($scope,function(row) {
+          changeSelected();
+        });
+      },
+
+    columnDefs : [
       {name: "asn", displayName: 'ASN', width: '*'},
       {name: "as_name", displayName: 'AS Name', width: '18%'},
       {name: "org_name", displayName: 'ORG Name', width: '35%'},
       {name: "country", displayName: 'Country', width: '8%'},
       {
-        name: "transit_v4", displayName: 'transit v4', width: '*',
+        name: "transit_v4_prefixes", displayName: 'transit v4', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'highlight';
@@ -40,7 +51,7 @@ angular.module('bmpUiApp')
         }
       },
       {
-        name: "transit_v6", displayName: 'transit v6', width: '*',
+        name: "transit_v6_prefixes", displayName: 'transit v6', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'highlight';
@@ -48,7 +59,7 @@ angular.module('bmpUiApp')
         }
       },
       {
-        name: "origin_v4", displayName: 'origin v4', width: '*',
+        name: "origin_v4_prefixes", displayName: 'origin v4', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'highlight';
@@ -56,31 +67,22 @@ angular.module('bmpUiApp')
         }
       },
       {
-        name: "origin_v6", displayName: 'origin v6', width: '*',
+        name: "origin_v6_prefixes", displayName: 'origin v6', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'highlight';
           }
         }
       }
-    ];
-
-    $scope.whoIsGridOptions.multiSelect = false;
-    $scope.whoIsGridOptions.noUnselect = true;
-    $scope.whoIsGridOptions.modifierKeysToMultiSelect = false;
-    $scope.whoIsGridOptions.rowTemplate = '<div ng-click="grid.appScope.changeSelected();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
-    $scope.whoIsGridOptions.onRegisterApi = function (gridApi) {
-      $scope.whoIsGridApi = gridApi;
+    ]
     };
+
     // $scope.peerViewPeerOptions.onRegisterApi = function (height){
     //   $scope.whoIsPeerApi = height;
     // }
 
-    console.dir($scope.whoIsGridOptions);
-    console.dir($scope.whoIsGridApi);
-
     //Loop through data selecting and altering relevant data.
-    var searchValue = function (value, init) {
+    var searchValue = function (value) {
       if (value == "" || value == " ")
         return;
       var numberRegex = /^\d+$/;
@@ -89,11 +91,8 @@ angular.module('bmpUiApp')
         //  not a number do string search
         apiFactory.getWhoIsName(value).
           success(function (result) {
-            $scope.whoIsGridOptions.data = $scope.whoIsData = result.w.data;
-            createWhoIsDataGrid();
-            if (init) {
-              initSelect();
-            }
+            $scope.whoIsGridOptions.data = result.w.data;
+            initSelect();
           }).
           error(function (error) {
             alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -103,8 +102,8 @@ angular.module('bmpUiApp')
         // do a asn search
         apiFactory.getWhoIsWhereASN(value).
           success(function (result) {
-            $scope.whoIsGridOptions.data = $scope.whoIsData = result.w.data;
-            createWhoIsDataGrid();
+            $scope.whoIsGridOptions.data = result.w.data;
+            initSelect();
           }).
           error(function (error) {
             alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -115,42 +114,25 @@ angular.module('bmpUiApp')
 
     var initSelect = function () {
       $timeout(function () {
-        if ($scope.whoIsGridApi.selection.selectRow) {
-          console.dir($scope.whoIsGridApi);
-          $scope.whoIsGridApi.selection.selectRow($scope.whoIsGridOptions.data[0]);
-        }
-      });
-      $timeout(function () {
-        $scope.changeSelected();
+        $scope.whoIsGridApi.selection.selectRow($scope.whoIsGridOptions.data[0]);
       });
     };
 
     //Waits a bit for user to contiune typing.
     $scope.enterValue = function (value) {
-      $scope.currentValue = value;
-
       $timeout(function () {
-        if (value == $scope.currentValue) {
+        if (value == $scope.searchValue) {
           searchValue(value);
         }
       }, 500);
     };
 
-    var createWhoIsDataGrid = function () {
-      for (var i = 0; i < $scope.whoIsData.length; i++) {
-        $scope.whoIsData[i].transit_v4 = $scope.whoIsData[i].transit_v4_prefixes;
-        $scope.whoIsData[i].transit_v6 = $scope.whoIsData[i].transit_v6_prefixes;
-        $scope.whoIsData[i].origin_v4 = $scope.whoIsData[i].origin_v4_prefixes;
-        $scope.whoIsData[i].origin_v6 = $scope.whoIsData[i].origin_v6_prefixes;
-      }
-    };
-
-    var resize = function () {
-      $scope.whoIsGridApi.core.handleWindowResize();
-    };
+    //var resize = function () {
+    //  $scope.whoIsGridApi.core.handleWindowResize();
+    //};
 
     //Decided to put the data into a table in the pre to align it
-    $scope.changeSelected = function () {
+    function changeSelected () {
       var noShow = ["$$hashKey", "symbOrigin", "symbTransit"];
       var values = $scope.whoIsGridApi.selection.getSelectedRows()[0];
       var showValues = '<table class="tableStyle">';
@@ -202,5 +184,5 @@ angular.module('bmpUiApp')
     };
 
     //Init table data
-    searchValue("Cisco", true);
+    searchValue("Cisco");
   }]);

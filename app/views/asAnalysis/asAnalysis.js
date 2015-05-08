@@ -162,7 +162,6 @@ angular.module('bmpUiApp')
           });
         }
       }
-      console.log(values);
 
       var chart_data=[{
         title: "Cumulative Return",
