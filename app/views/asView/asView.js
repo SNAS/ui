@@ -11,6 +11,7 @@ angular.module('bmpUiApp')
   .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
     var upstreamData, upstreamAmount, downstreamData, downstreamAmount;
+    var upstreamPromise;
 
     $scope.success = false;
     $scope.nodata = false;
@@ -94,8 +95,6 @@ angular.module('bmpUiApp')
       $scope.details = showValues;
     }
 
-    var upstreamPromise;
-
     function getUpstream() {
       upstreamPromise = apiFactory.getUpstreamCount($scope.searchValue);
       upstreamPromise.success(function (result) {
@@ -128,7 +127,6 @@ angular.module('bmpUiApp')
 
     // draw AS topology with current AS in the middle
     function drawTopology() {
-      console.log('upstreamData changed');
       var w = 500;
 
       var space1 = w / (upstreamAmount - 1)

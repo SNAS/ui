@@ -18,6 +18,7 @@ angular.module('bmpUiApp')
     $scope.selectedPeer = $scope.peerData[0];
     $scope.protocol;
     $scope.show = false;
+    var nodesPromise, linksPromise;
     var nodes = [];
     var links = [];
     var SPFdata;
@@ -170,18 +171,10 @@ angular.module('bmpUiApp')
     });
 
     $scope.selectChange = function () {
-      var nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peerHashId);
-      nodesPromise.success(function (result) {
-        nodes = [];
-        getNodes(result);
-      }).error(function (error) {
-        console.log(error.message);
-      });
+      getNodes();
+      getLinks();
 
-      apiFactory.getPeerLinks($scope.selectedPeer.peerHashId).success(function (result) {
-        links = [];
-        getLinks(result);
-
+      linksPromise.success(function () {
         nodesPromise.success(function () {
           var topologyData = {
             nodes: nodes,
@@ -202,8 +195,6 @@ angular.module('bmpUiApp')
           $scope.SPFtableOptions.data = {};
           $scope.show = false;
         });
-      }).error(function (error) {
-        console.log(error.message);
       });
     };
 
@@ -226,80 +217,93 @@ angular.module('bmpUiApp')
       $scope.selectChange();
     });
 
-    function getNodes(result) {
-      var nodesData = result.v_ls_nodes.data;
-      for (var i = 0; i < result.v_ls_nodes.size; i++) {
-        var hash_id = nodesData[i].hash_id;
-        var routerId;
-        if (nodesData[i].protocol == "OSPFv2") {
-          routerId = nodesData[i].IGP_RouterId;
-          $scope.protocol = 'OSPF';
+    function getNodes() {
+      nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peerHashId);
+      nodesPromise.success(function (result) {
+        nodes = [];
+        var nodesData = result.v_ls_nodes.data;
+        for (var i = 0; i < result.v_ls_nodes.size; i++) {
+          var hash_id = nodesData[i].hash_id;
+          var routerId;
+          if (nodesData[i].protocol == "OSPFv2") {
+            routerId = nodesData[i].IGP_RouterId;
+            $scope.protocol = 'OSPF';
+          }
+          else {
+            routerId = nodesData[i].RouterId;
+            $scope.protocol = 'ISIS';
+          }
+          nodes.push(
+            {
+              id: hash_id,
+              routerId: routerId,
+              latitude: latitudes[i],
+              longitude: longitudes[i],
+              level: i
+            });
         }
-        else {
-          routerId = nodesData[i].RouterId;
-          $scope.protocol = 'ISIS';
-        }
-        nodes.push(
-          {
-            id: hash_id,
-            routerId: routerId,
-            latitude: latitudes[i],
-            longitude: longitudes[i],
-            level: i
-          });
-      }
+      }).error(function (error) {
+        console.log(error.message);
+      });
     }
 
-    function getLinks(result) {
-      var linksData = result.v_ls_links.data;
-      var reverseLinks = [];
-      for (var i = 0; i < result.v_ls_links.size; i++) {
-        var source = linksData[i].local_node_hash_id;
-        var target = linksData[i].remote_node_hash_id;
-        var igp_metric = linksData[i].igp_metric;
-        var interfaceIP = linksData[i].InterfaceIP;
-        var neighborIP = linksData[i].NeighborIP;
-        if (source < target) {
-          links.push(
-            {
-              id: i,
-              source: source,
-              target: target,
-              igp_metric: igp_metric,
-              interfaceIP: interfaceIP,
-              neighborIP: neighborIP
-            });
-        }
-        else {
-          reverseLinks.push(
-            {
-              id: i,
-              source: source,
-              target: target,
-              igp_metric: igp_metric,
-              interfaceIP: interfaceIP,
-              neighborIP: neighborIP
-            });
-        }
-      }
-      for (var i = 0; i < reverseLinks.length; i++) {
-        for (var j = 0; j < links.length; j++) {
-          if (reverseLinks[i].target == links[j].source && reverseLinks[i].source == links[j].target
-            && reverseLinks[i].neighborIP == links[j].interfaceIP && reverseLinks[i].igp_metric != links[j].igp_metric) {
-            links[j] =
-            {
-              id: links[j].id,
-              source: links[j].source,
-              target: links[j].target,
-              sourceLabel: links[j].igp_metric,
-              targetLabel: reverseLinks[i].igp_metric,
-              interfaceIP: links[j].interfaceIP,
-              neighborIP: links[j].neighborIP
-            };
-            break;
+    function getLinks() {
+      linksPromise = apiFactory.getPeerLinks($scope.selectedPeer.peerHashId);
+      linksPromise.success(function (result) {
+        links = [];
+        var linksData = result.v_ls_links.data;
+        var reverseLinks = [];
+        for (var i = 0; i < result.v_ls_links.size; i++) {
+          var source = linksData[i].local_node_hash_id;
+          var target = linksData[i].remote_node_hash_id;
+          var igp_metric = linksData[i].igp_metric;
+          var interfaceIP = linksData[i].InterfaceIP;
+          var neighborIP = linksData[i].NeighborIP;
+          if (source < target) {
+            links.push(
+              {
+                id: i,
+                source: source,
+                target: target,
+                igp_metric: igp_metric,
+                interfaceIP: interfaceIP,
+                neighborIP: neighborIP
+              });
+          }
+          else {
+            reverseLinks.push(
+              {
+                id: i,
+                source: source,
+                target: target,
+                igp_metric: igp_metric,
+                interfaceIP: interfaceIP,
+                neighborIP: neighborIP
+              });
           }
         }
-      }
+
+        for (var i = 0; i < reverseLinks.length; i++) {
+          for (var j = 0; j < links.length; j++) {
+            if (reverseLinks[i].target == links[j].source && reverseLinks[i].source == links[j].target
+              && reverseLinks[i].neighborIP == links[j].interfaceIP && reverseLinks[i].igp_metric != links[j].igp_metric) {
+              links[j] =
+              {
+                id: links[j].id,
+                source: links[j].source,
+                target: links[j].target,
+                sourceLabel: links[j].igp_metric,
+                targetLabel: reverseLinks[i].igp_metric,
+                interfaceIP: links[j].interfaceIP,
+                neighborIP: links[j].neighborIP
+              };
+              break;
+            }
+          }
+        }
+      }).error(function (error) {
+        console.log(error.message);
+      });
     }
 
     function drawShortestPathTree(SPFdata) {

@@ -10,7 +10,8 @@
 angular.module('bmpUiApp')
   .controller('PeerAnalysisController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
-    var peers;
+    var peers, peer_prefix;
+    var peerPrefixPromise, peersPromise;
 
     // Table with peers
     $scope.peerTableOptions = {
@@ -54,6 +55,49 @@ angular.module('bmpUiApp')
       }
     };
 
+    $(function getTable() {
+      getPeerPrefix();
+      getPeers();
+
+      peersPromise.success(function () {
+        peerPrefixPromise.success(function () {
+          for (var i = 0; i < peers.length; i++) {
+            var prefix = getPrefix(i, peers, peer_prefix);
+            peers[i].IPv = (peers[i].isPeerIPv4 === 1) ? '4' : '6';
+            peers[i].Pre_RIB = (prefix == null ) ? 0 : prefix.Pre_RIB;
+            peers[i].Post_RIB = (prefix == null ) ? 0 : prefix.Post_RIB;
+          }
+          $scope.peerTableOptions.data = peers;
+
+          $timeout(function () {
+            $scope.gridApi.selection.selectRow($scope.peerTableOptions.data[0]);
+          });
+        });
+      });
+    });
+
+    function getPeerPrefix() {
+      peerPrefixPromise = apiFactory.getPeerPrefix();
+      peerPrefixPromise.success(
+        function (result) {
+          peer_prefix = result.v_peer_prefix_report_last.data;
+        }).
+        error(function (error) {
+          console.log(error.message);
+        });
+    }
+
+    function getPeers() {
+      peersPromise = apiFactory.getPeers();
+      peersPromise.success(
+        function (result) {
+          peers = result.v_peers.data;
+        }).
+        error(function (error) {
+          console.log(error.message);
+        });
+    }
+
     function getPrefix(i, peers, peer_prefix) {
       for (var idx in peer_prefix) {
         if ((peer_prefix[idx].peer_hash_id == peers[i].peer_hash_id) && (peer_prefix[idx].RouterName == peers[i].RouterName)) {
@@ -63,68 +107,23 @@ angular.module('bmpUiApp')
       return null;
     }
 
-    $(function getTable() {
-      var peerPrefixPromise = apiFactory.getPeerPrefix();
-      var peer_prefix;
-      peerPrefixPromise.success(
-        function (result) {
-          peer_prefix = result.v_peer_prefix_report_last.data;
-        }).
-        error(function (error) {
-          console.log(error.message);
-        });
-
-      apiFactory.getPeers().success(
-        function (result) {
-          peers = result.v_peers.data;
-
-          peerPrefixPromise.success(function(){
-              for (var i = 0; i < peers.length; i++) {
-                var prefix = getPrefix(i, peers, peer_prefix);
-
-                //  peers[i].Status = ((peers[i].isUp === 1) && (peers[i].isBMPConnected === 1)) ? "Up" : "Down";
-                peers[i].IPv = (peers[i].isPeerIPv4 === 1) ? '4' : '6';
-                peers[i].Pre_RIB = (prefix == null ) ? 0 : prefix.Pre_RIB;
-                peers[i].Post_RIB = (prefix == null ) ? 0 : prefix.Post_RIB;
-              }
-
-              $scope.peerTableOptions.data = peers;
-
-              $timeout(function () {
-                $scope.gridApi.selection.selectRow($scope.peerTableOptions.data[0]);
-              });
-            }
-          );
-        }
-      ).
-        error(function (error) {
-          console.log(error.message);
-        });
-    });
-
     // Click on row in Peers table
     function changeSelected(row) {
-      //  var row = $scope.gridApi.selection.getSelectedGridRows()[0].entity;
-      var detailsPanel = '<table class="tableStyle"><thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>';
+      getDetails(row);
+
       var amount_of_entries = 1000;
+      var peer_hash_id = row.peer_hash_id;
+      getPeerHistory(peer_hash_id, amount_of_entries);
+    }
+
+    function getDetails(row){
+      var detailsPanel = '<table class="tableStyle"><thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>';
       var noShow = ["$$hashKey", "Status", "IPv"];
 
       $scope.data = [];
       $scope.RouterName = row.RouterName;
       $scope.PeerName = row.PeerName;
       $scope.PeerStatus = ((row.isUp === 1) && (row.isBMPConnected === 1)) ? "uptext" : "downtext";
-
-      //if (row.isBMPConnected == "1") {
-      //   $scope.peerName += 'Connection to BMP:<p style="color:lawngreen">Connected</p>'
-      //     } else {
-      //   $scope.peerName += 'Connection to BMP:<p style="color:darkred">Disconnected</p>'
-      //     }
-      //
-      //   if (row.isUp == "1") {
-      //      $scope.peerName += 'Status:<p style="color:lawngreen">UP</p>'
-      //   } else {
-      //      $scope.peerName += 'Status:<p style="color:darkred">Down</p>'
-      //   }
 
       angular.forEach(row, function (value, key) {
         if (noShow.indexOf(key) == -1) { //doesn't show certain fields
@@ -144,8 +143,10 @@ angular.module('bmpUiApp')
       detailsPanel += '</table>';
 
       $scope.detailsPanel = detailsPanel;
+    }
 
-      apiFactory.getPeerHistory(row.peer_hash_id, amount_of_entries).success(
+    function getPeerHistory(peer_hash_id, amount_of_entries){
+      apiFactory.getPeerHistory(peer_hash_id, amount_of_entries).success(
         function (result) {
 
           var peer_history = result.v_peer_prefix_report.data;
@@ -185,8 +186,7 @@ angular.module('bmpUiApp')
             post_rib_max = pre_rib_min;
           }
 
-
-          $scope.options = {
+          $scope.peerHistoryOptions = {
             chart: {
               type: 'linePlusBarWithFocusChart',
               height: 450,
@@ -251,7 +251,7 @@ angular.module('bmpUiApp')
             }
           };
 
-          $scope.data = [
+          $scope.peerHistoryData = [
             {
               key: "Pre-RIB",
               values: pre_rib_values,
