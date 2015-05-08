@@ -107,7 +107,7 @@ angular.module('bmpUiApp')
       $scope.data = [];
       $scope.RouterName = row.RouterName;
       $scope.PeerName = row.PeerName;
-      $scope.Status = (row.Status == "Up") ? 1 : 0;
+      $scope.PeerStatus = ((row.isUp === 1) && (row.isBMPConnected === 1)) ? "uptext" : "downtext";
 
       //if (row.isBMPConnected == "1") {
       //   $scope.peerName += 'Connection to BMP:<p style="color:lawngreen">Connected</p>'

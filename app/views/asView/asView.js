@@ -118,7 +118,7 @@ angular.module('bmpUiApp')
     }
 
     // draw AS topology with current AS in the middle
-    function drawTopology() {
+    $timeout(function drawTopology() {
       var w = 500;
 
       var space1 = w / (upstreamAmount - 1)
@@ -131,7 +131,7 @@ angular.module('bmpUiApp')
             "id": 0,
             "x": 250,
             "y": 100,
-            "name": "AS" + $('#as_number').val(),
+            "name": "AS" + $scope.searchValue,
             iconType: 'groupS'
           }
         ],
@@ -246,6 +246,6 @@ angular.module('bmpUiApp')
 
       var app = new App();
       app.start();
-    }
+    });
 
   }]);
