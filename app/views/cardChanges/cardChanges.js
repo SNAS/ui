@@ -158,16 +158,21 @@ angular.module('bmpUiApp')
       drawLabel();
     };
 
-    var drawIconLine = function(posx, posy){
+    var drawIconLine = function(posx, posy , text){
       ctx.beginPath();
-      drawIcon(posx,posy,iconSize);
-      ctx.moveTo(posx+iconSize,posy+(iconSize/2));
-      ctx.lineTo(posx+iconSize + connectorWidth,posy+iconSize/2);
+      drawIcon(posx,posy, text);
+      ctx.moveTo(posx+iconSize - 4,posy+(iconSize/2)-7);
+      ctx.lineTo(posx+iconSize + 13 + connectorWidth,posy+iconSize/2 -7);
       ctx.stroke();
     };
 
-    var drawIcon = function(posx, posy){
-      drawRouterIcon(posx,posy,iconSize)
+    var drawIcon = function(posx, posy, text){
+      drawRouterIcon(posx,posy,iconSize);
+
+      //add Text
+      var fontSize = 30;
+      ctx.font = fontSize+"px arial";
+      ctx.fillText(text, posx, posy + iconSize + (fontSize/2));
     };
 
     var xStart= 10;
@@ -177,9 +182,9 @@ angular.module('bmpUiApp')
     canvas.width = width * norepeat.length + (xStart*2) - connectorWidth;
 
     for(var i =0; i < norepeat.length - 1; i++){
-      drawIconLine(xStart + (width*i), yStart);
+      drawIconLine(xStart + (width*i), yStart, norepeat[i]);
     }
-    drawIcon(xStart + (width*(norepeat.length-1)), yStart);
+    drawIcon(xStart + (width*(norepeat.length-1)), yStart, norepeat[i]);
 
     //worked once cannot repeat.
     //ctx.font = '60px bmpsymbol';
