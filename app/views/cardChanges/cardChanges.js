@@ -66,105 +66,122 @@ angular.module('bmpUiApp')
 
 
     //ROUTER DRAWING
-    var drawRouterIcon = function() {
+    var drawRouterIcon = function(x,y,size) {
 
-      var xStart = 320;
-      var yStart = 250;
+      var width = size;
+      var height = size * 0.8348;
 
-      var arrowHeight = 150;
-      var priCol = 'white'; //FFFFFF
-      var secCol = 'black'; //000000
+      var xStart = x+(width * 0.5658);
+      var yStart = y+(height * 0.4888);
 
-      var drawArrow = function (x, y) {
-        ctx.lineWidth = 25;
+      var arrowTotal;
+
+      var priCol = '#FFFFFF'; //white
+      var secCol = '#000000'; //black
+
+      var drawCircle = function(){   //draw circle
+        var circleLen = height * 0.4666;
+
+        ctx.save()
+        ctx.beginPath();
+        ctx.arc(xStart, yStart, circleLen, 0, 2 * Math.PI);
+        ctx.fillStyle = priCol;
+        ctx.fill();
+        ctx.lineWidth = circleLen * 0.02381;
+        ctx.strokeStyle = secCol;
+        ctx.stroke();
+        ctx.restore();
+      };
+
+      var drawArrow = function (x, y, change) {
+        var arrowHeight = height * 0.3333;
+        var padding = arrowHeight*0.2;
+        arrowTotal = arrowHeight + padding;
+
+        ctx.lineWidth = arrowHeight * 0.1666;
         ctx.beginPath();
         ctx.lineCap = "round";
 
+        //TO-DO::add offset in here
+        if(!change){
+          y = y - padding;
+        }
+
         //arrow stem
         ctx.moveTo(x, y);
-        ctx.lineTo(x, y - 150);
+        ctx.lineTo(x, y - arrowHeight);
 
         //arrouw head
-        ctx.moveTo(x - 50, y - arrowHeight + 50);
+        ctx.moveTo(x - (arrowHeight * 0.3333), y - arrowHeight + (arrowHeight * 0.3333));
         ctx.lineTo(x, y - arrowHeight);
-        ctx.lineTo(x + 50, y - arrowHeight + 50);
+        ctx.lineTo(x + (arrowHeight * 0.3333), y - arrowHeight + (arrowHeight * 0.3333));
 
         ctx.lineJoin = 'round';
         ctx.stroke();
       };
 
-      var drawCircle = function(){
-        //draw circle
-        ctx.save()
-        ctx.beginPath();
-        ctx.arc(xStart, yStart, (arrowHeight + 30 * 2), 0, 2 * Math.PI);
-        ctx.fillStyle = priCol;
-        ctx.fill();
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        ctx.restore();
-      };
 
       var drawRouter = function () {
         drawCircle();
 
-        var rotations = [90, 270, 180, 0];
+        var rotations = [0,90,180,270];
         var flips = [90, 270];
         for (var i = 0; i < rotations.length; i++) {
           ctx.save();
           ctx.translate(xStart, yStart);
           ctx.rotate(rotations[i] * Math.PI / 180);
           ctx.translate(-xStart, -yStart);
-
           if (flips.indexOf(rotations[i]) != -1) {
-            ctx.translate(0, yStart - 30);
+            ctx.translate(0, arrowTotal);
+            drawArrow(xStart, yStart, 1);
+          }else{
+            drawArrow(xStart, yStart, 0);
           }
-
-          drawArrow(xStart, yStart - 30);
           ctx.restore();
         }
       };
 
-      var drawLabel = function() {
-
-        var lineWidth = 10;
-        var xLineStart = xStart - 250;
-        var yLineStart = yStart - 150;
-        var lineLen = 130;
-        var lineHei = 75;
-
+      var drawLabel = function(){
         ctx.save();
         ctx.lineWidth = lineWidth;
+        ctx.beginPath();
         ctx.lineCap = "round";
+
+        var xLineStart = xStart-(height*0.5555);
+        var yLineStart = yStart-(height*0.3333);
+        var lineLen = width * 0.2412;
+        var lineHei = height * 0.1667;
+        var lineWidth = lineHei * 0.0668;
+
         ctx.fillStyle = priCol;
         ctx.fill();
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = '#00000';
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = secCol;
 
-        ctx.beginPath();
+        var curveAm = height * 0.1333;
+
         ctx.moveTo(xLineStart, yLineStart);
-        ctx.lineTo(xLineStart + lineLen, yLineStart);                     //top
-        ctx.bezierCurveTo(xLineStart + lineLen + 60, yLineStart,
-          xLineStart + lineLen + 60, yLineStart + lineHei,
-          xLineStart + lineLen, yLineStart + lineHei);
-        ctx.lineTo(xLineStart + lineLen, yLineStart + lineHei);           //right
-        ctx.lineTo(xLineStart, yLineStart + lineHei);                     //bottom
-        ctx.bezierCurveTo(xLineStart - 60, yLineStart + lineHei,
-          xLineStart - 60, yLineStart,
-          xLineStart, yLineStart);
-        ctx.lineTo(xLineStart, yLineStart);                               //left
+        ctx.lineTo(xLineStart+lineLen, yLineStart);//top
+        ctx.bezierCurveTo(xLineStart+lineLen+curveAm,yLineStart,
+          xLineStart+lineLen+curveAm,yLineStart+lineHei,
+          xLineStart+lineLen,yLineStart+lineHei);
+        ctx.lineTo(xLineStart+lineLen, yLineStart+lineHei);//right
+        ctx.lineTo(xLineStart, yLineStart+lineHei);//bottom
+        ctx.bezierCurveTo(xLineStart-curveAm,yLineStart+lineHei,
+          xLineStart-curveAm,yLineStart,
+          xLineStart,yLineStart);
+        ctx.lineTo(xLineStart, yLineStart);//left
         ctx.fill();
 
         ctx.lineJoin = 'round';
         ctx.stroke();
         ctx.restore();
 
-        //Text
-        var fontSize = 70;
-        ctx.font = fontSize + "px arial";
-        var xWordStart = xLineStart - 25;
-        var yWordStart = yLineStart + fontSize - 5;
+        //add Text
+        var fontSize = height * 0.1555;
+        ctx.font = fontSize+"px arial";
+        var xWordStart = xLineStart-(height*0.05555);
+        var yWordStart = yLineStart + fontSize - (height * 0.011111);
         ctx.fillText("eBGP", xWordStart, yWordStart);
       }
 
