@@ -11,7 +11,7 @@ angular.module('bmpUiApp')
   .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
     var upstreamData, upstreamAmount, downstreamData, downstreamAmount;
-    var upstreamPromise;
+    var upstreamPromise, downstreamPromise;
 
     $scope.success = false;
     $scope.nodata = false;
@@ -53,8 +53,14 @@ angular.module('bmpUiApp')
           if (result.w.size != 0) {
             getDetails(result.w.data[0]);
             getUpstream();
-            $timeout(getDownstream(),1000);
-           // drawTopology();
+            getDownstream();
+
+            downstreamPromise.success(function() {
+              upstreamPromise.success(function() {
+                drawTopology();
+              });
+            });
+
             $scope.nodata = false;
             $scope.success = true;
           }
@@ -109,15 +115,11 @@ angular.module('bmpUiApp')
     }
 
     function getDownstream() {
-      apiFactory.getDownstreamCount($scope.searchValue).success(function (result) {
+      downstreamPromise = apiFactory.getDownstreamCount($scope.searchValue);
+      downstreamPromise.success(function (result) {
         downstreamData = result.downstreamASNCount.data.data;
         $scope.downstreamGridOptions.data = downstreamData;
         downstreamAmount = result.downstreamASNCount.data.size;
-
-        upstreamPromise.success(function (){
-          //console.log("get upstream data second");
-          drawTopology();
-        });
       }).
         error(function (error) {
           alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -127,10 +129,11 @@ angular.module('bmpUiApp')
 
     // draw AS topology with current AS in the middle
     function drawTopology() {
+      var node, link;
       var w = 500;
 
-      var space1 = w / (upstreamAmount - 1)
-      var space2 = w / (downstreamAmount - 1)
+      var space1 = w / (upstreamAmount - 1);
+      var space2 = w / (downstreamAmount - 1);
 
 
       var topologyData = {
@@ -160,11 +163,11 @@ angular.module('bmpUiApp')
           "y": 0,
 
           iconType: 'groupL'
-        }
+        };
         link = {
           "source": 0,
           "target": 1
-        }
+        };
         topologyData["nodes"][1] = node;
         topologyData["links"][0] = link;
       } else {
@@ -208,7 +211,7 @@ angular.module('bmpUiApp')
         topologyData["links"][upstreamAmount] = link
       } else {
         for (var i = 0; i < downstreamAmount; i++) {
-          b = {
+          node = {
             "name": downstreamData[i].DownstreamAS,
             "AS Name": downstreamData[i].as_name,
             "Organization": downstreamData[i].org_name,
@@ -223,7 +226,7 @@ angular.module('bmpUiApp')
             "source": 0,
             "target": upstreamAmount + i + 1
           }
-          topologyData["nodes"][upstreamAmount + i + 1] = b;
+          topologyData["nodes"][upstreamAmount + i + 1] = node;
           topologyData["links"][upstreamAmount + i] = link
         }
       }
@@ -235,7 +238,7 @@ angular.module('bmpUiApp')
             return new nx.dom.Element(document.getElementById('AS_topology'));
           },
           start: function () {
-            var topo = new nx.graphic.Topology({
+             window.topo = new nx.graphic.Topology({
               //width: canvas_width,
               //height: canvas_height,
               adaptive: true,
@@ -248,6 +251,16 @@ angular.module('bmpUiApp')
             });
 
             topo.attach(this);
+
+            //hierarchical Layout
+            var layout = topo.getLayout('hierarchicalLayout');
+            layout.direction('vertical');
+             layout.sortOrder(['groupL', 'groupS', 'groupM']);
+            layout.levelBy(function (node, model) {
+              return node._iconType;
+              //   var level = Math.floor(model._data.level/5);
+            });
+            topo.activateLayout('hierarchicalLayout');
           }
         }
       });

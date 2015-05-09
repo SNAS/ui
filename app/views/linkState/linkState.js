@@ -63,6 +63,7 @@ angular.module('bmpUiApp')
     var topo = new nx.graphic.Topology({
       //width: 1000,
       //height: 500,
+      padding:10,
       nodeConfig: {
         // label: 'model.index',
         label: 'model.routerId',
@@ -183,7 +184,7 @@ angular.module('bmpUiApp')
               id: 1,
               type: 'nodeSet',
               nodes: [nodes[8].id, nodes[9].id],
-              root: nodes[8].id,
+              //root: nodes[8].id,
               latitude: nodes[8].latitude,
               longitude: nodes[8].longitude,
               name: "Node set 1",
@@ -200,7 +201,7 @@ angular.module('bmpUiApp')
 
     $(function () {
       var app = new nx.ui.Application();
-      app.container(document.getElementById('topology'));
+      app.container(document.getElementById('link_state_topology'));
       topo.attach(app);
 
       //hierarchical Layout
