@@ -30,40 +30,10 @@ angular.module('bmpUiApp')
       }
     }
 
-    var iconSize = 40;
+    var iconSize = 80;
     var connectorWidth = 100;
 
-    var width = iconSize*2 + connectorWidth;
-
-    var drawIconLine = function(posx, posy){
-      ctx.beginPath();
-      ctx.arc(posx+iconSize,posy+iconSize,iconSize,0,Math.PI*2,true); // Outer circle
-      ctx.lineTo(posx+iconSize*2 + connectorWidth,posy + iconSize);
-      ctx.stroke();
-    };
-
-    var drawIcon = function(posx, posy){
-      ctx.beginPath();
-      ctx.arc(posx+iconSize,posy+iconSize,iconSize,0,Math.PI*2,true); // Outer circle
-      ctx.stroke();
-    };
-
-    var xStart= 10;
-    var yStart= 50;
-
-    //only draw after width set
-    canvas.width = width * norepeat.length + (xStart*2) - connectorWidth;
-
-    for(var i =0; i < norepeat.length - 1; i++){
-      drawIconLine(xStart + (width*i), yStart);
-    }
-    drawIcon(xStart + (width*(norepeat.length-1)), yStart);
-
-    //'\u062'
-
-    ctx.font = '60px bmpsymbol';
-    ctx.fillText('\ue612', 10, 50);
-
+    var width = iconSize + connectorWidth;
 
     //ROUTER DRAWING
     var drawRouterIcon = function(x,y,size) {
@@ -119,7 +89,6 @@ angular.module('bmpUiApp')
         ctx.lineJoin = 'round';
         ctx.stroke();
       };
-
 
       var drawRouter = function () {
         drawCircle();
@@ -183,13 +152,38 @@ angular.module('bmpUiApp')
         var xWordStart = xLineStart-(height*0.05555);
         var yWordStart = yLineStart + fontSize - (height * 0.011111);
         ctx.fillText("eBGP", xWordStart, yWordStart);
-      }
+      };
 
       drawRouter();
       drawLabel();
-
     };
 
+    var drawIconLine = function(posx, posy){
+      ctx.beginPath();
+      drawIcon(posx,posy,iconSize);
+      ctx.moveTo(posx+iconSize,posy+(iconSize/2));
+      ctx.lineTo(posx+iconSize + connectorWidth,posy+iconSize/2);
+      ctx.stroke();
+    };
+
+    var drawIcon = function(posx, posy){
+      drawRouterIcon(posx,posy,iconSize)
+    };
+
+    var xStart= 10;
+    var yStart= 50;
+
+    //only draw after width set
+    canvas.width = width * norepeat.length + (xStart*2) - connectorWidth;
+
+    for(var i =0; i < norepeat.length - 1; i++){
+      drawIconLine(xStart + (width*i), yStart);
+    }
+    drawIcon(xStart + (width*(norepeat.length-1)), yStart);
+
+    //worked once cannot repeat.
+    //ctx.font = '60px bmpsymbol';
+    //ctx.fillText('\ue612', 10, 50);
 
   }])
 
