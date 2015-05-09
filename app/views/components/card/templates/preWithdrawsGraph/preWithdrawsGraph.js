@@ -54,7 +54,7 @@ angular.module('bmp.components.card')
 
     $scope.preWithdrawsData = [
       {
-        key: "test",
+        key: "Updates",
         values:[]
       }
     ];

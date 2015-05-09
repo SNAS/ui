@@ -2,10 +2,25 @@
 
 angular.module('bmp.components.card')
 
-.controller('BmpCardPeerPeerInsertController', ["$scope", "apiFactory", "$timeout", function ($scope, apiFactory, $timeout) {
+  .controller('CanvasController', ["$scope", "$timeout", "$element", "$document", function ($scope, $timeout, $element, $document) {
+
+      window.CANSCOPE = $scope;
+
+      console.log("canvas controller");
+
+      var canvas = document.getElementById('tutorial');
+      console.dir(canvas);
+      var ctx = canvas.getContext('2d');
+
+
+
+  }])
+
+.controller('BmpCardPeerPeerInsertController', ["$scope", "apiFactory", "$timeout", "$element", "$document", function ($scope, apiFactory, $timeout, $element, $document) {
     window.SCOPEZ = $scope;
 
     $scope.graphs = [];
+
 
     //Redraw Tables when menu state changed
     $scope.$on('menu-toggle', function(thing, args) {
@@ -91,8 +106,8 @@ angular.module('bmp.components.card')
     };
 
     $scope.ribGridSelection = function(){
-      console.log("test");
       $scope.values = $scope.ribGridApi.selection.getSelectedRows()[0];
+
       apiFactory.getPeerGeo($scope.values.Prefix).
         success(function (result) {
           $scope.values.geo = result.v_geo_ip.data[0];
@@ -109,13 +124,28 @@ angular.module('bmp.components.card')
             PeerIP: $scope.values.PeerAddress,
             PeerASN: $scope.data.PeerASN
           };
-
-          console.log($scope.rpiconData);
-
+          createASpath($scope.values.AS_Path);
         }).
         error(function (error) {
           console.log(error.message);
         });
+    };
+
+    var createASpath = function(path){
+      //e.g. " 64543 1221 4637 852 852 29810 29810 29810 29810 29810"
+      var wholepath = path.split(" ");
+      wholepath.shift(); //remove starting " "
+
+      var norepeat = [];
+      for(var i = 0; i < path.length; i++){
+        if(norepeat.indexOf(path[i]) == -1){
+          norepeat.push(path[i]);
+        }
+      }
+
+      //use canvas manipulation
+
+
     };
 
 

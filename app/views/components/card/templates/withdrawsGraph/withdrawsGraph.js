@@ -56,7 +56,7 @@ angular.module('bmp.components.card')
 
     $scope.withdrawsData = [
       {
-        key: "test",
+        key: "Withdrawns",
         values:[]
       }
     ];
