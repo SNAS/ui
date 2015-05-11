@@ -1,99 +1,84 @@
 <div ng-controller="BmpCardPeerController">
-  <!--COLLAPSED view-->
-  <div ng-hide="cardExpand" class="collapsed">
-    <!--Global Peer Card-->
-    <icon class="bmp-outline_router" style="font-size:36px;color:#e9a445;"></icon>
-    <div class="collapsedContent">
-      <ul class="collContentItems">
-        <li>BMP PEER</li>
-        <li>{{data.PeerASN}}</li>
-        <li>{{data.PeerName}}</li>
-        <li>{{data.PeerIP}}</li>
-      </ul>
-    </div>
-    <!--End Peer Card Expand-->
+
+  <div class="card-expand row">
+    <span class="col-xs-1">
+        <icon class="bmp-outline_router" style="  font-size: 26px; color: #e9a445; margin-left: 30px;"></icon>
+    </span>
+    <span class="col-xs-2">
+        <h4>BMP Peer</h4>
+    </span>
+    <span class="col-xs-4">
+      <h5>{{data.PeerName}}</h5>
+    </span>
+    <span class="col-xs-2">
+      <h5>{{data.PeerIP}}</h5>
+    </span>
+    <span class="col-xs-1">
+        <h5>{{data.PeerASN}}</h5>
+    </span>
+    <span class="col-xs-2">
+      <span style="float: right;text-align: right;">
+        <h5>Up Time</h5>
+        <span class="green ng-binding">
+          {{ peerTime }}
+        </span>
+        <icon ng-class="{'bmp-down': !data.isUp, 'bmp-up': data.isUp}" ng-style="!data.isUp &amp;&amp; {'color': '#f2732d'} || data.isUp &amp;&amp; {'color': '#7ec35c'}" style="font-size: 18px;">
+        </icon>
+      </span>
+    </span>
   </div>
 
-  <!--EXPANDED view-->
-  <div class="peer-card" ng-show="cardExpand">
-    <br>
-    <!--Peer Card in Global View-->
+  <br>
 
-    <h3>Peer Detail</h3>
-
-    <div style="float: right;">
-      <div style="display: table-cell">
-        <div>
-          Peer Status
-        </div>
-        <div>
-          {{ peerTimeText }}
+  <div class="template-content" ng-class="{expanded: cardExpand}">
+    <div class="row">
+      
+      <div class="col-lg-4">
+        <div class="icon-container">
+          <div bmp-card-router-peer-icon
+               data="rpIconData">
+          </div>
         </div>
       </div>
-      <div style="display: table-cell;padding-left: 10px;">
-        <!--Down Time-->
-        <div style="font-size: 15px;" ng-class="{'red bmp-down': !data.isUp, 'green bmp-up': data.isUp}"></div>
-        <div style="padding-top: 4px;">
-          {{ peerTime }}
+
+      <div class="col-lg-4">
+        <div class="icon-container">
+          <h4>Number Of Prefixes</h4>
+          <div class="rib-image">
+            <div class="rib-section" ng-repeat="item in ribData">
+              <div class="rib-part">
+                <div class="{{ item[2] }} rib-icon"></div>
+                <div>{{ item[0] }}</div>
+              </div>
+              <div class="rib-value">
+                {{ item[1] }}
+              </div>
+            </div>
+            <div class="rib-section">
+              <div class="rib-part">
+                <div>Filter Rate</div>
+                <div style="font-size: 20px">{{ filterRate }}%</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      <div class="col-lg-4">
+        <div class="icon-container">
+          <h4>Location Information</h4>
+          <span ng-bind-html="locationInfo"></span>
+        </div>
+      </div>
+      
     </div>
-
-    <h4>{{ data.PeerName }}</h4> - hash: {{ data.peer_hash_id }}
-    <br>
-
 
     <div class="row">
-
-      <div class="col-md-4">
-
-        <div bmp-card-router-peer-icon
-             data="rpIconData">
+      <div class="col-lg-12">
+        <div class="icon-container" style="height: auto;">
+          <div ng-include="templatePath + data.template + '/insert.html'"></div>
         </div>
-
       </div>
-
-      <div class="col-md-4">
-
-        <!--Number Prefixes-->
-        <div class="rib-image">
-          <div style="margin-bottom:10px;">
-            Number Of Prefixes
-          </div>
-          <div class="rib-section" ng-repeat="item in ribData">
-            <div class="rib-part">
-              <!--rib icon-->
-              <div class="{{ item[2] }} rib-icon"></div>
-              <div>{{ item[0] }}</div>
-            </div>
-
-            <div class="rib-value">
-              <!--rib value-->
-              {{ item[1] }}
-            </div>
-          </div>
-
-          <div class="rib-section">
-            <div class="rib-part">
-              <div>Filter Rate</div>
-              <div style="font-size: 20px">{{ filterRate }}%</div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="col-md-4">
-        <span ng-bind-html="locationInfo"></span>
-      </div>
-
     </div>
-
-    <br>
-
-    <!--This is where the insert will go-->
-    <div ng-include="templatePath + data.template + '/insert.html'"></div>
-
   </div>
 </div>

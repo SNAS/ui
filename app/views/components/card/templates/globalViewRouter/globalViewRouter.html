@@ -25,18 +25,18 @@
     <span class="col-md-1">
         <icon class="bmp-outline_router" style="  font-size: 26px; color: #6197d1; margin-left: 30px;"></icon>
     </span>
-    <span class="col-md-2">
+    <span class="col-xs-2">
         <h4>BMP Router</h4>
     </span>
-    <span class="col-md-4">
+    <span class="col-xs-4">
         <h5>{{data.RouterName}}</h5>
     </span>
-    <span class="col-md-2">
+    <span class="col-xs-2">
       <h5>{{data.RouterIP}}</h5>
     </span>
-    <span class="col-md-3">
-      <span style="float: right;text-align: right;margin-top: 3px;">
-        <h5>BMP Up Time</h5>
+    <span class="col-xs-3">
+      <span style="float: right;text-align: right;">
+        <h5>Up Time</h5>
         <span class="green ng-binding">
           {{upTime}}
         </span>
@@ -45,10 +45,12 @@
       </span>
     </span>
   </div>
+
   <br>
+  
   <div class="template-content" ng-class="{expanded: cardExpand}">
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-lg-4">
       <div class="icon-container">
         <h4>
           Router - Peer Diagram
@@ -57,7 +59,7 @@
             <div style="color:#AFAFAF;width: 135px; text-align: center; " tooltip="{{ data.RouterName }}">
               {{ wordCheck(data.RouterName) }}
             </div>
-            <div class="peers-amount-img">
+            <div class="peers-amount-img" style="height: 70px;">
               <div class="left-section">
                 <div class="centre">
                   <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
@@ -84,7 +86,7 @@
       </div>
 
       <!--IP's Graph-->
-      <div class="col-md-4" style="text-align: center">
+      <div class="col-lg-4" style="text-align: center">
         <div class="icon-container">
           <h4>Peer Types</h4>
           <nvd3 options="ipAmountOptions" data="ipAmountData"></nvd3>
@@ -92,7 +94,7 @@
       </div>
 
       <!--Location table-->
-      <div class="col-md-4">
+      <div class="col-lg-4">
         <div class="icon-container">
           <h4>Location Information</h4>
           <span ng-bind-html="locationInfo"></span>
@@ -102,15 +104,15 @@
     </div>
 
     <!--ROUTER up time graph-->
-    <div class="row">
-      <div class="col-md-6">
+    <div class="row" style="margin-bottom: 0">
+      <div class="col-lg-6">
         <div class="icon-container">
           <div>
             <nvd3 options="upTimeOptions" data="upTimeData" config="upTimeConfig"></nvd3>
           </div>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-lg-6">
         <div class="icon-container">
           <h4>Downstream ASes of Router {{ data.RouterName }}</h4>
           <!--R/Peers info table-->

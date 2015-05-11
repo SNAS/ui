@@ -82,12 +82,12 @@ angular
       .state('app.asView', {
         url: '/AS-view',
         templateUrl: 'views/asView/asView.html',
-        controller: 'ASViewController',
+        controller: 'ASViewController'
       })
       .state('app.linkState', {
         url: '/link-state-view',
         templateUrl: 'views/linkState/linkState.html',
-        controller: 'linkStateController',
+        controller: 'linkStateController'
       })
       .state('app.peerAnalysis', {
         url: '/peer-analysis',
@@ -99,11 +99,6 @@ angular
         templateUrl: 'views/asAnalysis/asAnalysis.html',
         controller: 'ASAnalysisController'
       })
-      /*.state('app.aggregationAnalysis', {
-        url: '/Aggregation-Analysis',
-        templateUrl: 'views/aggregationAnalysis/aggregationAnalysis.html',
-        controller: 'AggregationAnalysisController'
-      })*/
       .state('app.prefixAnalysis', {
         url: '/prefix-analysis',
         templateUrl: 'views/prefixAnalysis/prefixAnalysis.html',
@@ -125,7 +120,7 @@ angular
         templateUrl: 'views/preferences/preferences.html',
         controller: 'PreferencesController'
       })
-      .state('app.aggregationanalysis', {
+      .state('app.aggregationAnalysis', {
         url: '/aggregation-analysis',
         templateUrl: 'views/aggregationanalysis/aggregationanalysis.html',
         controller: 'aggregationanalysisController'

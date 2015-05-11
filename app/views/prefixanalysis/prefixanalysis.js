@@ -236,7 +236,7 @@ angular.module('bmpUiApp')
           debugger
           if($scope.HisData[i][j-1].AS_Path != $scope.HisData[i][j].AS_Path){
 
-            console.log($scope.asPathChangeAS_PATH[i]);
+            //console.log($scope.asPathChangeAS_PATH[i]);
 
             $scope.asPathChangeAS_PATH[i] = $scope.asPathChangeAS_PATH[i] + 1;
           }
@@ -313,9 +313,14 @@ angular.module('bmpUiApp')
         else if(3 == number){return "Communites"}
       }
 
+
+
       var drawRect = function(index)
       {
+
         var number = index;
+
+
 
         var div2 = d3.select(element[0])
           .append("div");
@@ -330,26 +335,31 @@ angular.module('bmpUiApp')
           .attr("width", w)
           .attr("height", h);
 
+        var tip = d3.tip()
+          .html(function(d,i) {
+
+            var content = "<strong>Number:</strong> " + d;
+
+            return content;
+          });
+
         svg2.selectAll("rect")
           .data(data)
           .enter()
           .append("rect")
           .attr("x", function(d, i) {
-            //console.log(i);
-            console.log("i draw the "+i+" rect,and the data is " + d);
             return (i%24) * 23 + 10;	//Bar width of 20 plus 1 for padding
           })
           .attr("width", 20)
           .attr("y", 0)
           .attr("height", 20)
-          .attr("tooltip-append-to-body", true)
-          .attr("tooltip", function(d){
-            return d;
-          })
+          //.attr("title","hello world")
           .attr("style",function(d, i){ return colorPicker(number,d);})
+          .call(tip)
           .on("click",function(d,i){
             d3.select(this)
               .attr("style","fill:green");
+
             $scope.createPrefixHisGrid(i);
             $scope.showGrid = "true";
 
@@ -357,17 +367,20 @@ angular.module('bmpUiApp')
             $anchorScroll();
           })
           .on("mouseout",function(d,i){
+            tip.destroy(d);
             d3.select(this)
               .attr("style",function(){ return colorPicker(number,d);})
+
           })
           .on("mouseenter",function(d,i){
             d3.select(this)
-              .attr("style","fill:red")
+              .attr("style","fill:#F59AE9")
+            //d3.selectAll(".d3-tip")
+            //  .attr("style",null)
           })
-          .call(function(){
-            $compile(this)(scope);
-          })
-
+          .on('mouseover', function(d) {
+            tip.attr("class", "d3-tip").show(d)
+          });
 
         if(!$scope.$$phase) {
           //$digest or $apply
@@ -414,17 +427,6 @@ angular.module('bmpUiApp')
             //$digest or $apply
             $scope.$apply();
           }
-
-        //// Remove the directive, so $compile doesn't reset it
-        //
-        //$element.removeAttr("d3-directive");
-        //
-        // // Compile d3 code so that tooltip shows
-        // $compile($element)(scope);
-        //
-        // // Re-add directive
-        // $element.attr("d3-directive");
-
       },true)
 
 

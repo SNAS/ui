@@ -30,13 +30,13 @@ angular.module('bmpUiApp')
       }
     }
 
-    var iconSize = 80;
+    var iconSize = 100;
     var connectorWidth = 100;
 
     var width = iconSize + connectorWidth;
 
     //ROUTER DRAWING
-    var drawRouterIcon = function(x,y,size) {
+    var drawRouterIcon = function(x,y,size,toDrawLabel) {
 
       var width = size;
       var height = size * 0.8348;
@@ -155,24 +155,28 @@ angular.module('bmpUiApp')
       };
 
       drawRouter();
-      drawLabel();
+      if(toDrawLabel)
+        drawLabel();
     };
 
-    var drawIconLine = function(posx, posy , text){
+    var drawIconLine = function(posx, posy, text, toDrawLabel){
       ctx.beginPath();
-      drawIcon(posx,posy, text);
+      drawIcon(posx, posy, text, toDrawLabel);
       ctx.moveTo(posx+iconSize - 4,posy+(iconSize/2)-7);
       ctx.lineTo(posx+iconSize + 13 + connectorWidth,posy+iconSize/2 -7);
       ctx.stroke();
     };
 
-    var drawIcon = function(posx, posy, text){
-      drawRouterIcon(posx,posy,iconSize);
+    var drawIcon = function(posx, posy, text,toDrawLabel){
+      drawRouterIcon(posx,posy,iconSize,toDrawLabel);
 
       //add Text
       var fontSize = 30;
       ctx.font = fontSize+"px arial";
-      ctx.fillText(text, posx, posy + iconSize + (fontSize/2));
+
+      var wordX = (iconSize - ctx.measureText(text).width) / 2;
+
+      ctx.fillText(text, posx + wordX, posy + iconSize + (fontSize/2));
     };
 
     var xStart= 10;
@@ -181,10 +185,11 @@ angular.module('bmpUiApp')
     //only draw after width set
     canvas.width = width * norepeat.length + (xStart*2) - connectorWidth;
 
-    for(var i =0; i < norepeat.length - 1; i++){
-      drawIconLine(xStart + (width*i), yStart, norepeat[i]);
+    drawIconLine(xStart, yStart, norepeat[0], true);
+    for(var i =1; i < norepeat.length - 1; i++){
+      drawIconLine(xStart + (width*i), yStart, norepeat[i], false);
     }
-    drawIcon(xStart + (width*(norepeat.length-1)), yStart, norepeat[i]);
+    drawIcon(xStart + (width*(norepeat.length-1)), yStart, norepeat[i],false);
 
     //worked once cannot repeat.
     //ctx.font = '60px bmpsymbol';

@@ -1,16 +1,16 @@
-<div>
+<div class="margin-small">
   <!------------------WHO IS---------------->
   <!--<h1 class="pgtitle">Whois</h1>-->
-  <div class = "input">
+  <div>
     Search ASN or Name
     <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
   </div>
   <!--Angular Table added here-->
-  <div class="gridStyle" ui-grid-selection ui-grid="whoIsGridOptions" ui-grid-auto-resize></div>
+  <div class="gridStyle margin-small" ui-grid-selection ui-grid="whoIsGridOptions" ui-grid-auto-resize></div>
   <div>
   <!--<div style="padding:12px">-->
     <h3 class="pgtitle">Details</h3>
-    <div class="detailspanel" >
+    <div class="detailspanel margin-small" >
       <pre class="preStyle" ng-bind-html="selectedItem"></pre>
     </div>
     <hr>

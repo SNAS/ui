@@ -1,10 +1,6 @@
 //===================================================================================
 // Header, Footer & Sidebar
 //===================================================================================
-.container-fluid{
-  width: 98%
-}
-
 .container-fluid > .navbar-header{
   margin-right: 0;
   margin-left: 0;
@@ -30,7 +26,6 @@
 
 #wrapper .main .navbar.navbar-default{
   margin: 0;
-  box-shadow: rgba(0,0,0,0.3) 0 2px 5px;
   z-index: 2;
 }
 
@@ -85,7 +80,7 @@
   display: block;
 }
 
-.nav>li>a {
+.sidebar-nav.nav>li>a {
   position: relative;
   display: block;
   padding: 10px 20px 10px 55px;
@@ -115,6 +110,7 @@
 }
 
 .sidebar{
+  border-right: 1px solid #e5e5e5;
   z-index: 1000;
   position: fixed;
   left: 250px;

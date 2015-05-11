@@ -151,15 +151,27 @@ angular.module('bmpUiApp')
               } else {
                 var s = raw_data[i].split(": "); //split on :<space> cause of http:// links
 
-                showValues += (
-                '<td>' +
-                s[0].trim() + ' ' +
-                '</td>' +
+                if(s.length>1) {
+                  showValues += (
+                  '<td>' +
+                  s[0].trim() + ' ' +
+                  '</td>' +
 
-                '<td>' +
-                s[1].trim() +
-                '</td>'
-                );
+                  '<td>' +
+                  s[1].trim() +
+                  '</td>'
+                  );
+                }
+                else{
+                  showValues += (
+                  '<td>' +
+                  '</td>' +
+
+                  '<td>' +
+                  s[0].trim() +
+                  '</td>'
+                  );
+                }
               }
               showValues += '</tr>';
             }
