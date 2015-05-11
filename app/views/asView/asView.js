@@ -13,7 +13,7 @@ angular.module('bmpUiApp')
     var upstreamData, upstreamAmount, downstreamData, downstreamAmount;
     var upstreamPromise, downstreamPromise;
 
-    $scope.success = false;
+    //$scope.success = false;
     $scope.nodata = false;
 
     $scope.upstreamGridOptions = {
@@ -23,7 +23,8 @@ angular.module('bmpUiApp')
 
       columnDefs: [
         {name: "UpstreamAS", displayName: 'ASN', width: '*'},
-        {name: "Prefixes_Learned", displayName: 'Prefixes', width: '*'}
+        {name: "as_name", displayName: 'AS Name', width: '*'},
+        //{name: "Prefixes_Learned", displayName: 'Prefixes', width: '*'}
       ]
     };
 
@@ -34,7 +35,8 @@ angular.module('bmpUiApp')
 
       columnDefs: [
         {name: "DownstreamAS", displayName: 'ASN', width: '*'},
-        {name: "Prefixes_Learned", displayName: 'Prefixes', width: '*'}
+        {name: "as_name", displayName: 'AS Name', width: '*'},
+        //{name: "Prefixes_Learned", displayName: 'Prefixes', width: '*'}
       ]
     };
 
@@ -47,6 +49,78 @@ angular.module('bmpUiApp')
       }, 500);
     };
 
+    nx.define('MyNodeTooltip', nx.ui.Component, {
+      properties: {
+        node: {},
+        topology: {}
+      },
+      view: {
+        content: [{
+          tag: 'h1',
+          content: '{#node.id}'
+        }, {
+          tag: 'p',
+          content: [{
+            tag: 'label',
+            content: 'Username'
+          }, {
+            tag: 'span',
+            content: '{#node.ASN}'
+          }]
+        }, {
+          tag: 'p',
+          content: '{#node.ASN}'
+        }]
+      }
+    });
+
+    $(function () {
+      var App = nx.define(nx.ui.Application, {
+        methods: {
+          getContainer: function (comp) {
+            return new nx.dom.Element(document.getElementById('AS_topology'));
+          },
+          start: function () {
+            window.topo = new nx.graphic.Topology({
+              //width: canvas_width,
+              //height: canvas_height,
+              adaptive: true,
+              nodeConfig: {
+                label: 'model.ASN', // display node's name as label from model
+                iconType: 'model.iconType'
+              },
+              tooltipManagerConfig: {
+                nodeTooltipContentClass: 'MyNodeTooltip'
+              },
+              dataProcessor: 'force',
+              identityKey: 'ASN',
+              showIcon: true,
+              scalable: false
+            });
+
+            topo.attach(this);
+
+            //hierarchical Layout
+            var layout = topo.getLayout('hierarchicalLayout');
+            layout.direction('vertical');
+            layout.sortOrder(["Upstream", "local", "Downstream"]);
+            layout.levelBy(function (node, model) {
+              return model._data.Type;
+            });
+            topo.activateLayout('hierarchicalLayout');
+          }
+        }
+      });
+
+      var app = new App();
+      app.start();
+
+      //initial search
+      $scope.searchValue = 109;
+      searchValue();
+    });
+
+
     function searchValue() {
       apiFactory.getWhoIsWhereASN($scope.searchValue).
         success(function (result) {
@@ -55,17 +129,17 @@ angular.module('bmpUiApp')
             getUpstream();
             getDownstream();
 
-            downstreamPromise.success(function() {
-              upstreamPromise.success(function() {
-                drawTopology();
+            downstreamPromise.success(function () {
+              upstreamPromise.success(function () {
+                drawTopology(result.w.data[0]);
               });
             });
 
             $scope.nodata = false;
-            $scope.success = true;
+            //$scope.success = true;
           }
-          else{
-            $scope.success = false;
+          else {
+            //$scope.success = false;
             $scope.nodata = true;
           }
         }).
@@ -102,11 +176,11 @@ angular.module('bmpUiApp')
     }
 
     function getUpstream() {
-      upstreamPromise = apiFactory.getUpstreamCount($scope.searchValue);
+      upstreamPromise = apiFactory.getUpstream($scope.searchValue);
       upstreamPromise.success(function (result) {
-        upstreamData = result.upstreamASNCount.data.data;
+        upstreamData = result.upstreamASN.data.data;
         $scope.upstreamGridOptions.data = upstreamData;
-        upstreamAmount = result.upstreamASNCount.data.size;
+        //upstreamAmount = result.upstreamASN.data.size;
       }).
         error(function (error) {
           alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -115,11 +189,11 @@ angular.module('bmpUiApp')
     }
 
     function getDownstream() {
-      downstreamPromise = apiFactory.getDownstreamCount($scope.searchValue);
+      downstreamPromise = apiFactory.getDownstream($scope.searchValue);
       downstreamPromise.success(function (result) {
-        downstreamData = result.downstreamASNCount.data.data;
+        downstreamData = result.downstreamASN.data.data;
         $scope.downstreamGridOptions.data = downstreamData;
-        downstreamAmount = result.downstreamASNCount.data.size;
+        //downstreamAmount = result.downstreamASN.data.size;
       }).
         error(function (error) {
           alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -127,146 +201,209 @@ angular.module('bmpUiApp')
         });
     }
 
-    // draw AS topology with current AS in the middle
-    function drawTopology() {
-      var node, link;
-      var w = 500;
+    function drawTopology(data) {
+      var nodes = [], links = [];
+      //var fields = ["asn", "as_name", "org_id", "org_name", "address", "city", "state_prov", "postal_code", "country", "timestamp", "source"];
 
-      var space1 = w / (upstreamAmount - 1);
-      var space2 = w / (downstreamAmount - 1);
+      nodes.push({
+          "ASN": data.asn,
+          "AS Name": data.as_name,
+          "Organization": data.org_name,
+          "Country": data.country,
+          iconType: 'groupS',
+          "Type": 'local'
+        }
+      );
 
+      for(var i=0; i<upstreamData.length;i++){
+        nodes.push({
+          "ASN": upstreamData[i].UpstreamAS,
+          "AS Name": upstreamData[i].as_name,
+          "Organization": upstreamData[i].org_name,
+          "Country": upstreamData[i].country,
+          "Prefix": upstreamData[i].Prefixes_Learned,
+          iconType: 'groupL',
+          "Type": 'Upstream'
+        });
+
+        links.push(
+          {
+            source: upstreamData[i].UpstreamAS,
+            target: data.asn
+          });
+      }
+
+      for(var i=0; i<downstreamData.length; i++){
+        //for(var i=0; i<downstreamData.length;i++){
+        nodes.push({
+          "ASN": downstreamData[i].DownstreamAS,
+          "AS Name": downstreamData[i].as_name,
+          "Organization": downstreamData[i].org_name,
+          "Country": downstreamData[i].country,
+          "Prefix": downstreamData[i].Prefixes_Learned,
+          iconType: 'groupM',
+          "Type": 'Downstream'
+        });
+
+        links.push(
+          {
+            source: data.asn,
+            target: downstreamData[i].DownstreamAS
+          });
+      }
+
+      var country = {};
+      //var as_name = {};
+      //var org_name = {};
+      for (var i = 0; i < downstreamData.length; i++) {
+        if (!country[downstreamData[i].country]) {
+          country[downstreamData[i].country] = [];
+        }
+        country[downstreamData[i].country].push(downstreamData[i].DownstreamAS);
+
+
+        //if (!as_name[downstreamData[i].as_name]) {
+        //  as_name[downstreamData[i].as_name] = 1;
+        //}
+        //else {
+        //  as_name[downstreamData[i].as_name]++;
+        //}
+        //
+        //if (!org_name[downstreamData[i].org_name]) {
+        //  org_name[downstreamData[i].org_name] = 1;
+        //}
+        //else {
+        //  org_name[downstreamData[i].org_name]++;
+        //}
+      }
+      console.log(country);
+      //console.log(as_name);
+      //console.log(org_name);
+
+      var nodeSet = [{
+        //id: 1,
+        type: 'nodeSet',
+        nodes: country["US"],
+        //root: nodes[8].id,
+        //latitude: nodes[8].latitude,
+        //longitude: nodes[8].longitude,
+        name: "US",
+        //iconType: 'server'
+      }];
 
       var topologyData = {
-        nodes: [
-          {
-            "id": 0,
-            "x": 250,
-            "y": 100,
-            "name": "AS" + $scope.searchValue,
-            iconType: 'groupS'
-          }
-        ],
-        links: []
-      };
-
-
-      if (upstreamAmount == 1) {
-        node = {
-
-          "name": upstreamData[0].UpstreamAS,
-          "AS Name": upstreamData[0].as_name,
-          "Organization": upstreamData[0].org_name,
-          "Country": upstreamData[0].country,
-          "-------------------------": "",
-          "id": 1,
-          "x": 250,
-          "y": 0,
-
-          iconType: 'groupL'
-        };
-        link = {
-          "source": 0,
-          "target": 1
-        };
-        topologyData["nodes"][1] = node;
-        topologyData["links"][0] = link;
-      } else {
-        for (var i = 0; i < upstreamAmount; i++) {
-          node = {
-            "name": upstreamData[i].UpstreamAS,
-            "AS Name": upstreamData[i].as_name,
-            "Organization": upstreamData[i].org_name,
-            "Country": upstreamData[i].country,
-            "-------------------------": "",
-            "id": i + 1,
-            "x": i * space1,
-            "y": 0,
-            iconType: 'groupL'
-          }
-          link = {
-            "source": 0,
-            "target": i + 1
-          }
-          topologyData["nodes"][i + 1] = node;
-          topologyData["links"][i] = link;
-        }
+        nodes: nodes,
+        links: links,
+      //  nodeSet: nodeSet
       }
-      if (downstreamAmount == 1) {
-        node = {
-          "name": downstreamData[0].DownstreamAS,
-          "AS Name": downstreamData[0].as_name,
-          "Organization": downstreamData[0].org_name,
-          "Country": downstreamData[0].country,
-          "-------------------------": "",
-          "id": upstreamAmount + 1,
-          "x": 250,
-          "y": 200,
-          iconType: 'groupM'
-        }
-        link = {
-          "source": 0,
-          "target": upstreamAmount + 1
-        }
-        topologyData["nodes"][upstreamAmount + 1] = node;
-        topologyData["links"][upstreamAmount] = link
-      } else {
-        for (var i = 0; i < downstreamAmount; i++) {
-          node = {
-            "name": downstreamData[i].DownstreamAS,
-            "AS Name": downstreamData[i].as_name,
-            "Organization": downstreamData[i].org_name,
-            "Country": downstreamData[i].country,
-            "-------------------------": "",
-            "id": upstreamAmount + i + 1,
-            "x": i * space2,
-            "y": 200,
-            iconType: 'groupM'
-          }
-          link = {
-            "source": 0,
-            "target": upstreamAmount + i + 1
-          }
-          topologyData["nodes"][upstreamAmount + i + 1] = node;
-          topologyData["links"][upstreamAmount + i] = link
-        }
-      }
-
-
-      var App = nx.define(nx.ui.Application, {
-        methods: {
-          getContainer: function (comp) {
-            return new nx.dom.Element(document.getElementById('AS_topology'));
-          },
-          start: function () {
-             window.topo = new nx.graphic.Topology({
-              //width: canvas_width,
-              //height: canvas_height,
-              adaptive: true,
-              nodeConfig: {
-                label: 'model.name', // display node's name as label from model
-                iconType: 'model.iconType'
-              },
-              showIcon: true,
-              data: topologyData
-            });
-
-            topo.attach(this);
-
-            //hierarchical Layout
-            var layout = topo.getLayout('hierarchicalLayout');
-            layout.direction('vertical');
-             layout.sortOrder(['groupL', 'groupS', 'groupM']);
-            layout.levelBy(function (node, model) {
-              return node._iconType;
-              //   var level = Math.floor(model._data.level/5);
-            });
-            topo.activateLayout('hierarchicalLayout');
-          }
-        }
-      });
-
-      var app = new App();
-      app.start();
+      topo.data(topologyData);
     }
+
+    // draw AS topology with current AS in the middle
+    //function drawTopology() {
+    //  var node, link;
+    //  var w = 500;
+    //
+    //  var space1 = w / (upstreamAmount - 1);
+    //  var space2 = w / (downstreamAmount - 1);
+    //
+    //
+    //  var topologyData = {
+    //    nodes: [
+    //      {
+    //        "id": 0,
+    //        "x": 250,
+    //        "y": 100,
+    //        "name": "AS" + $scope.searchValue,
+    //        iconType: 'groupS'
+    //      }
+    //    ],
+    //    links: []
+    //  };
+    //
+    //
+    //  if (upstreamAmount == 1) {
+    //    node = {
+    //
+    //      "name": upstreamData[0].UpstreamAS,
+    //      "AS Name": upstreamData[0].as_name,
+    //      "Organization": upstreamData[0].org_name,
+    //      "Country": upstreamData[0].country,
+    //      "-------------------------": "",
+    //      "id": 1,
+    //      "x": 250,
+    //      "y": 0,
+    //
+    //      iconType: 'groupL'
+    //    };
+    //    link = {
+    //      "source": 0,
+    //      "target": 1
+    //    };
+    //    topologyData["nodes"][1] = node;
+    //    topologyData["links"][0] = link;
+    //  } else {
+    //    for (var i = 0; i < upstreamAmount; i++) {
+    //      node = {
+    //        "name": upstreamData[i].UpstreamAS,
+    //        "AS Name": upstreamData[i].as_name,
+    //        "Organization": upstreamData[i].org_name,
+    //        "Country": upstreamData[i].country,
+    //        "-------------------------": "",
+    //        "id": i + 1,
+    //        "x": i * space1,
+    //        "y": 0,
+    //        iconType: 'groupL'
+    //      }
+    //      link = {
+    //        "source": 0,
+    //        "target": i + 1
+    //      }
+    //      topologyData["nodes"][i + 1] = node;
+    //      topologyData["links"][i] = link;
+    //    }
+    //  }
+    //  if (downstreamAmount == 1) {
+    //    node = {
+    //      "name": downstreamData[0].DownstreamAS,
+    //      "AS Name": downstreamData[0].as_name,
+    //      "Organization": downstreamData[0].org_name,
+    //      "Country": downstreamData[0].country,
+    //      "-------------------------": "",
+    //      "id": upstreamAmount + 1,
+    //      "x": 250,
+    //      "y": 200,
+    //      iconType: 'groupM'
+    //    }
+    //    link = {
+    //      "source": 0,
+    //      "target": upstreamAmount + 1
+    //    }
+    //    topologyData["nodes"][upstreamAmount + 1] = node;
+    //    topologyData["links"][upstreamAmount] = link
+    //  } else {
+    //    for (var i = 0; i < downstreamAmount; i++) {
+    //      node = {
+    //        "name": downstreamData[i].DownstreamAS,
+    //        "AS Name": downstreamData[i].as_name,
+    //        "Organization": downstreamData[i].org_name,
+    //        "Country": downstreamData[i].country,
+    //        "-------------------------": "",
+    //        "id": upstreamAmount + i + 1,
+    //        "x": i * space2,
+    //        "y": 200,
+    //        iconType: 'groupM'
+    //      }
+    //      link = {
+    //        "source": 0,
+    //        "target": upstreamAmount + i + 1
+    //      }
+    //      topologyData["nodes"][upstreamAmount + i + 1] = node;
+    //      topologyData["links"][upstreamAmount + i] = link
+    //    }
+    //  }
+    //
+    //  topo.data(topologyData);
+    //}
 
   }]);
