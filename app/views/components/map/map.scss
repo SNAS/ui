@@ -218,8 +218,11 @@
             transition: height 0.5s;
             &.expanded{
                 transition-delay: 0.5s;
-                height: 410px;
+                height: 300px;
                 background-color: #f7f7f7;
+                &.tall{
+                    height: 500px;
+                }
             }
 
             ul{
@@ -387,4 +390,8 @@
         @include transform(none);
         padding: 0;
     }
+}
+
+.map{
+    transition: height 0.5s 0.5s;
 }
