@@ -8,7 +8,7 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll', function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll) {
+  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile) {
     //DEBUG
 
     // resize the window
@@ -289,8 +289,8 @@ angular.module('bmpUiApp')
 
     }
   }])
-  .directive('d3Directive',function(){
-    function link($scope,element){
+  .directive('d3Directive',['$compile', function($compile){
+    function link($scope,element,scope){
       var w = 600;
       var h = 20;
       var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -342,9 +342,11 @@ angular.module('bmpUiApp')
           .attr("width", 20)
           .attr("y", 0)
           .attr("height", 20)
-
+          .attr("tooltip-append-to-body", true)
+          .attr("tooltip", function(d){
+            return d;
+          })
           .attr("style",function(d, i){ return colorPicker(number,d);})
-
           .on("click",function(d,i){
             d3.select(this)
               .attr("style","fill:green");
@@ -353,20 +355,24 @@ angular.module('bmpUiApp')
 
             $location.hash('bottom');
             $anchorScroll();
-            //$scope.$apply();
-
           })
           .on("mouseout",function(d,i){
             d3.select(this)
               .attr("style",function(){ return colorPicker(number,d);})
+          })
+          .on("mouseenter",function(d,i){
+            d3.select(this)
+              .attr("style","fill:red")
+          })
+          .call(function(){
+            $compile(this)(scope);
+          })
 
-          });
 
         if(!$scope.$$phase) {
           //$digest or $apply
           $scope.$apply();
         }
-        //$scope.$apply();
       }
 
       drawRect(0);
@@ -374,14 +380,12 @@ angular.module('bmpUiApp')
       drawRect(2);
       drawRect(3);
 
+      //$compile(element)(scope);
+
       var removeSvg = function()
       {
-        //d3.select("svg").selectAll("*").remove();
         d3.selectAll("svg").remove();
-        //d3.select("svg").remove();
         d3.selectAll("text").remove();
-        //svg.selectAll("*").remove();
-        //d3.select("text").selectAll("*").remove();
       }
 
       $scope.$watch('asPathChange',function(newVal,oldVal) {
@@ -406,16 +410,30 @@ angular.module('bmpUiApp')
           data = newVal[2];
           drawRect(2);
 
-          $scope.$apply();
-        //}
+          if(!$scope.$$phase) {
+            //$digest or $apply
+            $scope.$apply();
+          }
+
+        //// Remove the directive, so $compile doesn't reset it
+        //
+        //$element.removeAttr("d3-directive");
+        //
+        // // Compile d3 code so that tooltip shows
+        // $compile($element)(scope);
+        //
+        // // Re-add directive
+        // $element.attr("d3-directive");
+
       },true)
+
 
     }
     return {
       link: link,
       restrict: 'E'
     }
-  });
+  }]);
 
 
 
