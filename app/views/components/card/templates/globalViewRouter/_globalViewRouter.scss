@@ -63,7 +63,7 @@ svg.title {
 
 .template-content{
   opacity: 0;
-  transition: opacity 0.25s 0.6s;
+  transition: opacity 0.25s 0.5s;
   &.expanded{
     opacity: 1;
     transition-delay: 0;

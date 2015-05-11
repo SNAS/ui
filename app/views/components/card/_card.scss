@@ -10,7 +10,7 @@
   overflow: hidden;
   transition: height 0.25s;
   &.expanded{
-    height: 620px;
+    height: auto;
   }
   .row{
     width: 100%;
@@ -19,10 +19,17 @@
   .content {
     display: inline;
     .bmp-expand, .bmp-collapse {
-        font-size: 20px;
-        color: #888;
-        margin-top: 2px;
-        position: absolute;
+      font-size: 20px;
+      color: #888;
+      margin-top: 2px;
+      position: absolute;
+      padding: 3px;
+      cursor: pointer;
+      border-radius: 20px;
+      transition: background-color 0.2s;
+      &:hover{
+        background-color: rgb(228, 228, 228);
+      }
     }
     .bmp-close{
       font-size: 20px;
@@ -30,6 +37,13 @@
       margin-top: 2px;
       position: absolute;
       right: 20px;
+      padding: 3px;
+      cursor: pointer;
+      border-radius: 20px;
+      transition: background-color 0.2s;
+      &:hover{
+        background-color: rgb(228, 228, 228);
+      }
     }
     .red {
       color: red;
@@ -78,7 +92,7 @@
   width: inherit !important;
   h5{
     display: inline-block;
-  margin-top: 7px;
+    margin-top: 7px;
   }
   h4{
     margin-top: 5px;
