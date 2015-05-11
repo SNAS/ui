@@ -10,3 +10,33 @@
   //  background-color: #2dff07;
   color: green;
 }
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 6px;
+  background: #ed8e42;
+  color: #F5FFE0;
+  border-radius: 10px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 8px;
+  width: 100%;
+  line-height: 1;
+  color: #ed8e42;
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+  border-radius: 10px;
+
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
