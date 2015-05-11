@@ -40,6 +40,9 @@ angular.module('bmpUiApp')
           apiFactory.getAsnInfo(109,$scope.prefix_amount)
             .success(function(result) {
               $scope.ShowPrefixsOptions.data = $scope.PrefixData = result.v_routes.data;
+
+              var peerDataOriginal = result.v_routes.data;
+              $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
               createShowPrefixsOptions();
             });
       });
@@ -51,18 +54,35 @@ angular.module('bmpUiApp')
         $scope.PrefixData[i].peer_name = $scope.PrefixData[i].PeerName;
         $scope.PrefixData[i].prefix = $scope.PrefixData[i].Prefix;
       }
+      $scope.apply();
+    };
+
+
+    var filterUnique = function(input, key) {
+      var unique = {};
+      var uniqueList = [];
+      console.log("unique:" + unique);
+
+      for(var i = 0; i < input.length; i++){
+        if(typeof unique[input[i][key]] == "undefined"){
+          unique[input[i][key]] = "";
+          uniqueList.push(input[i]);
+          console.log("uniqueList:" + uniqueList);
+        }
+      }
+      return uniqueList;
     };
 
     //  this function is for getting peer information and return a drop-down list
-    var getPeers = function(){
-      apiFactory.getPeers()
-        .success(function(result) {
-          $scope.peerData = result.v_peers.data;
-
-        });
-    }
-
-    getPeers();
+    //var getPeers = function(){
+    //  apiFactory.getPeers()
+    //    .success(function(result) {
+    //      $scope.peerData = result.v_peers.data;
+    //
+    //    });
+    //}
+    //
+    //getPeers();
 
     $scope.selectChange = function(){
       $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
@@ -150,7 +170,8 @@ angular.module('bmpUiApp')
           if ("" != prefixes_of_as_and_peer)
           {
             createChartOptions();
-            $scope.efficiency = ($scope.prefix_amount - $scope.reduced_prefix_amount)/$scope.prefix_amount
+
+            $scope.efficiency = (($scope.prefix_amount - $scope.reduced_prefix_amount)/$scope.prefix_amount)*100 + "%"
           }
           else
           {
@@ -166,7 +187,7 @@ angular.module('bmpUiApp')
       enableRowHeaderSelection: false
     };
     $scope.ShowRedundantOptions.columnDefs = [
-      {name: "Prefix", displayName: 'Prefix', width: '*'},
+      {name: "Prefix", displayName: 'Prefix', width: '30%'},
       {name: "Covers", displayName: 'Covered Prefix', width: '*'},
     ];
 

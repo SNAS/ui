@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-.controller('MapController', function ($scope, $http, $timeout, apiFactory, leafletData, $compile, $filter, $location, $anchorScroll) {
+.controller('MapController', function ($scope, $http, $timeout, apiFactory, leafletData, $compile, $filter, $location, $anchorScroll, $window) {
 
     window.SCOPEMAP = $scope;
 
@@ -19,6 +19,10 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.info;
 
     $scope.activeMarker;
+
+    $scope.selectionMade = false;
+    $scope.height = angular.element($window).height() - 50;
+    $scope.panelHeight = $scope.height - 80;
 
     /************************************
         Change panel based on location
@@ -72,6 +76,21 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.$watch('plotMarker', function(val) {
         if(val != undefined)
             $scope.init();
+    });
+
+    $scope.$watch('selectionMade', function(val){
+        if(val === true){
+            $scope.height = 400;
+        }
+        else if(val === false){
+            $scope.height = angular.element($window).height() - 50;
+        }
+        else{
+            return;
+        }
+        $timeout(function(){
+            $scope.map.invalidateSize();
+        }, 1000);
     });
 
 
@@ -530,6 +549,10 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         cardData.country = location.options.country;
         cardData.stateprov = location.options.stateprov;
         cardData.city = location.options.stateprov;
+
+        $scope.height = 400;
+        $scope.map.invalidateSize();
+        $scope.selectionMade = true;
         
         $scope.cardApi.changeCard(router);
         $scope.panelSearch = '';
@@ -565,6 +588,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             *********************************************************************************/
             //$scope.selectedLocation = undefined;
         }
+        $scope.selectionMade = false;
         $scope.selectedPeerLocations = [];
         $scope.map.removeLayer($scope.peerLayer);
         $scope.map.addLayer($scope.routerLayer);
@@ -583,6 +607,13 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         if($scope.selectedLocation != undefined){
             $scope.selectedLocation.closePopup();
         }
+
+        if(!$scope.selectionMade){
+            $scope.height = 400;
+            $scope.map.invalidateSize();
+            $scope.selectionMade = true;
+        }
+
         var cardData = peer;
         cardData.country = location.options.country;
         cardData.stateprov = location.options.stateprov;
