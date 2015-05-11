@@ -123,9 +123,9 @@ angular.module('bmp.components.card')
           "height": 180,
           "margin": {
             "top": 20,
-            "right": 10,
+            "right": 20,
             "bottom": 40,
-            "left": 10
+            "left": 20
           },
           "useInteractiveGuideline": false,
           "tooltips": false,

@@ -1,23 +1,26 @@
-<div class="amount-img" style="padding-top: 70px;padding-left: 30px;width:100%;height:200px">
-  <div class="peers-amount-img">
-    <div class="router-peer-line"></div>
-    <div class="left-section">
-      <div class="centre">
-        <div class="router-name-text" tooltip="{{ data.RouterASN }}">{{ wordCheck(data.RouterASN) }}</div>
-        <div class="router-name-text" tooltip="{{ data.RouterName }}">{{ wordCheck(data.RouterName) }}</div>
-        <div class="{{ routerIcon }} bmp-outline-route"></div>
-        <div class="router-name-text" tooltip="{{data.RouterIP}}" tooltip-placement="bottom">{{ wordCheck(data.RouterIP) }}</div>
+<div>
+  <h4> Router - Peer Diagram</h4>
+  <div class="amount-img">
+    <div class="peers-amount-img">
+      <div class="router-peer-line"></div>
+      <div class="left-section">
+        <div class="centre">
+          <div class="router-name-text" tooltip="{{ data.RouterASN }}">{{ wordCheck(data.RouterASN) }}</div>
+          <div class="router-name-text" tooltip="{{ data.RouterName }}">{{ wordCheck(data.RouterName) }}</div>
+          <div class="{{ routerIcon }} bmp-outline-route"></div>
+          <div class="router-name-text" tooltip="{{data.RouterIP}}" tooltip-placement="bottom">{{ wordCheck(data.RouterIP) }}</div>
+        </div>
       </div>
-    </div>
 
-    <span class="middle-section"></span>
+      <span class="middle-section"></span>
 
-    <div class="left-section">
-      <div class="centre">
-        <div class="router-name-text" tooltip="{{ data.PeerASN }}">{{ wordCheck(data.PeerASN) }}</div>
-        <div class="router-name-text" tooltip="{{ data.PeerName }}">{{ wordCheck(data.PeerName) }}</div>
-        <div class="bmp-peer_router10-17 peer bmp-outline-route"></div>
-        <div class="router-name-text" tooltip="{{ data.PeerIP }}" tooltip-placement="bottom">{{ wordCheck(data.PeerIP) }}</div>
+      <div class="left-section">
+        <div class="centre">
+          <div class="router-name-text" tooltip="{{ data.PeerASN }}">{{ wordCheck(data.PeerASN) }}</div>
+          <div class="router-name-text" tooltip="{{ data.PeerName }}">{{ wordCheck(data.PeerName) }}</div>
+          <div class="bmp-peer_router10-17 peer bmp-outline-route"></div>
+          <div class="router-name-text" tooltip="{{ data.PeerIP }}" tooltip-placement="bottom">{{ wordCheck(data.PeerIP) }}</div>
+        </div>
       </div>
     </div>
   </div>
