@@ -180,16 +180,16 @@ angular.module('bmpUiApp')
           var topologyData = {
             nodes: nodes,
             links: links,
-            nodeSet: [{
-              id: 1,
-              type: 'nodeSet',
-              nodes: [nodes[8].id, nodes[9].id],
-              //root: nodes[8].id,
-              latitude: nodes[8].latitude,
-              longitude: nodes[8].longitude,
-              name: "Node set 1",
-              iconType: 'server'
-            }]
+            //nodeSet: [{
+            //  id: 1,
+            //  type: 'nodeSet',
+            //  nodes: [nodes[8].id, nodes[9].id],
+            //  //root: nodes[8].id,
+            //  latitude: nodes[8].latitude,
+            //  longitude: nodes[8].longitude,
+            //  name: "Node set 1",
+            //  iconType: 'server'
+            //}]
           };
           topo.data(topologyData);
 
