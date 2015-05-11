@@ -1,8 +1,8 @@
-<div>
+<div class="margin-small">
   <!------------------------------------------------- PEER TABLE----------------------------------------------------->
   <h1 class="pgtitle">BGP Peers</h1>
 
-  <div id="peerTable" class="gridStyle" ui-grid="peerTableOptions" ui-grid-selection ui-grid-auto-resize></div>
+  <div id="peerTable" class="gridStyle margin-small" ui-grid="peerTableOptions" ui-grid-selection ui-grid-auto-resize></div>
   <!------------------------------------------------- ./PEER TABLE -------------------------------------------------->
 
   <!------------------------------------------------- Prefix Trending per Peer--------------------------------------->
@@ -10,7 +10,7 @@
     <span ng-class="PeerStatus">{{RouterName}}  {{PeerName}}</span>
   </h3>
 
-  <div class="detailspanel">
+  <div class="detailspanel margin-small">
     <pre class="preStyle" ng-bind-html="detailsPanel"></pre>
   </div>
   <h3 class="pgtitle">Peer Prefix Trend

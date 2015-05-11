@@ -88,6 +88,7 @@ angular.module('bmpUiApp')
       identityKey: 'id',
       adaptive: true,
       showIcon: true,
+      scalable: false,
       layoutType: 'USMap',
       //layoutType: 'WorldMap',
       layoutConfig: {

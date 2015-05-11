@@ -1,6 +1,6 @@
-<div>
+<div class="margin-small">
   <!--<h1 class="pgtitle"> AS View</h1>-->
-  <div class="input">
+  <div>
     AS Number
     <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
     <p class="help-block">Example: 701</p>
@@ -9,22 +9,22 @@
     <!--again! :)</h3>-->
   </div>
 
-  <div ng-show="success">
-  <div class="detailspanel" >
+  <div ng-show="!nodata">
+  <div class="detailspanel margin-small">
     <pre class="preStyle" ng-bind-html="details"></pre>
   </div>
 
-  <div class="row">
+  <div class="row margin-small">
     <div class="col-lg-6">
       <h3 class="pgtitle-small">Upstream</h3>
       <div class="panel panel-default">
-        <div class="gridStyle" ui-grid="upstreamGridOptions" ui-grid-auto-resize></div>
+        <div class="gridStyle-abreast" ui-grid="upstreamGridOptions" ui-grid-auto-resize></div>
       </div>
     </div>
     <div class="col-lg-6">
       <h3 class="pgtitle-small">Downstream</h3>
       <div class="panel panel-default">
-        <div class="gridStyle" ui-grid="downstreamGridOptions" ui-grid-auto-resize></div>
+        <div class="gridStyle-abreast" ui-grid="downstreamGridOptions" ui-grid-auto-resize></div>
       </div>
     </div>
   </div>
