@@ -578,6 +578,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.deselectPanelRouter = function(){
         $scope.panelTitle = 'Router List';
         $scope.$broadcast('clear-router');
+        $scope.panelSearch = '';
         $scope.selectionMade = false;
         if($scope.selectedRouter != undefined){
             $scope.cardApi.removeCard($scope.selectedRouter);
