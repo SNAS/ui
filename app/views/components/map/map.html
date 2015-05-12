@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}">
+    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}" ng-style="{'max-height': panelHeight}">
       <ul class="locations" ng-hide="selectedRouter">
         <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
           <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">

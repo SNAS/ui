@@ -125,9 +125,8 @@
         right: 0;
         width: 160px;
         transition: opacity 0.15s, width 0.5s;
-        background-color: #0386D2;
         color: white;
-        box-shadow: rgba(0,0,0,0.2) 0 2px 10px;
+        //box-shadow: rgba(0,0,0,0.2) 0 2px 10px;
 
         h3{
             font-weight: 200;
@@ -172,6 +171,7 @@
             padding: 8px;
             margin: 0;
             box-shadow: rgba(0, 0, 0, 0.2) 0 2px 8px;
+            background-color: #0386D2;
             cursor: pointer;
             z-index: 2;
             position: relative;
@@ -181,7 +181,7 @@
                 height: 42px;
                 padding: 12px 22px 12px 30px;
                 position: absolute;
-                background-color: rgb(3, 134, 210);
+                background-color: rgb(3, 134, 210) !important;
                 z-index: 1;
                 width: 100%;
                 cursor: default;
@@ -213,23 +213,16 @@
         .main {
             background-color: white;
             color: #555;
-            overflow: hidden;
+            overflow-y: scroll;
             height: 0;
-            transition: height 0.5s;
+            opacity: 0;
+            transition: opacity 0.5s;
+            box-shadow: rgba(0,0,0,0.2) 0 2px 10px;
             &.expanded{
                 transition-delay: 0.5s;
-                height: 300px;
+                height: auto;
+                opacity: 1;
                 background-color: #f7f7f7;
-                &.tall{
-                    height: 500px;
-                }
-            }
-
-            ul{
-                &.locations{
-                    height: 100%;
-                    overflow-y: scroll;
-                }
             }
 
             .routers, .peers{
@@ -338,14 +331,16 @@
         }
         &.with-router{
             width: 380px;
-            background-color: #DFC089;
+            .panel-header{
+                background-color: #DFC089;
+            }
             &.peers-only{
                 width: 160px;
             }
             .main{
-                padding-top: 40px;
+                margin-top: 42px;
                 &.peers-only{
-                    padding-top: 0;
+                    margin-top: 0;
                 }
             }
             .pointer{

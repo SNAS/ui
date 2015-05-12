@@ -81,9 +81,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.$watch('selectionMade', function(val){
         if(val === true){
             $scope.height = 400;
+            $scope.panelHeight = $scope.height - 120;
         }
         else if(val === false){
             $scope.height = angular.element($window).height() - 50;
+            $scope.panelHeight = $scope.height - 80;
         }
         else{
             return;
@@ -207,6 +209,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
             $scope.map.addLayer($scope.routerLayer);
             $scope.loading = false;
+            $scope.$broadcast('routers-loaded');
             $scope.fitMap('routers');
         }).
         error(function (error){
@@ -313,6 +316,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             }
             $scope.map.addLayer($scope.peerLayer);
             $scope.loading = false;
+            $scope.$broadcast('peers-loaded');
             $scope.fitMap('peers');
         }).
         error(function (error){
@@ -550,10 +554,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         cardData.stateprov = location.options.stateprov;
         cardData.city = location.options.stateprov;
 
+        $scope.selectionMade = true;
+        $scope.$broadcast('router-click');
         $scope.height = 400;
         $scope.map.invalidateSize();
-        $scope.selectionMade = true;
-        
+
         $scope.cardApi.changeCard(router);
         $scope.panelSearch = '';
         $scope.selectedRouter = router;
@@ -572,6 +577,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *****************************************/
     $scope.deselectPanelRouter = function(){
         $scope.panelTitle = 'Router List';
+        $scope.$broadcast('clear-router');
+        $scope.selectionMade = false;
         if($scope.selectedRouter != undefined){
             $scope.cardApi.removeCard($scope.selectedRouter);
             $scope.selectedRouter = false;
@@ -628,6 +635,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *****************************************/
     $scope.selectPanelLocation = function(location){
         location.expandRouters = !location.expandRouters;
+        $scope.$broadcast('location-click');
         if($scope.selectedLocation != undefined)
             setIcon($scope.selectedLocation, 'default');
         $scope.selectedLocation = undefined;
@@ -639,6 +647,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *****************************************/
     $scope.selectPanelPeerLocation = function(location){
         location.options.expandPeers = !location.options.expandPeers;
+        $scope.$broadcast('peer-location-click');
         if($scope.selectedLocation != undefined){
             $scope.selectedLocation.closePopup();
             setIcon($scope.selectedLocation, 'default');
@@ -674,4 +683,58 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         id: "@name"
       }
     }
+})
+.directive('animateAuto', function ($timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            scope.$on('routers-loaded', function() {
+                scope.expandList = true;
+                $timeout( function(){
+                    autoHeightAnimate(element, 500);
+                }, 500);
+            });
+            scope.$on('peers-loaded', function(){
+                scope.expandList = true;
+                $timeout( function(){
+                    autoHeightAnimate(element, 500, 42);
+                }, 500);
+            });
+            scope.$on('clear-router', function(){
+                $timeout( function(){
+                    autoHeightAnimate(element, 500);
+                }, 500);
+            });
+            scope.$on('location-click', function() {
+                $timeout( function(){
+                    autoHeightAnimate(element, 500);
+                }, 50);
+            });
+            scope.$on('peer-location-click', function() {
+                $timeout( function(){
+                    autoHeightAnimate(element, 500, 42);
+                }, 50);
+            });
+            scope.$on('router-click', function() {
+                animateToSize(element, 0, 500);
+            })
+
+            function autoHeightAnimate(element, time, extra){
+                var maxHeight = scope.height - 80;
+                var curHeight = element.height();
+                var autoHeight = element.css('height', 'auto').height();
+                if(extra){
+                    autoHeight += extra;
+                }
+                if(autoHeight > maxHeight){
+                    autoHeight = maxHeight;
+                }
+                element.height(curHeight);
+                element.stop().animate({ height: autoHeight }, parseInt(time));
+            }
+            function animateToSize(element, size, time){
+                element.stop().animate({ height: size }, parseInt(time));
+            }
+        }
+    };
 });
