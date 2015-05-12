@@ -55,22 +55,43 @@ angular.module('bmpUiApp')
         topology: {}
       },
       view: {
-        content: [{
-          tag: 'h1',
-          content: '{#node.id}'
-        }, {
-          tag: 'p',
-          content: [{
-            tag: 'label',
-            content: 'Username'
-          }, {
-            tag: 'span',
-            content: '{#node.ASN}'
-          }]
-        }, {
-          tag: 'p',
-          content: '{#node.ASN}'
-        }]
+        content: [
+          {
+            tag: 'h4',
+            content: '{#node.model.asn}'
+            //content: '{#node.id}'
+          },
+          {
+            tag: 'p',
+            content: [{
+              tag: 'label',
+              content: 'AS Name:'
+            }, {
+              tag: 'span',
+              content: '{#node.model.as_name}'
+            }]
+          },
+          {
+            tag: 'p',
+            content: [{
+              tag: 'label',
+              content: 'Organization:'
+            }, {
+              tag: 'span',
+              content: '{#node.model.org_name}'
+            }]
+          },
+          {
+            tag: 'p',
+            content: [{
+              tag: 'label',
+              content: 'Country:'
+            }, {
+              tag: 'span',
+              content: '{#node.model.country}'
+            }]
+          }
+        ]
       }
     });
 
@@ -86,14 +107,14 @@ angular.module('bmpUiApp')
               //height: canvas_height,
               adaptive: true,
               nodeConfig: {
-                label: 'model.ASN', // display node's name as label from model
+                label: 'model.asn', // display node's name as label from model
                 iconType: 'model.iconType'
               },
               tooltipManagerConfig: {
                 nodeTooltipContentClass: 'MyNodeTooltip'
               },
               dataProcessor: 'force',
-              identityKey: 'ASN',
+              identityKey: 'asn',
               showIcon: true,
               scalable: false
             });
@@ -105,7 +126,7 @@ angular.module('bmpUiApp')
             layout.direction('vertical');
             layout.sortOrder(["Upstream", "local", "Downstream"]);
             layout.levelBy(function (node, model) {
-              return model._data.Type;
+              return model._data.type;
             });
             topo.activateLayout('hierarchicalLayout');
           }
@@ -206,24 +227,24 @@ angular.module('bmpUiApp')
       //var fields = ["asn", "as_name", "org_id", "org_name", "address", "city", "state_prov", "postal_code", "country", "timestamp", "source"];
 
       nodes.push({
-          "ASN": data.asn,
-          "AS Name": data.as_name,
-          "Organization": data.org_name,
-          "Country": data.country,
+          asn: data.asn,
+          as_name: data.as_name,
+          org_name: data.org_name,
+          country: data.country,
           iconType: 'groupS',
-          "Type": 'local'
+          type: 'local'
         }
       );
 
-      for(var i=0; i<upstreamData.length;i++){
+      for (var i = 0; i < upstreamData.length; i++) {
         nodes.push({
-          "ASN": upstreamData[i].UpstreamAS,
-          "AS Name": upstreamData[i].as_name,
-          "Organization": upstreamData[i].org_name,
-          "Country": upstreamData[i].country,
-          "Prefix": upstreamData[i].Prefixes_Learned,
+          asn: upstreamData[i].UpstreamAS,
+          as_name: upstreamData[i].as_name,
+          org_name: upstreamData[i].org_name,
+          country: upstreamData[i].country,
+          //"Prefix": upstreamData[i].Prefixes_Learned,
           iconType: 'groupL',
-          "Type": 'Upstream'
+          type: 'Upstream'
         });
 
         links.push(
@@ -233,16 +254,22 @@ angular.module('bmpUiApp')
           });
       }
 
-      for(var i=0; i<downstreamData.length; i++){
-        //for(var i=0; i<downstreamData.length;i++){
+      for (var i = 0; i < downstreamData.length; i++) {
         nodes.push({
-          "ASN": downstreamData[i].DownstreamAS,
-          "AS Name": downstreamData[i].as_name,
-          "Organization": downstreamData[i].org_name,
-          "Country": downstreamData[i].country,
-          "Prefix": downstreamData[i].Prefixes_Learned,
+          asn: downstreamData[i].DownstreamAS,
+          as_name: downstreamData[i].as_name,
+          org_name: downstreamData[i].org_name,
+          country: downstreamData[i].country,
+          //"Prefix": upstreamData[i].Prefixes_Learned,
           iconType: 'groupM',
-          "Type": 'Downstream'
+          type: 'Downstream'
+          //"ASN": downstreamData[i].DownstreamAS,
+          //"AS Name": downstreamData[i].as_name,
+          //"Organization": downstreamData[i].org_name,
+          //"Country": downstreamData[i].country,
+          ////"Prefix": downstreamData[i].Prefixes_Learned,
+          //iconType: 'groupM',
+          //"Type": 'Downstream'
         });
 
         links.push(
@@ -294,7 +321,7 @@ angular.module('bmpUiApp')
       var topologyData = {
         nodes: nodes,
         links: links,
-      //  nodeSet: nodeSet
+        //  nodeSet: nodeSet
       }
       topo.data(topologyData);
     }
