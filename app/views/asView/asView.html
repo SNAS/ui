@@ -2,7 +2,10 @@
   <!--<h1 class="pgtitle"> AS View</h1>-->
   <div>
     AS Number
-    <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
+    <input id="tags" type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
+    <ul id="suggestions" class="suggestions-list">
+      <li ng-repeat="suggestion in suggestions" class="blockSpan" ng-click="addToSelectedTags($index)" ng-mouseover="$parent.selectedIndex=$index" ng-class="{active : selectedIndex===$index}">{{suggestion}}</li>
+    </ul>
     <p class="help-block">Example: 701</p>
     <h3 ng-show="nodata" id="dem">This AS doesn't exist</h3>
     <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->

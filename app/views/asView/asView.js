@@ -10,7 +10,7 @@
 angular.module('bmpUiApp')
   .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
-    var upstreamData, upstreamAmount, downstreamData, downstreamAmount;
+    var upstreamData, downstreamData;
     var upstreamPromise, downstreamPromise;
 
     //$scope.success = false;
@@ -44,52 +44,83 @@ angular.module('bmpUiApp')
     $scope.enterValue = function (value) {
       $timeout(function () {
         if (value == $scope.searchValue) {
-          searchValue();
+          if (isNaN($scope.searchValue)) {
+            predictiveSeach();
+          }
+          else {
+            searchValue();
+          }
         }
       }, 500);
     };
 
     nx.define('MyNodeTooltip', nx.ui.Component, {
       properties: {
-        node: {},
-        topology: {}
+        node: {
+          set: function (value) {
+            var modelData = value.model().getData();
+            var showData = {
+              "AS Name": modelData.as_name,
+              "Organization": modelData.org_name,
+              "Country": modelData.country
+            };
+            this.view('list').set('items', new nx.data.Dictionary(showData));
+            this.title(value.label());
+          }
+        },
+        topology: {},
+        title: {}
       },
       view: {
         content: [
           {
-            tag: 'h4',
-            content: '{#node.model.asn}'
-            //content: '{#node.id}'
+            name: 'header',
+            props: {
+              'class': 'n-topology-tooltip-header'
+            },
+            content: [
+              {
+                tag: 'span',
+                props: {
+                  'class': 'n-topology-tooltip-header-text'
+                },
+                name: 'title',
+                content: '{#title}'
+              }
+            ]
           },
           {
-            tag: 'p',
-            content: [{
-              tag: 'label',
-              content: 'AS Name:'
-            }, {
-              tag: 'span',
-              content: '{#node.model.as_name}'
-            }]
-          },
-          {
-            tag: 'p',
-            content: [{
-              tag: 'label',
-              content: 'Organization:'
-            }, {
-              tag: 'span',
-              content: '{#node.model.org_name}'
-            }]
-          },
-          {
-            tag: 'p',
-            content: [{
-              tag: 'label',
-              content: 'Country:'
-            }, {
-              tag: 'span',
-              content: '{#node.model.country}'
-            }]
+            name: 'content',
+            props: {
+              'class': 'n-topology-tooltip-content n-list'
+            },
+            content: [
+              {
+                name: 'list',
+                tag: 'ul',
+                props: {
+                  'class': 'n-list-wrap',
+                  template: {
+                    tag: 'li',
+                    props: {
+                      'class': 'n-list-item-i',
+                      role: 'listitem'
+                    },
+                    content: [
+                      {
+                        tag: 'label',
+                        content: '{key}: '
+                      },
+                      {
+                        tag: 'span',
+                        content: '{value}'
+                      }
+                    ]
+
+                  }
+                }
+              }
+            ]
           }
         ]
       }
@@ -102,9 +133,10 @@ angular.module('bmpUiApp')
             return new nx.dom.Element(document.getElementById('AS_topology'));
           },
           start: function () {
+            //var container = document.getElementById('AS_topology');
             window.topo = new nx.graphic.Topology({
-              //width: canvas_width,
-              //height: canvas_height,
+              //width: container.clientWidth,
+              //height: 600,
               adaptive: true,
               nodeConfig: {
                 label: 'model.asn', // display node's name as label from model
@@ -113,22 +145,22 @@ angular.module('bmpUiApp')
               tooltipManagerConfig: {
                 nodeTooltipContentClass: 'MyNodeTooltip'
               },
-              dataProcessor: 'force',
+              //dataProcessor: 'force',
               identityKey: 'asn',
               showIcon: true,
-              scalable: false
+              //scalable: false
             });
 
             topo.attach(this);
 
             //hierarchical Layout
-            var layout = topo.getLayout('hierarchicalLayout');
-            layout.direction('vertical');
-            layout.sortOrder(["Upstream", "local", "Downstream"]);
-            layout.levelBy(function (node, model) {
-              return model._data.type;
-            });
-            topo.activateLayout('hierarchicalLayout');
+            //var layout = topo.getLayout('hierarchicalLayout');
+            //layout.direction('vertical');
+            //layout.sortOrder(["Upstream", "local", "Downstream"]);
+            //layout.levelBy(function (node, model) {
+            //  return model._data.level;
+            //});
+            //topo.activateLayout('hierarchicalLayout');
           }
         }
       });
@@ -141,6 +173,44 @@ angular.module('bmpUiApp')
       searchValue();
     });
 
+    function predictiveSeach() {
+      $scope.suggestions = [
+        "ActionScript",
+        "AppleScript",
+        "Asp",
+        "BASIC",
+        "C",
+        "C++",
+        "Clojure",
+        "COBOL",
+        "ColdFusion",
+        "Erlang",
+        "Fortran",
+        "Groovy",
+        "Haskell",
+        "Java",
+        "JavaScript",
+        "Lisp",
+        "Perl",
+        "PHP",
+        "Python",
+        "Ruby",
+        "Scala",
+        "Scheme"
+      ];
+      //$("#tags").autocomplete({
+      //  source: availableTags
+      //});
+
+      apiFactory.getWhoIsASName($scope.searchValue).success(function (result) {
+        if (result.w.size != 0) {
+          var data = result.w.data;
+        }
+      })
+        .error(function () {
+
+        });
+    }
 
     function searchValue() {
       apiFactory.getWhoIsWhereASN($scope.searchValue).
@@ -172,7 +242,6 @@ angular.module('bmpUiApp')
 
     function getDetails(data) {
       var keys = Object.keys(data);
-      //var fields = ["asn", "as_name", "org_id", "org_name", "address", "city", "state_prov", "postal_code", "country", "timestamp", "source"];
       var showValues = '<table class="tableStyle"><thead><tr><th>AS Information</th></tr></thead><tbody>';
 
       for (var i = 0; i < keys.length; i++) {
@@ -201,7 +270,6 @@ angular.module('bmpUiApp')
       upstreamPromise.success(function (result) {
         upstreamData = result.upstreamASN.data.data;
         $scope.upstreamGridOptions.data = upstreamData;
-        //upstreamAmount = result.upstreamASN.data.size;
       }).
         error(function (error) {
           alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -214,7 +282,6 @@ angular.module('bmpUiApp')
       downstreamPromise.success(function (result) {
         downstreamData = result.downstreamASN.data.data;
         $scope.downstreamGridOptions.data = downstreamData;
-        //downstreamAmount = result.downstreamASN.data.size;
       }).
         error(function (error) {
           alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -222,19 +289,96 @@ angular.module('bmpUiApp')
         });
     }
 
+    //draw AS topology with current AS in the middle
     function drawTopology(data) {
-      var nodes = [], links = [];
-      //var fields = ["asn", "as_name", "org_id", "org_name", "address", "city", "state_prov", "postal_code", "country", "timestamp", "source"];
+      var upstreamAmount = upstreamData.length;
+      var downstreamAmount = downstreamData.length;
+      var nodes = [], links = [], nodeSet = [];
+      var width = 1200;
+      var singleNodes = [];
+      //var allGroupedNodes = [];
+      var totalNodesAmount;
+
+      var countrySet1 = {}, countrySet2 = {};
+      for (var i = 0; i < upstreamData.length; i++) {
+        if (!countrySet1[upstreamData[i].country]) {
+          countrySet1[upstreamData[i].country] = [];
+        }
+        countrySet1[upstreamData[i].country].push(upstreamData[i]);
+      }
+      var countrySet1Keys = Object.keys(countrySet1);
+      totalNodesAmount = countrySet1Keys.length;
+      for (var i = 0; i < countrySet1Keys.length; i++) {
+        if (countrySet1[countrySet1Keys[i]].length > 1) {
+          countrySet2[countrySet1Keys[i]] = countrySet1[countrySet1Keys[i]];
+          //groupedNodes = groupedNodes.concat(countrySet1[countrySet1Keys[i]]);
+        }
+        else {
+          singleNodes.push(countrySet1[countrySet1Keys[i]][0]);
+        }
+      }
+      var countrySet2Keys = Object.keys(countrySet2);
+
+      console.log(countrySet1);
+      console.log(countrySet2);
+      console.log(singleNodes);
+
+      //for (var i = 0; i < downstreamData.length; i++) {
+      //  if (!country[downstreamData[i].country]) {
+      //    country[downstreamData[i].country] = [];
+      //  }
+      //  country[downstreamData[i].country].push(downstreamData[i].DownstreamAS);
+
+      var space1 = width / (totalNodesAmount - 1);
+      var space2 = width / (downstreamAmount - 1);
+
+      for (var i = 0; i < countrySet2Keys.length; i++) {
+        var groupedNodes = countrySet2[countrySet2Keys[i]];
+        var groupedNodesId = [];
+        for (var j = 0; j < groupedNodes.length; j++) {
+          groupedNodesId.push(groupedNodes[j].UpstreamAS);
+        }
+        nodeSet.push({
+          id: i,
+          type: 'nodeSet',
+          nodes: groupedNodesId,
+          name: countrySet2Keys[i],
+          iconType: 'server',
+          x: (countrySet1Keys.length == 1) ? width / 2 : (singleNodes.length + i) * space1,
+          y: 0
+          //lockYAxle: true,
+          //level: 'Upstream'
+        });
+      }
 
       nodes.push({
-          asn: data.asn,
-          as_name: data.as_name,
-          org_name: data.org_name,
-          country: data.country,
-          iconType: 'groupS',
-          type: 'local'
-        }
-      );
+        asn: data.asn,
+        as_name: data.as_name,
+        org_name: data.org_name,
+        country: data.country,
+        iconType: 'groupS',
+        //level: 'local',
+        x: width / 2,
+        y: width / 10
+      });
+
+      //for (var i = 0; i < singleNodes.length; i++) {
+      //  nodes.push({
+      //    asn: singleNodes[i].UpstreamAS,
+      //    as_name: singleNodes[i].as_name,
+      //    org_name: singleNodes[i].org_name,
+      //    country: singleNodes[i].country,
+      //    iconType: 'groupL',
+      //    //lockYAxle: true,
+      //    //level: 'Upstream',
+      //    x: (countrySet1Keys == 1) ? width / 2 : i * space1,
+      //    y: 0
+      //  });
+      //  links.push({
+      //    source: singleNodes[i].UpstreamAS,
+      //    target: data.asn
+      //  });
+      //}
 
       for (var i = 0; i < upstreamData.length; i++) {
         nodes.push({
@@ -242,195 +386,51 @@ angular.module('bmpUiApp')
           as_name: upstreamData[i].as_name,
           org_name: upstreamData[i].org_name,
           country: upstreamData[i].country,
-          //"Prefix": upstreamData[i].Prefixes_Learned,
           iconType: 'groupL',
-          type: 'Upstream'
+          //lockYAxle: true,
+          //level: 'Upstream',
+          x: (countrySet1Keys == 1) ? width / 2 : i * space1,
+          y: 0
         });
-
-        links.push(
-          {
-            source: upstreamData[i].UpstreamAS,
-            target: data.asn
-          });
+        links.push({
+          source: upstreamData[i].UpstreamAS,
+          target: data.asn
+        });
       }
 
-      for (var i = 0; i < downstreamData.length; i++) {
+
+      for (var i = 0; i < downstreamAmount; i++) {
         nodes.push({
           asn: downstreamData[i].DownstreamAS,
           as_name: downstreamData[i].as_name,
           org_name: downstreamData[i].org_name,
           country: downstreamData[i].country,
-          //"Prefix": upstreamData[i].Prefixes_Learned,
           iconType: 'groupM',
-          type: 'Downstream'
-          //"ASN": downstreamData[i].DownstreamAS,
-          //"AS Name": downstreamData[i].as_name,
-          //"Organization": downstreamData[i].org_name,
-          //"Country": downstreamData[i].country,
-          ////"Prefix": downstreamData[i].Prefixes_Learned,
-          //iconType: 'groupM',
-          //"Type": 'Downstream'
+          //level: 'Downstream'
+          x: (downstreamAmount == 1) ? width / 2 : i * space2,
+          y: width / 5
         });
-
-        links.push(
-          {
-            source: data.asn,
-            target: downstreamData[i].DownstreamAS
-          });
+        links.push({
+          source: data.asn,
+          target: downstreamData[i].DownstreamAS
+        });
       }
 
-      var country = {};
-      //var as_name = {};
-      //var org_name = {};
-      for (var i = 0; i < downstreamData.length; i++) {
-        if (!country[downstreamData[i].country]) {
-          country[downstreamData[i].country] = [];
-        }
-        country[downstreamData[i].country].push(downstreamData[i].DownstreamAS);
-
-
-        //if (!as_name[downstreamData[i].as_name]) {
-        //  as_name[downstreamData[i].as_name] = 1;
-        //}
-        //else {
-        //  as_name[downstreamData[i].as_name]++;
-        //}
-        //
-        //if (!org_name[downstreamData[i].org_name]) {
-        //  org_name[downstreamData[i].org_name] = 1;
-        //}
-        //else {
-        //  org_name[downstreamData[i].org_name]++;
-        //}
-      }
-      console.log(country);
-      //console.log(as_name);
-      //console.log(org_name);
-
-      var nodeSet = [{
-        //id: 1,
-        type: 'nodeSet',
-        nodes: country["US"],
-        //root: nodes[8].id,
-        //latitude: nodes[8].latitude,
-        //longitude: nodes[8].longitude,
-        name: "US",
-        //iconType: 'server'
-      }];
+      topo.view('stage').upon('mousewheel',function(sender,event){
+        return false;
+      });
 
       var topologyData = {
         nodes: nodes,
         links: links,
-        //  nodeSet: nodeSet
-      }
+        nodeSet: nodeSet
+      };
+
       topo.data(topologyData);
     }
 
-    // draw AS topology with current AS in the middle
-    //function drawTopology() {
-    //  var node, link;
-    //  var w = 500;
-    //
-    //  var space1 = w / (upstreamAmount - 1);
-    //  var space2 = w / (downstreamAmount - 1);
-    //
-    //
-    //  var topologyData = {
-    //    nodes: [
-    //      {
-    //        "id": 0,
-    //        "x": 250,
-    //        "y": 100,
-    //        "name": "AS" + $scope.searchValue,
-    //        iconType: 'groupS'
-    //      }
-    //    ],
-    //    links: []
-    //  };
-    //
-    //
-    //  if (upstreamAmount == 1) {
-    //    node = {
-    //
-    //      "name": upstreamData[0].UpstreamAS,
-    //      "AS Name": upstreamData[0].as_name,
-    //      "Organization": upstreamData[0].org_name,
-    //      "Country": upstreamData[0].country,
-    //      "-------------------------": "",
-    //      "id": 1,
-    //      "x": 250,
-    //      "y": 0,
-    //
-    //      iconType: 'groupL'
-    //    };
-    //    link = {
-    //      "source": 0,
-    //      "target": 1
-    //    };
-    //    topologyData["nodes"][1] = node;
-    //    topologyData["links"][0] = link;
-    //  } else {
-    //    for (var i = 0; i < upstreamAmount; i++) {
-    //      node = {
-    //        "name": upstreamData[i].UpstreamAS,
-    //        "AS Name": upstreamData[i].as_name,
-    //        "Organization": upstreamData[i].org_name,
-    //        "Country": upstreamData[i].country,
-    //        "-------------------------": "",
-    //        "id": i + 1,
-    //        "x": i * space1,
-    //        "y": 0,
-    //        iconType: 'groupL'
-    //      }
-    //      link = {
-    //        "source": 0,
-    //        "target": i + 1
-    //      }
-    //      topologyData["nodes"][i + 1] = node;
-    //      topologyData["links"][i] = link;
-    //    }
-    //  }
-    //  if (downstreamAmount == 1) {
-    //    node = {
-    //      "name": downstreamData[0].DownstreamAS,
-    //      "AS Name": downstreamData[0].as_name,
-    //      "Organization": downstreamData[0].org_name,
-    //      "Country": downstreamData[0].country,
-    //      "-------------------------": "",
-    //      "id": upstreamAmount + 1,
-    //      "x": 250,
-    //      "y": 200,
-    //      iconType: 'groupM'
-    //    }
-    //    link = {
-    //      "source": 0,
-    //      "target": upstreamAmount + 1
-    //    }
-    //    topologyData["nodes"][upstreamAmount + 1] = node;
-    //    topologyData["links"][upstreamAmount] = link
-    //  } else {
-    //    for (var i = 0; i < downstreamAmount; i++) {
-    //      node = {
-    //        "name": downstreamData[i].DownstreamAS,
-    //        "AS Name": downstreamData[i].as_name,
-    //        "Organization": downstreamData[i].org_name,
-    //        "Country": downstreamData[i].country,
-    //        "-------------------------": "",
-    //        "id": upstreamAmount + i + 1,
-    //        "x": i * space2,
-    //        "y": 200,
-    //        iconType: 'groupM'
-    //      }
-    //      link = {
-    //        "source": 0,
-    //        "target": upstreamAmount + i + 1
-    //      }
-    //      topologyData["nodes"][upstreamAmount + i + 1] = node;
-    //      topologyData["links"][upstreamAmount + i] = link
-    //    }
-    //  }
-    //
-    //  topo.data(topologyData);
-    //}
+  }])
+  .directive('autocomplete', function(){
 
-  }]);
+  })
+;
