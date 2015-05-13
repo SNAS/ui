@@ -100,9 +100,9 @@ angular.module('bmpUiApp')
           });
       } else {
         // do a asn search
-        apiFactory.getWhoIsWhereASN(value).
+        apiFactory.getWhoIsASN(value).
           success(function (result) {
-            $scope.whoIsGridOptions.data = result.w.data;
+            $scope.whoIsGridOptions.data = result.gen_whois_asn.data;
             initSelect();
           }).
           error(function (error) {

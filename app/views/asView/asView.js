@@ -15,6 +15,8 @@ angular.module('bmpUiApp')
 
     //$scope.success = false;
     $scope.nodata = false;
+    $scope.upstreamNodata = false;
+    $scope.downstreamNodata = false;
 
     $scope.upstreamGridOptions = {
       rowHeight: 25,
@@ -213,16 +215,16 @@ angular.module('bmpUiApp')
     }
 
     function searchValue() {
-      apiFactory.getWhoIsWhereASN($scope.searchValue).
+      apiFactory.getWhoIsASN($scope.searchValue).
         success(function (result) {
-          if (result.w.size != 0) {
-            getDetails(result.w.data[0]);
+          if (result.gen_whois_asn.size != 0) {
+            getDetails(result.gen_whois_asn.data[0]);
             getUpstream();
             getDownstream();
 
             downstreamPromise.success(function () {
               upstreamPromise.success(function () {
-                drawTopology(result.w.data[0]);
+                drawTopology(result.gen_whois_asn.data[0]);
               });
             });
 
@@ -269,7 +271,13 @@ angular.module('bmpUiApp')
       upstreamPromise = apiFactory.getUpstream($scope.searchValue);
       upstreamPromise.success(function (result) {
         upstreamData = result.upstreamASN.data.data;
-        $scope.upstreamGridOptions.data = upstreamData;
+        if(result.upstreamASN.data.size == 0){
+          $scope.upstreamNodata = true;
+        }
+        else{
+          $scope.upstreamGridOptions.data = upstreamData;
+          $scope.upstreamNodata = false;
+        }
       }).
         error(function (error) {
           alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -281,7 +289,13 @@ angular.module('bmpUiApp')
       downstreamPromise = apiFactory.getDownstream($scope.searchValue);
       downstreamPromise.success(function (result) {
         downstreamData = result.downstreamASN.data.data;
-        $scope.downstreamGridOptions.data = downstreamData;
+        if(result.downstreamASN.data.size == 0){
+          $scope.downstreamNodata = true;
+        }
+        else{
+          $scope.downstreamGridOptions.data = downstreamData;
+          $scope.downstreamNodata = false;
+        }
       }).
         error(function (error) {
           alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
