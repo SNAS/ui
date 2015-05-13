@@ -34,12 +34,12 @@ angular.module('bmp.components.card')
 
       //1. move this api call so that it is under the table initilastion --> DONE
       //2. dont need the peersTableCreate() function --> DONE
-      //3. make it so that data asignment is done in the peer api and 
+      //3. make it so that data asignment is done in the peer api and
       //   not done in peersTableCreate
       //4. make it so the headings in table are changed to peeras, as_name
       //   and peer name
-      //5. call the table resize method(calGridHeight) at end of success 
-      //   message inside the peer api. 
+      //5. call the table resize method(calGridHeight) at end of success
+      //   message inside the peer api.
 
 
 
@@ -86,8 +86,6 @@ angular.module('bmp.components.card')
             //
             $scope.ipAmountData[0].values[index].value = ipAmount;
             $scope.ipAmountData[0].values[$scope.ipAmountData[0].values.length-1].value = ipTotal;
-            console.log("test");
-            console.dir($scope.ipAmountData);
           }).
           error(function (error) {
             console.log(error.message);
@@ -207,13 +205,10 @@ angular.module('bmp.components.card')
       apiFactory.getPeersByIp($scope.data.RouterIP).
         success(function (result){
           $scope.peersAmount = result.v_peers.size;
-         // peersData = result.v_peers.data;
+           // peersData = result.v_peers.data;
           $scope.globalViewPeerOptions.data = result.v_peers.data;
 
-          console.log($scope.globalViewPeerOptions.data);
-
-
-         $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
+          $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
         }).
         error(function (error){
           console.log(error.message);
@@ -293,5 +288,4 @@ angular.module('bmp.components.card')
         type: $scope.data.type
       });
 
-      console.dir($scope);
   }]);

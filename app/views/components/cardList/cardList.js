@@ -30,8 +30,19 @@ angular.module('bmp.components.cardList',[])
       },
       link: function(scope) {
         scope.cards = [];
-        var arr = new Array(scope.priority.length);
+        scope.cApi = {};
 
+        var lenTotal = 0;
+        for(var i = 0; i < scope.length.length; i++){
+          lenTotal += scope.length[i];
+          //scope.cApi = scope.cApi.concat(new Array(scope.length[i]));
+        }
+
+        scope.revIndex = function(index){
+          return lenTotal - index;
+        };
+
+        var arr = new Array(scope.priority.length);
         for(var i = 0; i < scope.priority.length; i++){
           arr[i] = [];
         }
@@ -44,6 +55,7 @@ angular.module('bmp.components.cardList',[])
           }
           scope.cards = buildarr;
         };
+
 
         scope.api = {
 
@@ -70,9 +82,11 @@ angular.module('bmp.components.cardList',[])
 
             //check card doesnt exist
             if (arr[pIndex].indexOf(card) == -1) {
+              scope.cApi[card.$$hashKey]={api:null};
               //remove oldest of the begining if list becomes to long.
               if (arr[pIndex].length + 1 > scope.length[pIndex]) {
                 arr[pIndex].shift();
+                delete scope.cApi[card.$$hashKey];
                 //if empty then empty childs
                 if(arr[pIndex][0] == null){
                   for(var i = pIndex; i >= 0; i--){
@@ -82,6 +96,17 @@ angular.module('bmp.components.cardList',[])
               }
               arr[pIndex].push(card);
             }
+
+            //close parent cards
+            for(var i = pIndex+1; i < arr.length; i++){
+              for(var j =0; j < arr[i].length; j++){
+                var api = scope.cApi[arr[i][j].$$hashKey].api;
+                if(api.getCardState){ //check open
+                  api.changeCardState(); //close it
+                }
+              }
+            }
+
             buildList();
           }
 

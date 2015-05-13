@@ -21,8 +21,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.activeMarker;
 
     $scope.selectionMade = false;
-    $scope.height = angular.element($window).height() - 50;
-    $scope.panelHeight = $scope.height - 80;
 
     /************************************
         Change panel based on location
@@ -80,12 +78,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
     $scope.$watch('selectionMade', function(val){
         if(val === true){
-            $scope.height = 400;
+            $scope.mapHeight = 400;
             $scope.panelHeight = $scope.height - 120;
-        }
-        else if(val === false){
-            $scope.height = angular.element($window).height() - 50;
-            $scope.panelHeight = $scope.height - 80;
         }
         else{
             return;
@@ -223,6 +217,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     /*******************************
         Populate map with peers
     *******************************/
+    $scope.peerDictionary = {};
     $scope.selectedPeerLocations= [];
     $scope.getPeers = function (ip){
         $scope.loading = true;
@@ -233,11 +228,10 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         $scope.peerLayer = new L.FeatureGroup({
             selected: false
         });
-        //empty out the old location list
-        $scope.allLocations = [];
+        $scope.map.addLayer($scope.peerLayer);
         var data;
-        apiFactory.getPeersAndLocationsByIp(ip).
-        success(function (result){
+         apiFactory.getPeersAndLocationsByIp(ip).
+         success(function (result){
             try {
                 data = result.v_peers.data;
             } catch(e) {
@@ -275,24 +269,15 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                     type: 'Peer'
                 };
 
-                //concat of latlng for value (not an array)
-                var pos = $scope.allLocations.indexOf(data[i].latitude + data[i].longitude);
+                var temp = data[i].latitude + '-' + data[i].longitude;
 
-                //we already have a marker at this location
-                if(pos >= 0){
-                    var curr = $scope.selectedPeerLocations[pos];
-                    //Add this peer to the router's peer list
+                if($scope.peerDictionary[temp]){
+                    var curr = $scope.peerDictionary[temp];
                     curr.options.peers.push(currData);
-                    setIcon(curr, 'default');
-                    //update popup content
-                    curr = setPopupContent(curr);
-                    $scope.selectedPeerLocations[pos] = curr;
-                }
-                //we do not have a marker at this location
+                    $scope.peerDictionary[temp] = curr;
+                }   
                 else{
-                    $scope.allLocations.push(data[i].latitude + data[i].longitude);
-                    var options = 
-                    {
+                    var options = {
                         country: data[i].country,
                         stateprov: data[i].stateprov,
                         city: data[i].city,
@@ -307,14 +292,19 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                             iconSize: [30, 70]
                         })
                     };
-
                     var marker = new L.Marker(latlng, options);
                     marker = setPopup(marker);
+                    $scope.peerDictionary[temp] = marker;
                     $scope.peerLayer.addLayer(marker);
-                    $scope.selectedPeerLocations.push(marker);
                 }
             }
-            $scope.map.addLayer($scope.peerLayer);
+
+            for (var key in $scope.peerDictionary) {
+                var curr = $scope.peerDictionary[key];
+                setIcon(curr, 'default');
+                curr = setPopupContent(curr);
+            }
+
             $scope.loading = false;
             $scope.$broadcast('peers-loaded');
             $scope.fitMap('peers');
@@ -578,6 +568,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.deselectPanelRouter = function(){
         $scope.panelTitle = 'Router List';
         $scope.$broadcast('clear-router');
+        $scope.panelSearch = '';
         $scope.selectionMade = false;
         if($scope.selectedRouter != undefined){
             $scope.cardApi.removeCard($scope.selectedRouter);
@@ -596,7 +587,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             //$scope.selectedLocation = undefined;
         }
         $scope.selectionMade = false;
-        $scope.selectedPeerLocations = [];
+        // $scope.selectedPeerLocations = [];
+        $scope.peerDictionary = {};
         $scope.map.removeLayer($scope.peerLayer);
         $scope.map.addLayer($scope.routerLayer);
         setInfo('Card list cleared');
@@ -660,10 +652,14 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         Expand show/hide for searches
     *****************************************/
     $scope.expandPanelLocations = function(){
-        if($scope.selectedRouter != undefined)
+        if($scope.selectedRouter != undefined){
             for(var i = 0; i < $scope.selectedPeerLocations.length; i++){
                 $scope.selectedPeerLocations[i].options.expandPeers = true;
             }
+            for (var key in $scope.peerDictionary) {
+                $scope.peerDictionary[key].options.expandPeers = true;
+            }
+        }
         else
             for(var i = 0; i < $scope.locations.length; i++){
                 $scope.locations[i].expandRouters = true;
@@ -684,57 +680,24 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       }
     }
 })
-.directive('animateAuto', function ($timeout) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs) {
-            scope.$on('routers-loaded', function() {
-                scope.expandList = true;
-                $timeout( function(){
-                    autoHeightAnimate(element, 500);
-                }, 500);
-            });
-            scope.$on('peers-loaded', function(){
-                scope.expandList = true;
-                $timeout( function(){
-                    autoHeightAnimate(element, 500, 42);
-                }, 500);
-            });
-            scope.$on('clear-router', function(){
-                $timeout( function(){
-                    autoHeightAnimate(element, 500);
-                }, 500);
-            });
-            scope.$on('location-click', function() {
-                $timeout( function(){
-                    autoHeightAnimate(element, 500);
-                }, 50);
-            });
-            scope.$on('peer-location-click', function() {
-                $timeout( function(){
-                    autoHeightAnimate(element, 500, 42);
-                }, 50);
-            });
-            scope.$on('router-click', function() {
-                animateToSize(element, 0, 500);
-            })
+.directive('resize', function ($window, $timeout) {
+    return function (scope, element) {
+        var w = angular.element($window);
+        scope.getWindowDimensions = function () {
+            return { 'h': w.height()};
+        };
+        scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
+            if(!scope.selectionMade){
+                scope.windowHeight = newValue.h;
+                scope.mapHeight =  (newValue.h - 50) + 'px';
+                $timeout(function(){
+                    scope.map.invalidateSize();
+                }, 1000);
+            }
+        }, true);
 
-            function autoHeightAnimate(element, time, extra){
-                var maxHeight = scope.height - 80;
-                var curHeight = element.height();
-                var autoHeight = element.css('height', 'auto').height();
-                if(extra){
-                    autoHeight += extra;
-                }
-                if(autoHeight > maxHeight){
-                    autoHeight = maxHeight;
-                }
-                element.height(curHeight);
-                element.stop().animate({ height: autoHeight }, parseInt(time));
-            }
-            function animateToSize(element, size, time){
-                element.stop().animate({ height: size }, parseInt(time));
-            }
-        }
-    };
+        w.bind('resize', function () {
+            scope.$apply();
+        });
+    }
 });

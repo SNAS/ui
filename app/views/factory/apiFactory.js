@@ -72,6 +72,10 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "whois/asn/count?where=w.asn%20like%20%27" + asn + "%%27");
     };
 
+    apiFactory.getWhoIsASNameList = function (list) {
+      return $http.get(urlBase + "whois/asn?where=w.asn%20in%20(" + list.toString() + ")");
+    };
+
     apiFactory.getWhoIsName = function (name, lim) {
       if(lim === undefined) lim = limit;
 

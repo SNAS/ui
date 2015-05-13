@@ -39,7 +39,7 @@
     background-color: rgba(255, 255, 255, 0.6);
     z-index: 1001;
     position: absolute;
-    padding-top: 15%;
+    left: 0;
     opacity:0;
     transition: opacity 0.2s;
     pointer-events: none;
@@ -58,9 +58,11 @@
         font-size: 80pt;
         color: #ddd;
         text-shadow: 1px 1px #C3C3C3;
+        top: 30%;
     }
     &.active{
         opacity: 1;
+        pointer-events: all;
     }
 }
 
@@ -214,11 +216,12 @@
             background-color: white;
             color: #555;
             overflow-y: scroll;
-            height: 0;
+            // height: 0;
             opacity: 0;
-            transition: opacity 0.5s;
+            transition: opacity 0.2s;//, height 0.5s;
             box-shadow: rgba(0,0,0,0.2) 0 2px 10px;
             &.expanded{
+                transition: opacity 0.5s;
                 transition-delay: 0.5s;
                 height: auto;
                 opacity: 1;

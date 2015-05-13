@@ -60,7 +60,8 @@ angular.module('bmp.components.card',['ui.bootstrap'])
         noremove: '=?',  //optional
         template: '=',   //folderName
         removecard: '&', //method to remove card
-        expand: '='      //state of card (expanded or collapsed)
+        expand: '=',     //state of card (expanded or collapsed)
+        api: '=?'         //used to close cards
       },
       link: function(scope) {
         var generics = ['Peer']; //all generic card
@@ -73,7 +74,7 @@ angular.module('bmp.components.card',['ui.bootstrap'])
           scope.templateLoc = scope.templatePath + scope.template + '/' + scope.template + '.html';
         }
 
-        scope.cardExpand = true; //default false = closed
+        scope.cardExpand = true; //default
         if(scope.expand !== undefined)
           scope.cardExpand = scope.expand;
 
@@ -81,13 +82,18 @@ angular.module('bmp.components.card',['ui.bootstrap'])
           scope.noremove = true;
 
 
-        scope.changeCardState = function() {
-          scope.cardExpand = !scope.cardExpand;
+        scope.api = {
+
+          changeCardState : function() {
+            scope.cardExpand = !scope.cardExpand;
+          },
+
+          getCardState : function(){
+            return scope.cardExpand;
+          }
+
         };
 
-        scope.getCardState = function(){
-          return scope.cardExpand;
-        }
       }
     }
   });

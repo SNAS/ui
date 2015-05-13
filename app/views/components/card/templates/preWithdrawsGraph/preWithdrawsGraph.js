@@ -71,7 +71,6 @@ angular.module('bmp.components.card')
           });
         }
         $scope.preWithdrawsData[0].values = gData;
-        console.dir($scope.preWithdrawsData[0].values);
       })
       .error(function (error){
         console.log(error.message);
