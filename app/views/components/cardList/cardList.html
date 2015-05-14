@@ -1,5 +1,4 @@
-<div ng-repeat="card in cards track by revIndex($index)">
-<!--<div ng-repeat="card in [].concat(cards).reverse() track by $index">-->
+<div ng-repeat="card in [].concat(cards).reverse() track by $index">
   <div bmp-card
        template="card.template"
        data="card"
