@@ -291,6 +291,7 @@ angular.module('bmpUiApp')
           var index = $scope.norepeat.indexOf((asname[i].asn).toString());
 
           //Here is where all fieldes/ info for popover should be.
+          
 
           //changed the name of the as to name from results.
           $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
