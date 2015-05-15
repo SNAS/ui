@@ -194,9 +194,6 @@
  
 
 <!--
-    //1. you will need to attach a popover to node read https://angular-ui.github.io/bootstrap/ find:"popover"
-    //2. add this to the correct html element commented in cardC.html the AS icon
-    //3. once got a simple pop open will need to fill it with correct information.
     //   this can be found in the existing query just need the fields. The felds need can be found in whois.
     //   go to whois page select one and then the first block text up to the gap so last field should be country
     //4. Add these fields to the popover for each node.
@@ -205,7 +202,7 @@
 
 
           <!--This is the actual AS icon-->
-          <div class="{{ path.icon }}" style="font-size: 50px" ng-style="{'color':path.colour}"></div>
+          <div class="{{ path.icon }}" style="font-size: 50px" ng-style="{'color':path.colour}" popover="I am Temi" popover-placement="right" popover-trigger="mouseenter"></div>
           <div style="text-align: center">{{ path.botVal }}</div>
         </div>
         <!--line-->

@@ -228,8 +228,6 @@ angular.module('bmpUiApp')
 
     //:::TEMI:::
 
-    //1. you will need to attach a popover to node read https://angular-ui.github.io/bootstrap/ find:"popover"
-    //2. add this to the correct html element commented in cardC.html the AS icon
     //3. once got a simple pop open will need to fill it with correct information.
     //   this can be found in the existing query just need the fields. The felds need can be found in whois.
     //   go to whois page select one and then the first block text up to the gap so last field should be country
@@ -286,14 +284,34 @@ angular.module('bmpUiApp')
       success(function (result) {
         var asname = result.w.data;
         for(var i=0; i < asname.length; i++){
-          console.dir(asname[i]);
+         console.dir(asname[i]);
 
           var index = $scope.norepeat.indexOf((asname[i].asn).toString());
 
-          //Here is where all fieldes/ info for popover should be.
+          //Here is where all fields/ info for popover should be.
+      /*    
+       $scope.fieldOptions = {
+        selection: [
+          {name: "asn"},
+          {name: "as_name"},
+          {name: "org_id"},
+          {name: "org_name"},
+          {name: "remarks"},
+          {name: "address"},
+          {name: "city"},
+          {name: "state_prov"},
+          {name: "postal_code"},
+          {name: "country"}
+        ]
+      };
+      
+      $scope.fieldOptions = asname[i];
+      console.dir($scope.fieldOptions);*/
 
           //changed the name of the as to name from results.
-          $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
+        $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
+      //  $scope.as_path[index+1].topVal = $scope.fieldOptions.as_name;//+1 cause starting router node
+
         }
       }).
       error(function (error) {
