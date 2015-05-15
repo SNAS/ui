@@ -25,7 +25,7 @@ angular.module('bmpUiApp')
       //  '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
 
       columnDefs: [
-        {name: "UpstreamAS", displayName: 'ASN', width: '*'},
+        {name: "asn", displayName: 'ASN', width: '*'},
         {name: "as_name", displayName: 'AS Name', width: '*'},
         //{name: "Prefixes_Learned", displayName: 'Prefixes', width: '*'}
       ]
@@ -38,7 +38,7 @@ angular.module('bmpUiApp')
       //  '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
 
       columnDefs: [
-        {name: "DownstreamAS", displayName: 'ASN', width: '*'},
+        {name: "asn", displayName: 'ASN', width: '*'},
         {name: "as_name", displayName: 'AS Name', width: '*'},
         //{name: "Prefixes_Learned", displayName: 'Prefixes', width: '*'}
       ]
@@ -259,6 +259,8 @@ angular.module('bmpUiApp')
         asn: data.asn,
         as_name: data.as_name,
         org_name: data.org_name,
+        city: data.city,
+        state_prov: data.state_prov,
         country: data.country,
         type: "local",
         iconType: 'groupS',
@@ -271,9 +273,11 @@ angular.module('bmpUiApp')
         for (var i = 0; i < upstreamData.length; i++) {
           nodes.push({
             id: id++,
-            asn: upstreamData[i].UpstreamAS,
+            asn: upstreamData[i].asn,
             as_name: upstreamData[i].as_name,
             org_name: upstreamData[i].org_name,
+            city: upstreamData[i].city,
+            state_prov: upstreamData[i].state_prov,
             country: upstreamData[i].country,
             type: "upstream",
             iconType: 'groupL',
@@ -295,9 +299,11 @@ angular.module('bmpUiApp')
         for (var i = 0; i < downstreamData.length; i++) {
           nodes.push({
             id: id++,
-            asn: downstreamData[i].DownstreamAS,
+            asn: downstreamData[i].asn,
             as_name: downstreamData[i].as_name,
             org_name: downstreamData[i].org_name,
+            city: downstreamData[i].city,
+            state_prov: downstreamData[i].state_prov,
             country: downstreamData[i].country,
             type: "downstream",
             iconType: 'groupM',
@@ -325,28 +331,28 @@ angular.module('bmpUiApp')
 
     //Group nodes by the initial of  AS name
     function groupNode(data, type, width, id) {
-      var space = width / (data.length - 1);
       var singleNodes = [];
       var allGroupedNodes = [];
+      //var USnodes = [];
 
       var nodeSet1 = {}, nodeSet2 = {};
       for (var i = 0; i < data.length; i++) {
-        if (!data[i].as_name) {
-          if(!nodeSet1[""]){
-            nodeSet1[""] = [];
-          }
-          nodeSet1[""].push(data[i]);
-        }
-        else {
-          if (!nodeSet1[data[i].as_name.charAt(0)]) {
-            nodeSet1[data[i].as_name.charAt(0)] = [];
-          }
-          nodeSet1[data[i].as_name.charAt(0)].push(data[i]);
-        }
-        //if (!nodeSet1[data[i].country]) {
-        //  nodeSet1[data[i].country] = [];
+        //if (!data[i].as_name) {
+        //  if(!nodeSet1[""]){
+        //    nodeSet1[""] = [];
+        //  }
+        //  nodeSet1[""].push(data[i]);
         //}
-        //nodeSet1[data[i].country].push(data[i]);
+        //else {
+        //  if (!nodeSet1[data[i].as_name.charAt(0)]) {
+        //    nodeSet1[data[i].as_name.charAt(0)] = [];
+        //  }
+        //  nodeSet1[data[i].as_name.charAt(0)].push(data[i]);
+        //}
+        if (!nodeSet1[data[i].country]) {
+          nodeSet1[data[i].country] = [];
+        }
+        nodeSet1[data[i].country].push(data[i]);
       }
       var nodeSet1Keys = Object.keys(nodeSet1).sort();
 
@@ -354,7 +360,12 @@ angular.module('bmpUiApp')
       for (var i = 0; i < nodeSet1Keys.length; i++) {
         if (nodeSet1[nodeSet1Keys[i]].length > 1) {
           nodeSet2[nodeSet1Keys[i]] = nodeSet1[nodeSet1Keys[i]];
-          allGroupedNodes = allGroupedNodes.concat(nodeSet1[nodeSet1Keys[i]]);
+          //if (nodeSet1Keys[i] != "US") {
+            allGroupedNodes = allGroupedNodes.concat(nodeSet1[nodeSet1Keys[i]]);
+          //}
+          //else{
+          //  USnodes = nodeSet1[nodeSet1Keys[i]];
+          //}
         }
         else {
           singleNodes.push(nodeSet1[nodeSet1Keys[i]][0]);
@@ -362,22 +373,25 @@ angular.module('bmpUiApp')
       }
       var nodeSet2Keys = Object.keys(nodeSet2);
 
+      var space = width / ((singleNodes.length + nodeSet2Keys.length) - 1);
       console.log(nodeSet1);
       console.log(nodeSet2);
-      console.log(nodeSet1Keys);
       console.log(singleNodes);
 
       //push all the single nodes
       for (var i = 0; i < singleNodes.length; i++) {
         nodes.push({
           id: id++,
-          asn: type == "upstream" ? singleNodes[i].UpstreamAS : singleNodes[i].DownstreamAS,
+          asn: singleNodes[i].asn,
           as_name: singleNodes[i].as_name,
           org_name: singleNodes[i].org_name,
+          city: singleNodes[i].city,
+          state_prov: singleNodes[i].state_prov,
           country: singleNodes[i].country,
           type: type,
           iconType: 'groupL',
-          x: i < singleNodes.length / 2 ? i * space : (allGroupedNodes.length + i) * space,
+          x: i < singleNodes.length / 2 ? i * space : (nodeSet2Keys.length + i) * space,
+          //x: i < singleNodes.length / 2 ? i * space : (allGroupedNodes.length + i) * space,
           y: type == "upstream" ? 0 : width / 5
         });
         if (type == "upstream") {
@@ -398,14 +412,18 @@ angular.module('bmpUiApp')
       for (var i = 0; i < allGroupedNodes.length; i++) {
         nodes.push({
           id: id++,
-          asn: type == "upstream" ? allGroupedNodes[i].UpstreamAS : allGroupedNodes[i].DownstreamAS,
+          asn: allGroupedNodes[i].asn,
           as_name: allGroupedNodes[i].as_name,
           org_name: allGroupedNodes[i].org_name,
+          city: allGroupedNodes[i].city,
+          state_prov: allGroupedNodes[i].state_prov,
           country: allGroupedNodes[i].country,
           type: type,
           iconType: 'groupL',
-          x: (singleNodes.length / 2 + i) * space,
-          y: type == "upstream" ? 0 : width / 5
+          //x: (singleNodes.length / 2 + i) * space,
+          //y: type == "upstream" ? 0 : width / 2.5
+          x: i * width/allGroupedNodes.length,
+          y: type == "upstream" ?  -  width / 20  : width / 5 +  width / 20
         });
         if (type == "upstream") {
           links.push({
@@ -421,26 +439,61 @@ angular.module('bmpUiApp')
         }
       }
 
+      //push all US nodes
+      //for (var i = 0; i < nodeSet2Keys.length; i++) {
+      //  var groupedNodes = nodeSet2[nodeSet2Keys[i]];
+      //
+      //  for (var j = 0; j < groupedNodes.length; j++) {
+      //    nodes.push({
+      //      id: id++,
+      //      asn: groupedNodes[j].asn,
+      //      as_name: groupedNodes[j].as_name,
+      //      org_name: groupedNodes[j].org_name,
+      //      city: groupedNodes[j].city,
+      //      state_prov: groupedNodes[j].state_prov,
+      //      country: groupedNodes[j].country,
+      //      type: type,
+      //      iconType: 'groupL',
+      //      //x: (singleNodes.length / 2 + i) * space,
+      //      //y: type == "upstream" ? 0 : width / 5
+      //      x: j * width / groupedNodes.length,
+      //      y: type == "upstream" ?  - i * width / 20  : width / 5 + (i + 1) * width / 20
+      //    });
+      //    if (type == "upstream") {
+      //      links.push({
+      //        source: id - 1,
+      //        target: 0
+      //      });
+      //    }
+      //    else {
+      //      links.push({
+      //        source: 0,
+      //        target: id - 1
+      //      });
+      //    }
+      //  }
+      //}
       //push nodeSet
       for (var i = 0; i < nodeSet2Keys.length; i++) {
         var groupedNodes = nodeSet2[nodeSet2Keys[i]];
         var groupedNodesId = [];
 
         for (var j = 0; j < groupedNodes.length; j++) {
-          var asn = ( type == "upstream" ) ? groupedNodes[j].UpstreamAS : groupedNodes[j].DownstreamAS;
+          var asn = groupedNodes[j].asn;
           groupedNodesId.push(getNode(asn, type).id);
         }
 
-        var centreNode = groupedNodes[Math.floor(groupedNodes.length / 2) - 1];
-        var asn = ( type == "upstream" ) ? centreNode.UpstreamAS : centreNode.DownstreamAS;
-        var centre = getNode(asn, type).x;
+        //var centreNode = groupedNodes[Math.floor(groupedNodes.length / 2) - 1];
+        //var asn = centreNode.asn;
+        //var centre = getNode(asn, type).x;
 
         nodeSet.push({
           id: id++,
           type: 'nodeSet',
           nodes: groupedNodesId,
           name: nodeSet2Keys[i],
-          x: centre,
+          //x: centre,
+          x: (singleNodes.length/2 + i) * space,
           y: type == "upstream" ? 0 : width / 5
         });
       }
@@ -463,6 +516,8 @@ angular.module('bmpUiApp')
             var showData = {
               "AS Name": modelData.as_name,
               "Organization": modelData.org_name,
+              "City": modelData.city,
+              "State": modelData.state_prov,
               "Country": modelData.country
             };
             this.view('list').set('items', new nx.data.Dictionary(showData));

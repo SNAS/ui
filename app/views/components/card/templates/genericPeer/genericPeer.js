@@ -60,12 +60,12 @@ angular.module('bmp.components.card')
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       columnDefs:[
-        {name: "DownstreamAS", displayName: 'AS Number', width: '*'},
+        {name: "asn", displayName: 'AS Number', width: '*'},
         {name: "as_name", displayName: 'AS Name', width: '*'},
         {name: "org_name", displayName:'Organization', width: '*'}
       ]
     };
-    var summaryPeerOptionsDefaultData = [{"as_name":"-","DownstreamAS":"-","org_name":"-"}];
+    var summaryPeerOptionsDefaultData = [{"as_name":"-","asn":"-","org_name":"-"}];
 
     $scope.summaryPeerOptions.multiSelect = false;
     $scope.summaryPeerOptions.modifierKeysToMultiSelect = false;
@@ -73,6 +73,19 @@ angular.module('bmp.components.card')
 
     $scope.summaryPeerOptions.onRegisterApi = function (gridApi) {
       $scope.summaryPeerOptionsApi= gridApi;
+    };
+
+    $scope.calGridHeight = function(grid, gridapi){
+      gridapi.core.handleWindowResize();
+
+      var height;
+      if(grid.data.length > 10){
+        height = ((10 * 30) + 30);
+      }else{
+        height = ((grid.data.length * 30) + 50);
+      }
+      grid.changeHeight = height;
+      gridapi.grid.gridHeight = grid.changeHeight;
     };
 
     $scope.$watch('cardExpand', function(val) {
@@ -90,28 +103,15 @@ angular.module('bmp.components.card')
       }, 550);
     });
 
-    $scope.calGridHeight = function(grid, gridapi){
-      gridapi.core.handleWindowResize();
-
-      var height;
-      if(grid.data.length > 10){
-        height = ((10 * 30) + 30);
-      }else{
-        height = ((grid.data.length * 30) + 50);
-      }
-      grid.changeHeight = height;
-      gridapi.grid.gridHeight = grid.changeHeight;
-    };
-
     //DownstreamAS, as_name, and org_name (working)
     $scope.peerDownData = [];
     apiFactory.getPeerDownStream($scope.data.peer_hash_id).
       success(function (result){
-        //var peerDown
-        if(result.peerDownstreamASN.data.length == 0){
+        console.dir(result.downstreamASN);
+        if(result.downstreamASN.size == 0){
           $scope.summaryPeerOptions.data = summaryPeerOptionsDefaultData;
         }else {
-          $scope.summaryPeerOptions.data = result.peerDownstreamASN.data;
+          $scope.summaryPeerOptions.data = result.downstreamASN.data;
         }
         $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
       }).

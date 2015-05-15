@@ -219,7 +219,7 @@ angular.module('bmpUiApp')
 
     apiFactory.getDownstream = function (asn) {
       return $http.get(urlBase + "downstream/" + asn);
-    }
+    };
 
     apiFactory.getUpstreamCount = function (asn) {
       return $http.get(urlBase + "upstream/" + asn + "/count");
