@@ -35,7 +35,7 @@ angular.module('bmp.components.card')
             rotateYLabel: true
           },
           yAxis: {
-            axisLabel: 'Quantity(Ip Count)',
+            axisLabel: 'Number of Updates',
             axisLabelDistance: 30,
             tickFormat:d3.format('d')
           }
