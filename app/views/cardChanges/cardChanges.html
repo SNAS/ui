@@ -191,18 +191,9 @@
         <!--icon-->
         <div style="display: table-cell;">
           <div style="text-align: center" tooltip="{{path.topVal}}">{{ wordCheck(path.topVal) }}</div>
- 
-
-<!--
-    //   this can be found in the existing query just need the fields. The felds need can be found in whois.
-    //   go to whois page select one and then the first block text up to the gap so last field should be country
-    //4. Add these fields to the popover for each node.
--->         
-
-
 
           <!--This is the actual AS icon-->
-          <div class="{{ path.icon }}" style="font-size: 50px" ng-style="{'color':path.colour}" popover="I am Temi" popover-placement="right" popover-trigger="mouseenter"></div>
+          <div class="{{ path.icon }}" style="font-size: 50px" ng-style="{'color':path.colour}" popover="{{path.popOut}}" popover-placement="right" popover-trigger="mouseenter"></div>
           <div style="text-align: center">{{ path.botVal }}</div>
         </div>
         <!--line-->
