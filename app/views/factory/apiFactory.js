@@ -52,7 +52,7 @@ angular.module('bmpUiApp')
 
     apiFactory.getPeersAndLocationsGrouped = function () {
       return $http.get(urlBase + "peer/map");
-    };    
+    };
 
     apiFactory.getPeersByLocalIp = function (ip) {
       return $http.get(urlBase + "peer/localip/" + ip + "?limit=5");
@@ -120,6 +120,10 @@ angular.module('bmpUiApp')
     };
 
     //Peer Analysis
+    apiFactory.getPeerByHashId = function (peerHashId) {
+      return $http.get(urlBase + "peer/" + peerHashId);
+    };
+
     apiFactory.getPeerPrefix = function () {
       return $http.get(urlBase + "peer/prefix");
     };
@@ -168,7 +172,7 @@ angular.module('bmpUiApp')
 
     //topology
     apiFactory.getPeerNodes = function (peerHashId){
-      return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);
+      return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId + "/?withGeo");
     };
 
     apiFactory.getPeerLinks = function (peerHashId){
