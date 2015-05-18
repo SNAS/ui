@@ -119,6 +119,10 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "as_stats/ipv6?topOrigin=5");
     };
 
+    apiFactory.getRIBbyASN = function (asn) {
+      return $http.get(urlBase + "rib/asn/" + asn);
+    };
+
     //Peer Analysis
     apiFactory.getPeerByHashId = function (peerHashId) {
       return $http.get(urlBase + "peer/" + peerHashId);
