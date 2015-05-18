@@ -226,15 +226,6 @@ angular.module('bmpUiApp')
         });
     };
 
-    //:::TEMI:::
-
-    //1. you will need to attach a popover to node read https://angular-ui.github.io/bootstrap/ find:"popover"
-    //2. add this to the correct html element commented in cardC.html the AS icon
-    //3. once got a simple pop open will need to fill it with correct information.
-    //   this can be found in the existing query just need the fields. The felds need can be found in whois.
-    //   go to whois page select one and then the first block text up to the gap so last field should be country
-    //4. Add these fields to the popover for each node.
-
     $scope.asPath={};
     var iconWidth = 50;
     var lineWidth = 100;
@@ -275,26 +266,44 @@ angular.module('bmpUiApp')
         topVal:$scope.norepeat[i],
         colour:"#9467b0",
         botVal:$scope.norepeat[i],
+        //popOut: "popOutContent",
         isEnd:true
       });
     }
     //make last as not have connecting line
     $scope.as_path[$scope.as_path.length-1].isEnd = false;
 
-    var asname;
+
+
+   var asname;
     apiFactory.getWhoIsASNameList($scope.norepeat).
       success(function (result) {
         var asname = result.w.data;
         for(var i=0; i < asname.length; i++){
-          console.dir(asname[i]);
+         //console.dir(asname[i]);
 
           var index = $scope.norepeat.indexOf((asname[i].asn).toString());
 
-          //Here is where all fieldes/ info for popover should be.
-          
+          //Here is where all fields/ info for popover should be.
 
-          //changed the name of the as to name from results.
-          $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
+      var popOutContent = asname[i].asn + "\n";
+      popOutContent+= asname[i].as_name + "\n";
+      popOutContent+= asname[i].org_id + "\n";
+      popOutContent+= asname[i].org_name + "\n";
+      popOutContent+= asname[i].remarks + "\n";
+      popOutContent+= asname[i].address + "\n";
+      popOutContent+= asname[i].city + "\n";
+      popOutContent+= asname[i].state_prov + "\n";
+      popOutContent+= asname[i].postal_code + "\n";
+      popOutContent+= asname[i].country;
+
+
+
+      //changed the name of the as to name from results.
+        $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
+       //$scope.as_path[index+1].popOut = asname[i].as_name;//+1 cause starting router node
+        $scope.as_path[index+1].popOut = popOutContent;//+1 cause starting router node
+
         }
       }).
       error(function (error) {

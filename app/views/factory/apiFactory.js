@@ -50,6 +50,10 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip + "%%27&withgeo");
     };
 
+    apiFactory.getPeersAndLocationsGrouped = function () {
+      return $http.get(urlBase + "peer/map");
+    };    
+
     apiFactory.getPeersByLocalIp = function (ip) {
       return $http.get(urlBase + "peer/localip/" + ip + "?limit=5");
     };
@@ -219,7 +223,7 @@ angular.module('bmpUiApp')
 
     apiFactory.getDownstream = function (asn) {
       return $http.get(urlBase + "downstream/" + asn);
-    }
+    };
 
     apiFactory.getUpstreamCount = function (asn) {
       return $http.get(urlBase + "upstream/" + asn + "/count");

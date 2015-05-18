@@ -32,30 +32,6 @@ angular.module('bmp.components.card')
       //  "LastModified":"2015-04-01 18:36:36"
       // }
 
-      //1. move this api call so that it is under the table initilastion --> DONE
-      //2. dont need the peersTableCreate() function --> DONE
-      //3. make it so that data asignment is done in the peer api and
-      //   not done in peersTableCreate
-      //4. make it so the headings in table are changed to peeras, as_name
-      //   and peer name
-      //5. call the table resize method(calGridHeight) at end of success
-      //   message inside the peer api.
-
-
-
-
-      //get peers data
-      /*var peersData;
-      apiFactory.getPeersByIp($scope.data.RouterIP).
-        success(function (result){
-          $scope.peersAmount = result.v_peers.size;
-          peersData = result.v_peers.data;
-         // peersTableCreate();
-        }).
-        error(function (error){
-          console.log(error.message);
-        });*/
-
 
       $scope.ipAmountData = [
         {
