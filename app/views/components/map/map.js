@@ -79,11 +79,14 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.$watch('selectionMade', function(val){
         if(val === true){
             $scope.mapHeight = 400;
-            $scope.panelHeight = $scope.height - 120;
+        }
+        else if(val === false){
+            $scope.mapHeight = angular.element($window).height();
         }
         else{
             return;
         }
+        $scope.panelHeight = $scope.mapHeight - 120;
         $timeout(function(){
             $scope.map.invalidateSize();
         }, 1000);
@@ -524,6 +527,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         $scope.$broadcast('clear-router');
         $scope.panelSearch = '';
         $scope.selectionMade = false;
+        //force map resize
+        $scope.getWindowDimensions();
         if($scope.selectedRouter != undefined){
             $scope.cardApi.removeCard($scope.selectedRouter);
             $scope.selectedRouter = false;
@@ -645,6 +650,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             if(!scope.selectionMade){
                 scope.windowHeight = newValue.h;
                 scope.mapHeight =  (newValue.h - 50) + 'px';
+                scope.panelHeight =  (newValue.h - 130) + 'px';
                 $timeout(function(){
                     scope.map.invalidateSize();
                 }, 1000);
