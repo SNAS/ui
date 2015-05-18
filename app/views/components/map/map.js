@@ -21,8 +21,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.activeMarker;
 
     $scope.selectionMade = false;
-    $scope.height = angular.element($window).height() - 50;
-    $scope.panelHeight = $scope.height - 80;
 
     /************************************
         Change panel based on location
@@ -80,14 +78,15 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
     $scope.$watch('selectionMade', function(val){
         if(val === true){
-            $scope.height = 400;
+            $scope.mapHeight = 400;
         }
         else if(val === false){
-            $scope.height = angular.element($window).height() - 50;
+            $scope.mapHeight = angular.element($window).height();
         }
         else{
             return;
         }
+        $scope.panelHeight = $scope.mapHeight - 120;
         $timeout(function(){
             $scope.map.invalidateSize();
         }, 1000);
@@ -207,6 +206,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
             $scope.map.addLayer($scope.routerLayer);
             $scope.loading = false;
+            $scope.$broadcast('routers-loaded');
             $scope.fitMap('routers');
         }).
         error(function (error){
@@ -220,6 +220,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     /*******************************
         Populate map with peers
     *******************************/
+    $scope.peerDictionary = {};
     $scope.selectedPeerLocations= [];
     $scope.getPeers = function (ip){
         $scope.loading = true;
@@ -227,98 +228,47 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             ip = '';
         if($scope.routerLayer)
                 $scope.map.removeLayer($scope.routerLayer);
-        $scope.peerLayer = new L.FeatureGroup({
-            selected: false
-        });
-        //empty out the old location list
-        $scope.allLocations = [];
+        $scope.peerLayer = new L.FeatureGroup();
+        
         var data;
         apiFactory.getPeersAndLocationsByIp(ip).
         success(function (result){
-            try {
-                data = result.v_peers.data;
-            } catch(e) {
-                console.log(e);
-                $scope.error = typeof e !== undefined ? e : 'Generic Server Error';
-                $scope.loading = false;
-                return false;
-            }
+            var data = result.v_peers.data;
+            for (var i = 0, len = data.length; i < len; i++) {
+                var curr = data[i];
+                var latlng = [curr.latitude, curr.longitude];
+                var temp = curr.latitude + ',' + curr.longitude;
 
-            if(data.length < 1){
-                $scope.error = "Error: no results from server";
-                $scope.loading = false;
-                return false;
-            }
-
-            for(var i = 0; i < data.length; i++){
-                //current location
-                var latlng = [data[i].latitude, data[i].longitude];
-                //current router data
-                var currData = {
-                    RouterIP: data[i].RouterIP,
-                    RouterName: data[i].RouterName,
-                    RouterAS: data[i].RouterAS,
-                    PeerName: data[i].PeerName,
-                    PeerIP: data[i].PeerIP,
-                    PeerASN: data[i].PeerASN,
-                    PeerASName: data[i].as_name,
-                    LastDownTimestamp: data[i].LastDownTimestamp,
-                    LastModified: data[i].LastModified,
-                    LocalASN: data[i].LocalASN,
-                    PeerPort: data[i].PeerPort,
-                    isPeerIPv4: data[i].isPeerIPv4,
-                    peer_hash_id: data[i].peer_hash_id,
-                    isUp: data[i].isUp,
-                    type: 'Peer'
-                };
-
-                //concat of latlng for value (not an array)
-                var pos = $scope.allLocations.indexOf(data[i].latitude + data[i].longitude);
-
-                //we already have a marker at this location
-                if(pos >= 0){
-                    var curr = $scope.selectedPeerLocations[pos];
-                    //Add this peer to the router's peer list
-                    curr.options.peers.push(currData);
-                    setIcon(curr, 'default');
-                    //update popup content
-                    curr = setPopupContent(curr);
-                    $scope.selectedPeerLocations[pos] = curr;
+                //Already have a location
+                if($scope.peerDictionary[temp]){
+                    $scope.peerDictionary[temp].options.peers.push(curr);
                 }
-                //we do not have a marker at this location
+                //New location
                 else{
-                    $scope.allLocations.push(data[i].latitude + data[i].longitude);
-                    var options = 
-                    {
-                        country: data[i].country,
-                        stateprov: data[i].stateprov,
-                        city: data[i].city,
+                    var options = {
+                        country: curr.country,
+                        stateprov: curr.stateprov,
+                        city: curr.city,
                         routers: [],
-                        peers: [currData],
+                        peers: [curr],
                         expandRouters: false,
                         expandPeers: false,
-                        type: 'Peer',
-                        icon: L.divIcon({
-                            html: '<div><span>1</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+DFC089.png"/></div>',
-                            className: 'marker',
-                            iconSize: [30, 70]
-                        })
+                        type: 'Peer'
                     };
-
                     var marker = new L.Marker(latlng, options);
-                    marker = setPopup(marker);
+                    $scope.peerDictionary[temp] = marker;
                     $scope.peerLayer.addLayer(marker);
-                    $scope.selectedPeerLocations.push(marker);
                 }
             }
+            for(var key in $scope.peerDictionary){
+                setIcon($scope.peerDictionary[key], 'default');
+                $scope.peerDictionary[key] = setPopup($scope.peerDictionary[key]);
+            }
+
+            $scope.loading = false;
+            $scope.$broadcast('peers-loaded');
             $scope.map.addLayer($scope.peerLayer);
-            $scope.loading = false;
             $scope.fitMap('peers');
-        }).
-        error(function (error){
-            $scope.error = "Error: API error";
-            $scope.loading = false;
-            return false;
         });
     }
 
@@ -536,7 +486,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         $scope.selectedLocation = location;
         setIcon($scope.selectedLocation, 'active');
         
-        angular.element(".locations").animate({ scrollTop: angular.element('#'+location.$$hashKey).position().top - 84 }, 1000);
+        //angular.element(".locations").animate({ scrollTop: angular.element('#'+location.$$hashKey).position().top - 84 }, 1000);
     }
 
 
@@ -549,11 +499,13 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         cardData.country = location.options.country;
         cardData.stateprov = location.options.stateprov;
         cardData.city = location.options.stateprov;
+        cardData.type = 'Router';
 
+        $scope.selectionMade = true;
+        $scope.$broadcast('router-click');
         $scope.height = 400;
         $scope.map.invalidateSize();
-        $scope.selectionMade = true;
-        
+
         $scope.cardApi.changeCard(router);
         $scope.panelSearch = '';
         $scope.selectedRouter = router;
@@ -572,6 +524,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *****************************************/
     $scope.deselectPanelRouter = function(){
         $scope.panelTitle = 'Router List';
+        $scope.$broadcast('clear-router');
+        $scope.panelSearch = '';
+        $scope.selectionMade = false;
+        //force map resize
+        $scope.getWindowDimensions();
         if($scope.selectedRouter != undefined){
             $scope.cardApi.removeCard($scope.selectedRouter);
             $scope.selectedRouter = false;
@@ -589,7 +546,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             //$scope.selectedLocation = undefined;
         }
         $scope.selectionMade = false;
-        $scope.selectedPeerLocations = [];
+        // $scope.selectedPeerLocations = [];
+        $scope.peerDictionary = {};
         $scope.map.removeLayer($scope.peerLayer);
         $scope.map.addLayer($scope.routerLayer);
         setInfo('Card list cleared');
@@ -618,6 +576,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         cardData.country = location.options.country;
         cardData.stateprov = location.options.stateprov;
         cardData.city = location.options.city;
+        cardData.type = 'Peer';
         $scope.cardApi.changeCard(cardData);
         setInfo('Peer added to card list');
     };
@@ -628,6 +587,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *****************************************/
     $scope.selectPanelLocation = function(location){
         location.expandRouters = !location.expandRouters;
+        $scope.$broadcast('location-click');
         if($scope.selectedLocation != undefined)
             setIcon($scope.selectedLocation, 'default');
         $scope.selectedLocation = undefined;
@@ -639,6 +599,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *****************************************/
     $scope.selectPanelPeerLocation = function(location){
         location.options.expandPeers = !location.options.expandPeers;
+        $scope.$broadcast('peer-location-click');
         if($scope.selectedLocation != undefined){
             $scope.selectedLocation.closePopup();
             setIcon($scope.selectedLocation, 'default');
@@ -651,10 +612,14 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         Expand show/hide for searches
     *****************************************/
     $scope.expandPanelLocations = function(){
-        if($scope.selectedRouter != undefined)
+        if($scope.selectedRouter != undefined){
             for(var i = 0; i < $scope.selectedPeerLocations.length; i++){
                 $scope.selectedPeerLocations[i].options.expandPeers = true;
             }
+            for (var key in $scope.peerDictionary) {
+                $scope.peerDictionary[key].options.expandPeers = true;
+            }
+        }
         else
             for(var i = 0; i < $scope.locations.length; i++){
                 $scope.locations[i].expandRouters = true;
@@ -673,5 +638,27 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         cardApi: '=',
         id: "@name"
       }
+    }
+})
+.directive('resize', function ($window, $timeout) {
+    return function (scope, element) {
+        var w = angular.element($window);
+        scope.getWindowDimensions = function () {
+            return { 'h': w.height()};
+        };
+        scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
+            if(!scope.selectionMade){
+                scope.windowHeight = newValue.h;
+                scope.mapHeight =  (newValue.h - 50) + 'px';
+                scope.panelHeight =  (newValue.h - 130) + 'px';
+                $timeout(function(){
+                    scope.map.invalidateSize();
+                }, 1000);
+            }
+        }, true);
+
+        w.bind('resize', function () {
+            scope.$apply();
+        });
     }
 });

@@ -1,4 +1,14 @@
 <div>
+
+  <h1 class="pgtitle">Originating AS Analysis</h1>
+  <div class="margin-small">
+    AS Number
+    <input id="tags" type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
+    <p class="help-block">Example: 701</p>
+    <h3 ng-show="nodata">This AS doesn't exist</h3>
+  <div class="gridStyle" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+  </div>
+
   <h1 class="pgtitle">AS Summary Report</h1>
   <div class="row">
     <div class="col-lg-6">

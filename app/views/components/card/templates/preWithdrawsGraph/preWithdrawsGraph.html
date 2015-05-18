@@ -1,13 +1,13 @@
 <div ng-controller="BmpCardPreWithdrawsGraphController">
   <!--COLLAPSED view-->
   <div ng-hide="cardExpand" class="collapsed"  style="display: block;">
-    <h5>Top prefixes by number of updates in past hours</h5>
+    <h5>Top prefixes by number of updates in past two hours</h5>
   </div>
 
   <!--EXPANDED view-->
   <div ng-show="cardExpand">
     <br>
-    <h1 class="pgtitle">Top prefixes by number of updates in past hours</h1>
+    <h1 class="pgtitle">Top prefixes by number of updates in past two hours</h1>
     <nvd3 options="preWithdrawsGraph" data="preWithdrawsData" config="preUpdatesConfig"></nvd3>
     Value: {{ hover }}
   </div>

@@ -36,20 +36,6 @@ angular.module('bmp.components.card')
       $scope.graphVisibility = true;
     };
 
-    //$scope.$watch('cardExpand', function(val) {
-    //  if($scope.cardExpand == true){
-    //    setTimeout(function(){
-    //      $scope.peerViewPeerApi.core.handleWindowResize();
-    //      //$scope.calGridHeight($scope.peerViewPeerOptions, $scope.peerViewPeerApi);
-    //    },10)
-    //  }
-    //});
-
-    ////when main tab is selected
-    //$scope.downStreamTab = function(){
-    //  $scope.peerViewPeerApi.core.handleWindowResize();
-    //};
-
     //  "RouterName": "csr1.openbmp.org",
     //  "PeerName": "lo-0.edge5.Washington1.Level3.net",
     //  "Prefix": "216.40.30.0",

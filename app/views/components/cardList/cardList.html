@@ -1,7 +1,9 @@
-<div ng-repeat="card in [].concat(cards).reverse()">
+<div ng-repeat="card in [].concat(cards).reverse() track by $index">
   <div bmp-card
        template="card.template"
        data="card"
-       removeCard="api.removeCard(card)">
+       expand="card.open"
+       removeCard="api.removeCard(card)"
+       api="cApi[card.$$hashKey].api">
   </div>
 </div>

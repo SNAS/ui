@@ -100,9 +100,9 @@ angular.module('bmpUiApp')
           });
       } else {
         // do a asn search
-        apiFactory.getWhoIsWhereASN(value).
+        apiFactory.getWhoIsASN(value).
           success(function (result) {
-            $scope.whoIsGridOptions.data = result.w.data;
+            $scope.whoIsGridOptions.data = result.gen_whois_asn.data;
             initSelect();
           }).
           error(function (error) {
@@ -151,15 +151,27 @@ angular.module('bmpUiApp')
               } else {
                 var s = raw_data[i].split(": "); //split on :<space> cause of http:// links
 
-                showValues += (
-                '<td>' +
-                s[0].trim() + ' ' +
-                '</td>' +
+                if(s.length>1) {
+                  showValues += (
+                  '<td>' +
+                  s[0].trim() + ' ' +
+                  '</td>' +
 
-                '<td>' +
-                s[1].trim() +
-                '</td>'
-                );
+                  '<td>' +
+                  s[1].trim() +
+                  '</td>'
+                  );
+                }
+                else{
+                  showValues += (
+                  '<td>' +
+                  '</td>' +
+
+                  '<td>' +
+                  s[0].trim() +
+                  '</td>'
+                  );
+                }
               }
               showValues += '</tr>';
             }

@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}">
+    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}" ng-style="{'max-height': panelHeight}">
       <ul class="locations" ng-hide="selectedRouter">
         <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
           <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
@@ -45,7 +45,7 @@
       </ul>
 
       <ul class="locations" ng-show="selectedRouter">
-        <li ng-attr-id="{{location.$$hashKey}}" ng-repeat="location in selectedPeerLocations | orderBy: 'options.city'" ng-show="filteredPeers.length">
+        <li ng-attr-id="{{location.$$hashKey}}" ng-repeat="(latlng, location) in peerDictionary | orderBy: 'options.city'" ng-show="filteredPeers.length">
           <p class="router-list-city" ng-class="{expanded: location.options.expandPeers}" ng-click="selectPanelPeerLocation(location)">
             <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
             <span class="count">({{location.options.peers.length}})</span>
@@ -72,5 +72,5 @@
     <span>{{info}}</span>
   </div>
 
-  <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{height}}" width="100%"></leaflet>
+  <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="100%" resize></leaflet>
 </div>

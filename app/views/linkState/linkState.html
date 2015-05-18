@@ -2,7 +2,7 @@
   <!--<h1 class="pgtitle">Link State View</h1>-->
   <div style="padding-bottom:12px">
     Select Peer
-    <select ng-model="selectedPeer" ng-options="peer.peerHashId for peer in peerData" ng-change="selectChange()">
+    <select ng-model="selectedPeer" ng-options="(peer.PeerName != '' ? peer.PeerName : peer.PeerIP + ' (' + peer.protocol + ')' ) for peer in peerData" ng-change="selectChange()">
     </select>
     Protocol:  {{protocol}}
   </div>

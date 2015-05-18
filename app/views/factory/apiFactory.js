@@ -50,6 +50,10 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip + "%%27&withgeo");
     };
 
+    apiFactory.getPeersAndLocationsGrouped = function () {
+      return $http.get(urlBase + "peer/map");
+    };
+
     apiFactory.getPeersByLocalIp = function (ip) {
       return $http.get(urlBase + "peer/localip/" + ip + "?limit=5");
     };
@@ -70,6 +74,10 @@ angular.module('bmpUiApp')
 
     apiFactory.getWhoIsWhereASNLikeCOUNT = function (asn) {
       return $http.get(urlBase + "whois/asn/count?where=w.asn%20like%20%27" + asn + "%%27");
+    };
+
+    apiFactory.getWhoIsASNameList = function (list) {
+      return $http.get(urlBase + "whois/asn?where=w.asn%20in%20(" + list.toString() + ")");
     };
 
     apiFactory.getWhoIsName = function (name, lim) {
@@ -111,7 +119,15 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "as_stats/ipv6?topOrigin=5");
     };
 
+    apiFactory.getRIBbyASN = function (asn) {
+      return $http.get(urlBase + "rib/asn/" + asn);
+    };
+
     //Peer Analysis
+    apiFactory.getPeerByHashId = function (peerHashId) {
+      return $http.get(urlBase + "peer/" + peerHashId);
+    };
+
     apiFactory.getPeerPrefix = function () {
       return $http.get(urlBase + "peer/prefix");
     };
@@ -160,7 +176,7 @@ angular.module('bmpUiApp')
 
     //topology
     apiFactory.getPeerNodes = function (peerHashId){
-      return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);
+      return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId + "/?withGeo");
     };
 
     apiFactory.getPeerLinks = function (peerHashId){
@@ -209,6 +225,14 @@ angular.module('bmpUiApp')
     };
 
     //AS View
+    apiFactory.getUpstream = function (asn) {
+      return $http.get(urlBase + "upstream/" + asn);
+    };
+
+    apiFactory.getDownstream = function (asn) {
+      return $http.get(urlBase + "downstream/" + asn);
+    };
+
     apiFactory.getUpstreamCount = function (asn) {
       return $http.get(urlBase + "upstream/" + asn + "/count");
     };

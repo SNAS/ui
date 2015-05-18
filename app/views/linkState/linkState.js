@@ -12,9 +12,25 @@ angular.module('bmpUiApp')
   .controller('linkStateController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
     $scope.peerData = [
-      {peerHashId: "16ea27797629984cc5fd8c7a210b082d"},
-      {peerHashId: "42e3715aaec11635f6dded418a1fe8f2"}
-    ]
+      {
+        PeerName: "pool-100-1-1-4.nwrknj.fios.verizon.net",
+        PeerIP: "100.1.1.4",
+        protocol: "OSPFv2",
+        peerHashId: "f759ff5667e3e5341fbf7297c49d7f6f"
+      },
+      {
+        PeerName: "",
+        PeerIP: "200.1.1.1",
+        protocol: "OSPFv2",
+        peerHashId: "16ea27797629984cc5fd8c7a210b082d"
+      },
+      {
+        PeerName: "",
+        PeerIP: "200.1.1.1",
+        protocol: "IS-IS_L2",
+        peerHashId: "42e3715aaec11635f6dded418a1fe8f2"
+      }
+    ];
     $scope.selectedPeer = $scope.peerData[0];
     $scope.protocol;
     $scope.show = false;
@@ -226,6 +242,8 @@ angular.module('bmpUiApp')
         var nodesData = result.v_ls_nodes.data;
         for (var i = 0; i < result.v_ls_nodes.size; i++) {
           var hash_id = nodesData[i].hash_id;
+          var latitude = nodesData[i].latitude;
+          var longitude = nodesData[i].longitude;
           var routerId;
           if (nodesData[i].protocol == "OSPFv2") {
             routerId = nodesData[i].IGP_RouterId;
@@ -239,8 +257,10 @@ angular.module('bmpUiApp')
             {
               id: hash_id,
               routerId: routerId,
-              latitude: latitudes[i],
-              longitude: longitudes[i],
+              latitude: latitude != null ? latitude : latitudes[i],
+              longitude: longitude != null ? longitude : longitudes[i],
+              //latitude: latitudes[i],
+              //longitude: longitudes[i],
               level: i
             });
         }

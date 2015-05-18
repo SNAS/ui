@@ -2,9 +2,12 @@
   <!--<h1 class="pgtitle"> AS View</h1>-->
   <div>
     AS Number
-    <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
+    <input id="tags" type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
+    <ul id="suggestions" class="suggestions-list">
+      <li ng-repeat="suggestion in suggestions" class="blockSpan" ng-click="addToSelectedTags($index)" ng-mouseover="$parent.selectedIndex=$index" ng-class="{active : selectedIndex===$index}">{{suggestion}}</li>
+    </ul>
     <p class="help-block">Example: 701</p>
-    <h3 ng-show="nodata" id="dem">This AS doesn't exist</h3>
+    <h3 ng-show="nodata">This AS doesn't exist</h3>
     <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
     <!--again! :)</h3>-->
   </div>
@@ -17,15 +20,13 @@
   <div class="row margin-small">
     <div class="col-lg-6">
       <h3 class="pgtitle-small">Upstream</h3>
-      <div class="panel panel-default">
-        <div class="gridStyle-abreast" ui-grid="upstreamGridOptions" ui-grid-auto-resize></div>
-      </div>
+        <div ng-show="!upstreamNodata" class="gridStyle-abreast" ui-grid="upstreamGridOptions" ui-grid-auto-resize></div>
+        <p ng-show="upstreamNodata">There is no upstream of this AS</p>
     </div>
     <div class="col-lg-6">
       <h3 class="pgtitle-small">Downstream</h3>
-      <div class="panel panel-default">
-        <div class="gridStyle-abreast" ui-grid="downstreamGridOptions" ui-grid-auto-resize></div>
-      </div>
+        <div ng-show="!downstreamNodata" class="gridStyle-abreast" ui-grid="downstreamGridOptions" ui-grid-auto-resize></div>
+        <p ng-show="downstreamNodata">There is no downstream of this AS</p>
     </div>
   </div>
 

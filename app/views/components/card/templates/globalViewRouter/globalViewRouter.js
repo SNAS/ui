@@ -32,18 +32,6 @@ angular.module('bmp.components.card')
       //  "LastModified":"2015-04-01 18:36:36"
       // }
 
-      //get peers data
-      var peersData;
-      apiFactory.getPeersByIp($scope.data.RouterIP).
-        success(function (result){
-          $scope.peersAmount = result.v_peers.size;
-          peersData = result.v_peers.data;
-          peersTableCreate();
-        }).
-        error(function (error){
-          console.log(error.message);
-        });
-
 
       $scope.ipAmountData = [
         {
@@ -74,8 +62,6 @@ angular.module('bmp.components.card')
             //
             $scope.ipAmountData[0].values[index].value = ipAmount;
             $scope.ipAmountData[0].values[$scope.ipAmountData[0].values.length-1].value = ipTotal;
-            console.log("test");
-            console.dir($scope.ipAmountData);
           }).
           error(function (error) {
             console.log(error.message);
@@ -181,13 +167,29 @@ angular.module('bmp.components.card')
         enableRowHeaderSelection: false,
         columnDefs: [
           {name: "PeerASN", displayName: 'AS Number', width: '*'},
-          {name: "PeerName", displayName: 'AS Name', width: '*'},
-          {name: "org_name", displayName: 'Organization', width: '*'}
+          {name: "as_name", displayName: 'AS Name', width: '*'},
+          {name: "PeerName", displayName: 'Peer', width: '*'}
         ]
       };
       $scope.globalViewPeerOptions.multiSelect = false;
       $scope.globalViewPeerOptions.noUnselect = false;
       $scope.globalViewPeerOptions.modifierKeysToMultiSelect = false;
+
+      //get peers data
+      var peersData;
+      // $scope.peerSummaryTable = [];
+      apiFactory.getPeersByIp($scope.data.RouterIP).
+        success(function (result){
+          $scope.peersAmount = result.v_peers.size;
+           // peersData = result.v_peers.data;
+          $scope.globalViewPeerOptions.data = result.v_peers.data;
+
+          $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
+        }).
+        error(function (error){
+          console.log(error.message);
+        });
+       // $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
 
       var peerViewPeerDefaultData = [{"as_name":"NO DATA"}];
       $scope.globalViewPeerOptions.onRegisterApi = function (gridApi) {
@@ -224,7 +226,7 @@ angular.module('bmp.components.card')
       });
       //End Router up time Graph
 
-      var peersTableCreate = function() {
+    /*  var peersTableCreate = function() {
         //<!--R/Peers info table-->
         $scope.peerSummaryTable = [];
         angular.forEach(peersData, function(obj,index){
@@ -252,7 +254,7 @@ angular.module('bmp.components.card')
             });
         });
         $scope.globalViewPeerOptions.data = $scope.peerSummaryTable;
-      };
+      };*/
 
       $scope.isUP = ($scope.data.isConnected=='1')? '⬆':'⬇';
       $scope.locationInfo =  cardFactory.createLocationTable({
@@ -262,5 +264,4 @@ angular.module('bmp.components.card')
         type: $scope.data.type
       });
 
-      console.dir($scope);
   }]);
