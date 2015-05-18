@@ -35,7 +35,7 @@ angular.module('bmp.components.card')
           },
           yAxis: {
             tickFormat:d3.format('d'),
-            axisLabel: 'Updates'
+            axisLabel: 'Withdrawals'
           }
         }
       };
@@ -47,7 +47,7 @@ angular.module('bmp.components.card')
 
     $scope.updatesData = [
       {
-        key: "Withdrawns",
+        key: "Withdrawals",
         values:[],
         area: true
       }

@@ -36,7 +36,7 @@ angular.module('bmp.components.card')
             rotateYLabel: true
           },
           yAxis: {
-            axisLabel: 'Quantity(Ip Count)',
+            axisLabel: 'Withdrawals',
             axisLabelDistance: 30,
             tickFormat:d3.format('d')
           }
@@ -56,7 +56,7 @@ angular.module('bmp.components.card')
 
     $scope.withdrawsData = [
       {
-        key: "Withdrawns",
+        key: "Withdrawals",
         values:[]
       }
     ];
