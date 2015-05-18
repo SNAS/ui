@@ -1,6 +1,4 @@
  <!------------------PREFIXANALYSIS---------------->
-
-
  <h1>prefix analysis</h1>
  <hr>
  <label>Prefix Number:</label>
@@ -33,10 +31,42 @@
    <d3-directive ng-model="data"></d3-directive>
    <hr>
  </div>
- <div ng-show="showGrid" ui-grid="HistoryPrefixOptions" ui-grid-resize-columns></div>
+ <div ng-show="showGrid" ui-grid="HistoryPrefixOptions" ui-grid-selection  ui-grid-resize-columns></div>
  <!--ng-show="showGrid"-->
  <p></p>
  <br>
+
+
+ <!--<script type="text/ng-template" id="myModal.html">-->
+   <!--<div>where is the data !!!</div>-->
+   <!--<div ng-bind-html="showItems">why you not show</div>-->
+ <!--</script>-->
+
+ <!--<button ng-click="showModal()">Open me!</button>-->
+
+ <!--modal control-->
+ <!--<my-modal class="detailsPanel">-->
+   <!--<pre ng-bind-html="showItems" ></pre>-->
+ <!--</my-modal>-->
+ <!--<div>-->
+   <!--&lt;!&ndash;<script type="text/ng-template" id="myModalContent.html">&ndash;&gt;-->
+   <!--<script type="text/ng-template" id="prefixanalysis.html">-->
+     <!--<div>-->
+       <!--<h3>I'm a modal!</h3>-->
+     <!--</div>-->
+     <!--<div>-->
+       <!--{{ showItems }}-->
+       <!--&lt;!&ndash;<pre ng-bind-html="showItems"></pre>&ndash;&gt;-->
+       <!--&lt;!&ndash;<ul>&ndash;&gt;-->
+         <!--&lt;!&ndash;<li ng-repeat="item in showItems">&ndash;&gt;-->
+           <!--&lt;!&ndash;{{ showItems }}&ndash;&gt;-->
+         <!--&lt;!&ndash;</li>&ndash;&gt;-->
+       <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+     <!--</div>-->
+   <!--</script>-->
+   <!--<button ng-click="open()">Open me!</button>-->
+ <!--</div>-->
+
  <div id = "bottom"></div>
 
  </div>
