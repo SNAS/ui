@@ -229,7 +229,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         if($scope.routerLayer)
                 $scope.map.removeLayer($scope.routerLayer);
         $scope.peerLayer = new L.FeatureGroup();
-        
+        var peerCount = 0;
         var data;
         apiFactory.getPeersAndLocationsByIp(ip).
         success(function (result){
@@ -239,6 +239,21 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 var latlng = [curr.latitude, curr.longitude];
                 var temp = curr.latitude + ',' + curr.longitude;
 
+                // for(var key in $scope.peerDictionary){
+                //     var p = $scope.peerDictionary[key]._latlng;
+                //     var distance =
+                //     Math.sin(p.lat * Math.PI) * Math.sin(curr.latitude * Math.PI) +
+                //     Math.cos(p.lat * Math.PI) * Math.cos(curr.latitude * Math.PI) * Math.cos(Math.abs(p.lng - curr.longitude) * Math.PI);
+                //     // Return the distance in miles
+                //     var distance = Math.acos(distance) * 3958.754;
+                //     if(distance < 200){
+                //         console.log('distance = ', distance + 'm', $scope.peerDictionary[key].options.city);
+                //         $scope.peerDictionary[key].options.peers.push(curr);
+                //     }
+                //     continue;
+                // }
+
+                // console.log('not close', distance, curr.city);
                 //Already have a location
                 if($scope.peerDictionary[temp]){
                     $scope.peerDictionary[temp].options.peers.push(curr);
@@ -253,8 +268,10 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                         peers: [curr],
                         expandRouters: false,
                         expandPeers: false,
-                        type: 'Peer'
+                        type: 'Peer',
+                        id: peerCount
                     };
+                    peerCount++;
                     var marker = new L.Marker(latlng, options);
                     $scope.peerDictionary[temp] = marker;
                     $scope.peerLayer.addLayer(marker);
@@ -476,17 +493,22 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.selectMapPeerLocation = function(location){
         $scope.expandList = true;
 
-        for(var i = 0; i < $scope.selectedPeerLocations.length; i++){
-            //$scope.selectedPeerLocations[i].options.expandPeers = false;
-        }
+        // for (var key in $scope.peerDictionary) {
+        //     $scope.peerDictionary[key].options.expandPeers = false;
+        // }
+
         location.options.expandPeers = true;
         if($scope.selectedLocation != undefined){
             setIcon($scope.selectedLocation, 'default');
         }
         $scope.selectedLocation = location;
         setIcon($scope.selectedLocation, 'active');
-        
-        //angular.element(".locations").animate({ scrollTop: angular.element('#'+location.$$hashKey).position().top - 84 }, 1000);
+
+        $timeout(function(){
+            var x = angular.element('#id'+location.options.id).position().top - 84;
+            if(x != 0)
+                angular.element(".main").stop().animate({ scrollTop: x }, 1000);
+        }, 250);
     }
 
 
