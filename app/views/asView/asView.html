@@ -1,44 +1,39 @@
 <div class="margin-small">
   <!--<h1 class="pgtitle"> AS View</h1>-->
   <div>
-    AS Number
-    <input id="tags" type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
-    <ul id="suggestions" class="suggestions-list">
-      <li ng-repeat="suggestion in suggestions" class="blockSpan" ng-click="addToSelectedTags($index)"
-          ng-mouseover="$parent.selectedIndex=$index" ng-class="{active : selectedIndex===$index}">{{suggestion}}
-      </li>
-    </ul>
-    <p class="help-block">Example: 701</p>
+    AS Number or AS Name
+    <input id="tags" type="text" size="50" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
+    <span class="help-block">Example: 701</span>
 
     <h3 ng-show="nodata">This AS doesn't exist</h3>
     <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
     <!--again! :)</h3>-->
   </div>
 
-  <div ng-show="!nodata">
-    <div class="row margin-small">
+  <div ng-show="!nodata" class = "margin-small">
+    <div class="row">
       <div class="col-lg-6">
-        <h1 class="pgtitle-small">Whois Information for AS {{searchValue}}</h1>
+        <p class="pgtitle-small">Whois Information for AS {{asn}}</p>
         <div class="detailspanel gridStyle-abreast">
           <pre class="preStyle" ng-bind-html="details"></pre>
         </div>
       </div>
       <div class="col-lg-6">
-        <h1 class="pgtitle-small">Prefixes Originated by AS {{searchValue}}</h1>
-        <div class="gridStyle-abreast" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+        <p class="pgtitle-small">Prefixes Originated by AS {{asn}}</p>
+        <div class="gridStyle-abreast fixedHeight" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
       </div>
     </div>
 
-    <div class="row margin-small">
+    <div class="row">
       <div class="col-lg-6">
-        <h3 class="pgtitle-small">Upstream ASes of AS {{searchValue}}</h3>
+        <p class="pgtitle-small">Upstream ASes of AS {{asn}}</p>
 
         <div ng-show="!upstreamNodata" class="gridStyle-abreast" ui-grid="upstreamGridOptions"
              ui-grid-auto-resize></div>
         <p ng-show="upstreamNodata">There is no upstream of this AS</p>
       </div>
       <div class="col-lg-6">
-        <h3 class="pgtitle-small">Downstream ASes of AS {{searchValue}}</h3>
+        <p class="pgtitle-small">Downstream ASes of AS {{asn}}</p>
 
         <div ng-show="!downstreamNodata" class="gridStyle-abreast" ui-grid="downstreamGridOptions"
              ui-grid-auto-resize></div>

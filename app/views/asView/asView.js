@@ -22,6 +22,7 @@ angular.module('bmpUiApp')
     //prefix table option
     $scope.prefixGridOptions = {
       rowHeight: 25,
+      footerHeight: 0,
       //rowTemplate:
       //  '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
 
@@ -34,6 +35,7 @@ angular.module('bmpUiApp')
     //upstream table opions
     $scope.upstreamGridOptions = {
       rowHeight: 25,
+      footerHeight: 0,
       //rowTemplate:
       //  '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
 
@@ -60,12 +62,14 @@ angular.module('bmpUiApp')
     //Waits a bit for user to contiune typing.
     $scope.enterValue = function (value) {
       $timeout(function () {
-        if (value == $scope.searchValue) {
-          if (isNaN($scope.searchValue)) {
-            predictiveSearch();
-          }
-          else {
-            searchValue();
+        if (value) {
+          if (value == $scope.searchValue) {
+            if (isNaN($scope.searchValue)) {
+              predictiveSearch();
+            }
+            else {
+              searchValue();
+            }
           }
         }
       }, 500);
@@ -126,37 +130,32 @@ angular.module('bmpUiApp')
 
     //complete the search field automatically while searching AS name
     function predictiveSearch() {
-      $scope.suggestions = [
-        "ActionScript",
-        "AppleScript",
-        "Asp",
-        "BASIC",
-        "C",
-        "C++",
-        "Clojure",
-        "COBOL",
-        "ColdFusion",
-        "Erlang",
-        "Fortran",
-        "Groovy",
-        "Haskell",
-        "Java",
-        "JavaScript",
-        "Lisp",
-        "Perl",
-        "PHP",
-        "Python",
-        "Ruby",
-        "Scala",
-        "Scheme"
-      ];
-      //$("#tags").autocomplete({
-      //  source: availableTags
-      //});
+      var suggestions = [];
+      $("#tags").autocomplete({
+        source: suggestions,
+        autoFocus: true,
+        minLength: 2,
+        delay: 1000,
+        select: function (event, ui) {
+          apiFactory.getWhoIsASName(ui.item.value).
+            success(function (result) {
+              var data = result.w.data;
+              getData(data);
+            }).
+            error(function (error) {
+              alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+              console.log(error.message);
+            });
+        }
+      });
 
-      apiFactory.getWhoIsASName($scope.searchValue).success(function (result) {
+      apiFactory.getWhoIsASNameLike($scope.searchValue, 10).success(function (result) {
         if (result.w.size != 0) {
           var data = result.w.data;
+          for (var i = 0; i < result.w.size; i++) {
+            suggestions.push(data[i].as_name);
+          }
+
         }
       })
         .error(function () {
@@ -168,28 +167,35 @@ angular.module('bmpUiApp')
     function searchValue() {
       apiFactory.getWhoIsASN($scope.searchValue).
         success(function (result) {
-          if (result.gen_whois_asn.size != 0) {
-            getDetails(result.gen_whois_asn.data[0]);
-            getPrefixes();
-            getUpstream();
-            getDownstream();
-
-            downstreamPromise.success(function () {
-              upstreamPromise.success(function () {
-                drawTopology(result.gen_whois_asn.data[0]);
-              });
-            });
-
-            $scope.nodata = false;
-          }
-          else {
-            $scope.nodata = true;
-          }
+          var data = result.gen_whois_asn.data;
+          getData(data);
         }).
         error(function (error) {
           alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
           console.log(error.message);
         });
+    }
+
+    //get data about details, prefixes, upstream and downstream
+    function getData(data) {
+      if (data.size != 0) {
+        $scope.asn = data[0].asn;
+        getDetails(data[0]);
+        getPrefixes();
+        getUpstream();
+        getDownstream();
+
+        downstreamPromise.success(function () {
+          upstreamPromise.success(function () {
+            drawTopology(data[0]);
+          });
+        });
+
+        $scope.nodata = false;
+      }
+      else {
+        $scope.nodata = true;
+      }
     }
 
     //get detailed information of this AS
@@ -218,12 +224,12 @@ angular.module('bmpUiApp')
       $scope.details = showValues;
     }
 
-    function getPrefixes(){
-      apiFactory.getRIBbyASN($scope.searchValue).
+    function getPrefixes() {
+      apiFactory.getRIBbyASN($scope.asn).
         success(function (result) {
           var data = result.v_routes.data;
-          for(var i = 0; i < result.v_routes.size; i++){
-             data[i].prefixWithLen = data[i].Prefix + "/" + data[i].PrefixLen;
+          for (var i = 0; i < result.v_routes.size; i++) {
+            data[i].prefixWithLen = data[i].Prefix + "/" + data[i].PrefixLen;
           }
           $scope.prefixGridOptions.data = data;
         }).
@@ -235,7 +241,7 @@ angular.module('bmpUiApp')
 
     //Get upstream data
     function getUpstream() {
-      upstreamPromise = apiFactory.getUpstream($scope.searchValue);
+      upstreamPromise = apiFactory.getUpstream($scope.asn);
       upstreamPromise.success(function (result) {
         upstreamData = result.upstreamASN.data.data;
         if (result.upstreamASN.data.size == 0) {
@@ -254,7 +260,7 @@ angular.module('bmpUiApp')
 
     //Get downstream data
     function getDownstream() {
-      downstreamPromise = apiFactory.getDownstream($scope.searchValue);
+      downstreamPromise = apiFactory.getDownstream($scope.asn);
       downstreamPromise.success(function (result) {
         downstreamData = result.downstreamASN.data.data;
         if (result.downstreamASN.data.size == 0) {
