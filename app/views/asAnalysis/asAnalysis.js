@@ -10,40 +10,7 @@
 angular.module('bmpUiApp')
   .controller('ASAnalysisController',['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
-    //prefix table option
-    $scope.prefixGridOptions = {
-      rowHeight: 25,
-      //rowTemplate:
-      //  '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
-
-      columnDefs: [
-        {name: "Prefix", displayName: 'Prefix', width: '*'},
-        {name: "PrefixLen", displayName: 'Prefix Length', width: '*'},
-        //{name: "Prefixes_Learned", displayName: 'Prefixes', width: '*'}
-      ]
-    };
-
-    //Waits a bit for user to contiune typing.
-    $scope.enterValue = function (value) {
-      $timeout(function () {
-        if (value == $scope.searchValue) {
-          searchValue();
-        }
-      }, 500);
-    };
-
-    function searchValue() {
-      apiFactory.getRIBbyASN($scope.searchValue).
-        success(function (result) {
-          $scope.prefixGridOptions.data = result.v_routes.data;
-        }).
-        error(function (error) {
-          alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
-          console.log(error.message);
-        });
-    }
-
-      /* Chart options */
+    /* Chart options */
     $scope.ipv4Options = {
       chart: {
         type: 'discreteBarChart',
