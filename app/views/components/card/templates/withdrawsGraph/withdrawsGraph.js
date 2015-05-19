@@ -69,7 +69,7 @@ angular.module('bmp.components.card')
         var gData = [];
         for(var i = 0; i < len; i++){
           gData.push({
-            label:data[i].Prefix, value:parseInt(data[i].Count)
+            label:data[i].Prefix + "/" + data[i].PrefixLen, value:parseInt(data[i].Count)
           });
         }
         $scope.withdrawsData[0].values = gData;

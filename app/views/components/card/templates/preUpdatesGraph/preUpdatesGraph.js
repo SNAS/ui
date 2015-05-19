@@ -30,7 +30,13 @@ angular.module('bmp.components.card')
             rotateLabels: -20,
             rotateYLabel: true,
             tickFormat: function(d) {
-              return new Date(d).toLocaleString()
+              var date = new Date(d);
+                return date.getDay() + "/" +
+                  date.getMonth() + "/" +
+                  date.getFullYear() + ", " +
+                  date.getHours() + ":" +
+                  date.getMinutes() + ":" +
+                  date.getSeconds() + " UTC";
             }
           },
           yAxis: {
