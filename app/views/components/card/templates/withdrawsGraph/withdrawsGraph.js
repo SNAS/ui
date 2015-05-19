@@ -67,7 +67,7 @@ angular.module('bmp.components.card')
         var data = result.log.data;
         var len = data.length;
         var gData = [];
-        for(var i = len - 1; i > 0; i--){
+        for(var i = 0; i < len; i++){
           gData.push({
             label:data[i].Prefix, value:parseInt(data[i].Count)
           });
