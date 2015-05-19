@@ -195,7 +195,7 @@ angular.module('bmpUiApp')
     //get detailed information of this AS
     function getDetails(data) {
       var keys = Object.keys(data);
-      var showValues = '<table class="tableStyle"><thead><tr><th>AS Information</th></tr></thead><tbody>';
+      var showValues = '<table class="tableStyle"><tbody>';
 
       for (var i = 0; i < keys.length; i++) {
         var key = keys[i];

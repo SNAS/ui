@@ -130,8 +130,8 @@ angular.module('bmpUiApp')
       rowHeight: 25,
 
       columnDefs: [
-        {field: 'prefix', displayName: 'Prefix', width: '*'},
-        {field: 'prefix_len', displayName: 'Prefix Length', width: '*'},
+        {field: 'prefixWithLen', displayName: 'Prefix', width: '*'},
+        //{field: 'prefix_len', displayName: 'Prefix Length', width: '*'},
         {field: 'Type', displayName: 'Type', width: '*'},
         {field: 'metric', displayName: 'Metric', width: '*'},
         {field: 'src_router_id', displayName: 'Source Router Id', width: '*'},
@@ -335,6 +335,7 @@ angular.module('bmpUiApp')
       linksLayerHighlightElements.addRange(selectedLinks);
 
       for (var i = 0; i < SPFdata.length; i++) {
+        SPFdata[i].prefixWithLen = SPFdata[i].prefix + "/" + SPFdata[i].prefix_len;
         SPFdata[i].neighbor_addr_adjusted = (SPFdata[i].neighbor_addr == null) ? 'local' : SPFdata[i].neighbor_addr;
       }
       $scope.SPFtableOptions.data = SPFdata;
