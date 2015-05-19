@@ -2,20 +2,6 @@
 
 angular.module('bmp.components.card')
 
-  .controller('CanvasController', ["$scope", "$timeout", "$element", "$document", function ($scope, $timeout, $element, $document) {
-
-      window.CANSCOPE = $scope;
-
-      console.log("canvas controller");
-
-      var canvas = document.getElementById('tutorial');
-      console.dir(canvas);
-      var ctx = canvas.getContext('2d');
-
-
-
-  }])
-
 .controller('BmpCardPeerPeerInsertController', ["$scope", "apiFactory", "$timeout", "$element", "$document", function ($scope, apiFactory, $timeout, $element, $document) {
     window.SCOPEZ = $scope;
 
@@ -63,8 +49,7 @@ angular.module('bmp.components.card')
     };
 
     $scope.ribGridOptions.columnDefs = [
-      {name: "Prefix", displayName: 'Prefix', width: "15%"},
-      {name: "PrefixLen", displayName: 'Pre Len', width: "7%"},
+      {name: "wholePrefix", displayName: 'Prefix', width: "20%"},
       {name: "NH", displayName: 'NH', width: "15%"},
       {name: "AS_Path", displayName: 'AS Path'},
       {name: "MED", displayName: 'MED', width: "10%"},
@@ -83,7 +68,11 @@ angular.module('bmp.components.card')
     $scope.getRibData = function() {
       apiFactory.getPeerRib($scope.data.peer_hash_id).
         success(function (result) {
-          $scope.ribGridOptions.data = $scope.initalRibdata = result.v_routes.data;
+          var resultData = result.v_routes.data;
+          for(var i = 0; i < resultData.length; i++){
+            resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+          }
+          $scope.ribGridOptions.data = $scope.initalRibdata = resultData;
           $scope.ribGridApi.core.handleWindowResize();
         }).
         error(function (error) {
