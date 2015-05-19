@@ -89,6 +89,11 @@ angular
         templateUrl: 'views/linkState/linkState.html',
         controller: 'linkStateController'
       })
+      .state('app.orrView', {
+        url: '/orr-view',
+        templateUrl: 'views/orrView/orrView.html',
+        controller: 'orrViewController'
+      })
       .state('app.peerAnalysis', {
         url: '/peer-analysis',
         templateUrl: 'views/peerAnalysis/peerAnalysis.html',

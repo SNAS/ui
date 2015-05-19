@@ -2,14 +2,14 @@
 
 /**
  * @ngdoc function
- * @name bmpUiApp.controller:TopologyController
+ * @name bmpUiApp.controller:orrViewController
  * @description
- * # TopologyController
- * Controller of the Topology page
+ * # orrViewController
+ * Controller of the Orr View page
  */
 
 angular.module('bmpUiApp')
-  .controller('linkStateController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
+  .controller('orrViewController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
     $scope.peerData = [
       {
@@ -196,7 +196,7 @@ angular.module('bmpUiApp')
         nodesPromise.success(function () {
           var topologyData = {
             nodes: nodes,
-            links: links,
+            links: links
             //nodeSet: [{
             //  id: 1,
             //  type: 'nodeSet',
