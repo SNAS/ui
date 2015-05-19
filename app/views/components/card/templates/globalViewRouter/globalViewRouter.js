@@ -125,7 +125,7 @@ angular.module('bmp.components.card')
         },
         "title": {
           "enable": true,
-          "text": "Router Up Time"
+          "text": "BMP Connection Up Time"
         }
       };
 

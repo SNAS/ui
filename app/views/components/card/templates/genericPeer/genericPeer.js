@@ -107,7 +107,6 @@ angular.module('bmp.components.card')
     $scope.peerDownData = [];
     apiFactory.getPeerDownStream($scope.data.peer_hash_id).
       success(function (result){
-        console.dir(result.downstreamASN);
         if(result.downstreamASN.size == 0){
           $scope.summaryPeerOptions.data = summaryPeerOptionsDefaultData;
         }else {
@@ -149,4 +148,5 @@ angular.module('bmp.components.card')
         country: $scope.data.country,
         type: $scope.data.type
     });
+
   }]);
