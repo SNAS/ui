@@ -34,7 +34,7 @@ angular
     $stateProvider
       .state('login', {
         url: '/login',
-        templateUrl: 'views/login/login.html',
+        templateUrl: 'views/Login/login.html',
         controller: 'LoginController',
         data: {
           requireLogin: false
@@ -89,9 +89,14 @@ angular
         templateUrl: 'views/linkState/linkState.html',
         controller: 'linkStateController'
       })
+      .state('app.orrView', {
+        url: '/orr-view',
+        templateUrl: 'views/orrView/orrView.html',
+        controller: 'orrViewController'
+      })
       .state('app.peerAnalysis', {
         url: '/peer-analysis',
-        templateUrl: 'views/peerAnalysis/peerAnalysis.html',
+        templateUrl: 'views/peeranalysis/peeranalysis.html',
         controller: 'PeerAnalysisController'
       })
       .state('app.asAnalysis', {
@@ -101,12 +106,12 @@ angular
       })
       .state('app.prefixAnalysis', {
         url: '/prefix-analysis',
-        templateUrl: 'views/prefixAnalysis/prefixAnalysis.html',
+        templateUrl: 'views/prefixanalysis/prefixanalysis.html',
         controller: 'PrefixAnalysisController'
       })
       .state('app.whoIs', {
         url: '/whois',
-        templateUrl: 'views/whoIs/whoIs.html',
+        templateUrl: 'views/whois/whois.html',
         controller: 'WhoIsController'
       })
       .state('app.collectionServer', {

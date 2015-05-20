@@ -52,7 +52,7 @@ angular.module('bmpUiApp')
 
     apiFactory.getPeersAndLocationsGrouped = function () {
       return $http.get(urlBase + "peer/map");
-    };    
+    };
 
     apiFactory.getPeersByLocalIp = function (ip) {
       return $http.get(urlBase + "peer/localip/" + ip + "?limit=5");
@@ -88,7 +88,13 @@ angular.module('bmpUiApp')
       return $http.get(res);
     };
 
-    apiFactory.getWhoIsASName = function (name, lim) {
+    apiFactory.getWhoIsASName = function (name) {
+      var uri = urlBase + "whois/asn?where=w.as_name='" + name + "'";
+      var res = encodeURI(uri);
+      return $http.get(res);
+    };
+
+    apiFactory.getWhoIsASNameLike = function (name, lim) {
       if(lim === undefined) lim = limit;
 
       var uri = urlBase + "whois/asn?where=w.as_name like '%" + name + "%'&limit=" + lim;
@@ -119,7 +125,15 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "as_stats/ipv6?topOrigin=5");
     };
 
+    apiFactory.getRIBbyASN = function (asn) {
+      return $http.get(urlBase + "rib/asn/" + asn);
+    };
+
     //Peer Analysis
+    apiFactory.getPeerByHashId = function (peerHashId) {
+      return $http.get(urlBase + "peer/" + peerHashId);
+    };
+
     apiFactory.getPeerPrefix = function () {
       return $http.get(urlBase + "peer/prefix");
     };
@@ -168,7 +182,7 @@ angular.module('bmpUiApp')
 
     //topology
     apiFactory.getPeerNodes = function (peerHashId){
-      return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId);
+      return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId + "/?withGeo");
     };
 
     apiFactory.getPeerLinks = function (peerHashId){

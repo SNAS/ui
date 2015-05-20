@@ -8,7 +8,10 @@
   </div>
 
   <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}">
-    <input type="text" placeholder="Search" class="search" ng-model="panelSearch" ng-click="expandPanelLocations()"/>
+    <div class="panel-search">
+      <span class="glyphicon glyphicon-remove" ng-show="panelSearch" ng-click="panelSearch = ''"></span>
+      <input type="text" placeholder="Search" class="search" ng-model="panelSearch" ng-click="expandPanelLocations()"/>
+    </div>
     <h3 class="panel-header" ng-init="expandList = false" ng-click="expandList = !expandList">
       <strong class="pointer">&lt;</strong> {{panelTitle}}
     </h3>
@@ -21,8 +24,8 @@
       </div>
     </div>
 
-    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}" ng-style="{'max-height': panelHeight}">
-      <ul class="locations" ng-hide="selectedRouter">
+    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}">
+      <ul class="locations" ng-hide="selectedRouter"  ng-style="{'max-height': panelHeight}">
         <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
           <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
             <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
@@ -44,8 +47,8 @@
         </li>
       </ul>
 
-      <ul class="locations" ng-show="selectedRouter">
-        <li ng-attr-id="{{location.$$hashKey}}" ng-repeat="(latlng, location) in peerDictionary | orderBy: 'options.city'" ng-show="filteredPeers.length">
+      <ul class="locations" ng-show="selectedRouter"  ng-style="{'max-height': panelHeight}">
+        <li ng-attr-id="id{{location.options.id}}" ng-repeat="(latlng, location) in peerDictionary | orderBy: 'location.options.city'" ng-show="filteredPeers.length">
           <p class="router-list-city" ng-class="{expanded: location.options.expandPeers}" ng-click="selectPanelPeerLocation(location)">
             <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
             <span class="count">({{location.options.peers.length}})</span>

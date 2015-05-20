@@ -36,7 +36,7 @@ angular.module('bmp.components.card')
             rotateYLabel: true
           },
           yAxis: {
-            axisLabel: 'Quantity(Ip Count)',
+            axisLabel: 'Withdrawals',
             axisLabelDistance: 30,
             tickFormat:d3.format('d')
           }
@@ -56,7 +56,7 @@ angular.module('bmp.components.card')
 
     $scope.withdrawsData = [
       {
-        key: "Withdrawns",
+        key: "Withdrawals",
         values:[]
       }
     ];
@@ -67,9 +67,9 @@ angular.module('bmp.components.card')
         var data = result.log.data;
         var len = data.length;
         var gData = [];
-        for(var i = len - 1; i > 0; i--){
+        for(var i = 0; i < len; i++){
           gData.push({
-            label:data[i].Prefix, value:parseInt(data[i].Count)
+            label:data[i].Prefix + "/" + data[i].PrefixLen, value:parseInt(data[i].Count)
           });
         }
         $scope.withdrawsData[0].values = gData;

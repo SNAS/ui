@@ -1,13 +1,13 @@
 <div ng-controller="BmpCardPreUpdatesGraphController">
   <!--COLLAPSED view-->
   <div ng-hide="cardExpand" class="collapsed" style="display: block;">
-    <h5>Count of updates</h5>
+    <h5 class="graph-collapsed">Number of updates over time</h5>
   </div>
 
   <!--EXPANDED view-->
   <div ng-show="cardExpand">
     <br>
-    <h1 class="pgtitle">Count of updates</h1>
+    <h1 class="pgtitle">Number of updates over time</h1>
     <nvd3 options="preUpdatesGraph" data="preUpdatesData" config="preUpdatesConfig"></nvd3>
   </div>
 </div>

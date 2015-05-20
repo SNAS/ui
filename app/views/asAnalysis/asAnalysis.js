@@ -8,7 +8,7 @@
  * Controller of the AS Analysis page
  */
 angular.module('bmpUiApp')
-  .controller('ASAnalysisController',['$scope', 'apiFactory', function ($scope, apiFactory) {
+  .controller('ASAnalysisController',['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
     /* Chart options */
     $scope.ipv4Options = {

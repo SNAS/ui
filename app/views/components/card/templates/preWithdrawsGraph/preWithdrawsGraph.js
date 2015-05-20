@@ -35,7 +35,7 @@ angular.module('bmp.components.card')
             rotateYLabel: true
           },
           yAxis: {
-            axisLabel: 'Quantity(Ip Count)',
+            axisLabel: 'Number of Updates',
             axisLabelDistance: 30,
             tickFormat:d3.format('d')
           }
@@ -67,7 +67,7 @@ angular.module('bmp.components.card')
         var gData = [];
         for(var i = 0; i < len; i++){
           gData.push({
-            label:data[i].Prefix, value:parseInt(data[i].Count)
+            label:data[i].Prefix + "/" + data[i].PrefixLen, value:parseInt(data[i].Count)
           });
         }
         $scope.preWithdrawsData[0].values = gData;

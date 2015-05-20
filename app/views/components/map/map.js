@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-.controller('MapController', function ($scope, $http, $timeout, apiFactory, leafletData, $compile, $filter, $location, $anchorScroll, $window) {
+.controller('MapController', ["$scope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", function ($scope, $timeout, apiFactory, leafletData, $compile, $window) {
 
     window.SCOPEMAP = $scope;
 
@@ -217,6 +217,24 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     }
 
 
+    function distance(obj) {
+        var R = 6371; // km
+        var dLat = (obj.lat2 - obj.lat1) * Math.PI / 180;
+        var dLon = (obj.lon2 - obj.lon1) * Math.PI / 180;
+        var lat1 = obj.lat1 * Math.PI / 180;
+        var lat2 = obj.lat2 * Math.PI / 180;
+     
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c;
+        var m = d * 0.621371;
+        return {
+            km: d,
+            m: m
+        }
+    }
+
     /*******************************
         Populate map with peers
     *******************************/
@@ -229,7 +247,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         if($scope.routerLayer)
                 $scope.map.removeLayer($scope.routerLayer);
         $scope.peerLayer = new L.FeatureGroup();
-        
+        var peerCount = 0;
         var data;
         apiFactory.getPeersAndLocationsByIp(ip).
         success(function (result){
@@ -239,26 +257,41 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 var latlng = [curr.latitude, curr.longitude];
                 var temp = curr.latitude + ',' + curr.longitude;
 
-                //Already have a location
-                if($scope.peerDictionary[temp]){
-                    $scope.peerDictionary[temp].options.peers.push(curr);
+                //
+                var dist = {km: 99999, m : 999999};
+                for(var key in $scope.peerDictionary){
+                    var p = $scope.peerDictionary[key]._latlng;
+                    dist = distance({
+                        lat1: p.lat,
+                        lon1: p.lng,
+                        lat2: curr.latitude,
+                        lon2: curr.longitude
+                    });
+                    if (dist.km < 100) {
+                        $scope.peerDictionary[key].options.peers.push(curr);
+                        break;
+                    }
                 }
-                //New location
-                else{
-                    var options = {
-                        country: curr.country,
-                        stateprov: curr.stateprov,
-                        city: curr.city,
-                        routers: [],
-                        peers: [curr],
-                        expandRouters: false,
-                        expandPeers: false,
-                        type: 'Peer'
-                    };
-                    var marker = new L.Marker(latlng, options);
-                    $scope.peerDictionary[temp] = marker;
-                    $scope.peerLayer.addLayer(marker);
-                }
+
+                if(dist.km < 100)
+                    continue;
+
+                var options = {
+                    country: curr.country,
+                    stateprov: curr.stateprov,
+                    city: curr.city,
+                    routers: [],
+                    peers: [curr],
+                    expandRouters: false,
+                    expandPeers: false,
+                    type: 'Peer',
+                    id: peerCount
+                };
+                peerCount++;
+                var marker = new L.Marker(latlng, options);
+                $scope.peerDictionary[temp] = marker;
+                $scope.peerLayer.addLayer(marker);
+                
             }
             for(var key in $scope.peerDictionary){
                 setIcon($scope.peerDictionary[key], 'default');
@@ -476,17 +509,17 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.selectMapPeerLocation = function(location){
         $scope.expandList = true;
 
-        for(var i = 0; i < $scope.selectedPeerLocations.length; i++){
-            //$scope.selectedPeerLocations[i].options.expandPeers = false;
-        }
-        location.options.expandPeers = true;
         if($scope.selectedLocation != undefined){
             setIcon($scope.selectedLocation, 'default');
         }
         $scope.selectedLocation = location;
         setIcon($scope.selectedLocation, 'active');
-        
-        //angular.element(".locations").animate({ scrollTop: angular.element('#'+location.$$hashKey).position().top - 84 }, 1000);
+
+        for (var key in $scope.peerDictionary) {
+            $scope.peerDictionary[key].options.expandPeers = false;
+        }
+        location.options.expandPeers = true;
+        $scope.panelSearch = location.options.city;
     }
 
 
@@ -625,7 +658,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.locations[i].expandRouters = true;
             }
     }
-})
+}])
 .directive('map', function () {
     return {
       templateUrl: "views/components/map/map.html",
@@ -640,7 +673,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       }
     }
 })
-.directive('resize', function ($window, $timeout) {
+.directive('resize', ["$window", "$timeout", function ($window, $timeout) {
     return function (scope, element) {
         var w = angular.element($window);
         scope.getWindowDimensions = function () {
@@ -661,4 +694,4 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             scope.$apply();
         });
     }
-});
+}]);

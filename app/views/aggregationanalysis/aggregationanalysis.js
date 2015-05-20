@@ -181,7 +181,7 @@ angular.module('bmpUiApp')
     }
 
 
-    <!--show redundant prefix-->
+    // show redundant prefix
     $scope.ShowRedundantOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false
