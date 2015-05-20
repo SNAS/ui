@@ -223,10 +223,10 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         var dLon = (obj.lon2 - obj.lon1) * Math.PI / 180;
         var lat1 = obj.lat1 * Math.PI / 180;
         var lat2 = obj.lat2 * Math.PI / 180;
-     
+
         var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         var d = R * c;
         var m = d * 0.621371;
         return {
@@ -292,7 +292,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 var marker = new L.Marker(latlng, options);
                 $scope.peerDictionary[temp] = marker;
                 $scope.peerLayer.addLayer(marker);
-                
+
             }
             for(var key in $scope.peerDictionary){
                 setIcon($scope.peerDictionary[key], 'default');
@@ -660,7 +660,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.locations[i].expandRouters = true;
             }
     }
-}])
 
 
 
@@ -773,11 +772,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       })
       .error(function(result){
         console.log("api routers up bottom pannel error")
-      });
+      })
 
 //    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
 
-})
+  }])
 .directive('map', function () {
     return {
       templateUrl: "views/components/map/map.html",
