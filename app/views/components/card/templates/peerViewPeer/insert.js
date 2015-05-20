@@ -119,18 +119,102 @@ angular.module('bmp.components.card')
 
     var createASpath = function(path){
       //e.g. " 64543 1221 4637 852 852 29810 29810 29810 29810 29810"
-      var wholepath = path.split(" ");
-      wholepath.shift(); //remove starting " "
+   $scope.asPath={};
+    var iconWidth = 50;
+    var lineWidth = 100;
+    var nodeWidth = iconWidth + lineWidth;
 
-      var norepeat = [];
-      for(var i = 0; i < path.length; i++){
-        if(norepeat.indexOf(path[i]) == -1){
-          norepeat.push(path[i]);
-        }
+    $scope.asPath.width = "100%";
+    $scope.asPath.lineWidth = lineWidth+"px";
+    $scope.asPath.iconWidth = iconWidth+"px";
+
+    //this is example later on will be revieved from the table in peerviewpeer
+    $scope.path = path;
+    var path = $scope.path.split(" ");
+    path.shift();
+
+    //Router node
+    $scope.as_path=[];
+    $scope.as_path.push({
+      icon:"bmp-bmp_router10-17",
+      topVal:"RouterName",
+      colour:"#4b84ca",
+      botVal:"IP",
+      isEnd:true
+    });
+
+    $scope.norepeat = [];
+    for(var i = 0; i < path.length; i++){
+      if($scope.norepeat.indexOf(path[i]) == -1){
+        $scope.norepeat.push(path[i]);
       }
+    }
 
-      //use canvas manipulation
+    //var cloneNorepeat = $scope.norepeat.slice(0);
+    //cloneNorepeat.sort();
+    for(var i = 0; i < $scope.norepeat.length; i++){
+      //AS nodes
+      $scope.as_path.push({
+        icon:"bmp-as_router10-17",
+        topVal:$scope.norepeat[i],
+        colour:"#9467b0",
+        botVal:$scope.norepeat[i],
+        //popOut: "popOutContent",
+        isEnd:true
+      });
+    }
+    //make last as not have connecting line
+    $scope.as_path[$scope.as_path.length-1].isEnd = false;
 
+
+
+   var asname;
+    apiFactory.getWhoIsASNameList($scope.norepeat).
+      success(function (result) {
+        var asname = result.w.data;
+        for(var i=0; i < asname.length; i++){
+         //console.dir(asname[i]);
+
+          var index = $scope.norepeat.indexOf((asname[i].asn).toString());
+
+          //Here is where all fields/ info for popover should be.
+
+      var popOutContent = "asn:" + asname[i].asn + " ";
+      popOutContent+= "as_name:" + asname[i].as_name + " ";
+      popOutContent+= "org_id:" + asname[i].org_id + " ";
+      popOutContent+= "org_name:" + asname[i].org_name + " ";
+      popOutContent+= "remarks:" + asname[i].remarks + " ";
+      popOutContent+= "address:" + asname[i].address + " ";
+      popOutContent+= "city:" + asname[i].city + " ";
+      popOutContent+= "state_prov:" + asname[i].state_prov + " ";
+      popOutContent+= "postal_code:" + asname[i].postal_code + " ";
+      popOutContent+= "country:" + asname[i].country;
+      popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');
+
+
+      //changed the name of the as to name from results.
+        $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
+       //$scope.as_path[index+1].popOut = asname[i].as_name;//+1 cause starting router node
+        $scope.as_path[index+1].popOut = popOutContent;//+1 cause starting router node
+
+        }
+      }).
+      error(function (error) {
+        console.log(error);
+      });
+
+    //set width of whole container depending on result size.
+    //len + 1 for router     + 80 stop wrapping and padding
+    $scope.asPath.width = nodeWidth * ($scope.norepeat.length + 1) + 80 + "px";
+
+    //for the tooltip
+    $scope.wordCheck = function(word){
+      if(word.length > 6){
+        return word.slice(0,4) + " ...";
+      }else{
+        return word;
+      }
+    };
 
     };
 

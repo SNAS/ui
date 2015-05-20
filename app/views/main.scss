@@ -53,6 +53,7 @@ a{
  $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
 // bower:scss
 @import "bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
+@import "nsPopover/sass/ns-popover.scss";
 // endbower
 
 @import "compass/css3";

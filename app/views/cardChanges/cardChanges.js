@@ -286,17 +286,17 @@ angular.module('bmpUiApp')
 
           //Here is where all fields/ info for popover should be.
 
-      var popOutContent = asname[i].asn + "\n";
-      popOutContent+= asname[i].as_name + "\n";
-      popOutContent+= asname[i].org_id + "\n";
-      popOutContent+= asname[i].org_name + "\n";
-      popOutContent+= asname[i].remarks + "\n";
-      popOutContent+= asname[i].address + "\n";
-      popOutContent+= asname[i].city + "\n";
-      popOutContent+= asname[i].state_prov + "\n";
-      popOutContent+= asname[i].postal_code + "\n";
-      popOutContent+= asname[i].country;
-
+      var popOutContent = "asn:" + asname[i].asn + " ";
+      popOutContent+= "\n as_name:" + asname[i].as_name + " ";
+      popOutContent+= "\n org_id:" + asname[i].org_id + " ";
+      popOutContent+= "\n org_name:" + asname[i].org_name + " ";
+      popOutContent+= "\n remarks:" + asname[i].remarks + " ";
+      popOutContent+= "\n address:" + asname[i].address + " ";
+      popOutContent+= "\n city:" + asname[i].city + " ";
+      popOutContent+= "\n state_prov:" + asname[i].state_prov + " ";
+      popOutContent+= "\n postal_code:" + asname[i].postal_code + " ";
+      popOutContent+= "\n country:" + asname[i].country;
+      popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');
 
 
       //changed the name of the as to name from results.

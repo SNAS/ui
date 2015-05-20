@@ -8,3 +8,20 @@
   }
 
 }
+
+
+.as-path{
+	height:250px;
+	overflow-x: scroll;
+	border: 1px solid black;
+	width:100%;
+	padding-top: 75px;
+	padding-left: 40px;
+		.popover{
+		width:200px;
+		font-size:12px;
+	}
+	#here{
+		white-space:pre;
+	}
+}

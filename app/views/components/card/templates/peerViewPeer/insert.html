@@ -17,10 +17,35 @@
         <!--{{ values }}-->
         <h3>Prefix Detail</h3>
 
+      <!-- AS path -->
 
-        <div ng-controller="CanvasController">
+        <div style="height:250px;overflow-x: scroll;border: 1px solid black;width:100%;padding-top: 75px;padding-left: 40px">
+
+            <div  ng-style="{'width':asPath.width}">
+
+              <div ng-repeat="path in as_path" style="position: relative;float: left;width:150px;">
+                <!--icon-->
+                <div style="display: table-cell;">
+                  <div style="text-align: center" tooltip="{{path.topVal}}">{{ wordCheck(path.topVal) }}</div>
+
+          <!--This is the actual AS icon  '{"show":500, "hide":5300}'-->
+          <div class="{{ path.icon }}" style="font-size: 50px" ng-style="{'color':path.colour}" popover="{{path.popOut}}" popover-placement="right" popover-trigger="mouseenter"></div>
+                  <div style="text-align: center">{{ path.botVal }}</div>
+                </div>
+                <!--line-->
+                <div style="display: table-cell;" ng-if="path.isEnd">
+                  <div style="width: 100px;height: 2px;background-color:#000000;position: absolute;margin-top: 45px;"
+                       ng-style="{'width':asPath.lineWidth}"></div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        <!--div ng-controller="CanvasController">
           <canvas id="tutorial" style="border: 1px solid black;width:100%;height: 200px;"></canvas>
-        </div>
+        </div-->
 
         <section style="width: 100%;margin: auto;padding: 10px;">
           <div class="left-container"
