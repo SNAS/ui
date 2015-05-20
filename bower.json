@@ -20,7 +20,6 @@
     "bg-splitter": "*",
     "angular-leaflet-directive": "~0.7.11",
     "angular-bootstrap": "~0.12.1",
-    "nsPopover": "~0.6.7",
     "d3-tip": "~0.6.7",
     "jquery-ui": "~1.11.4"
   },
