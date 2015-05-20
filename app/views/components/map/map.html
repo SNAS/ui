@@ -75,5 +75,25 @@
     <span>{{info}}</span>
   </div>
 
+
+  <!--bottom pane-->
+  <div ng-show="!loading" ng-init="closed=true">
+
+    <div style="background-color: blue;width: 100px;height: 20px;position: absolute;z-index: 1002; bottom:0;left:50%;margin-left: -50px; text-align: center;">
+      <div class="bmp-expand" ng-click="closed=!closed"></div>
+    </div>
+
+    <!--expanded-->
+    <div ng-show="!closed && !loading" style="background-color: red;width: 100%;height: 150px;position: absolute;z-index: 1001; bottom:0;">
+        <!------------------BMP ROUTERS---------------->
+        <!--Angular Table added here-->
+        <!--<div class="gridStyle" ng-grid="bmpRouterGridOptions"></div>-->
+        <!------------------------PEERS---------------->
+        <!--Angular Table added here-->
+        <div class="gridStyle" ng-grid="bgpPeersGridOptions"></div>
+    </div>
+
+  </div>
+
   <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="100%" resize></leaflet>
 </div>
