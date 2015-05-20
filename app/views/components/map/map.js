@@ -247,11 +247,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         if($scope.routerLayer)
                 $scope.map.removeLayer($scope.routerLayer);
         $scope.peerLayer = new L.FeatureGroup();
-<<<<<<< Updated upstream
         var peerCount = 0;
-=======
 
->>>>>>> Stashed changes
         var data;
         apiFactory.getPeersAndLocationsByIp(ip).
         success(function (result){
@@ -519,15 +516,12 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         $scope.selectedLocation = location;
         setIcon($scope.selectedLocation, 'active');
 
-<<<<<<< Updated upstream
+
         for (var key in $scope.peerDictionary) {
             $scope.peerDictionary[key].options.expandPeers = false;
         }
         location.options.expandPeers = true;
         $scope.panelSearch = location.options.city;
-=======
-        //angular.element(".locations").animate({ scrollTop: angular.element('#'+location.$$hashKey).position().top - 84 }, 1000);
->>>>>>> Stashed changes
     }
 
 
@@ -666,9 +660,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.locations[i].expandRouters = true;
             }
     }
-<<<<<<< Updated upstream
 }])
-=======
+
 
 
 //    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
@@ -785,7 +778,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 //    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
 
 })
->>>>>>> Stashed changes
 .directive('map', function () {
     return {
       templateUrl: "views/components/map/map.html",
