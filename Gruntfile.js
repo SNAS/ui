@@ -146,6 +146,7 @@ module.exports = function (grunt) {
           dot: true,
           src: [
             '.tmp',
+            '<%= yeoman.war_dist %>/{,*}*',
             '<%= yeoman.dist %>/{,*/}*',
             '!<%= yeoman.dist %>/.git*'
           ]
@@ -245,7 +246,7 @@ module.exports = function (grunt) {
 
     // Performs rewrites based on filerev and the useminPrepare configuration
     usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
+      html: ['<%= yeoman.dist %>/{,*/}/*.html', '<%= yeoman.dist %>/**/*.html'],
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
       options: {
         assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/images']
@@ -351,8 +352,9 @@ module.exports = function (grunt) {
             '*.{ico,png,txt}',
             '.htaccess',
             '*.html',
-            'views/{,*/}*.html',
+            'views/**/*.html',
             'images/{,*/}*.{webp}',
+            'views/components/NeXt*/**',
             'fonts/*'
           ]
         }, {
@@ -363,7 +365,8 @@ module.exports = function (grunt) {
         }, {
           expand: true,
           cwd: '.',
-          src: 'bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/*',
+          //src: 'bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/*',
+          src: 'bower_components/**',
           dest: '<%= yeoman.dist %>'
         }]
       },
@@ -443,6 +446,11 @@ module.exports = function (grunt) {
     'filerev',
     'usemin',
     'htmlmin'
+  ]);
+
+  grunt.registerTask('package', [
+    'build',
+    'war'
   ]);
 
   grunt.registerTask('default', [

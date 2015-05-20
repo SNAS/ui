@@ -5,24 +5,20 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/nvd3/src/nv.d3.css" />
     <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css" />
     <link rel="stylesheet" href="bower_components/bg-splitter/css/style.css" />
     <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
-    <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.min.css">
     <!-- endbower -->
-    <!-- endbuild -->
-    <!-- build:css(.tmp) styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
-    <!-- endbuild -->
-    <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css">
 
-    <!--next.js-->
-    <!--<link rel="stylesheet" href="views/components/NeXt_0.7.3/next/css/next-blue.css">-->
-    <link rel="stylesheet" href="views/components/NeXt_0.7.3/next-topology/css/next-topology.css">
+    <!-- build:css(.tmp) styles/main.css -->
+        <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
 
   </head>
 
@@ -34,6 +30,7 @@
     <div ui-view></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+    <!-- NOT USED 
      <script>
        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -43,111 +40,133 @@
        ga('create', 'UA-XXXXX-X');
        ga('send', 'pageview');
     </script>
+    -->
 
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
+
     <!-- build:js(.) scripts/vendor.js -->
-    <!-- bower:js -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/json3/lib/json3.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/affix.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/alert.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/button.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/carousel.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/collapse.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/dropdown.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/tab.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/transition.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/scrollspy.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/modal.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/tooltip.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/popover.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
-    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
-    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="bower_components/angular-animate/angular-animate.js"></script>
-    <script src="bower_components/angular-touch/angular-touch.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-    <script src="bower_components/lodash/dist/lodash.compat.js"></script>
-    <script src="bower_components/angular-google-maps/dist/angular-google-maps.js"></script>
-    <script src="bower_components/d3/d3.js"></script>
-    <script src="bower_components/nvd3/nv.d3.js"></script>
-    <script src="bower_components/angular-nvd3/dist/angular-nvd3.min.js"></script>
-    <script src="bower_components/angular-ui-grid/ui-grid.js"></script>
-    <script src="bower_components/bg-splitter/js/splitter.js"></script>
-    <script src="bower_components/leaflet/dist/leaflet.js"></script>
-    <script src="bower_components/leaflet/dist/leaflet-src.js"></script>
-    <script src="bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="bower_components/d3-tip/index.js"></script>
-    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
-    <!-- endbower -->
+    <!-- ===================================================================== -->
+    <!-- BEGIN useminPrepare build include (vendor)                            -->
+    <!--     items below this and up to endbuild comment are included          -->
+    <!--     DO NOT PUT HTTPS/HTTP sources under here, this will be stripped.  -->
+    <!-- ===================================================================== -->
+        <!-- bower:js -->
+        <script src="bower_components/jquery/dist/jquery.js"></script>
+        <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/json3/lib/json3.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/affix.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/alert.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/button.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/carousel.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/collapse.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/dropdown.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/tab.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/transition.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/scrollspy.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/modal.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/tooltip.js"></script>
+        <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/popover.js"></script>
+        <script src="bower_components/angular-resource/angular-resource.js"></script>
+        <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+        <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+        <script src="bower_components/angular-animate/angular-animate.js"></script>
+        <script src="bower_components/angular-touch/angular-touch.js"></script>
+        <script src="bower_components/angular-route/angular-route.js"></script>
+        <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+        <script src="bower_components/lodash/dist/lodash.compat.js"></script>
+        <script src="bower_components/angular-google-maps/dist/angular-google-maps.js"></script>
+        <script src="bower_components/d3/d3.js"></script>
+        <script src="bower_components/nvd3/nv.d3.js"></script>
+        <script src="bower_components/angular-nvd3/dist/angular-nvd3.min.js"></script>
+        <script src="bower_components/angular-ui-grid/ui-grid.js"></script>
+        <script src="bower_components/bg-splitter/js/splitter.js"></script>
+        <script src="bower_components/leaflet/dist/leaflet.js"></script>
+        <script src="bower_components/leaflet/dist/leaflet-src.js"></script>
+        <script src="bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
+        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+        <script src="bower_components/d3-tip/index.js"></script>
+        <script src="bower_components/jquery-ui/jquery-ui.js"></script>
     <!-- endbuild -->
 
-    <!-- /components Directives-->
+    <!-- neXt -->
+    <!--    has a lot of depends/assets. Need to figure out the grunt build config for this.  Till then, this is not usemin'd -->
+    <link rel="stylesheet" href="views/components/NeXt_0.7.3/next-topology/css/next-topology.css">
+
+    <!-- mapbox - load before min script items -->
     <script src="https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js"></script>
-    <!--<script src="views/components/router-card/router-card.js"></script>-->
-    <script src="views/components/card/card.js"></script>
-    <script src="views/components/cardList/cardList.js"></script>
-    <script src="views/components/map/map.js"></script>
-
-    <!-- /components CARD Templates-->
-      <!--Router-->
-      <script src="views/components/card/templates/globalViewRouter/globalViewRouter.js"></script>
-      <!--Peer-->
-      <script src="views/components/card/templates/genericPeer/genericPeer.js"></script>
-      <script src="views/components/card/templates/globalViewPeer/insert.js"></script>
-      <script src="views/components/card/templates/peerViewPeer/insert.js"></script>
-      <!--Graphs-->
-      <script src="views/components/card/templates/preUpdatesGraph/preUpdatesGraph.js"></script>
-      <script src="views/components/card/templates/preWithdrawsGraph/preWithdrawsGraph.js"></script>
-      <script src="views/components/card/templates/updatesGraph/updatesGraph.js"></script>
-      <script src="views/components/card/templates/withdrawsGraph/withdrawsGraph.js"></script>
-
-      <!-- /components CARD components-->
-      <script src="views/components/card/components/routerPeerIcon/routerPeerIcon.js"></script>
-
-    <!--End Card Templates-->
-
-    <!--<script src="views/components/card/templates/peerViewPeer/peerViewPeer.js"></script>-->
-    <!--<script src="views/components/card/templates/globalViewPeer/globalViewPeer.js"></script>-->
-
-    <!--next.js-->
-    <script src="views/components/NeXt_0.7.3/next/js/next.js"></script>
-    <script src="views/components/NeXt_0.7.3/next-topology/js/next-topology.js"></script>
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
-    <script src="views/app.js"></script>
-    <script src="views/asAnalysis/asAnalysis.js"></script>
-    <script src="views/collectionServer/collectionServer.js"></script>
-    <script src="views/login/login.js"></script>
-    <script src="views/peerAnalysis/peerAnalysis.js"></script>
-    <script src="views/preferences/preferences.js"></script>
-    <script src="views/prefixAnalysis/prefixAnalysis.js"></script>
-    <script src="views/aggregationanalysis/aggregationanalysis.js"></script>
-    <script src="views/summary/summary.js"></script>
-    <script src="views/globalView/globalView.js"></script>
-    <script src="views/peerView/peerView.js"></script>
-    <script src="views/whoIs/whoIs.js"></script>
-    <script src="views/container/container.js"></script>
-    <script src="views/linkState/linkState.js"></script>
-    <script src="views/asView/asView.js"></script>
-    <script src="views/orrView/orrView.js"></script>
+    <!-- ===================================================================== -->
+    <!-- BEGIN useminPrepare build include (script)                            -->
+    <!--     items below this and up to endbuild comment are included          -->
+    <!--     DO NOT PUT HTTPS/HTTP sources under here, this will be stripped.  -->
+    <!-- ===================================================================== -->
+        <script src="views/components/NeXt_0.7.3/next/js/next.js"></script>
+        <script src="views/components/NeXt_0.7.3/next-topology/js/next-topology.js"></script>
+      
+        <!-- /components Directives-->
+        <!--<script src="views/components/router-card/router-card.js"></script>-->
+        <script src="views/components/card/card.js"></script>
+        <script src="views/components/cardList/cardList.js"></script>
+        <script src="views/components/map/map.js"></script>
 
-    <!--Factories-->
-    <script src="views/factory/apiFactory.js"></script>
-    <script src="views/factory/timeFactory.js"></script>
-    <script src="views/factory/cardFactory.js"></script>
+        <!-- /components CARD Templates-->
+          <!--Router-->
+          <script src="views/components/card/templates/globalViewRouter/globalViewRouter.js"></script>
+          <!--Peer-->
+          <script src="views/components/card/templates/genericPeer/genericPeer.js"></script>
+          <script src="views/components/card/templates/globalViewPeer/insert.js"></script>
+          <script src="views/components/card/templates/peerViewPeer/insert.js"></script>
+          <!--Graphs-->
+          <script src="views/components/card/templates/preUpdatesGraph/preUpdatesGraph.js"></script>
+          <script src="views/components/card/templates/preWithdrawsGraph/preWithdrawsGraph.js"></script>
+          <script src="views/components/card/templates/updatesGraph/updatesGraph.js"></script>
+          <script src="views/components/card/templates/withdrawsGraph/withdrawsGraph.js"></script>
 
-    <!--TEST-->
-    <script src="views/cardTest/cardTest.js"></script>
-    <script src="views/cardChanges/cardChanges.js"></script>
-    <!--END TEST-->
+          <!-- /components CARD components-->
+          <script src="views/components/card/components/routerPeerIcon/routerPeerIcon.js"></script>
+
+        <!--End Card Templates-->
+
+        <!--<script src="views/components/card/templates/peerViewPeer/peerViewPeer.js"></script>-->
+        <!--<script src="views/components/card/templates/globalViewPeer/globalViewPeer.js"></script>-->
+
+        <script src="views/app.js"></script>
+     
+        <script src="views/asAnalysis/asAnalysis.js"></script>
+        <script src="views/collectionServer/collectionServer.js"></script>
+        <script src="views/login/login.js"></script>
+        <script src="views/peeranalysis/peeranalysis.js"></script>
+        <script src="views/preferences/preferences.js"></script>
+        <script src="views/prefixanalysis/prefixanalysis.js"></script>
+        <script src="views/aggregationanalysis/aggregationanalysis.js"></script>
+        <script src="views/summary/summary.js"></script>
+        <script src="views/globalView/globalView.js"></script>
+        <script src="views/peerView/peerView.js"></script>
+        <script src="views/whois/whois.js"></script>
+        <script src="views/container/container.js"></script>
+        <script src="views/linkState/linkState.js"></script>
+        <script src="views/asView/asView.js"></script>
+        <script src="views/orrView/orrView.js"></script>
+
+        <!--Factories-->
+        <script src="views/factory/apiFactory.js"></script>
+        <script src="views/factory/timeFactory.js"></script>
+        <script src="views/factory/cardFactory.js"></script>
+
+        <!--TEST-->
+        <script src="views/cardTest/cardTest.js"></script>
+        <script src="views/cardChanges/cardChanges.js"></script>
+        <!--END TEST-->
+
+    <!-- endbuild -->
+
+    <!-- mapbox -->
+    <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css">
 
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
@@ -156,6 +175,7 @@
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-zoomslider/v0.7.0/L.Control.Zoomslider.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-zoomslider/v0.7.0/L.Control.Zoomslider.css' rel='stylesheet' />
 
-    <!-- endbuild -->
+
+
 </body>
 </html>
