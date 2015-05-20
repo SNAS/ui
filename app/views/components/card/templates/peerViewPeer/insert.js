@@ -1,5 +1,24 @@
 'use strict';
 
+ angular.module('bmp.components.card').filter('unsafe', ['$sce', function ($sce){
+    return function (val){
+      return $sce.trustAsHtml(val);
+    };
+  }]);
+
+angular.module("template/popover/popover.html", []).run(["$templateCache", function ($templateCache) {
+    $templateCache.put("template/popover/popover.html",
+      "<div class=\"popover {{placement}}\" ng-class=\"{ in: isOpen(), fade: animation() }\">\n" +
+      "  <div class=\"arrow\"></div>\n" +
+      "\n" +
+      "  <div class=\"popover-inner\">\n" +
+      "      <h3 class=\"popover-title\" ng-bind-html=\"title | unsafe\" ng-show=\"title\"></h3>\n" +
+      "      <div class=\"popover-content\"ng-bind-html=\"content | unsafe\"></div>\n" +
+      "  </div>\n" +
+      "</div>\n" +
+      "");
+}]);
+
 angular.module('bmp.components.card')
 
 .controller('BmpCardPeerPeerInsertController', ["$scope", "apiFactory", "$timeout", "$element", "$document", function ($scope, apiFactory, $timeout, $element, $document) {
@@ -99,6 +118,7 @@ angular.module('bmp.components.card')
             PeerIP: $scope.values.PeerAddress,
             PeerASN: $scope.data.PeerASN
           };
+
           createASpath($scope.values.AS_Path);
         }).
         error(function (error) {
@@ -168,7 +188,7 @@ angular.module('bmp.components.card')
 
           //Here is where all fields/ info for popover should be.
 
-      var popOutContent = "asn:" + asname[i].asn + " ";
+    /*  var popOutContent = "asn:" + asname[i].asn + " ";
       popOutContent+= "as_name:" + asname[i].as_name + " ";
       popOutContent+= "org_id:" + asname[i].org_id + " ";
       popOutContent+= "org_name:" + asname[i].org_name + " ";
@@ -178,13 +198,20 @@ angular.module('bmp.components.card')
       popOutContent+= "state_prov:" + asname[i].state_prov + " ";
       popOutContent+= "postal_code:" + asname[i].postal_code + " ";
       popOutContent+= "country:" + asname[i].country;
-      popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');
+      popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');*/
 
+    var popOutFields = ["asn","asn_name","org_id","org_name","remarks","address","city","state_prov","postal_code","country"]; //etc
+    var pcontent = "";
+    for(var j = 0; j < popOutFields.length; j++){
+      if(asname[i][popOutFields[j]] != null){
+        pcontent+= popOutFields[j] + ":" + asname[i][popOutFields[j]] + "<br>";
+      }
+    }
 
       //changed the name of the as to name from results.
         $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
        //$scope.as_path[index+1].popOut = asname[i].as_name;//+1 cause starting router node
-        $scope.as_path[index+1].popOut = popOutContent;//+1 cause starting router node
+        $scope.as_path[index+1].popOut = pcontent;//+1 cause starting router node
 
         }
       }).
