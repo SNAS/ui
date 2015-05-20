@@ -9,5 +9,7 @@
  */
 angular.module('bmpUiApp')
 .controller('GlobalViewController', function ($scope) {
+    window.VIEWSCOPE = $scope;
+
     $scope.location = "globalView";
 });

@@ -180,7 +180,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 //we do not have a marker at this location
                 else{
                     $scope.allLocations.push(data[i].latitude + data[i].longitude);
-                    var options = 
+                    var options =
                     {
                         country: data[i].country,
                         stateprov: data[i].stateprov,
@@ -248,6 +248,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.map.removeLayer($scope.routerLayer);
         $scope.peerLayer = new L.FeatureGroup();
         var peerCount = 0;
+
         var data;
         apiFactory.getPeersAndLocationsByIp(ip).
         success(function (result){
@@ -354,15 +355,15 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     function setPopupContent(marker){
         //contents of popup window
         if(marker.options.type === "Router")
-            var content =   '<span><p><strong>Location:</strong><br>' + marker.options.city + 
-                            ', ' + marker.options.stateprov + 
-                            ', ' + marker.options.country + '</p>' + 
+            var content =   '<span><p><strong>Location:</strong><br>' + marker.options.city +
+                            ', ' + marker.options.stateprov +
+                            ', ' + marker.options.country + '</p>' +
                             '<p><strong>Routers at location: </strong>' + marker.options.routers.length +
                             '</p></span>';
         else{
-            var content =   '<span><p><strong>Location:</strong><br>' + marker.options.city + 
-                            ', ' + marker.options.stateprov + 
-                            ', ' + marker.options.country + '</p>' + 
+            var content =   '<span><p><strong>Location:</strong><br>' + marker.options.city +
+                            ', ' + marker.options.stateprov +
+                            ', ' + marker.options.country + '</p>' +
                             '<p><strong>Peers at location: </strong>' + marker.options.peers.length +
                             '</p></span>';
         }
@@ -432,7 +433,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.selectedLocation.closePopup();
                 $scope.selectedLocation.options.zIndexOffset = 0;
                 setIcon($scope.selectedLocation, 'default');
-            } 
+            }
             $scope.selectedLocation = location;
             $scope.selectedLocation.options.zIndexOffset = 1000;
             setIcon($scope.selectedLocation, 'active');
@@ -444,7 +445,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.selectedLocation.closePopup();
                 $scope.selectedLocation.options.zIndexOffset = 0;
                 setIcon($scope.selectedLocation, 'default');
-            } 
+            }
             $scope.selectedLocation = location;
             $scope.selectedLocation.options.zIndexOffset = 1000;
             setIcon($scope.selectedLocation, 'active');
@@ -494,7 +495,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             $scope.locations[i].expandRouters = false;
         }
         location.expandRouters = true;
-        
+
         if($scope.selectedLocation != undefined)
             setIcon($scope.selectedLocation, 'default');
 
@@ -514,6 +515,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }
         $scope.selectedLocation = location;
         setIcon($scope.selectedLocation, 'active');
+
 
         for (var key in $scope.peerDictionary) {
             $scope.peerDictionary[key].options.expandPeers = false;
@@ -659,6 +661,123 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             }
     }
 }])
+
+
+
+//    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
+
+    apiFactory.getRouters()
+      .success(function (result){
+        $scope.routers = result.routers.data;
+      })
+      .error(function(result){
+        console.log("api routers bottom pannel error")
+      });
+
+    apiFactory.getRouterStatus()
+      .success(function (result){
+        $scope.active_routers = result.routers.size;
+      })
+      .error(function(result){
+        console.log("api routers up bottom pannel error")
+      });
+
+    //Loop through routers selecting and altering relevant data.
+    $scope.bmpRouterGrid = [];
+    //for(var i = 0; i < $scope.routers.length; i++) {
+    //
+    //  apiFactory.getPeersByIp($scope.routers[i].RouterIP)
+    //    .success(function (result){
+    //      var item = {};
+    //
+    //      item.routerName = $scope.routers[i].RouterName;
+    //      item.routerIp = $scope.routers[i].RouterIP;
+    //      item.peers = $scope.routers[i].peers;
+    //
+    //      if ($scope.routers[i].isConnected == 1) {
+    //        item.status = "Up";
+    //      }
+    //      else {
+    //        item.status = "Down";
+    //      }
+    //
+    //      item.peers = result.v_peers.size;
+    //
+    //      $scope.bmpRouterGrid.push(item);
+    //    })
+    //    .error(function(result){
+    //      console.log("api routers up bottom pannel error")
+    //    });
+    //
+    //}
+    //$scope.bmpRouterGridOptions = { data: 'bmpRouterGrid' };
+
+    //"isUp": "1",
+    //"isBMPConnected": "1",
+    //"isPeerIPv4": "1",
+
+    apiFactory.getPeers()
+      .success(function (result){
+        $scope.bgpPeersGridOptions = {}; //init
+        var peersData = result;
+
+        //[ Up-ColDwn, Dwn-ColDwn, Up, Dwn ]
+        var ips = [[0,0,0,0], //ipv4
+                   [0,0,0,0]]; //ipv6
+
+        for(var i =0;i<peersData.v_peers.size;i++){
+
+          var item = peersData.v_peers.data[i];
+
+          var whichIp = 1;
+          if(item.isPeerIPv4 == 1){
+            whichIp = 0;
+          }
+
+          if(item.isBMPConnected == 0){
+            //Count Down-collected up || down
+            if(item.isUp == 1){
+              //Up
+              ips[whichIp][0]++;
+            }else{
+              //Down
+              ips[whichIp][1]++;
+            }
+          }
+          //count up and downs
+          if(item.isUp == 1){
+            //Up
+            ips[whichIp][2]++;
+          }else{
+            //Down
+            ips[whichIp][3]++;
+          }
+        }
+
+
+        //build data for the Peers table
+        var keys = ["Up-ColDwn", "Dwn-ColDwn", "Up", "Dwn"];
+        $scope.bgpPeersGrid = [];
+        for(var i = 0; i < ips[0].length; i++){
+          item={};
+          item[""] = keys[i];
+          item.IPv4 = ips[0][i];
+          item.IPv6 = ips[1][i];
+          item.Total = ips[0][i] + ips[1][i];
+          $scope.bgpPeersGrid.push(item);
+        }
+        $scope.bgpPeersGridOptions.data = $scope.bgpPeersGrid;
+
+        console.dir($scope.bgpPeersGridOptions);
+
+      })
+      .error(function(result){
+        console.log("api routers up bottom pannel error")
+      });
+
+//    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
+
+})
 .directive('map', function () {
     return {
       templateUrl: "views/components/map/map.html",
