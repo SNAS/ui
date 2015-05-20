@@ -149,7 +149,7 @@ angular.module('bmpUiApp')
     $scope.HistoryPrefixOptions.columnDefs = [
       {name: "RouterName", displayName: 'RouterName', width: 110, cellTemplate: '<div>{{row.entity[col.field]}}</div>'},
       {name: "NH", displayName: 'NH', width: 100},
-      {name: "AS_Path", displayName: 'AS_Path', cellTemplate: '<div ng-class="{redbar: row.entity.id!=1}">{{row.entity[col.field]}}</div>'+'<div ng-class="{redbar: row.entity.id!=1}">{{row.entity[col.field]}}</div>'},
+      {name: "AS_Path", displayName: 'AS_Path', cellTemplate: '<div ng-class="{redbar: row.entity.id!=1}">{{row.entity[col.field].split(" ")[1]}}</div>'+'<div ng-class="{greenbar: row.entity.id!=1}">{{row.entity[col.field].split(" ")[2]}}</div>'+'<div ng-class="{whitebar: row.entity.id!=1}">{{row.entity[col.field].split(" ")[3]}}</div>'},
       {name: "PeerASN", displayName: 'Peer_ASN', width: 130},
       {name: "MED", displayName: 'MED', width: 60},
       {name: "Communities", displayName: 'Communities'},
