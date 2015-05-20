@@ -3,7 +3,7 @@
   <div>
     AS Number or AS Name
     <input id="tags" type="text" size="50" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
-    <span class="help-block">Example: 701</span>
+    <span class="help-block">Example: 701/Cisco</span>
 
     <h3 ng-show="nodata">This AS doesn't exist</h3>
     <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
@@ -15,12 +15,12 @@
       <div class="col-lg-6">
         <p class="pgtitle-small">Whois Information for AS {{asn}}</p>
         <div class="detailspanel gridStyle-abreast">
-          <pre class="preStyle" ng-bind-html="details"></pre>
+          <pre class="preStyle fixedHeight" ng-bind-html="details"></pre>
         </div>
       </div>
       <div class="col-lg-6">
         <p class="pgtitle-small">Prefixes Originated by AS {{asn}}</p>
-        <div class="gridStyle-abreast fixedHeight" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+        <div class="gridStyle-abreast" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
       </div>
     </div>
 

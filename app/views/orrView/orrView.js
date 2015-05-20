@@ -11,27 +11,8 @@
 angular.module('bmpUiApp')
   .controller('orrViewController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
-    $scope.peerData = [
-      {
-        PeerName: "pool-100-1-1-4.nwrknj.fios.verizon.net",
-        PeerIP: "100.1.1.4",
-        protocol: "OSPFv2",
-        peerHashId: "f759ff5667e3e5341fbf7297c49d7f6f"
-      },
-      {
-        PeerName: "",
-        PeerIP: "200.1.1.1",
-        protocol: "OSPFv2",
-        peerHashId: "16ea27797629984cc5fd8c7a210b082d"
-      },
-      {
-        PeerName: "",
-        PeerIP: "200.1.1.1",
-        protocol: "IS-IS_L2",
-        peerHashId: "42e3715aaec11635f6dded418a1fe8f2"
-      }
-    ];
-    $scope.selectedPeer = $scope.peerData[0];
+    getPeers();
+
     $scope.protocol;
     $scope.show = false;
     var nodesPromise, linksPromise;
@@ -169,7 +150,7 @@ angular.module('bmpUiApp')
       topo.selectedNodes().add(node);
 
       if ($scope.protocol == "OSPF") {
-        apiFactory.getSPFospf($scope.selectedPeer.peerHashId, selectedRouterId).success(function (result) {
+        apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
             SPFdata = result.igp_ospf.data;
             drawShortestPathTree(SPFdata);
           }
@@ -178,7 +159,7 @@ angular.module('bmpUiApp')
           });
       }
       else if ($scope.protocol == "ISIS") {
-        apiFactory.getSPFisis($scope.selectedPeer.peerHashId, selectedRouterId).success(function (result) {
+        apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
             SPFdata = result.igp_isis.data;
             drawShortestPathTree(SPFdata);
           }
@@ -216,7 +197,19 @@ angular.module('bmpUiApp')
       });
     };
 
-    $(function () {
+    function getPeers(){
+      apiFactory.getLinkStatePeers().success(
+        function (result){
+          $scope.peerData = result.ls_peers.data;
+          $scope.selectedPeer = $scope.peerData[0];
+          init();
+        })
+        .error(function (error) {
+          console.log(error.message);
+        });
+    }
+
+    function init() {
       var app = new nx.ui.Application();
       app.container(document.getElementById('link_state_topology'));
       topo.attach(app);
@@ -233,10 +226,10 @@ angular.module('bmpUiApp')
       //topo.activateLayout('hierarchicalLayout');
 
       $scope.selectChange();
-    });
+    }
 
     function getNodes() {
-      nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peerHashId);
+      nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id);
       nodesPromise.success(function (result) {
         nodes = [];
         var nodesData = result.v_ls_nodes.data;
@@ -270,7 +263,7 @@ angular.module('bmpUiApp')
     }
 
     function getLinks() {
-      linksPromise = apiFactory.getPeerLinks($scope.selectedPeer.peerHashId);
+      linksPromise = apiFactory.getPeerLinks($scope.selectedPeer.peer_hash_id);
       linksPromise.success(function (result) {
         links = [];
         var linksData = result.v_ls_links.data;

@@ -181,6 +181,14 @@ angular.module('bmpUiApp')
     };
 
     //topology
+    apiFactory.getLinkStatePeers = function (){
+      return $http.get(urlBase + "linkstate/peers/");
+    };
+
+    apiFactory.getLinkStatePeersWithGeo = function (){
+      return $http.get(urlBase + "linkstate/peers/?withGeo");
+    };
+
     apiFactory.getPeerNodes = function (peerHashId){
       return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId + "/?withGeo");
     };
