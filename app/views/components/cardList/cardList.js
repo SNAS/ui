@@ -23,10 +23,10 @@ angular.module('bmp.components.cardList',[])
       restrict: 'AE',
       replace: 'true',
       scope: {
-        length: '=',      //set length of cards to show
-        priority: '=',    //order for the cards !!most imp at end!!
-        api: '=',         //directive global api
-        pageLocation: '=' //location for getting relevant template
+        length: '=',       //set length of cards to show
+        priority: '=',     //order for the cards !!most imp at end!!
+        api: '=?',         //directive global api
+        pageLocation: '='  //location for getting relevant template
       },
       link: function(scope) {
         scope.cards = [];
@@ -101,6 +101,7 @@ angular.module('bmp.components.cardList',[])
           }
 
         };
+
       }
     }
   });
