@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-.controller('MapController', function ($scope, $http, $timeout, apiFactory, leafletData, $compile, $filter, $location, $anchorScroll, $window) {
+.controller('MapController', ["$scope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", function ($scope, $timeout, apiFactory, leafletData, $compile, $window) {
 
     window.SCOPEMAP = $scope;
 
@@ -658,7 +658,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.locations[i].expandRouters = true;
             }
     }
-})
+}])
 .directive('map', function () {
     return {
       templateUrl: "views/components/map/map.html",
@@ -673,7 +673,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       }
     }
 })
-.directive('resize', function ($window, $timeout) {
+.directive('resize', ["$window", "$timeout", function ($window, $timeout) {
     return function (scope, element) {
         var w = angular.element($window);
         scope.getWindowDimensions = function () {
@@ -694,4 +694,4 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             scope.$apply();
         });
     }
-});
+}]);
