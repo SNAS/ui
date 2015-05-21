@@ -8,7 +8,7 @@
  * Controller of the AS View page
  */
 angular.module('bmpUiApp')
-  .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
+  .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', '$stateParams', function ($scope, apiFactory, $timeout, $stateParams) {
 
     var upstreamData, downstreamData;
     var upstreamPromise, downstreamPromise;
@@ -34,27 +34,28 @@ angular.module('bmpUiApp')
 
     //upstream table opions
     $scope.upstreamGridOptions = {
+      enableColumnResizing: true,
       rowHeight: 25,
-      footerHeight: 0,
       //rowTemplate:
       //  '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
 
       columnDefs: [
-        {name: "asn", displayName: 'ASN', width: '*'},
-        {name: "as_name", displayName: 'AS Name', width: '*'},
+        {name: "asn", displayName: 'ASN', width: '30%'},
+        {name: "as_name", displayName: 'AS Name', width: '70%'},
         //{name: "Prefixes_Learned", displayName: 'Prefixes', width: '*'}
       ]
     };
 
     //downstream table opions
     $scope.downstreamGridOptions = {
+      enableColumnResizing: true,
       rowHeight: 25,
       //rowTemplate:
       //  '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
 
       columnDefs: [
-        {name: "asn", displayName: 'ASN', width: '*'},
-        {name: "as_name", displayName: 'AS Name', width: '*'},
+        {name: "asn", displayName: 'ASN', width: '30%'},
+        {name: "as_name", displayName: 'AS Name', width: '70%'}
         //{name: "Prefixes_Learned", displayName: 'Prefixes', width: '*'}
       ]
     };
@@ -124,7 +125,12 @@ angular.module('bmpUiApp')
       app.start();
 
       //initial search
-      $scope.searchValue = 109;
+      if($stateParams.as){
+        $scope.searchValue = $stateParams.as;
+      }
+      else{
+        $scope.searchValue = 109;
+      }
       searchValue();
     });
 
@@ -305,21 +311,21 @@ angular.module('bmpUiApp')
       });
 
       //Upstream ASes
-      pushNodes(upstreamData, "upstream", width, -downstreamLayerHeight);
+      pushNodes(upstreamData, "upstream", width, -upstreamLayerHeight);
       if (upstreamData.length > 100) {
-        var allNodeSets = groupNode(upstreamData, "", "upstream", "country", width, -upstreamLayerHeight);
-        var allNodeSetsKeys = Object.keys(allNodeSets);
-        for (var i = 0; i < allNodeSetsKeys.length; i++) {
-          allNodeSets = groupNode(allNodeSets[allNodeSetsKeys[i]], allNodeSetsKeys[i], "upstream", "state_prov",
-            i * width / allNodeSetsKeys.length, width / allNodeSetsKeys.length, -2 * upstreamLayerHeight);
-          allNodeSetsKeys = Object.keys(allNodeSets);
-          for (var j = 0; j < allNodeSetsKeys.length; j++) {
-            allNodeSets = groupNode(allNodeSets[allNodeSetsKeys[j]], allNodeSetsKeys[j], "upstream", "city",
-              j * width / allNodeSetsKeys.length, width / allNodeSetsKeys.length, -3 * upstreamLayerHeight);
-            allNodeSetsKeys = Object.keys(allNodeSets);
-            for (var n = 0; n < allNodeSetsKeys.length; n++) {
-              allNodeSets = groupNode(allNodeSets[allNodeSetsKeys[n]], allNodeSetsKeys[n], "upstream", "",
-                n * width / allNodeSetsKeys.length, width / allNodeSetsKeys.length, -4 * upstreamLayerHeight);
+        var allNodeSetsByCountry = groupNode(upstreamData, "", "upstream", "country", 0, width, -upstreamLayerHeight);
+        var allNodeSetsByCountryKeys = Object.keys(allNodeSetsByCountry);
+        for (var i = 0; i < allNodeSetsByCountryKeys.length; i++) {
+          var allNodeSetsByState = groupNode(allNodeSetsByCountry[allNodeSetsByCountryKeys[i]], allNodeSetsByCountryKeys[i], "upstream", "state_prov",
+            i * width / allNodeSetsByCountryKeys.length, width / allNodeSetsByCountryKeys.length, -2 * upstreamLayerHeight);
+          var allNodeSetsByStateKeys = Object.keys(allNodeSetsByState);
+          for (var j = 0; j < allNodeSetsByStateKeys.length; j++) {
+            var allNodeSetsByCity = groupNode(allNodeSetsByState[allNodeSetsByStateKeys[j]], allNodeSetsByStateKeys[j], "upstream", "city",
+              j * width / allNodeSetsByStateKeys.length, width / allNodeSetsByStateKeys.length, -3 * upstreamLayerHeight);
+            var allNodeSetsByCityKeys = Object.keys(allNodeSetsByCity);
+            for (var n = 0; n < allNodeSetsByCityKeys.length; n++) {
+              groupNode(allNodeSetsByCity[allNodeSetsByCityKeys[n]], allNodeSetsByCityKeys[n], "upstream", "",
+                n * width / allNodeSetsByCityKeys.length, width / allNodeSetsByCityKeys.length, -4 * upstreamLayerHeight);
             }
           }
         }
@@ -332,19 +338,19 @@ angular.module('bmpUiApp')
       pushNodes(downstreamData, "downstream", width, downstreamLayerHeight);
 
       if (downstreamData.length > 100) {
-        var allNodeSets = groupNode(downstreamData, "", "downstream", "country", width, downstreamLayerHeight);
-        var allNodeSetsKeys = Object.keys(allNodeSets);
-        for (var i = 0; i < allNodeSetsKeys.length; i++) {
-          allNodeSets = groupNode(allNodeSets[allNodeSetsKeys[i]], allNodeSetsKeys[i], "downstream", "state_prov",
-            i * width / allNodeSetsKeys.length, width / allNodeSetsKeys.length, 2 * downstreamLayerHeight);
-          allNodeSetsKeys = Object.keys(allNodeSets);
-          for (var j = 0; j < allNodeSetsKeys.length; j++) {
-            allNodeSets = groupNode(allNodeSets[allNodeSetsKeys[j]], allNodeSetsKeys[j], "downstream", "city",
-              j * width / allNodeSetsKeys.length, width / allNodeSetsKeys.length, 3 * downstreamLayerHeight);
-            allNodeSetsKeys = Object.keys(allNodeSets);
-            for (var n = 0; n < allNodeSetsKeys.length; n++) {
-              allNodeSets = groupNode(allNodeSets[allNodeSetsKeys[n]], allNodeSetsKeys[n], "downstream", "",
-                n * width / allNodeSetsKeys.length, width / allNodeSetsKeys.length, 4 * downstreamLayerHeight);
+        var allNodeSetsByCountry = groupNode(downstreamData, "", "downstream", "country", 0, width, downstreamLayerHeight);
+        var allNodeSetsByCountryKeys = Object.keys(allNodeSetsByCountry);
+        for (var i = 0; i < allNodeSetsByCountryKeys.length; i++) {
+          allNodeSetsByState = groupNode(allNodeSetsByCountry[allNodeSetsByCountryKeys[i]], allNodeSetsByCountryKeys[i], "downstream", "state_prov",
+            i * width / allNodeSetsByCountryKeys.length, width / allNodeSetsByCountryKeys.length, 2 * downstreamLayerHeight);
+          allNodeSetsByStateKeys = Object.keys(allNodeSetsByState);
+          for (var j = 0; j < allNodeSetsByStateKeys.length; j++) {
+            allNodeSetsByCity = groupNode(allNodeSetsByState[allNodeSetsByStateKeys[j]], allNodeSetsByStateKeys[j], "downstream", "city",
+              j * width / allNodeSetsByStateKeys.length, width / allNodeSetsByStateKeys.length, 3 * downstreamLayerHeight);
+            allNodeSetsByCityKeys = Object.keys(allNodeSetsByCity);
+            for (var n = 0; n < allNodeSetsByCityKeys.length; n++) {
+              groupNode(allNodeSetsByCity[allNodeSetsByCityKeys[n]], allNodeSetsByCityKeys[n], "downstream", "",
+                n * width / allNodeSetsByCityKeys.length, width / allNodeSetsByCityKeys.length, 4 * downstreamLayerHeight);
             }
           }
         }
@@ -437,8 +443,10 @@ angular.module('bmpUiApp')
       }
       var space = width / ((singleNodes.length + nodeSet2Keys.length) - 1);
       //console.log(nodeSet1);
-      console.log(nodeSet2);
+      //console.log(nodeSet2);
       //console.log(singleNodes);
+
+      var groupedNodesId = [];
 
       //push all the single nodes
       for (var i = 0; i < singleNodes.length; i++) {
@@ -470,6 +478,8 @@ angular.module('bmpUiApp')
           ////x: i < singleNodes.length / 2 ? i * space : (allGroupedNodes.length + i) * space,
           //y: height
         };
+
+        groupedNodesId.push(node.id);
       }
 
       //push all the nodes grouped
@@ -494,7 +504,7 @@ angular.module('bmpUiApp')
       //push nodeSet
       for (var i = 0; i < nodeSet2Keys.length; i++) {
         //var groupedNodes = nodeSet2[nodeSet2Keys[i]];
-        var groupedNodesId = [];
+        //var groupedNodesId = [];
 
         //for (var j = 0; j < groupedNodes.length; j++) {
         //  var asn = groupedNodes[j].asn;
@@ -508,26 +518,33 @@ angular.module('bmpUiApp')
         nodeSet.push({
           id: nodeSetId++,
           type: 'nodeSet',
-          nodes: groupedNodesId,
+          nodes: [],
           name: nodeSet2Keys[i],
+          parentNodeSetName: parentNodeSetName,
+          country: nodeSet2[nodeSet2Keys[i]][0].country,
           //x: centre,
           x: (singleNodes.length / 2 + i) * space,
           y: height
         });
+
+        groupedNodesId.push(nodeSetId-1);
       }
+
 
       var nodeset = getNodeSet(parentNodeSetName);
       if (nodeset) {
         nodeSet[nodeset.id] = {
-          id: nodeSetId++,
-          type: 'nodeSet',
+          id: nodeset.id,
+          type: nodeset.type,
           nodes: groupedNodesId,
-          name: nodeSet2Keys[i],
-          //x: centre,
-          x: (singleNodes.length / 2 + i) * space,
-          y: height
+          name: nodeset.name,
+          x: nodeset.x,
+          y: nodeset.y
         };
       }
+
+      console.log(nodeSet);
+
       return nodeSet2;
     }
 

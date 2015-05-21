@@ -11,27 +11,8 @@
 angular.module('bmpUiApp')
   .controller('orrViewController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
-    $scope.peerData = [
-      {
-        PeerName: "pool-100-1-1-4.nwrknj.fios.verizon.net",
-        PeerIP: "100.1.1.4",
-        protocol: "OSPFv2",
-        peerHashId: "f759ff5667e3e5341fbf7297c49d7f6f"
-      },
-      {
-        PeerName: "",
-        PeerIP: "200.1.1.1",
-        protocol: "OSPFv2",
-        peerHashId: "16ea27797629984cc5fd8c7a210b082d"
-      },
-      {
-        PeerName: "",
-        PeerIP: "200.1.1.1",
-        protocol: "IS-IS_L2",
-        peerHashId: "42e3715aaec11635f6dded418a1fe8f2"
-      }
-    ];
-    $scope.selectedPeer = $scope.peerData[0];
+    getPeers();
+
     $scope.protocol;
     $scope.show = false;
     var nodesPromise, linksPromise;
@@ -125,27 +106,33 @@ angular.module('bmpUiApp')
     $scope.SPFtableOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
+      enableColumnResizing: true,
       multiSelect: false,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
 
       columnDefs: [
-        {field: 'prefixWithLen', displayName: 'Prefix', width: '*'},
-        //{field: 'prefix_len', displayName: 'Prefix Length', width: '*'},
-        {field: 'Type', displayName: 'Type', width: '*'},
-        {field: 'metric', displayName: 'Metric', width: '*'},
+        {field: 'prefixWithLen', displayName: 'Prefix', width: '10%'},
+        {field: 'ORR', displayName: 'ORR', width: '*'},
+        {field: 'protocol', displayName: 'Protocol', width: '6%'},
+        {field: 'NH', displayName: 'Next Hop', width: '*'},
+        {field: 'Type', displayName: 'Type', width: '4%'},
+        {field: 'metric', displayName: 'Metric', width: '5%'},
         {field: 'src_router_id', displayName: 'Source Router Id', width: '*'},
         {field: 'nei_router_id', displayName: 'Neighbor Router Id', width: '*'},
         {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '*'},
       ],
 
-      rowTemplate: '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
+      rowTemplate: '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" ' +
+      'ng-class="{\'highlight\':row.entity.protocol==\'bgp\' && row.entity.ORR.startsWith(\'Not optimized\')}" ' +
+      'class="ui-grid-cell" ui-grid-cell></div>',
       onRegisterApi: function (gridApi) {
         $scope.gridApi = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           var path = row.entity.path_hash_ids;
           var neighbor_addr = row.entity.neighbor_addr;
-          $scope.drawPath(path, neighbor_addr);
+          var type = (row.entity.protocol == "bgp" && row.entity.ORR.startsWith("Not optimized"))? 2 : 1;
+          $scope.drawPath(path, neighbor_addr, type);
         });
       }
     };
@@ -169,8 +156,8 @@ angular.module('bmpUiApp')
       topo.selectedNodes().add(node);
 
       if ($scope.protocol == "OSPF") {
-        apiFactory.getSPFospf($scope.selectedPeer.peerHashId, selectedRouterId).success(function (result) {
-            SPFdata = result.igp_ospf.data;
+        apiFactory.getORRospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
+            SPFdata = result.orr.data.data;
             drawShortestPathTree(SPFdata);
           }
         ).error(function (error) {
@@ -178,8 +165,8 @@ angular.module('bmpUiApp')
           });
       }
       else if ($scope.protocol == "ISIS") {
-        apiFactory.getSPFisis($scope.selectedPeer.peerHashId, selectedRouterId).success(function (result) {
-            SPFdata = result.igp_isis.data;
+        apiFactory.getORRisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
+            SPFdata = result.orr.data.data;
             drawShortestPathTree(SPFdata);
           }
         ).error(function (error) {
@@ -216,7 +203,19 @@ angular.module('bmpUiApp')
       });
     };
 
-    $(function () {
+    function getPeers(){
+      apiFactory.getLinkStatePeers().success(
+        function (result){
+          $scope.peerData = result.ls_peers.data;
+          $scope.selectedPeer = $scope.peerData[0];
+          init();
+        })
+        .error(function (error) {
+          console.log(error.message);
+        });
+    }
+
+    function init() {
       var app = new nx.ui.Application();
       app.container(document.getElementById('link_state_topology'));
       topo.attach(app);
@@ -233,10 +232,10 @@ angular.module('bmpUiApp')
       //topo.activateLayout('hierarchicalLayout');
 
       $scope.selectChange();
-    });
+    }
 
     function getNodes() {
-      nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peerHashId);
+      nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id);
       nodesPromise.success(function (result) {
         nodes = [];
         var nodesData = result.v_ls_nodes.data;
@@ -270,7 +269,7 @@ angular.module('bmpUiApp')
     }
 
     function getLinks() {
-      linksPromise = apiFactory.getPeerLinks($scope.selectedPeer.peerHashId);
+      linksPromise = apiFactory.getPeerLinks($scope.selectedPeer.peer_hash_id);
       linksPromise.success(function (result) {
         links = [];
         var linksData = result.v_ls_links.data;
@@ -359,7 +358,8 @@ angular.module('bmpUiApp')
     }
 
     //draw the path
-    $scope.drawPath = function (path_hash_ids, neighbor_addr) {
+    $scope.drawPath = function (path_hash_ids, neighbor_addr, type) {
+      var color = type == 1 ? '#9ec654' : 'red';
       var pathLayer = topo.getLayer("paths");
       nx.each(pathLayer.paths(), function (path) {
         path.dispose();
@@ -384,7 +384,7 @@ angular.module('bmpUiApp')
           pathStyle: {
             'stroke': '#9ec654',
             'stroke-width': '0px',
-            fill: '#9ec654'
+            fill: color
           },
           pathWidth: 4,
           reverse: reverse

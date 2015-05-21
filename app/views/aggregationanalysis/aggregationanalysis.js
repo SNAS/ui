@@ -8,11 +8,11 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('aggregationanalysisController',['$scope', 'apiFactory', '$http', '$timeout', function ($scope, apiFactory, $http, $timeout) {
+  .controller('aggregationanalysisController',['$scope', 'apiFactory', '$http', '$timeout', "$stateParams", function ($scope, apiFactory, $http, $timeout, $stateParams) {
     //DEBUG
     window.SCOPE = $scope;
 
-     $scope.searchPrefix = "";
+    $scope.searchPrefix = "";
 
     $scope.$on('menu-toggle', function (thing, args) {
       $timeout(function () {
@@ -22,36 +22,46 @@ angular.module('bmpUiApp')
 
     //populate prefix data into ShowPrefixsOptions Grid
     $scope.ShowPrefixsOptions = {
-      enableRowSelection: false,
-      enableRowHeaderSelection: false,
-      flatEntityAccess: true
+      enableRowSelection: true,
+      enableRowHeaderSelection: false
     };
 
     $scope.ShowPrefixsOptions.columnDefs = [
-      {name: "RouterName", displayName: 'RouterName', width: '*'},
-      {name: "PeerName", displayName: 'PeerName', width: '*'},
-      {name: "Prefix", displayName: 'Prefix', width: '*'},
+      {name: "router_name", displayName: 'RouterName', width: '*'},
+      {name: "peer_name", displayName: 'PeerName', width: '*'},
+      {name: "prefix", displayName: 'Prefix', width: '*'},
     ];
 
     $scope.getsShowPrefixInfo = function(){
-
-      $scope.ShowPrefixsOptions.data = [];
 
       apiFactory.getAsnCount($scope.searchPrefix)
         .success(function(data) {
         $scope.prefix_amount= data.table.data[0].PrefixCount;
           apiFactory.getAsnInfo(109,$scope.prefix_amount)
             .success(function(result) {
-              $scope.ShowPrefixsOptions.data = result.v_routes.data;
+              $scope.ShowPrefixsOptions.data = $scope.PrefixData = result.v_routes.data;
 
-              var peerDataOriginal = $scope.ShowPrefixsOptions.data;
-
+              var peerDataOriginal = result.v_routes.data;
               $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
-
-              $scope.apply();
+              createShowPrefixsOptions();
             });
       });
     };
+
+    if($stateParams.as){
+      $scope.searchPrefix = $stateParams.as;
+      $scope.getsShowPrefixInfo();
+    }
+
+    var createShowPrefixsOptions = function () {
+      for (var i = 0; i < $scope.PrefixData.length; i++) {
+        $scope.PrefixData[i].router_name = $scope.PrefixData[i].RouterName + "/" + $scope.PrefixData[i].PrefixLen;
+        $scope.PrefixData[i].peer_name = $scope.PrefixData[i].PeerName;
+        $scope.PrefixData[i].prefix = $scope.PrefixData[i].Prefix;
+      }
+      $scope.apply();
+    };
+
 
     var filterUnique = function(input, key) {
       var unique = {};
@@ -68,6 +78,16 @@ angular.module('bmpUiApp')
       return uniqueList;
     };
 
+    //  this function is for getting peer information and return a drop-down list
+    //var getPeers = function(){
+    //  apiFactory.getPeers()
+    //    .success(function(result) {
+    //      $scope.peerData = result.v_peers.data;
+    //
+    //    });
+    //}
+    //
+    //getPeers();
 
     $scope.selectChange = function(){
       $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
@@ -168,7 +188,7 @@ angular.module('bmpUiApp')
 
     // show redundant prefix
     $scope.ShowRedundantOptions = {
-      enableRowSelection: false,
+      enableRowSelection: true,
       enableRowHeaderSelection: false
     };
     $scope.ShowRedundantOptions.columnDefs = [

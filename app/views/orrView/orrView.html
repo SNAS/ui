@@ -1,15 +1,16 @@
-<br>
-  <!--<h1 class="pgtitle">Link State View</h1>-->
+<div class="margin-small">
   <div style="padding-bottom:12px">
     Select Peer
-    <select ng-model="selectedPeer" ng-options="(peer.PeerName != '' ? peer.PeerName : peer.PeerIP + ' (' + peer.protocol + ')' ) for peer in peerData" ng-change="selectChange()">
+    <select ng-model="selectedPeer"
+            ng-options="(peer.PeerName != '' ? peer.PeerName : peer.PeerIP + ' (' + peer.protocol + ')' ) for peer in peerData"
+            ng-change="selectChange()">
     </select>
-    Protocol:  {{protocol}}
+    Protocol: {{protocol}}
   </div>
   <!--<nextTopology data="topologyData" options="topologyOptions" protocol="protocol" peer-hash-id="peerHashId" get-spf-table="getSPFtable" path="path"></nextTopology>-->
   <!--<topology></topology>-->
   <div id="link_state_topology"></div>
-  <br>
-  <div class="gridStyle margin" ng-show="show===true" ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
-  <br>
+  <div class="margin-small">
+    <div class="grid" ng-show="show===true" ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
+  </div>
 </div>

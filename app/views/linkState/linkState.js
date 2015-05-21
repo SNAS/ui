@@ -11,27 +11,8 @@
 angular.module('bmpUiApp')
   .controller('linkStateController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
-    $scope.peerData = [
-      {
-        PeerName: "pool-100-1-1-4.nwrknj.fios.verizon.net",
-        PeerIP: "100.1.1.4",
-        protocol: "OSPFv2",
-        peerHashId: "f759ff5667e3e5341fbf7297c49d7f6f"
-      },
-      {
-        PeerName: "",
-        PeerIP: "200.1.1.1",
-        protocol: "OSPFv2",
-        peerHashId: "16ea27797629984cc5fd8c7a210b082d"
-      },
-      {
-        PeerName: "",
-        PeerIP: "200.1.1.1",
-        protocol: "IS-IS_L2",
-        peerHashId: "42e3715aaec11635f6dded418a1fe8f2"
-      }
-    ];
-    $scope.selectedPeer = $scope.peerData[0];
+    getPeers();
+
     $scope.protocol;
     $scope.show = false;
     var nodesPromise, linksPromise;
@@ -43,30 +24,6 @@ angular.module('bmpUiApp')
       45.5234, 42.6526, 25.7743, 32.7153, 42.3584, 36.137242513163];
     var longitudes = [-149.8286774, -122.332, -95.3633, -87.65, -84.1959236252621, -93.2638, -118.244, -94.5786,
       -74.0143, -77.0364, -122.676, -73.7562, -80.1937, -117.157, -71.0598, -120.754451723841];
-
-    //var topologyData = {
-    //  nodes: [
-    //    {"id": 0, "x": 410, "y": 100, "name": "12K-1"},
-    //    {"id": 1, "x": 410, "y": 280, "name": "12K-2"},
-    //    {"id": 2, "x": 660, "y": 280, "name": "Of-9k-03"},
-    //    {"id": 3, "x": 660, "y": 100, "name": "Of-9k-02"},
-    //    {"id": 4, "x": 180, "y": 190, "name": "Of-9k-01"}
-    //  ],
-    //  links: [
-    //    {"source": 0, "target": 1},
-    //    {"source": 1, "target": 2},
-    //    {"source": 1, "target": 3},
-    //    {"source": 4, "target": 1},
-    //    {"source": 2, "target": 3},
-    //    {"source": 2, "target": 0},
-    //    {"source": 3, "target": 0},
-    //    {"source": 3, "target": 0},
-    //    {"source": 3, "target": 0},
-    //    {"source": 0, "target": 4},
-    //    {"source": 0, "target": 4},
-    //    {"source": 0, "target": 3}
-    //  ]
-    //};
 
     // initialize a topology
     //(function(nx, global) {
@@ -125,6 +82,7 @@ angular.module('bmpUiApp')
     $scope.SPFtableOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
+      enableColumnResizing: true,
       multiSelect: false,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
@@ -169,7 +127,7 @@ angular.module('bmpUiApp')
       topo.selectedNodes().add(node);
 
       if ($scope.protocol == "OSPF") {
-        apiFactory.getSPFospf($scope.selectedPeer.peerHashId, selectedRouterId).success(function (result) {
+        apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
             SPFdata = result.igp_ospf.data;
             drawShortestPathTree(SPFdata);
           }
@@ -178,7 +136,7 @@ angular.module('bmpUiApp')
           });
       }
       else if ($scope.protocol == "ISIS") {
-        apiFactory.getSPFisis($scope.selectedPeer.peerHashId, selectedRouterId).success(function (result) {
+        apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
             SPFdata = result.igp_isis.data;
             drawShortestPathTree(SPFdata);
           }
@@ -216,7 +174,19 @@ angular.module('bmpUiApp')
       });
     };
 
-    $(function () {
+    function getPeers(){
+      apiFactory.getLinkStatePeers().success(
+        function (result){
+          $scope.peerData = result.ls_peers.data;
+          $scope.selectedPeer = $scope.peerData[0];
+          init();
+        })
+        .error(function (error) {
+          console.log(error.message);
+        });
+    }
+
+    function init() {
       var app = new nx.ui.Application();
       app.container(document.getElementById('link_state_topology'));
       topo.attach(app);
@@ -233,10 +203,10 @@ angular.module('bmpUiApp')
       //topo.activateLayout('hierarchicalLayout');
 
       $scope.selectChange();
-    });
+    }
 
     function getNodes() {
-      nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peerHashId);
+      nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id);
       nodesPromise.success(function (result) {
         nodes = [];
         var nodesData = result.v_ls_nodes.data;
@@ -270,7 +240,7 @@ angular.module('bmpUiApp')
     }
 
     function getLinks() {
-      linksPromise = apiFactory.getPeerLinks($scope.selectedPeer.peerHashId);
+      linksPromise = apiFactory.getPeerLinks($scope.selectedPeer.peer_hash_id);
       linksPromise.success(function (result) {
         links = [];
         var linksData = result.v_ls_links.data;

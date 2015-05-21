@@ -1,4 +1,4 @@
-<div class="relative">
+<div class="relative" ng-style="{height: dualWindow == true ? '100%' : 'auto'}">
   <div class="loading" ng-class="{active: loading}">
       <span class="glyphicon glyphicon-refresh"></span>
   </div>
@@ -7,7 +7,7 @@
     {{error}}
   </div>
 
-  <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}">
+  <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}" ng-style="{ height: dualWindow == true ? '70%' : 'inherit' }">
     <div class="panel-search">
       <span class="glyphicon glyphicon-remove" ng-show="panelSearch" ng-click="panelSearch = ''"></span>
       <input type="text" placeholder="Search" class="search" ng-model="panelSearch" ng-click="expandPanelLocations()"/>
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}">
+    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}" ng-style="{ height: dualWindow == true ? '100%' : 'inherit' }">
       <ul class="locations" ng-hide="selectedRouter"  ng-style="{'max-height': panelHeight}">
         <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
           <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
@@ -77,20 +77,77 @@
 
 
   <!--bottom pane-->
-  <div ng-show="!loading" ng-init="closed=true">
+  <div class="bottom-pane" ng-show="!loading && location === 'globalView'" ng-init="closed=true">
 
-    <div style="background-color: blue;width: 100px;height: 20px;position: absolute;z-index: 1002; bottom:0;left:50%;margin-left: -50px; text-align: center;">
-      <div class="bmp-expand" ng-click="closed=!closed"></div>
+    <div ng-class="{'top':!closed}" class="collapsed-section">
+      <div class="bmp-expand coll-icon" ng-click="closed=!closed"></div>
     </div>
 
     <!--expanded-->
-    <div ng-show="!closed && !loading" style="background-color: red;width: 100%;height: 150px;position: absolute;z-index: 1001; bottom:0;">
-        <!------------------BMP ROUTERS---------------->
-        <!--Angular Table added here-->
-        <!--<div class="gridStyle" ng-grid="bmpRouterGridOptions"></div>-->
-        <!------------------------PEERS---------------->
-        <!--Angular Table added here-->
-        <div class="gridStyle" ng-grid="bgpPeersGridOptions"></div>
+    <div class="expanded-section" ng-show="!closed && !loading">
+
+      <div style="float: left">
+        <div>PEER</div>
+        <!--IP Boxes-->
+        <div class="ip-section" ng-repeat="peer in bgpPeers" ng-style="{'background-color':peer.colour}">
+          <!--top section-->
+          <div style="width: 100%; height: 35px;">
+            <!--top left //ipv4-->
+            <div style="float:left;text-align: center">
+              <!--type-->ipv4
+              <br>
+              <!--total-->{{ peer.ipv4 }}
+            </div>
+            <!--top right //ipv6-->
+            <div style="float:right;text-align: center">
+              <!--type-->ipv6
+              <br>
+              <!--total-->{{ peer.ipv6 }}
+            </div>
+          </div>
+          <!--bottom-->
+          <div style="text-align: center">
+            <!--total--><h3>{{ peer.total }}</h3>
+            <!--type-->{{ peer.type }}
+          </div>
+        </div>
+      </div>
+
+      <!--Chart-->
+
+      <div style="float: left">
+        <div style="background-color: white;width: 600px;height: 129px;float: left;margin-top: 21px;color:#000000;">
+          <nvd3 options="topChartOptions" data="topChartData"></nvd3>
+        </div>
+      </div>
+
+      <div class="left">
+        <div>BMP ROUTER</div>
+        <!--Router Boxes-->
+        <div class="ip-section" style="background-color: #0266a0;">
+          <!--top section-->
+          <div style="width: 100%; height: 35px;">
+            <!--top left //ipv4-->
+            <div style="float:left;text-align: center">
+              <!--type-->UP
+              <br>
+              <!--total-->{{ routerTotals[0] }}
+            </div>
+            <!--top right //ipv6-->
+            <div style="float:right;text-align: center">
+              <!--type-->DOWN
+              <br>
+              <!--total-->{{ routerTotals[1] }}
+            </div>
+          </div>
+          <!--bottom-->
+          <div style="text-align: center">
+            <!--total--><h3>{{ routerTotals[2] }}</h3>
+            <!--type-->TOTAL
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div>

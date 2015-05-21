@@ -19,12 +19,14 @@
 .detailspanel {
   //margin: 5%;
   //margin-right: 5%;
-  height: 300px;
-  overflow-y: scroll;
+  // height: 300px;
+  // overflow-y: scroll;
 }
 
 .preStyle{
   background-color: #f4f6f9;
+  max-height: 300px;
+  overflow-y: scroll;
 }
 
 .tableStyle{
@@ -32,9 +34,7 @@
   font-weight: lighter;
 }
 
-.gridStyle{
-  //margin: 5%;
-  //margin-right: 5%;
+.grid{
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 12px;
   font-style: normal;
@@ -70,5 +70,6 @@
 }
 
 .highlight {
-  color: #7ec35c;
+  color: #4ec0f1;
+  //color: #7ec35c;
 }
