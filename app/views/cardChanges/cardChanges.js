@@ -335,7 +335,7 @@ angular.module('bmpUiApp')
           })
         }
       };
-      $('body').popover({ selector: '[data-popover]', trigger: 'hover', placement: 'right', delay: {show: 50, hide: 3000}});
+      $('body').popover({ selector: '[data-popover]', trigger: 'hover', placement: 'right', delay: {show: 50, hide: 1000}});
 
 
 
