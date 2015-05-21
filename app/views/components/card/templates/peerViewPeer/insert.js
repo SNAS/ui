@@ -146,7 +146,7 @@ angular.module('bmp.components.card')
     $scope.as_path=[];
     $scope.as_path.push({
       icon:"bmp-bmp_router10-17",
-      topVal:"RouterName",
+      topVal:$scope.data.LocalASN,
       colour:"#4b84ca",
       botVal:"IP",
       isEnd:true
