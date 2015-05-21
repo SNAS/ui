@@ -68,6 +68,7 @@
 
 .relative{
     position: relative;
+    height: 100%;
 }
 
 .error{
@@ -234,7 +235,6 @@
             background-color: white;
             color: #555;
             overflow-y: scroll;
-            // height: 0;
             opacity: 0;
             transition: opacity 0.2s;//, height 0.5s;
             box-shadow: rgba(0,0,0,0.2) 0 2px 10px;
@@ -414,24 +414,43 @@
     transition: height 0.5s 0.5s;
 }
 
+$pane-height: 150px;
+$pane-colour: rgb(0,134,209);
+
+$collapsed-width: 100px;
+
 .bottom-pane {
   color:#FFFFFF;
+  .coll-icon{
+    display: inline-block;
+    transition: transform 0.5s;
+  }
+
   .collapsed-section {
-    background-color: #0386d2;
-    width: 100px;
+    background-color: $pane-colour;
+    width: $collapsed-width;
     height: 20px;
     position: absolute;
     z-index: 1002;
     bottom: 0;
     left: 50%;
-    margin-left: -50px;
+    margin-left: - $collapsed-width/2;
     text-align: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
   }
 
+  .top{
+    bottom:$pane-height;
+     .coll-icon{
+       transform: rotate(180deg);
+     }
+   }
+
   .expanded-section {
-    background-color: #0386d2;
+    background-color: $pane-colour;
     width: 100%;
-    height: 150px;
+    height: $pane-height;
     position: absolute;
     z-index: 1001;
     bottom: 0;
@@ -443,5 +462,4 @@
     float: left;
     padding:9px;
   }
-
 }

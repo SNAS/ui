@@ -42,13 +42,30 @@
 }
 
 .redbar{
-  width:250px;
-  height:28px;
-  background-color: #e7e2ef;
+  width:42px;
+  height:32px;
+  background-color: white;
+  //height:auto;
+  float:left;
+  display:inline
 }
 
 .greenbar{
-  width:250px;
-  height:28px;
-  background-color: lightgreen;
+  width:42px;
+  height:32px;
+  background-color: white;
+  color:lightgreen;
+  //height:auto;
+  float:left;
+  display:inline
 }
+
+.whitebar{
+  width:42px;
+  height:32px;
+  background-color: white;
+  //height:auto;
+  float:left;
+  display:inline
+}
+.background { background-color: white !important;;}

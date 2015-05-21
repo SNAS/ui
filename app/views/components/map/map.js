@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-.controller('MapController', ["$scope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", function ($scope, $timeout, apiFactory, leafletData, $compile, $window, $q) {
+.controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", function ($scope, $rootScope, $timeout, apiFactory, leafletData, $compile, $window, $q) {
 
     window.SCOPEMAP = $scope;
 
@@ -21,16 +21,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.activeMarker;
 
     $scope.selectionMade = false;
-
-    /************************************
-        Change panel based on location
-    *************************************/
-    if($scope.location === 'globalView')
-        $scope.panelTitle = "Router List";
-    else{
-        $scope.panelTitle = "Peer List";
-        $scope.selectedRouter = true;
-    }
 
     $scope.locations = [];
     $scope.peers = [];
@@ -77,6 +67,14 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     });
 
     $scope.$watch('selectionMade', function(val){
+        if($rootScope.dualWindow.active){
+            $scope.mapHeight = '100%';
+            $scope.panelHeight = '80%';
+            $timeout(function(){
+                $scope.map.invalidateSize();
+            }, 1000);
+            return;
+        }
         if(val === true){
             $scope.mapHeight = 400;
         }
@@ -96,12 +94,17 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     /****************************************
         Initialise map based on location
     *****************************************/
+    $scope.dualWindow = false;
     $scope.init = function(){
         if($scope.location === 'peerView'){
+            $scope.panelTitle = "Peer List";
+            $scope.selectedRouter = true;
             $scope.getPeers();
         }
         else if($scope.location === 'globalView'){
+            $scope.panelTitle = "Router List";
             $scope.getRouters();
+            loadBottomPane();
         }
         else if($scope.location === 'peerCard'){
             if($scope.plotMarker != undefined){
@@ -120,6 +123,25 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.singlePoint = new L.Marker(latlng, options);
                 $scope.map.addLayer($scope.singlePoint);
                 $scope.fitMap('single');
+            }
+        }
+        else{
+            if($rootScope.dualWindow.active){
+                if($rootScope.dualWindow.a === "globalView"){
+                    $scope.location = "globalView";
+                }
+                else if($rootScope.dualWindow.a === "peerView"){
+                    $scope.location = "peerView"
+                }
+
+                if($rootScope.dualWindow.b === "globalView"){
+                    $scope.location = "globalView"
+                }
+                else if($rootScope.dualWindow.b === "peerView"){
+                    $scope.location = "peerView"
+                }
+                $scope.dualWindow = true;
+                $scope.init();
             }
         }
     }
@@ -520,6 +542,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         for (var key in $scope.peerDictionary) {
             $scope.peerDictionary[key].options.expandPeers = false;
         }
+        angular.element('.main').scrollTop(0);
         location.options.expandPeers = true;
         $scope.panelSearch = location.options.city;
     }
@@ -663,17 +686,26 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
 
 
-//    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
+    /****************************************
+     Bottom Pane - setup
+     *****************************************/
+
+    //ATM this increase loading time could be made to load
+    //this after page loads so when loading = false;
+
+    //TODO:still need to make this only show on certain pages
+
+    var loadBottomPane = function(){
 
     $scope.topChartOptions = {
       chart: {
         type: 'multiBarHorizontalChart',
-        height: 200,
+        height: 100,
         width: 600,
         margin : {
           top: 20,
-          right: 20,
-          bottom: 80,
+          right: 10,
+          bottom: -10,
           left: 120
         },
         color: function (d, i) {
@@ -711,12 +743,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           deferred.resolve(
             results
           )
-        },
-        function(errors) {
-          deferred.reject(errors);
-        },
-        function(updates) {
-          deferred.update(updates);
         });
       return deferred.promise;
 
@@ -753,14 +779,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       .error(function(result){
         console.log("api routers bottom pannel error")
       });
-
-    //apiFactory.getRouterStatus()
-    //  .success(function (result){
-    //    $scope.active_routers = result.routers.size;
-    //  })
-    //  .error(function(result){
-    //    console.log("api routers up bottom pannel error")
-    //  });
 
     apiFactory.getPeers()
       .success(function (result){
@@ -809,7 +827,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
         //ipv4,ipv6,total,type
         var keys = ["Up-ColDwn", "Dwn-ColDwn", "Up", "Down", "Total"];
-        var colour = ["","","#5e7309","#a65e5e","#0386d2"];
+        var colour = ["","","#5e7309","#a65e5e","#0266a0"];
         //start at 2 ignore the coldwn for now
         for(var i = 2; i < ips[0].length; i++){
           var ipMap = {ipv4:0,ipv6:0,total:0,type:"None",colour:"#FFFFFF"};
@@ -825,8 +843,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       .error(function(result){
         console.log("api routers up bottom pannel error")
       });
-
-//    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
+    };
 
 }])
 
@@ -844,13 +861,18 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       }
     }
 })
-.directive('resize', ["$window", "$timeout", function ($window, $timeout) {
+.directive('resize', ["$rootScope", "$window", "$timeout", function ($rootScope, $window, $timeout) {
     return function (scope, element) {
         var w = angular.element($window);
         scope.getWindowDimensions = function () {
             return { 'h': w.height()};
         };
         scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
+            if($rootScope.dualWindow.active){
+                scope.mapHeight = '100%';
+                scope.panelHeight = '80%';
+                return;
+            }
             if(!scope.selectionMade){
                 scope.windowHeight = newValue.h;
                 scope.mapHeight =  (newValue.h - 50) + 'px';
