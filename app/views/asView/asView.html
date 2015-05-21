@@ -14,13 +14,13 @@
     <div class="row">
       <div class="col-lg-6">
         <p class="pgtitle-small">Whois Information for AS {{asn}}</p>
-        <div class="detailspanel gridStyle-abreast">
+        <div class="detailspanel">
           <pre class="preStyle fixedHeight" ng-bind-html="details"></pre>
         </div>
       </div>
       <div class="col-lg-6">
         <p class="pgtitle-small">Prefixes Originated by AS {{asn}}</p>
-        <div class="gridStyle-abreast" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+        <div class="grid" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
       </div>
     </div>
 
@@ -28,14 +28,14 @@
       <div class="col-lg-6">
         <p class="pgtitle-small">Upstream ASes of AS {{asn}}</p>
 
-        <div ng-show="!upstreamNodata" class="gridStyle-abreast" ui-grid="upstreamGridOptions"
+        <div ng-show="!upstreamNodata" class="grid" ui-grid="upstreamGridOptions"
              ui-grid-auto-resize></div>
         <p ng-show="upstreamNodata">There is no upstream of this AS</p>
       </div>
       <div class="col-lg-6">
         <p class="pgtitle-small">Downstream ASes of AS {{asn}}</p>
 
-        <div ng-show="!downstreamNodata" class="gridStyle-abreast" ui-grid="downstreamGridOptions"
+        <div ng-show="!downstreamNodata" class="grid" ui-grid="downstreamGridOptions"
              ui-grid-auto-resize></div>
         <p ng-show="downstreamNodata">There is no downstream of this AS</p>
       </div>

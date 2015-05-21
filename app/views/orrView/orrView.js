@@ -113,23 +113,8 @@ angular.module('bmpUiApp')
 
       columnDefs: [
         {field: 'prefixWithLen', displayName: 'Prefix', width: '10%'},
-        //{field: 'prefix_len', displayName: 'Prefix Length', width: '*'},
-        {
-          field: 'ORR', displayName: 'ORR', width: '*',
-          //cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
-          //  if (grid.getCellValue(row, col).startsWith("Not optimized")) {
-          //    return 'highlight';
-          //  }
-          //}
-        },
-        {
-          field: 'protocol', displayName: 'Protocol', width: '6%',
-          //cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
-          //  if (grid.getCellValue(row, col) == "bgp" && grid.getCellValue(row, col-1).startsWith("Not optimized")) {
-          //    return 'highlight';
-          //  }
-          //}
-        },
+        {field: 'ORR', displayName: 'ORR', width: '*'},
+        {field: 'protocol', displayName: 'Protocol', width: '6%'},
         {field: 'NH', displayName: 'Next Hop', width: '*'},
         {field: 'Type', displayName: 'Type', width: '4%'},
         {field: 'metric', displayName: 'Metric', width: '5%'},
