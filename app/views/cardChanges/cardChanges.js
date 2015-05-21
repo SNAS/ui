@@ -265,7 +265,6 @@ angular.module('bmpUiApp')
         topVal:$scope.norepeat[i],
         colour:"#9467b0",
         botVal:$scope.norepeat[i],
-        //popOut: "popOutContent",
         isEnd:true
       });
     }
@@ -282,7 +281,6 @@ angular.module('bmpUiApp')
          //console.dir(asname[i]);
 
           var index = $scope.norepeat.indexOf((asname[i].asn).toString());
-
           //Here is where all fields/ info for popover should be.
 
      /* var popOutContent = "asn:" + asname[i].asn + "<br>";
@@ -304,10 +302,10 @@ angular.module('bmpUiApp')
         pcontent+= popOutFields[j] + " : " + asname[i][popOutFields[j]] + "<br>";
       }
     }
-
       //changed the name of the as to name from results.
+     asname[i].as_name = asname[i].as_name.replace(/ASN-|ASN/g,"");
+
         $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
-       //$scope.as_path[index+1].popOut = asname[i].as_name;//+1 cause starting router node
         $scope.as_path[index+1].popOut = pcontent;//+1 cause starting router node
 
         }
@@ -315,8 +313,6 @@ angular.module('bmpUiApp')
       error(function (error) {
         console.log(error);
       });
-
-
 
       var originalLeave = $.fn.popover.Constructor.prototype.leave;
       $.fn.popover.Constructor.prototype.leave = function(obj){
@@ -357,6 +353,19 @@ angular.module('bmpUiApp')
     };
 
   }]);
+
+/*angular.module('bmpUiApp').filter('removeASN', function(){
+  return function(items){
+    var filtered = [];
+    for (var i = 0; i < items.length; i++){
+      var item = items[i];
+      if (/ASN/.test(i) == true){
+        filtered.push(item.replace(/^ASN/gi, ''))
+      }
+    }
+    return filtered;
+  };
+});*/
 
  angular.module('bmpUiApp').filter('unsafe', ['$sce', function ($sce){
     return function (val){
