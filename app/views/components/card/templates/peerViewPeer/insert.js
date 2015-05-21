@@ -199,7 +199,7 @@ angular.module('bmp.components.card')
       popOutContent+= "country:" + asname[i].country;
       popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');*/
 
-    var popOutFields = ["asn","asn_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
+    var popOutFields = ["asn","as_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
     var pcontent = "";
     for(var j = 0; j < popOutFields.length; j++){
       if(asname[i][popOutFields[j]] != null){
@@ -240,7 +240,7 @@ angular.module('bmp.components.card')
           })
         }
       };
-      $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 50, hide: 1000}});
+      $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 200}});
 
 
     //set width of whole container depending on result size.
