@@ -8,7 +8,6 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-
   //REWORKED CANVAS SECTION MAY NOT BE NEEDED
 
   //.controller('CanvasController2', ["$scope", "$timeout", "$element", "$document", function ($scope, $timeout, $element, $document) {
@@ -286,29 +285,63 @@ angular.module('bmpUiApp')
 
           //Here is where all fields/ info for popover should be.
 
-      var popOutContent = "asn:" + asname[i].asn + " ";
-      popOutContent+= "\n as_name:" + asname[i].as_name + " ";
-      popOutContent+= "\n org_id:" + asname[i].org_id + " ";
-      popOutContent+= "\n org_name:" + asname[i].org_name + " ";
-      popOutContent+= "\n remarks:" + asname[i].remarks + " ";
-      popOutContent+= "\n address:" + asname[i].address + " ";
-      popOutContent+= "\n city:" + asname[i].city + " ";
-      popOutContent+= "\n state_prov:" + asname[i].state_prov + " ";
-      popOutContent+= "\n postal_code:" + asname[i].postal_code + " ";
-      popOutContent+= "\n country:" + asname[i].country;
-      popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');
+     /* var popOutContent = "asn:" + asname[i].asn + "<br>";
+      popOutContent+= "as_name:" + asname[i].as_name + "<br>";
+      popOutContent+= "org_id:" + asname[i].org_id + "<br>";
+      popOutContent+= "org_name:" + asname[i].org_name + "<br>";
+      popOutContent+= "remarks:" + asname[i].remarks + "<br>";
+      popOutContent+= "address:" + asname[i].address + "<br>";
+      popOutContent+= "city:" + asname[i].city + "<br>";
+      popOutContent+= "state_prov:" + asname[i].state_prov + "<br>";
+      popOutContent+= "postal_code:" + asname[i].postal_code + "<br>";
+      popOutContent+= "country:" + asname[i].country;*/
+     // popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');
 
+     var popOutFields = ["asn","asn_name","org_id","org_name","remarks","address","city","state_prov","postal_code","country"]; //etc
+    var pcontent = "";
+    for(var j = 0; j < popOutFields.length; j++){
+      if(asname[i][popOutFields[j]] != null){
+        pcontent+= popOutFields[j] + " : " + asname[i][popOutFields[j]] + "<br>";
+      }
+    }
 
       //changed the name of the as to name from results.
         $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
        //$scope.as_path[index+1].popOut = asname[i].as_name;//+1 cause starting router node
-        $scope.as_path[index+1].popOut = popOutContent;//+1 cause starting router node
+        $scope.as_path[index+1].popOut = pcontent;//+1 cause starting router node
 
         }
       }).
       error(function (error) {
         console.log(error);
       });
+
+
+
+      var originalLeave = $.fn.popover.Constructor.prototype.leave;
+      $.fn.popover.Constructor.prototype.leave = function(obj){
+        var self = obj instanceof this.constructor ?
+          obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
+        var container, timeout;
+
+        originalLeave.call(this, obj);
+
+        if(obj.currentTarget) {
+          container = $(obj.currentTarget).siblings('.popover')
+          timeout = self.timeout;
+          container.one('mouseenter', function(){
+            //We entered the actual popover – call off the dogs
+            clearTimeout(timeout);
+            //Let's monitor popover content instead
+            container.one('mouseleave', function(){
+              $.fn.popover.Constructor.prototype.leave.call(self, self);
+            });
+          })
+        }
+      };
+      $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 50, hide: 5000}});
+
+
 
     //set width of whole container depending on result size.
     //len + 1 for router     + 80 stop wrapping and padding
@@ -324,3 +357,22 @@ angular.module('bmpUiApp')
     };
 
   }]);
+
+ angular.module('bmpUiApp').filter('unsafe', ['$sce', function ($sce){
+    return function (val){
+      return $sce.trustAsHtml(val);
+    };
+  }]);
+
+angular.module("template/popover/popover.html", []).run(["$templateCache", function ($templateCache) {
+    $templateCache.put("template/popover/popover.html",
+      "<div class=\"popover {{placement}}\" ng-class=\"{ in: isOpen(), fade: animation() }\">\n" +
+      "  <div class=\"arrow\"></div>\n" +
+      "\n" +
+      "  <div class=\"popover-inner\">\n" +
+      "      <h3 class=\"popover-title\" ng-bind-html=\"title | unsafe\" ng-show=\"title\"></h3>\n" +
+      "      <div class=\"popover-content\"ng-bind-html=\"content | unsafe\"></div>\n" +
+      "  </div>\n" +
+      "</div>\n" +
+      "");
+}]);
