@@ -8,7 +8,7 @@
  * Controller of the Whois page
  */
 angular.module('bmpUiApp')
-  .controller('WhoIsController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', function ($scope, apiFactory, $http, $timeout, $interval) {
+  .controller('WhoIsController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$stateParams', function ($scope, apiFactory, $http, $timeout, $interval, $stateParams) {
 
     //DEBUG
     window.SCOPE = $scope;
@@ -197,5 +197,10 @@ angular.module('bmpUiApp')
     };
 
     //Init table data
-    searchValue("Cisco");
+    if($stateParams.as){
+      searchValue($stateParams.as);
+    }
+    else{
+      searchValue("Cisco");
+    }
   }]);

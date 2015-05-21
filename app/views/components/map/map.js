@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-.controller('MapController', ["$scope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", function ($scope, $timeout, apiFactory, leafletData, $compile, $window, $q) {
+.controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", function ($scope, $timeout, apiFactory, leafletData, $compile, $window, $q) {
 
     window.SCOPEMAP = $scope;
 
@@ -21,16 +21,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.activeMarker;
 
     $scope.selectionMade = false;
-
-    /************************************
-        Change panel based on location
-    *************************************/
-    if($scope.location === 'globalView')
-        $scope.panelTitle = "Router List";
-    else{
-        $scope.panelTitle = "Peer List";
-        $scope.selectedRouter = true;
-    }
 
     $scope.locations = [];
     $scope.peers = [];
@@ -77,6 +67,14 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     });
 
     $scope.$watch('selectionMade', function(val){
+        if($rootScope.dualWindow.active){
+            $scope.mapHeight = '100%';
+            $scope.panelHeight = '80%';
+            $timeout(function(){
+                $scope.map.invalidateSize();
+            }, 1000);
+            return;
+        }
         if(val === true){
             $scope.mapHeight = 400;
         }
@@ -96,11 +94,15 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     /****************************************
         Initialise map based on location
     *****************************************/
+    $scope.dualWindow = false;
     $scope.init = function(){
         if($scope.location === 'peerView'){
+            $scope.panelTitle = "Peer List";
+            $scope.selectedRouter = true;
             $scope.getPeers();
         }
         else if($scope.location === 'globalView'){
+            $scope.panelTitle = "Router List";
             $scope.getRouters();
             loadBottomPane();
         }
@@ -121,6 +123,25 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.singlePoint = new L.Marker(latlng, options);
                 $scope.map.addLayer($scope.singlePoint);
                 $scope.fitMap('single');
+            }
+        }
+        else{
+            if($rootScope.dualWindow.active){
+                if($rootScope.dualWindow.a === "globalView"){
+                    $scope.location = "globalView";
+                }
+                else if($rootScope.dualWindow.a === "peerView"){
+                    $scope.location = "peerView"
+                }
+
+                if($rootScope.dualWindow.b === "globalView"){
+                    $scope.location = "globalView"
+                }
+                else if($rootScope.dualWindow.b === "peerView"){
+                    $scope.location = "peerView"
+                }
+                $scope.dualWindow = true;
+                $scope.init();
             }
         }
     }
@@ -521,6 +542,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         for (var key in $scope.peerDictionary) {
             $scope.peerDictionary[key].options.expandPeers = false;
         }
+        angular.element('.main').scrollTop(0);
         location.options.expandPeers = true;
         $scope.panelSearch = location.options.city;
     }
@@ -839,13 +861,18 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       }
     }
 })
-.directive('resize', ["$window", "$timeout", function ($window, $timeout) {
+.directive('resize', ["$rootScope", "$window", "$timeout", function ($rootScope, $window, $timeout) {
     return function (scope, element) {
         var w = angular.element($window);
         scope.getWindowDimensions = function () {
             return { 'h': w.height()};
         };
         scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
+            if($rootScope.dualWindow.active){
+                scope.mapHeight = '100%';
+                scope.panelHeight = '80%';
+                return;
+            }
             if(!scope.selectionMade){
                 scope.windowHeight = newValue.h;
                 scope.mapHeight =  (newValue.h - 50) + 'px';
