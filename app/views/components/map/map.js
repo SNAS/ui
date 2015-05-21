@@ -102,6 +102,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }
         else if($scope.location === 'globalView'){
             $scope.getRouters();
+            loadBottomPane();
         }
         else if($scope.location === 'peerCard'){
             if($scope.plotMarker != undefined){
@@ -663,17 +664,26 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
 
 
-//    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
+    /****************************************
+     Bottom Pane - setup
+     *****************************************/
+
+    //ATM this increase loading time could be made to load
+    //this after page loads so when loading = false;
+
+    //TODO:still need to make this only show on certain pages
+
+    var loadBottomPane = function(){
 
     $scope.topChartOptions = {
       chart: {
         type: 'multiBarHorizontalChart',
-        height: 200,
+        height: 100,
         width: 600,
         margin : {
           top: 20,
-          right: 20,
-          bottom: 80,
+          right: 10,
+          bottom: -10,
           left: 120
         },
         color: function (d, i) {
@@ -711,12 +721,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           deferred.resolve(
             results
           )
-        },
-        function(errors) {
-          deferred.reject(errors);
-        },
-        function(updates) {
-          deferred.update(updates);
         });
       return deferred.promise;
 
@@ -753,14 +757,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       .error(function(result){
         console.log("api routers bottom pannel error")
       });
-
-    //apiFactory.getRouterStatus()
-    //  .success(function (result){
-    //    $scope.active_routers = result.routers.size;
-    //  })
-    //  .error(function(result){
-    //    console.log("api routers up bottom pannel error")
-    //  });
 
     apiFactory.getPeers()
       .success(function (result){
@@ -809,7 +805,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
         //ipv4,ipv6,total,type
         var keys = ["Up-ColDwn", "Dwn-ColDwn", "Up", "Down", "Total"];
-        var colour = ["","","#5e7309","#a65e5e","#0386d2"];
+        var colour = ["","","#5e7309","#a65e5e","#0266a0"];
         //start at 2 ignore the coldwn for now
         for(var i = 2; i < ips[0].length; i++){
           var ipMap = {ipv4:0,ipv6:0,total:0,type:"None",colour:"#FFFFFF"};
@@ -825,8 +821,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       .error(function(result){
         console.log("api routers up bottom pannel error")
       });
-
-//    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
+    };
 
 }])
 
