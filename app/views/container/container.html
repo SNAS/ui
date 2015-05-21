@@ -1,17 +1,26 @@
 <div id="wrapper" class="toggled">
-
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
+    <button ng-click="toggleDualWindows()" class="dual-window-control">Toggle Dual Window Mode (beta)</button>
     <span class="sidebar-icon glyphicon glyphicon-dashboard"></span>
     <h4>DASHBOARDS</h4>
     <ul class="nav sidebar-nav">
-      <li active-item><a ui-sref="app.globalView" ui-sref-opts="{reload: true}">Global View</a></li>
+      <li active-item><a ui-sref="app.globalView" ui-sref-opts="{reload: true}">Global View</a>
+        <div ng-show="dualWindow.active" class="dual-window-buttons">
+          <button ng-click="setTopWindow('globalView')">[Top]</button>
+          <button ng-click="setBottomWindow('globalView')">[Bottom]</button>
+        </div>
+      </li>
       <li active-item><a ui-sref="app.peerView" ui-sref-opts="{reload: true}">Peer View</a></li>
-      <li active-item><a ui-sref="app.asView" ui-sref-opts="{reload: true}">AS View</a></li>
+      <li active-item><a ui-sref="app.asView" ui-sref-opts="{reload: true}">AS View</a>
+        <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iias" class="instant-input"/></form>
+      </li>
       <li active-item><a ui-sref="app.orrView" ui-sref-opts="{reload: true}">Orr View</a></li>
       <li active-item><a ui-sref="app.linkState" ui-sref-opts="{reload: true}">Link State View</a></li>
       <li active-item><a ui-sref-opts="{reload: true}">Looking Glass</a></li>
-      <li active-item><a ui-sref="app.whoIs" ui-sref-opts="{reload: true}">Whois</a></li>
+      <li active-item><a ui-sref="app.whoIs" ui-sref-opts="{reload: true}">Whois</a>
+        <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iiwi" class="instant-input"/></form>
+      </li>
       <!--<li active-item><a ui-sref-opts="{reload: true}">Collector View</a></li>-->
       <!-- <li active-item><a ui-sref="app.worldWatch" ui-sref-opts="{reload: true}">World Watch</a></li>
       <li active-item><a ui-sref="app.summary" ui-sref-opts="{reload: true}">Summary</a></li> -->
@@ -21,9 +30,12 @@
   <ul class="nav sidebar-nav">
       <li active-item><a ui-sref="app.peerAnalysis" ui-sref-opts="{reload: true}">Peer Analysis</a></li>
       <li active-item><a ui-sref="app.asAnalysis" ui-sref-opts="{reload: true}">AS Analysis</a></li>
-      <li active-item><a ui-sref="app.prefixAnalysis"ui-sref-opts="{reload: true}">Prefix Analysis</a></li>
-     <li active-item><a ui-sref="app.aggregationAnalysis">Aggregation Analysis</a></li>
-
+      <li active-item><a ui-sref="app.prefixAnalysis"ui-sref-opts="{reload: true}">Prefix Analysis</a>
+        <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="Prefix..." type="text" ng-model="iipa" class="instant-input"/></form>
+      </li>
+      <li active-item><a ui-sref="app.aggregationAnalysis">Aggregation Analysis</a>
+        <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iiaa" class="instant-input"/></form>
+      </li>
   </ul>
   <!--<span class="sidebar-icon glyphicon glyphicon-wrench"></span>-->
   <!--<h4>ADMINISTRATION</h4>-->
@@ -39,7 +51,7 @@
 <div class="main">
 
   <!-- HEADER -->
-  <nav class="navbar navbar-default">
+  <nav class="navbar navbar-default" ng-class="{hidden: dualWindow.active}">
     <div class="container-fluid">
       <!--<div class="navbar-header">-->
       <!--<button type="button" ng-click="toggleMenu()" id="menu-toggle" class="navbar-toggle">-->

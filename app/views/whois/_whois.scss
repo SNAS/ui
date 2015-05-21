@@ -19,12 +19,14 @@
 .detailspanel {
   //margin: 5%;
   //margin-right: 5%;
-  height: 300px;
-  overflow-y: scroll;
+  // height: 300px;
+  // overflow-y: scroll;
 }
 
 .preStyle{
   background-color: #f4f6f9;
+  max-height: 300px;
+  overflow-y: scroll;
 }
 
 .tableStyle{
