@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-.controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", function ($scope, $timeout, apiFactory, leafletData, $compile, $window, $q) {
+.controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", function ($scope, $rootScope, $timeout, apiFactory, leafletData, $compile, $window, $q) {
 
     window.SCOPEMAP = $scope;
 
