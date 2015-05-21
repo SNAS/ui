@@ -196,7 +196,7 @@ angular.module('bmpUiApp')
             console.log("getPrefixHisData has been executed:" + searchPrefix + ' ' + $scope.peerHashId);
             $scope.originHisData = data.v_routes_history.data;
 
-            console.log("$scope.originHisData:" + $scope.originHisData);
+            //console.log("$scope.originHisData:" + $scope.originHisData);
 
             if($scope.originHisData.length == 0)
             {
