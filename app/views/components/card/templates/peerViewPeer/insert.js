@@ -8,7 +8,6 @@
 
 angular.module("template/popover/popover.html", []).run(["$templateCache", function ($templateCache) {
     $templateCache.put("template/popover/popover.html",
-      "<div class=\"popover {{placement}}\" ng-class=\"{ in: isOpen(), fade: animation() }\">\n" +
       "  <div class=\"arrow\"></div>\n" +
       "\n" +
       "  <div class=\"popover-inner\">\n" +
@@ -200,7 +199,7 @@ angular.module('bmp.components.card')
       popOutContent+= "country:" + asname[i].country;
       popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');*/
 
-    var popOutFields = ["asn","asn_name","org_id","org_name","remarks","address","city","state_prov","postal_code","country"]; //etc
+    var popOutFields = ["asn","asn_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
     var pcontent = "";
     for(var j = 0; j < popOutFields.length; j++){
       if(asname[i][popOutFields[j]] != null){
@@ -208,6 +207,7 @@ angular.module('bmp.components.card')
       }
     }
 
+      asname[i].as_name = asname[i].as_name.replace(/ASN-|ASN/g,"");
       //changed the name of the as to name from results.
         $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
        //$scope.as_path[index+1].popOut = asname[i].as_name;//+1 cause starting router node
@@ -240,9 +240,7 @@ angular.module('bmp.components.card')
           })
         }
       };
-      $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 50, hide: 5000}});
-
-
+      $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 50, hide: 3000}});
 
 
     //set width of whole container depending on result size.

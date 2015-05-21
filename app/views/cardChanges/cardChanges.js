@@ -295,7 +295,7 @@ angular.module('bmpUiApp')
       popOutContent+= "country:" + asname[i].country;*/
      // popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');
 
-     var popOutFields = ["asn","asn_name","org_id","org_name","remarks","address","city","state_prov","postal_code","country"]; //etc
+     var popOutFields = ["asn","asn_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
     var pcontent = "";
     for(var j = 0; j < popOutFields.length; j++){
       if(asname[i][popOutFields[j]] != null){
@@ -335,7 +335,7 @@ angular.module('bmpUiApp')
           })
         }
       };
-      $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 50, hide: 5000}});
+      $('body').popover({ selector: '[data-popover]', trigger: 'hover', placement: 'right', delay: {show: 50, hide: 3000}});
 
 
 
@@ -375,12 +375,11 @@ angular.module('bmpUiApp')
 
 angular.module("template/popover/popover.html", []).run(["$templateCache", function ($templateCache) {
     $templateCache.put("template/popover/popover.html",
-      "<div class=\"popover {{placement}}\" ng-class=\"{ in: isOpen(), fade: animation() }\">\n" +
       "  <div class=\"arrow\"></div>\n" +
       "\n" +
       "  <div class=\"popover-inner\">\n" +
       "      <h3 class=\"popover-title\" ng-bind-html=\"title | unsafe\" ng-show=\"title\"></h3>\n" +
-      "      <div class=\"popover-content\"ng-bind-html=\"content | unsafe\"></div>\n" +
+      "      <div class=\"popover-content\"ng-bind-html=\"content | safe\"></div>\n" +
       "  </div>\n" +
       "</div>\n" +
       "");

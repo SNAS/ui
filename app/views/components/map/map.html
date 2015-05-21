@@ -1,4 +1,4 @@
-<div class="relative">
+<div class="relative" ng-style="{height: dualWindow == true ? '100%' : 'auto'}">
   <div class="loading" ng-class="{active: loading}">
       <span class="glyphicon glyphicon-refresh"></span>
   </div>
@@ -7,7 +7,7 @@
     {{error}}
   </div>
 
-  <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}">
+  <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}" ng-style="{ height: dualWindow == true ? '70%' : 'inherit' }">
     <div class="panel-search">
       <span class="glyphicon glyphicon-remove" ng-show="panelSearch" ng-click="panelSearch = ''"></span>
       <input type="text" placeholder="Search" class="search" ng-model="panelSearch" ng-click="expandPanelLocations()"/>
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}">
+    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}" ng-style="{ height: dualWindow == true ? '100%' : 'inherit' }">
       <ul class="locations" ng-hide="selectedRouter"  ng-style="{'max-height': panelHeight}">
         <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
           <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
