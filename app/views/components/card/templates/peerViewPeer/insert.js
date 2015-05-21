@@ -208,6 +208,7 @@ angular.module('bmp.components.card')
       }
     }
 
+      asname[i].as_name = asname[i].as_name.replace(/ASN-|ASN/g,"");
       //changed the name of the as to name from results.
         $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
        //$scope.as_path[index+1].popOut = asname[i].as_name;//+1 cause starting router node
