@@ -355,18 +355,6 @@ angular.module('bmpUiApp')
 
   }]);
 
-/*angular.module('bmpUiApp').filter('removeASN', function(){
-  return function(items){
-    var filtered = [];
-    for (var i = 0; i < items.length; i++){
-      var item = items[i];
-      if (/ASN/.test(i) == true){
-        filtered.push(item.replace(/^ASN/gi, ''))
-      }
-    }
-    return filtered;
-  };
-});*/
 
  angular.module('bmpUiApp').filter('unsafe', ['$sce', function ($sce){
     return function (val){

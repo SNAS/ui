@@ -259,7 +259,6 @@ angular.module('bmp.components.card')
 
     };
 
-
     //--------------------------------------- SEARCH --------------------------------------------//
 
     //TODO - ATM IPV6 with XXXX:0:  not accepted need to add place to fill zero's
