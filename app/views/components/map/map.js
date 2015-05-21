@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-.controller('MapController', ["$scope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", function ($scope, $timeout, apiFactory, leafletData, $compile, $window) {
+.controller('MapController', ["$scope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", function ($scope, $timeout, apiFactory, leafletData, $compile, $window, $q) {
 
     window.SCOPEMAP = $scope;
 
@@ -665,64 +665,111 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
 //    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
 
+    $scope.topChartOptions = {
+      chart: {
+        type: 'multiBarHorizontalChart',
+        height: 200,
+        width: 600,
+        margin : {
+          top: 20,
+          right: 20,
+          bottom: 80,
+          left: 120
+        },
+        color: function (d, i) {
+          return "#EAA546"
+        },
+        x: function(d){return d.label;},
+        y: function(d){return d.value;},
+        showControls: false,
+        showLegend: false,
+        showValues: true,
+        transitionDuration: 500
+      }
+    };
+
+    $scope.chartData = [];
+
+    $scope.routerTotals = [0,0,0]; //up,down,total
+
+    var loadPeersFromRouters = function(router){
+      var deferred = $q.defer();
+      var urlCalls = [];
+      angular.forEach(router, function(value, key) {
+        if(router.isConnected){
+          $scope.routerTotals[0]++;
+        }else{
+          $scope.routerTotals[1]++;
+        }
+        $scope.routerTotals[2]++;
+        urlCalls.push(apiFactory.getPeersByIp(value.RouterIP));
+      });
+
+      $q.all(urlCalls)
+        .then(
+        function(results) {
+          deferred.resolve(
+            results
+          )
+        },
+        function(errors) {
+          deferred.reject(errors);
+        },
+        function(updates) {
+          deferred.update(updates);
+        });
+      return deferred.promise;
+
+    };
+
     apiFactory.getRouters()
       .success(function (result){
-        $scope.routers = result.routers.data;
+        var routers = result.routers.data;
+        //Loop through routers selecting and altering relevant data.
+
+        loadPeersFromRouters(routers).then(function(results){
+          for(var i = 0; i < results.length; i++){
+            $scope.chartData.push({
+              label : routers[i].RouterIP,
+              value : results[i].data.v_peers.size
+            });
+          }
+          $scope.chartData.sort(function(a, b){return b.value - a.value});
+          $scope.chartData = $scope.chartData.slice(0,3);
+
+          $scope.topChartData = [
+            {
+              key: "Routers",
+              color: "#d62728",
+              values: $scope.chartData
+            }
+          ];
+
+          console.dir(results);
+          return results
+        });
+
       })
       .error(function(result){
         console.log("api routers bottom pannel error")
       });
 
-    apiFactory.getRouterStatus()
-      .success(function (result){
-        $scope.active_routers = result.routers.size;
-      })
-      .error(function(result){
-        console.log("api routers up bottom pannel error")
-      });
-
-    //Loop through routers selecting and altering relevant data.
-    $scope.bmpRouterGrid = [];
-    //for(var i = 0; i < $scope.routers.length; i++) {
-    //
-    //  apiFactory.getPeersByIp($scope.routers[i].RouterIP)
-    //    .success(function (result){
-    //      var item = {};
-    //
-    //      item.routerName = $scope.routers[i].RouterName;
-    //      item.routerIp = $scope.routers[i].RouterIP;
-    //      item.peers = $scope.routers[i].peers;
-    //
-    //      if ($scope.routers[i].isConnected == 1) {
-    //        item.status = "Up";
-    //      }
-    //      else {
-    //        item.status = "Down";
-    //      }
-    //
-    //      item.peers = result.v_peers.size;
-    //
-    //      $scope.bmpRouterGrid.push(item);
-    //    })
-    //    .error(function(result){
-    //      console.log("api routers up bottom pannel error")
-    //    });
-    //
-    //}
-    //$scope.bmpRouterGridOptions = { data: 'bmpRouterGrid' };
-
-    //"isUp": "1",
-    //"isBMPConnected": "1",
-    //"isPeerIPv4": "1",
+    //apiFactory.getRouterStatus()
+    //  .success(function (result){
+    //    $scope.active_routers = result.routers.size;
+    //  })
+    //  .error(function(result){
+    //    console.log("api routers up bottom pannel error")
+    //  });
 
     apiFactory.getPeers()
       .success(function (result){
-        $scope.bgpPeersGridOptions = {}; //init
+
         var peersData = result;
 
-        //[ Up-ColDwn, Dwn-ColDwn, Up, Dwn ]
-        var ips = [[0,0,0,0], //ipv4
-                   [0,0,0,0]]; //ipv6
+        //[ Up-ColDwn, Dwn-ColDwn, Up, Dwn, total ]
+        var ips = [[0,0,0,0,0], //ipv4
+                   [0,0,0,0,0]]; //ipv6
 
         for(var i =0;i<peersData.v_peers.size;i++){
 
@@ -751,32 +798,38 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             //Down
             ips[whichIp][3]++;
           }
+
+          //add item to correct total
+          ips[whichIp][4]++;
         }
 
 
         //build data for the Peers table
-        var keys = ["Up-ColDwn", "Dwn-ColDwn", "Up", "Dwn"];
-        $scope.bgpPeersGrid = [];
-        for(var i = 0; i < ips[0].length; i++){
-          item={};
-          item[""] = keys[i];
-          item.IPv4 = ips[0][i];
-          item.IPv6 = ips[1][i];
-          item.Total = ips[0][i] + ips[1][i];
-          $scope.bgpPeersGrid.push(item);
-        }
-        $scope.bgpPeersGridOptions.data = $scope.bgpPeersGrid;
+        $scope.bgpPeers = []; //init
 
-        console.dir($scope.bgpPeersGridOptions);
+        //ipv4,ipv6,total,type
+        var keys = ["Up-ColDwn", "Dwn-ColDwn", "Up", "Down", "Total"];
+        var colour = ["","","#5e7309","#a65e5e","#0386d2"];
+        //start at 2 ignore the coldwn for now
+        for(var i = 2; i < ips[0].length; i++){
+          var ipMap = {ipv4:0,ipv6:0,total:0,type:"None",colour:"#FFFFFF"};
+          ipMap.ipv4 = ips[0][i];
+          ipMap.ipv6 = ips[1][i];
+          ipMap.total = ips[0][i] + ips[1][i];
+          ipMap.type = keys[i];
+          ipMap.colour = colour[i];
+          $scope.bgpPeers.push(ipMap);
+        }
 
       })
       .error(function(result){
         console.log("api routers up bottom pannel error")
-      })
+      });
 
 //    ALEXS WORKING AREA THIS WILLL ALLL BE CHANGED !!!!!!!!!!!!!!!!
 
-  }])
+}])
+
 .directive('map', function () {
     return {
       templateUrl: "views/components/map/map.html",

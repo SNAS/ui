@@ -77,20 +77,84 @@
 
 
   <!--bottom pane-->
-  <div ng-show="!loading" ng-init="closed=true">
+  <div class="bottom-pane" ng-show="!loading" ng-init="closed=true">
 
-    <div style="background-color: blue;width: 100px;height: 20px;position: absolute;z-index: 1002; bottom:0;left:50%;margin-left: -50px; text-align: center;">
+    <div class="collapsed-section">
       <div class="bmp-expand" ng-click="closed=!closed"></div>
     </div>
 
     <!--expanded-->
-    <div ng-show="!closed && !loading" style="background-color: red;width: 100%;height: 150px;position: absolute;z-index: 1001; bottom:0;">
-        <!------------------BMP ROUTERS---------------->
-        <!--Angular Table added here-->
-        <!--<div class="gridStyle" ng-grid="bmpRouterGridOptions"></div>-->
-        <!------------------------PEERS---------------->
-        <!--Angular Table added here-->
-        <div class="gridStyle" ng-grid="bgpPeersGridOptions"></div>
+    <div class="expanded-section" ng-show="!closed && !loading">
+
+      <div style="float: left; font-size: 15px; vertical-align:text-bottom;margin-top: 25px;">
+        P<br>
+        E<br>
+        E<br>
+        R<br>
+      </div>
+
+        <!--IP Boxes-->
+        <div class="ip-section" ng-repeat="peer in bgpPeers" ng-style="{'background-color':peer.colour}">
+          <!--top section-->
+          <div style="width: 100%; height: 35px;">
+            <!--top left //ipv4-->
+            <div style="float:left;text-align: center">
+              <!--type-->ipv4
+              <br>
+              <!--total-->{{ peer.ipv4 }}
+            </div>
+            <!--top right //ipv6-->
+            <div style="float:right;text-align: center">
+              <!--type-->ipv6
+              <br>
+              <!--total-->{{ peer.ipv6 }}
+            </div>
+          </div>
+          <!--bottom-->
+          <div style="text-align: center">
+            <!--total--><h3>{{ peer.total }}</h3>
+            <!--type-->{{ peer.type }}
+          </div>
+        </div>
+
+
+      <!--Chart-->
+      <div style="background-color: white;width: 600px;height: 135px;float: left;margin-top: 7px;">
+      <nvd3 options="topChartOptions" data="topChartData"></nvd3>
+      </div>
+
+      <div style="float: left; font-size: 15px; vertical-align:text-bottom;margin-top: 12px;">
+        R<br>
+        O<br>
+        U<br>
+        T<br>
+        E<br>
+        R<br>
+      </div>
+      <!--Router Boxes-->
+      <div class="ip-section">
+        <!--top section-->
+        <div style="width: 100%; height: 35px;">
+          <!--top left //ipv4-->
+          <div style="float:left;text-align: center">
+            <!--type-->UP
+            <br>
+            <!--total-->{{ routerTotals[0] }}
+          </div>
+          <!--top right //ipv6-->
+          <div style="float:right;text-align: center">
+            <!--type-->DOWN
+            <br>
+            <!--total-->{{ routerTotals[1] }}
+          </div>
+        </div>
+        <!--bottom-->
+        <div style="text-align: center">
+          <!--total--><h3>{{ routerTotals[2] }}</h3>
+          <!--type-->TOTAL
+        </div>
+      </div>
+
     </div>
 
   </div>
