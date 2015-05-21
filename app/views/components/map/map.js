@@ -709,7 +709,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           left: 120
         },
         color: function (d, i) {
-          return "#EAA546"
+          return "#5e7309"
         },
         x: function(d){return d.label;},
         y: function(d){return d.value;},
@@ -717,6 +717,14 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         showLegend: false,
         showValues: true,
         transitionDuration: 500
+      },
+      title: {
+        enable: true,
+        text: "Top 3 BMP Routers by Peers Monitored",
+        css: {
+          width: "nullpx",
+          textAlign: "center"
+        }
       }
     };
 
@@ -728,7 +736,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       var deferred = $q.defer();
       var urlCalls = [];
       angular.forEach(router, function(value, key) {
-        if(router.isConnected){
+        if(router.isUp){
           $scope.routerTotals[0]++;
         }else{
           $scope.routerTotals[1]++;
@@ -766,7 +774,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           $scope.topChartData = [
             {
               key: "Routers",
-              color: "#d62728",
+              color: "#5e7309",
               values: $scope.chartData
             }
           ];
