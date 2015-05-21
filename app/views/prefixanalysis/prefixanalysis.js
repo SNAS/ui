@@ -152,7 +152,7 @@ angular.module('bmpUiApp')
       {name: "PeerASN", displayName: 'Peer_ASN', width: 130,cellClass:'background'},
       {name: "MED", displayName: 'MED', width: 60,cellClass:'background'},
       {name: "Communities", displayName: 'Communities',cellClass:'background'},
-      {name: "LastModified", displayName: 'Last_Modified', width: 150,cellClass:'background'}
+      {name: "LastModified", displayName: 'Last_Modified', width: 180,cellClass:'background'}
     ];
 
     // the only Function is creatinga history prefix gird , inject data should be $scope.HisData
@@ -216,7 +216,7 @@ angular.module('bmpUiApp')
 
     var getPrefixHisDataHour = function () {
 
-      var allHisData = $scope.originHisData;
+      var allHisData = $scope.originHisData.reverse();
       $scope.asPathList = new Array();
 
       //console.log(allHisData);
@@ -280,7 +280,6 @@ angular.module('bmpUiApp')
           if (0 == i){ allHisData[i].AS_Path_list_flag[j] = true;console.log("hi , it's true");continue; }
           allHisData[i].AS_Path_list_flag[j] = allHisData[i-1].AS_Path.contains(allHisData[i].AS_Path[j]);
           //console.log("allHisData[i].AS_Path_list_flag[",j,"]",allHisData[i].AS_Path_list_flag[j]);
-
         }
 
         //
@@ -294,13 +293,12 @@ angular.module('bmpUiApp')
 
           //console.log("allHisData[i].AS_Path_list[",j,"][flag]",allHisData[i].AS_Path_list[j]["flag"]);
           //console.log("allHisData[i].AS_Path_list[",j,"][path]",allHisData[i].AS_Path_list[j]["path"]);
-
         }
 
-        //$scope.HisData[hour] = new Array();
         $scope.HisData[hour].push(allHisData[i]);
-        //$scope.asPathChangeNumber[0]
+        //$scope.HisData[hour].reverse();
       }
+      //$scope.HisData = $scope.HisData.reverse();
 
       //console.log("$scope.HisData:"+$scope.HisData);
       for(i = 0; i < 24; i++)
