@@ -200,7 +200,7 @@ angular.module('bmp.components.card')
       popOutContent+= "country:" + asname[i].country;
       popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');*/
 
-    var popOutFields = ["asn","asn_name","org_id","org_name","remarks","address","city","state_prov","postal_code","country"]; //etc
+    var popOutFields = ["asn","asn_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
     var pcontent = "";
     for(var j = 0; j < popOutFields.length; j++){
       if(asname[i][popOutFields[j]] != null){
