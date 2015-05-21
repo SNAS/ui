@@ -349,8 +349,8 @@ angular.module('bmpUiApp')
       //$scope.showGrid = 'true';
       $scope.showGrid = "false";
       $scope.showTip = "false";
-      $scope.value = "202.70.64.0/21";
-      getPrefixDataGrid($scope.value);
+      //$scope.value = "202.70.64.0/21";
+      //getPrefixDataGrid($scope.value);
     }
 
     init();
