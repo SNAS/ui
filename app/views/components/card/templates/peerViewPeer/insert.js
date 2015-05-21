@@ -241,7 +241,7 @@ angular.module('bmp.components.card')
           })
         }
       };
-      $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 200}});
+      $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 20}});
 
 
     //set width of whole container depending on result size.
