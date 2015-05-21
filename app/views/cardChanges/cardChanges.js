@@ -300,6 +300,7 @@ angular.module('bmpUiApp')
     for(var j = 0; j < popOutFields.length; j++){
       if(asname[i][popOutFields[j]] != null){
         pcontent+= popOutFields[j] + " : " + asname[i][popOutFields[j]] + "<br>";
+        pcontent = pcontent.replace(/ASN-|ASN/g,"");
       }
     }
       //changed the name of the as to name from results.

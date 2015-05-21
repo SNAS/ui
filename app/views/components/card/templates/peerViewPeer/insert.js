@@ -204,6 +204,7 @@ angular.module('bmp.components.card')
     for(var j = 0; j < popOutFields.length; j++){
       if(asname[i][popOutFields[j]] != null){
         pcontent+= popOutFields[j] + " : " + asname[i][popOutFields[j]] + "<br>";
+        pcontent = pcontent.replace(/ASN-|ASN/g,"");
       }
     }
 
