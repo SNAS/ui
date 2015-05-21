@@ -8,7 +8,7 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', '$modal',function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,$modal) {
+  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', '$modal', '$stateParams', function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,$modal, $stateParams) {
     //DEBUG
 
     // resize the window
@@ -49,6 +49,10 @@ angular.module('bmpUiApp')
         }
       }, 500);
     };
+
+    if($stateParams.prefix){
+      $scope.enterValue($stateParams.prefix);
+    }
 
     var filterUnique = function(input, key) {
       var unique = {};

@@ -8,7 +8,7 @@
  * Controller of the AS View page
  */
 angular.module('bmpUiApp')
-  .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
+  .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', '$stateParams', function ($scope, apiFactory, $timeout, $stateParams) {
 
     var upstreamData, downstreamData;
     var upstreamPromise, downstreamPromise;
@@ -124,7 +124,12 @@ angular.module('bmpUiApp')
       app.start();
 
       //initial search
-      $scope.searchValue = 109;
+      if($stateParams.as){
+        $scope.searchValue = $stateParams.as;
+      }
+      else{
+        $scope.searchValue = 109;
+      }
       searchValue();
     });
 

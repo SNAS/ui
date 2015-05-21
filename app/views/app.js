@@ -80,7 +80,7 @@ angular
         controller: 'PeerViewController'
       })
       .state('app.asView', {
-        url: '/AS-view',
+        url: '/AS-view?:as?',
         templateUrl: 'views/asView/asView.html',
         controller: 'ASViewController'
       })
@@ -105,12 +105,12 @@ angular
         controller: 'ASAnalysisController'
       })
       .state('app.prefixAnalysis', {
-        url: '/prefix-analysis',
+        url: '/prefix-analysis?:prefix?',
         templateUrl: 'views/prefixanalysis/prefixanalysis.html',
         controller: 'PrefixAnalysisController'
       })
       .state('app.whoIs', {
-        url: '/whois',
+        url: '/whois?:as?',
         templateUrl: 'views/whois/whois.html',
         controller: 'WhoIsController'
       })
@@ -126,13 +126,43 @@ angular
         controller: 'PreferencesController'
       })
       .state('app.aggregationAnalysis', {
-        url: '/aggregation-analysis',
+        url: '/aggregation-analysis?:as?',
         templateUrl: 'views/aggregationanalysis/aggregationanalysis.html',
         controller: 'aggregationanalysisController'
+      })
+
+      //DUAL WINDOW MODE ENAGAAAGE
+      .state('app.dualWindow', {
+        templateUrl: 'views/dual/dual.html'
+      })
+      .state('app.dualWindow.contents', {
+        url: '/:a/:b',
+        views: {
+          'top': {
+            templateUrl: function ($stateParams){
+                return 'views/' + $stateParams.a + '/' + $stateParams.a + '.html';
+            },
+            controller: function ($stateParams){
+              if($stateParams.a)
+                return $stateParams.a + 'Controller';
+            }
+          },
+          'bottom': {
+            templateUrl: function ($stateParams){
+              if($stateParams.b)
+                return 'views/' + $stateParams.b + '/' + $stateParams.b + '.html';
+            },
+            controller: function ($stateParams){
+              if($stateParams.b)
+                return $stateParams.b + 'Controller';
+            }
+          }
+        }
       });
   })
   .run(function ($rootScope, $state, $cookies) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+
       var requireLogin = toState.data.requireLogin;
       if (requireLogin && typeof $cookies.username === 'undefined') {
         event.preventDefault();

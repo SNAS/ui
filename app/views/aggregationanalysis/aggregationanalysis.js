@@ -8,11 +8,11 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('aggregationanalysisController',['$scope', 'apiFactory', '$http', '$timeout', function ($scope, apiFactory, $http, $timeout) {
+  .controller('aggregationanalysisController',['$scope', 'apiFactory', '$http', '$timeout', "$stateParams", function ($scope, apiFactory, $http, $timeout, $stateParams) {
     //DEBUG
     window.SCOPE = $scope;
 
-     $scope.searchPrefix = "";
+    $scope.searchPrefix = "";
 
     $scope.$on('menu-toggle', function (thing, args) {
       $timeout(function () {
@@ -47,6 +47,11 @@ angular.module('bmpUiApp')
             });
       });
     };
+
+    if($stateParams.as){
+      $scope.searchPrefix = $stateParams.as;
+      $scope.getsShowPrefixInfo();
+    }
 
     var createShowPrefixsOptions = function () {
       for (var i = 0; i < $scope.PrefixData.length; i++) {
