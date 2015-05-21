@@ -23,11 +23,19 @@
    Selects BGP Peer please:
    <!--| orderBy : 'PeerName'-->
    <p>
+   <div>
+   <div>
      <select ng-model="peerData.selectPeer" ng-options="peer.PeerName for peer in peerData | orderBy : 'PeerName'" ng-change="selectChange()">
        <option value="">All peers</option>
      </select>
+   </div>
+   <div ng-show="showTip">
+     Nothing changed in this one hour!
+   </div>
+
+ </div>
+
    <hr>
-   <!--data="[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"-->
    <d3-directive ng-model="data"></d3-directive>
    <hr>
  </div>

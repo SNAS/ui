@@ -38,7 +38,6 @@ angular.module('bmpUiApp')
       {name: "LastModified", displayName: 'Last_Modified', width: 150}
     ];
 
-
     //Waits a bit for user to continue typing.
     $scope.enterValue = function (value) {
       $scope.currentValue = value;
@@ -163,8 +162,8 @@ angular.module('bmpUiApp')
         $scope.HistoryPrefixOptions.data = [];
         $scope.HistoryPrefixOptions.data = $scope.HisData[hour];
 
+        //console.log("$scope.HistoryPrefixOptions.data",$scope.HistoryPrefixOptions.data);
         $scope.$apply();
-
         $location.hash('bottom');
         $anchorScroll();
 
@@ -180,6 +179,10 @@ angular.module('bmpUiApp')
             // still dont know why we need $scope.HistoryPrefixOptions.data here
             $scope.HistoryPrefixOptions.data =  $scope.originHisData = data.v_routes_history.data;
 
+            if($scope.HistoryPrefixOptions.data.length == 0)
+            {
+              $scope.showTip = "true";
+            }
             //prepared the data to put into grid
             getPrefixHisDataHour();
             //createPrefixHisGrid(7);
@@ -192,8 +195,21 @@ angular.module('bmpUiApp')
           .success(function (data) {
             console.log("getPrefixHisData has been executed:" + searchPrefix + ' ' + $scope.peerHashId);
             $scope.originHisData = data.v_routes_history.data;
+
+            console.log("$scope.originHisData:" + $scope.originHisData);
+
+            if($scope.originHisData.length == 0)
+            {
+              $scope.showTip = "true";
+            }
+            else
+            {
+              $scope.showTip = "false";
+            }
+
             getPrefixHisDataHour();
           });
+        $scope.$apply();
       }
     };
 
@@ -255,15 +271,15 @@ angular.module('bmpUiApp')
         allHisData[i].AS_Path_list_flag = [];
         allHisData[i].AS_Path_list = new Array();
 
-        console.log("allHisData[",i,"].AS_Path",allHisData[i].AS_Path);
+        //console.log("allHisData[",i,"].AS_Path",allHisData[i].AS_Path);
 
         //initialize all the information
         for (j = 0; j < allHisData[i].AS_Path.length; j++)
         {
-          console.log("Hi i am here");
+          //console.log("Hi i am here");
           if (0 == i){ allHisData[i].AS_Path_list_flag[j] = true;console.log("hi , it's true");continue; }
           allHisData[i].AS_Path_list_flag[j] = allHisData[i-1].AS_Path.contains(allHisData[i].AS_Path[j]);
-          console.log("allHisData[i].AS_Path_list_flag[",j,"]",allHisData[i].AS_Path_list_flag[j]);
+          //console.log("allHisData[i].AS_Path_list_flag[",j,"]",allHisData[i].AS_Path_list_flag[j]);
 
         }
 
@@ -332,6 +348,9 @@ angular.module('bmpUiApp')
     {
       //$scope.showGrid = 'true';
       $scope.showGrid = "false";
+      $scope.showTip = "false";
+      $scope.value = "202.70.64.0/21";
+      getPrefixDataGrid($scope.value);
     }
 
     init();
