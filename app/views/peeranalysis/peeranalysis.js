@@ -17,6 +17,7 @@ angular.module('bmpUiApp')
     $scope.peerTableOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: true,
+      enableColumnResizing: true,
       multiSelect: false,
       noUnselect: true,
       selectionRowHeaderWidth: 35,

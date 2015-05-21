@@ -82,6 +82,7 @@ angular.module('bmpUiApp')
     $scope.SPFtableOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
+      enableColumnResizing: true,
       multiSelect: false,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,

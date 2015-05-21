@@ -34,8 +34,8 @@ angular.module('bmpUiApp')
 
     //upstream table opions
     $scope.upstreamGridOptions = {
+      enableColumnResizing: true,
       rowHeight: 25,
-      footerHeight: 0,
       //rowTemplate:
       //  '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
 
@@ -48,6 +48,7 @@ angular.module('bmpUiApp')
 
     //downstream table opions
     $scope.downstreamGridOptions = {
+      enableColumnResizing: true,
       rowHeight: 25,
       //rowTemplate:
       //  '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
@@ -305,9 +306,9 @@ angular.module('bmpUiApp')
       });
 
       //Upstream ASes
-      pushNodes(upstreamData, "upstream", width, -downstreamLayerHeight);
+      pushNodes(upstreamData, "upstream", width, -upstreamLayerHeight);
       if (upstreamData.length > 100) {
-        var allNodeSetsByCountry = groupNode(upstreamData, "", "upstream", "country", width, -upstreamLayerHeight);
+        var allNodeSetsByCountry = groupNode(upstreamData, "", "upstream", "country", 0, width, -upstreamLayerHeight);
         var allNodeSetsByCountryKeys = Object.keys(allNodeSetsByCountry);
         for (var i = 0; i < allNodeSetsByCountryKeys.length; i++) {
           var allNodeSetsByState = groupNode(allNodeSetsByCountry[allNodeSetsByCountryKeys[i]], allNodeSetsByCountryKeys[i], "upstream", "state_prov",
@@ -332,7 +333,7 @@ angular.module('bmpUiApp')
       pushNodes(downstreamData, "downstream", width, downstreamLayerHeight);
 
       if (downstreamData.length > 100) {
-        var allNodeSetsByCountry = groupNode(downstreamData, "", "downstream", "country", width, downstreamLayerHeight);
+        var allNodeSetsByCountry = groupNode(downstreamData, "", "downstream", "country", 0, width, downstreamLayerHeight);
         var allNodeSetsByCountryKeys = Object.keys(allNodeSetsByCountry);
         for (var i = 0; i < allNodeSetsByCountryKeys.length; i++) {
           allNodeSetsByState = groupNode(allNodeSetsByCountry[allNodeSetsByCountryKeys[i]], allNodeSetsByCountryKeys[i], "downstream", "state_prov",
@@ -437,8 +438,10 @@ angular.module('bmpUiApp')
       }
       var space = width / ((singleNodes.length + nodeSet2Keys.length) - 1);
       //console.log(nodeSet1);
-      console.log(nodeSet2);
+      //console.log(nodeSet2);
       //console.log(singleNodes);
+
+      var groupedNodesId = [];
 
       //push all the single nodes
       for (var i = 0; i < singleNodes.length; i++) {
@@ -470,6 +473,8 @@ angular.module('bmpUiApp')
           ////x: i < singleNodes.length / 2 ? i * space : (allGroupedNodes.length + i) * space,
           //y: height
         };
+
+        groupedNodesId.push(node.id);
       }
 
       //push all the nodes grouped
@@ -494,7 +499,7 @@ angular.module('bmpUiApp')
       //push nodeSet
       for (var i = 0; i < nodeSet2Keys.length; i++) {
         //var groupedNodes = nodeSet2[nodeSet2Keys[i]];
-        var groupedNodesId = [];
+        //var groupedNodesId = [];
 
         //for (var j = 0; j < groupedNodes.length; j++) {
         //  var asn = groupedNodes[j].asn;
@@ -508,7 +513,7 @@ angular.module('bmpUiApp')
         nodeSet.push({
           id: nodeSetId++,
           type: 'nodeSet',
-          nodes: groupedNodesId,
+          nodes: [],
           name: nodeSet2Keys[i],
           parentNodeSetName: parentNodeSetName,
           country: nodeSet2[nodeSet2Keys[i]][0].country,
@@ -516,20 +521,25 @@ angular.module('bmpUiApp')
           x: (singleNodes.length / 2 + i) * space,
           y: height
         });
+
+        groupedNodesId.push(nodeSetId-1);
       }
+
 
       var nodeset = getNodeSet(parentNodeSetName);
       if (nodeset) {
         nodeSet[nodeset.id] = {
-          id: nodeSetId++,
-          type: 'nodeSet',
+          id: nodeset.id,
+          type: nodeset.type,
           nodes: groupedNodesId,
-          name: nodeSet2Keys[i],
-          //x: centre,
-          x: (singleNodes.length / 2 + i) * space,
-          y: height
+          name: nodeset.name,
+          x: nodeset.x,
+          y: nodeset.y
         };
       }
+
+      console.log(nodeSet);
+
       return nodeSet2;
     }
 
