@@ -180,7 +180,16 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "withdrawns/peer/" + peer_hash_id + "/top");
     };
 
-    //topology
+    //orr view
+    apiFactory.getORRospf = function (peerHashId,routerId){
+      return $http.get(urlBase + "orr/peer/" + peerHashId + "/ospf/" + routerId);
+    };
+
+    apiFactory.getORRisis = function (peerHashId,routerId){
+      return $http.get(urlBase + "orr/peer/" + peerHashId + "/isis/" + routerId);
+    };
+
+    //link state view
     apiFactory.getLinkStatePeers = function (){
       return $http.get(urlBase + "linkstate/peers/");
     };

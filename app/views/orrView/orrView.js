@@ -106,27 +106,33 @@ angular.module('bmpUiApp')
     $scope.SPFtableOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
+      enableColumnResizing: true,
       multiSelect: false,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
 
       columnDefs: [
-        {field: 'prefixWithLen', displayName: 'Prefix', width: '*'},
-        //{field: 'prefix_len', displayName: 'Prefix Length', width: '*'},
-        {field: 'Type', displayName: 'Type', width: '*'},
-        {field: 'metric', displayName: 'Metric', width: '*'},
+        {field: 'prefixWithLen', displayName: 'Prefix', width: '10%'},
+        {field: 'ORR', displayName: 'ORR', width: '*'},
+        {field: 'protocol', displayName: 'Protocol', width: '6%'},
+        {field: 'NH', displayName: 'Next Hop', width: '*'},
+        {field: 'Type', displayName: 'Type', width: '4%'},
+        {field: 'metric', displayName: 'Metric', width: '5%'},
         {field: 'src_router_id', displayName: 'Source Router Id', width: '*'},
         {field: 'nei_router_id', displayName: 'Neighbor Router Id', width: '*'},
         {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '*'},
       ],
 
-      rowTemplate: '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
+      rowTemplate: '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" ' +
+      'ng-class="{\'highlight\':row.entity.protocol==\'bgp\' && row.entity.ORR.startsWith(\'Not optimized\')}" ' +
+      'class="ui-grid-cell" ui-grid-cell></div>',
       onRegisterApi: function (gridApi) {
         $scope.gridApi = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           var path = row.entity.path_hash_ids;
           var neighbor_addr = row.entity.neighbor_addr;
-          $scope.drawPath(path, neighbor_addr);
+          var type = (row.entity.protocol == "bgp" && row.entity.ORR.startsWith("Not optimized"))? 2 : 1;
+          $scope.drawPath(path, neighbor_addr, type);
         });
       }
     };
@@ -150,8 +156,8 @@ angular.module('bmpUiApp')
       topo.selectedNodes().add(node);
 
       if ($scope.protocol == "OSPF") {
-        apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
-            SPFdata = result.igp_ospf.data;
+        apiFactory.getORRospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
+            SPFdata = result.orr.data.data;
             drawShortestPathTree(SPFdata);
           }
         ).error(function (error) {
@@ -159,8 +165,8 @@ angular.module('bmpUiApp')
           });
       }
       else if ($scope.protocol == "ISIS") {
-        apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
-            SPFdata = result.igp_isis.data;
+        apiFactory.getORRisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
+            SPFdata = result.orr.data.data;
             drawShortestPathTree(SPFdata);
           }
         ).error(function (error) {
@@ -352,7 +358,8 @@ angular.module('bmpUiApp')
     }
 
     //draw the path
-    $scope.drawPath = function (path_hash_ids, neighbor_addr) {
+    $scope.drawPath = function (path_hash_ids, neighbor_addr, type) {
+      var color = type == 1 ? '#9ec654' : 'red';
       var pathLayer = topo.getLayer("paths");
       nx.each(pathLayer.paths(), function (path) {
         path.dispose();
@@ -377,7 +384,7 @@ angular.module('bmpUiApp')
           pathStyle: {
             'stroke': '#9ec654',
             'stroke-width': '0px',
-            fill: '#9ec654'
+            fill: color
           },
           pathWidth: 4,
           reverse: reverse

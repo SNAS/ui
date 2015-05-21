@@ -3,16 +3,18 @@
   <!--<h1 class="pgtitle">Whois</h1>-->
   <div>
     Search ASN or Name
-    <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
+    <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
   </div>
   <!--Angular Table added here-->
-  <div class="gridStyle margin-small" ui-grid-selection ui-grid="whoIsGridOptions" ui-grid-auto-resize></div>
+  <div class="margin-small">
+    <div class="grid" ui-grid-selection ui-grid="whoIsGridOptions" ui-grid-auto-resize></div>
+  </div>
   <div>
-  <!--<div style="padding:12px">-->
+    <!--<div style="padding:12px">-->
     <h3 class="pgtitle">Details</h3>
-    <div class="detailspanel margin-small" >
+
+    <div class="detailspanel margin-small">
       <pre class="preStyle" ng-bind-html="selectedItem"></pre>
     </div>
-    <hr>
   </div>
-  </div>
+</div>

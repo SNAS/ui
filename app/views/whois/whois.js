@@ -23,6 +23,7 @@ angular.module('bmpUiApp')
     $scope.whoIsGridOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
+      enableColumnResizing: true,
       rowHeight: 25,
       multiSelect: false,
       noUnselect: true,
