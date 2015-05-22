@@ -301,6 +301,30 @@ angular.module('bmpUiApp')
       //$scope.HisData = $scope.HisData.reverse();
 
       //console.log("$scope.HisData:"+$scope.HisData);
+      Array.prototype.compare = function (array) {
+        // if the other array is a falsy value, return
+        if (!array)
+          return false;
+
+        // compare lengths - can save a lot of time
+        if (this.length != array.length)
+          return false;
+
+        for (var i = 0, l=this.length; i < l; i++) {
+          // Check if we have nested arrays
+          if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].compare(array[i]))
+              return false;
+          }
+          else if (this[i] != array[i]) {
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;
+          }
+        }
+        return true;
+      }
+
       for(i = 0; i < 24; i++)
       {
         $scope.asPathChangeNumber[i] = $scope.HisData[i].length;
@@ -309,19 +333,22 @@ angular.module('bmpUiApp')
 
         for(var j = 1;j < $scope.HisData[i].length;j++)
         {
-          if($scope.HisData[i][j-1].AS_Path != $scope.HisData[i][j].AS_Path){
+          console.log(i,j);
 
+          if(!$scope.HisData[i][j-1].AS_Path.compare($scope.HisData[i][j].AS_Path)){
             //console.log($scope.asPathChangeAS_PATH[i]);
+            //console.log($scope.HisData[i][j-1].AS_Path,$scope.HisData[i][j].AS_Path)
+            //console.log($scope.HisData[i][j-1].AS_Path == $scope.HisData[i][j].AS_Path)
 
             $scope.asPathChangeAS_PATH[i] = $scope.asPathChangeAS_PATH[i] + 1;
           }
-          if($scope.HisData[i][j-1].NH != $scope.HisData[i][j].NH){
+          if(!($scope.HisData[i][j-1].NH === $scope.HisData[i][j].NH)){
             $scope.asPathChangeHP[i] = $scope.asPathChangeHP[i] + 1;
           }
-          if($scope.HisData[i][j-1].Communities != $scope.HisData[i][j].Communities){
+          if(!($scope.HisData[i][j-1].Communities === $scope.HisData[i][j].Communities)){
             $scope.asPathChangeCommunites[i] = $scope.asPathChangeCommunites[i] + 1;
           }
-          if($scope.HisData[i][j-1].MED != $scope.HisData[i][j].MED){
+          if(!($scope.HisData[i][j-1].MED === $scope.HisData[i][j].MED)){
             $scope.asPathChangeMED[i] = $scope.asPathChangeMED[i] + 1;
         }
       }
@@ -527,8 +554,8 @@ angular.module('bmpUiApp')
             $scope.createPrefixHisGrid(i);
             $scope.showGrid = "true";
 
-            $location.hash('bottom');
-            $anchorScroll();
+            //$location.hash('bottom');
+            //$anchorScroll();
           })
           .on("mouseout",function(d,i){
             tip.destroy(d);

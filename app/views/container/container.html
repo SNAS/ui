@@ -1,25 +1,32 @@
 <div id="wrapper" class="toggled">
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
-    <button ng-click="toggleDualWindows()" class="dual-window-control">Toggle Dual Window Mode (beta)</button>
+    <button ng-click="toggleDualWindows()" ng-class="{'dual-control-active': dualWindow.active}" class="dual-window-control">{{dualState}} Dual Window Mode (beta)</button>
     <span class="sidebar-icon glyphicon glyphicon-dashboard"></span>
     <h4>DASHBOARDS</h4>
     <ul class="nav sidebar-nav">
       <li active-item><a ui-sref="app.globalView" ui-sref-opts="{reload: true}">Global View</a>
-        <div ng-show="dualWindow.active" class="dual-window-buttons">
-          <button ng-click="setTopWindow('globalView')">[Top]</button>
-          <button ng-click="setBottomWindow('globalView')">[Bottom]</button>
-        </div>
+        <dual-control d="dualWindow" l="globalView"></dual-control>
       </li>
-      <li active-item><a ui-sref="app.peerView" ui-sref-opts="{reload: true}">Peer View</a></li>
+      <li active-item><a ui-sref="app.peerView" ui-sref-opts="{reload: true}">Peer View</a>
+        <dual-control d="dualWindow" l="peerView"></dual-control>
+      </li>
       <li active-item><a ui-sref="app.asView" ui-sref-opts="{reload: true}">AS View</a>
         <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iias" class="instant-input"/></form>
+        <dual-control d="dualWindow" l="asView"></dual-control>
       </li>
-      <li active-item><a ui-sref="app.orrView" ui-sref-opts="{reload: true}">Orr View</a></li>
-      <li active-item><a ui-sref="app.linkState" ui-sref-opts="{reload: true}">Link State View</a></li>
-      <li active-item><a ui-sref-opts="{reload: true}">Looking Glass</a></li>
+      <li active-item><a ui-sref="app.orrView" ui-sref-opts="{reload: true}">Orr View</a>
+        <dual-control d="dualWindow" l="orrView"></dual-control>
+      </li>
+      <li active-item><a ui-sref="app.linkState" ui-sref-opts="{reload: true}">Link State View</a>
+        <dual-control d="dualWindow" l="linkState"></dual-control>
+      </li>
+      <li active-item><a ui-sref-opts="{reload: true}">Looking Glass</a>
+        <!-- <dual-control d="dualWindow" l="globalView"></dual-control> -->
+      </li>
       <li active-item><a ui-sref="app.whoIs" ui-sref-opts="{reload: true}">Whois</a>
         <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iiwi" class="instant-input"/></form>
+        <dual-control d="dualWindow" l="whoIs"></dual-control>
       </li>
       <!--<li active-item><a ui-sref-opts="{reload: true}">Collector View</a></li>-->
       <!-- <li active-item><a ui-sref="app.worldWatch" ui-sref-opts="{reload: true}">World Watch</a></li>
@@ -28,13 +35,19 @@
   <span class="sidebar-icon glyphicon glyphicon-list-alt"></span>
   <h4>ANALYSIS</h4>
   <ul class="nav sidebar-nav">
-      <li active-item><a ui-sref="app.peerAnalysis" ui-sref-opts="{reload: true}">Peer Analysis</a></li>
-      <li active-item><a ui-sref="app.asAnalysis" ui-sref-opts="{reload: true}">AS Analysis</a></li>
+      <li active-item><a ui-sref="app.peerAnalysis" ui-sref-opts="{reload: true}">Peer Analysis</a>
+        <dual-control d="dualWindow" l="peerAnalysis"></dual-control>
+      </li>
+      <li active-item><a ui-sref="app.asAnalysis" ui-sref-opts="{reload: true}">AS Analysis</a>
+        <dual-control d="dualWindow" l="asAnalysis"></dual-control>
+      </li>
       <li active-item><a ui-sref="app.prefixAnalysis"ui-sref-opts="{reload: true}">Prefix Analysis</a>
         <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="Prefix..." type="text" ng-model="iipa" class="instant-input"/></form>
+        <dual-control d="dualWindow" l="prefixAnalysis"></dual-control>
       </li>
       <li active-item><a ui-sref="app.aggregationAnalysis">Aggregation Analysis</a>
         <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iiaa" class="instant-input"/></form>
+        <dual-control d="dualWindow" l="aggregationAnalysis"></dual-control>
       </li>
   </ul>
   <!--<span class="sidebar-icon glyphicon glyphicon-wrench"></span>-->
