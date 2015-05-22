@@ -25,7 +25,7 @@ angular.module('bmpUiApp')
 
       columnDefs: [
         {
-          field: 'Status', displayName: 'Status', width: '4%',
+          field: 'Status', displayName: 'Status', width: '5%',
           cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
 
             if ((row.entity.isUp === 1) && (row.entity.isBMPConnected === 1)) {
@@ -36,14 +36,14 @@ angular.module('bmpUiApp')
             }
           }
         },
-        {field: 'RouterName', displayName: 'RouterName', width: '15%'},
-        {field: 'PeerName', displayName: 'PeerName', width: '22%'},
-        {field: 'PeerIP', displayName: 'PeerIP', width: '10%'},
-        {field: 'LocalASN', displayName: 'LocalASN', width: '8%'},
-        {field: 'PeerASN', displayName: 'PeerASN', width: '8%'},
+        {field: 'RouterName', displayName: 'Router Name', width: '15%'},
+        {field: 'PeerName', displayName: 'Peer Name', width: '22%'},
+        {field: 'PeerIP', displayName: 'Peer IP', width: '10%'},
+        {field: 'LocalASN', displayName: 'Local ASN', width: '8%'},
+        {field: 'PeerASN', displayName: 'Peer ASN', width: '8%'},
         {field: 'IPv', displayName: 'IPv', width: '4%'},
-        {field: 'Pre_RIB', displayName: 'Pre-RIB', width: '10%'},
-        {field: 'Post_RIB', displayName: 'Post-RIB', width: '10%'}
+        {field: 'Pre_RIB', displayName: 'Pre RIB', width: '10%'},
+        {field: 'Post_RIB', displayName: 'Post RIB', width: '10%'}
       ],
 
       rowTemplate: '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',

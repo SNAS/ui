@@ -112,15 +112,15 @@ angular.module('bmpUiApp')
       rowHeight: 25,
 
       columnDefs: [
-        {field: 'prefixWithLen', displayName: 'Prefix', width: '10%'},
+        {field: 'prefixWithLen', displayName: 'Prefix', width: '12%'},
         {field: 'ORR', displayName: 'ORR', width: '*'},
-        {field: 'protocol', displayName: 'Protocol', width: '6%'},
-        {field: 'NH', displayName: 'Next Hop', width: '*'},
-        {field: 'Type', displayName: 'Type', width: '4%'},
-        {field: 'metric', displayName: 'Metric', width: '5%'},
-        {field: 'src_router_id', displayName: 'Source Router Id', width: '*'},
-        {field: 'nei_router_id', displayName: 'Neighbor Router Id', width: '*'},
-        {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '*'},
+        {field: 'protocol', displayName: 'Protocol', width: '7%'},
+        {field: 'NH', displayName: 'Next Hop', width: '12%'},
+        {field: 'Type', displayName: 'Type', width: '5%'},
+        {field: 'metric', displayName: 'Metric', width: '6%'},
+        {field: 'src_router_id', displayName: 'Source Router Id', width: '12%'},
+        {field: 'nei_router_id', displayName: 'Neighbor Router Id', width: '12%'},
+        {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '12%'},
       ],
 
       rowTemplate: '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" ' +
@@ -140,7 +140,7 @@ angular.module('bmpUiApp')
     topo.view('stage').upon('mousewheel', function (sender, event) {
       return false;
     });
-    
+
     topo.on('clickStage', function (sender, event) {
       clear();
       $scope.SPFtableOptions.data = {};
