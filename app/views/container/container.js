@@ -27,15 +27,19 @@ angular.module('bmpUiApp')
       $scope.submit = function(){
         if($scope.iiaa){
           $state.transitionTo('app.aggregationAnalysis', {'as': $scope.iiaa});
+          $scope.iiaa = '';
         }
         else if($scope.iipa){
           $state.transitionTo('app.prefixAnalysis', {'prefix': $scope.iipa});
+          $scope.iipa = '';
         }
         else if($scope.iiwi){
           $state.transitionTo('app.whoIs', {'as': $scope.iiwi});
+          $scope.iiwi = '';
         }
         else if($scope.iias){
           $state.transitionTo('app.asView', {'as': $scope.iias});
+          $scope.iias = '';
         }
       }
 
