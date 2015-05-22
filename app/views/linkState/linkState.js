@@ -108,6 +108,10 @@ angular.module('bmpUiApp')
       }
     };
 
+    topo.view('stage').upon('mousewheel', function (sender, event) {
+      return false;
+    });
+
     topo.on('clickStage', function (sender, event) {
       clear();
       $scope.SPFtableOptions.data = {};
