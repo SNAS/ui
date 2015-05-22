@@ -43,6 +43,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     /****************************************
         Store map object when available
     *****************************************/
+    console.log($scope.id);
     leafletData.getMap($scope.id).then(function(map) {
         $scope.map = map;
         L.control.zoomslider().addTo(map);
@@ -96,6 +97,10 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *****************************************/
     $scope.dualWindow = false;
     $scope.init = function(){
+        if($rootScope.dualWindow.active){
+            $scope.dualWindow = true;
+        }
+        
         if($scope.location === 'peerView'){
             $scope.panelTitle = "Peer List";
             $scope.selectedRouter = true;
@@ -123,25 +128,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.singlePoint = new L.Marker(latlng, options);
                 $scope.map.addLayer($scope.singlePoint);
                 $scope.fitMap('single');
-            }
-        }
-        else{
-            if($rootScope.dualWindow.active){
-                if($rootScope.dualWindow.a === "globalView"){
-                    $scope.location = "globalView";
-                }
-                else if($rootScope.dualWindow.a === "peerView"){
-                    $scope.location = "peerView"
-                }
-
-                if($rootScope.dualWindow.b === "globalView"){
-                    $scope.location = "globalView"
-                }
-                else if($rootScope.dualWindow.b === "peerView"){
-                    $scope.location = "peerView"
-                }
-                $scope.dualWindow = true;
-                $scope.init();
             }
         }
     }
@@ -857,7 +843,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         ip: '=?',
         plotMarker: "=?",
         cardApi: '=',
-        id: "@name"
+        id: "=name"
       }
     }
 })

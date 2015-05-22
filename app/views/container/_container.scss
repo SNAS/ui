@@ -15,6 +15,15 @@
   height: 50px;
   border: 1px solid #007CC5;
   border-bottom-width: 5px;
+
+  &:active, &:focus{
+    outline: 0;
+  }
+
+  &.dual-control-active{
+    background-color: #B56060;
+    border-color: #944848;
+  }
 }
 
 .dual-window-buttons{
@@ -35,9 +44,13 @@
     transition: 0.2s;
     font-size: 6pt;
 
-    &:hover{
+    &:hover, &.dual-active{
       background-color: #007CC5;
       color: white;
+      border-color: #006BB4;
+    }
+    &:active, &:focus{
+      outline: 0;
     }
   }
 }
