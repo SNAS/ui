@@ -681,30 +681,125 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
     //TODO:still need to make this only show on certain pages
 
+    $scope.bottomPaneState = true; //is closed
+
     var loadBottomPane = function(){
 
-    $scope.topChartOptions = {
-      chart: {
-        type: 'multiBarHorizontalChart',
-        height: 100,
-        width: 600,
-        margin : {
-          top: 20,
-          right: 10,
-          bottom: -10,
-          left: 120
+      $scope.topChartOptions = {
+        chart: {
+          type: 'multiBarHorizontalChart',
+          height: 100,
+          width: 600,
+          margin : {
+            top: 0,
+            right: 10,
+            bottom: 20,
+            left: 120
+          },
+          color: function (d, i) {
+            return "#5e7309"
+          },
+          x: function(d){return d.label;},
+          y: function(d){return d.value;},
+          showControls: false,
+          showLegend: false,
+          showValues: true,
+          transitionDuration: 500
         },
-        color: function (d, i) {
-          return "#EAA546"
-        },
-        x: function(d){return d.label;},
-        y: function(d){return d.value;},
-        showControls: false,
-        showLegend: false,
-        showValues: true,
-        transitionDuration: 500
-      }
-    };
+        title: {
+          enable: true,
+          text: "Top 3 BMP Routers by Peers Monitored",
+          class: "h5",
+          css: {
+            width: "nullpx",
+            textAlign: "center"
+          }
+        }
+      };
+
+
+      $scope.peerIpChartOptions = {
+        chart: {
+          type: "pieChart",
+          height: 150,
+          width: 150,
+          donut: true,
+          showLabels: false,
+          showLegend: false,
+          pie: {
+            startAngle: function(d) { return d.startAngle -Math.PI/2 },
+            endAngle: function(d) { return d.endAngle -Math.PI/2 }
+          },
+          color: function(d,i){
+            return d.data.color
+          },
+          tooltipContent: function (key, y, e, graph) {
+            return '<h3 style="background-color: '
+              + e.color + '">' + e.point.key + '</h3>'
+              + '<p>' +  y + '</p>';
+          },
+          transitionDuration: 500
+        }
+      };
+
+      $scope.peerChartUpOptions = {
+        chart: {
+          type: "pieChart",
+          height: 150,
+          width: 150,
+          donut: true,
+          showLabels: false,
+          showLegend: false,
+          pie: {
+            startAngle: function(d) { return d.startAngle -Math.PI/2 },
+            endAngle: function(d) { return d.endAngle -Math.PI/2 }
+          },
+          color: function(d,i){
+            return d.data.color
+          },
+          tooltipContent: function (key, y, e, graph) {
+            return '<h3 style="background-color: '
+              + e.color + '">' + e.point.key + '</h3>'
+              + '<p>' +  y + '</p>';
+          },
+          transitionDuration: 500
+        }
+      };
+
+      $scope.routerChartOptions = {
+        chart: {
+          type: "pieChart",
+          height: 150,
+          width: 150,
+          donut: true,
+          showLabels: false,
+          showLegend: false,
+          pie: {
+            startAngle: function(d) { return d.startAngle -Math.PI/2 },
+            endAngle: function(d) { return d.endAngle -Math.PI/2 }
+          },
+          color: function(d,i){
+            return d.data.color
+          },
+          tooltipContent: function (key, y, e, graph) {
+            return '<h3 style="background-color: '
+              + e.color + '">' + e.point.key + '</h3>'
+              + '<p>' +  y + '</p>';
+          },
+          transitionDuration: 500
+        }
+      };
+
+      $scope.showChartsConfig = {
+        visible: false // default: true
+      };
+
+      $scope.$watch('bottomPaneState', function() {
+        if ($scope.bottomPaneState == false) {
+          //resize
+          $scope.showChartsConfig.visible = true;
+        }
+      });
 
     $scope.chartData = [];
 
@@ -714,7 +809,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       var deferred = $q.defer();
       var urlCalls = [];
       angular.forEach(router, function(value, key) {
-        if(router.isConnected){
+        if(value.isConnected){
           $scope.routerTotals[0]++;
         }else{
           $scope.routerTotals[1]++;
@@ -722,6 +817,19 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         $scope.routerTotals[2]++;
         urlCalls.push(apiFactory.getPeersByIp(value.RouterIP));
       });
+
+      $scope.routerChartData = [
+        {
+          key: "Up",
+          color: "#00FF00",
+          y: $scope.routerTotals[0]
+        },
+        {
+          key: "Down",
+          color: "#FF0000",
+          y: $scope.routerTotals[1]
+        }
+      ];
 
       $q.all(urlCalls)
         .then(
@@ -752,7 +860,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           $scope.topChartData = [
             {
               key: "Routers",
-              color: "#d62728",
+              color: "#5e7309",
               values: $scope.chartData
             }
           ];
@@ -765,6 +873,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       .error(function(result){
         console.log("api routers bottom pannel error")
       });
+
 
     apiFactory.getPeers()
       .success(function (result){
@@ -814,6 +923,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         //ipv4,ipv6,total,type
         var keys = ["Up-ColDwn", "Dwn-ColDwn", "Up", "Down", "Total"];
         var colour = ["","","#5e7309","#a65e5e","#0266a0"];
+        var ipType = ["V4","V6"];
         //start at 2 ignore the coldwn for now
         for(var i = 2; i < ips[0].length; i++){
           var ipMap = {ipv4:0,ipv6:0,total:0,type:"None",colour:"#FFFFFF"};
@@ -824,6 +934,42 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           ipMap.colour = colour[i];
           $scope.bgpPeers.push(ipMap);
         }
+
+        $scope.peerIpChartData = [
+          {
+            key: "V4 UP",
+            color: "#00FF00",
+            y: ips[0][2]
+          },
+          {
+            key: "V4 Down",
+            color: "#FF0000",
+            y: ips[0][3]
+          },
+          {
+            key: "V6 Down",
+            color: "#DD0000",
+            y: ips[1][3]
+          },
+          {
+            key: "V6 Up",
+            color: "#00DD00",
+            y: ips[1][2]
+          }
+        ];
+
+        $scope.peerChartUpData = [
+          {
+            key: "UP",
+            color: "#00FF00",
+            y: ips[0][2] + ips[1][2]
+          },
+          {
+            key: "Down",
+            color: "#FF0000",
+            y: ips[0][3] + ips[1][3]
+          }
+        ];
 
       })
       .error(function(result){

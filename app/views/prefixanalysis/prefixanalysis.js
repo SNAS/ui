@@ -8,7 +8,7 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', '$modal', '$stateParams', function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,$modal, $stateParams) {
+  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', '$modal',function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,$modal) {
     //DEBUG
 
     // resize the window
@@ -38,7 +38,6 @@ angular.module('bmpUiApp')
       {name: "LastModified", displayName: 'Last_Modified', width: 150}
     ];
 
-
     //Waits a bit for user to continue typing.
     $scope.enterValue = function (value) {
       $scope.currentValue = value;
@@ -50,20 +49,16 @@ angular.module('bmpUiApp')
       }, 500);
     };
 
-    if($stateParams.prefix){
-      $scope.enterValue($stateParams.prefix);
-    }
-
     var filterUnique = function(input, key) {
       var unique = {};
       var uniqueList = [];
-      console.log("unique:" + unique);
+      //console.log("unique:" + unique);
 
       for(var i = 0; i < input.length; i++){
         if(typeof unique[input[i][key]] == "undefined"){
           unique[input[i][key]] = "";
           uniqueList.push(input[i]);
-          console.log("uniqueList:" + uniqueList);
+          //console.log("uniqueList:" + uniqueList);
         }
       }
       return uniqueList;
@@ -151,13 +146,13 @@ angular.module('bmpUiApp')
     };
     //define the history gird columns
     $scope.HistoryPrefixOptions.columnDefs = [
-      {name: "RouterName", displayName: 'RouterName', width: 110, cellTemplate: '<div>{{row.entity[col.field]}}</div>'},
-      {name: "NH", displayName: 'NH', width: 100},
-      {name: "AS_Path", displayName: 'AS_Path', cellTemplate: '<div ng-class="{redbar: row.entity.id!=1}">{{row.entity[col.field]}}</div>'+'<div ng-class="{redbar: row.entity.id!=1}">{{row.entity[col.field]}}</div>'},
-      {name: "PeerASN", displayName: 'Peer_ASN', width: 130},
-      {name: "MED", displayName: 'MED', width: 60},
-      {name: "Communities", displayName: 'Communities'},
-      {name: "LastModified", displayName: 'Last_Modified', width: 150}
+      {name: "RouterName", displayName: 'RouterName', width: 110, cellClass:'background'},
+      {name: "NH", displayName: 'NH', width: 100,cellClass:'background'},
+      {name: "AS_Path_list", displayName: 'AS_Path', cellClass:'background',cellTemplate: '<div ng-class="{greenbar: !AS_Path_list.flag, whitebar: AS_Path_list.flag,}" ng-repeat="AS_Path_list in row.entity.AS_Path_list">{{AS_Path_list.path}}</div>'},
+      {name: "PeerASN", displayName: 'Peer_ASN', width: 130,cellClass:'background'},
+      {name: "MED", displayName: 'MED', width: 60,cellClass:'background'},
+      {name: "Communities", displayName: 'Communities',cellClass:'background'},
+      {name: "LastModified", displayName: 'Last_Modified', width: 180,cellClass:'background'}
     ];
 
     // the only Function is creatinga history prefix gird , inject data should be $scope.HisData
@@ -167,15 +162,14 @@ angular.module('bmpUiApp')
         $scope.HistoryPrefixOptions.data = [];
         $scope.HistoryPrefixOptions.data = $scope.HisData[hour];
 
+        //console.log("$scope.HistoryPrefixOptions.data",$scope.HistoryPrefixOptions.data);
         $scope.$apply();
-
         $location.hash('bottom');
         $anchorScroll();
 
       }
       ;
     };
-
 
     var getPrefixHisData = function (searchPrefix) {
       if ("All peers" == searchPrefix) {
@@ -185,6 +179,10 @@ angular.module('bmpUiApp')
             // still dont know why we need $scope.HistoryPrefixOptions.data here
             $scope.HistoryPrefixOptions.data =  $scope.originHisData = data.v_routes_history.data;
 
+            if($scope.HistoryPrefixOptions.data.length == 0)
+            {
+              $scope.showTip = "true";
+            }
             //prepared the data to put into grid
             getPrefixHisDataHour();
             //createPrefixHisGrid(7);
@@ -197,16 +195,31 @@ angular.module('bmpUiApp')
           .success(function (data) {
             console.log("getPrefixHisData has been executed:" + searchPrefix + ' ' + $scope.peerHashId);
             $scope.originHisData = data.v_routes_history.data;
+
+            //console.log("$scope.originHisData:" + $scope.originHisData);
+
+            if($scope.originHisData.length == 0)
+            {
+              $scope.showTip = "true";
+            }
+            else
+            {
+              $scope.showTip = "false";
+            }
+
             getPrefixHisDataHour();
           });
+        $scope.$apply();
       }
     };
 
 
     var getPrefixHisDataHour = function () {
 
-      var allHisData = $scope.originHisData;
-      console.log(allHisData);
+      var allHisData = $scope.originHisData.reverse();
+      $scope.asPathList = new Array();
+
+      //console.log(allHisData);
       $scope.asPathChangeNumber = new Array(24);
       $scope.asPathChangeRate = new Array(24);
       $scope.HisData = new Array(24);
@@ -224,19 +237,68 @@ angular.module('bmpUiApp')
         $scope.asPathChangeMED[i] = 0;
       }
 
-      console.log($scope.asPathChangeHP);
+      //console.log($scope.asPathChangeHP);
+
 
       for(var i = 0; i < 24; i++)
       {
         $scope.HisData[i] = new Array();
       }
 
+
+      //contain method:Determine whether an array contains a value
+      Array.prototype.contains = function(obj) {
+        var i = this.length;
+        while (i--) {
+          if (this[i] == obj) {
+            return true;
+          }
+        }
+        return false;
+      }
+
       for (i = 0; i < allHisData.length; i++) {
         var hour = parseInt(allHisData[i].LastModified.substring(11, 13));
-        //$scope.HisData[hour] = new Array();
+
+        //added the as path list
+        //$scope.asPathList.push(allHisData[i].AS_Path.split(" ").slice(1));
+        //allHisData[i].AS_Path = [];
+
+        //console.log("allHisData[",i,"].AS_Path",allHisData[i].AS_Path);
+        allHisData[i].AS_Path = allHisData[i].AS_Path.split(" ");
+        allHisData[i].AS_Path =  allHisData[i].AS_Path.slice(1);
+
+        allHisData[i].AS_Path_list_flag = [];
+        allHisData[i].AS_Path_list = new Array();
+
+        //console.log("allHisData[",i,"].AS_Path",allHisData[i].AS_Path);
+
+        //initialize all the information
+        for (j = 0; j < allHisData[i].AS_Path.length; j++)
+        {
+          //console.log("Hi i am here");
+          if (0 == i){ allHisData[i].AS_Path_list_flag[j] = true;console.log("hi , it's true");continue; }
+          allHisData[i].AS_Path_list_flag[j] = allHisData[i-1].AS_Path.contains(allHisData[i].AS_Path[j]);
+          //console.log("allHisData[i].AS_Path_list_flag[",j,"]",allHisData[i].AS_Path_list_flag[j]);
+        }
+
+        //
+        for (j = 0; j < allHisData[i].AS_Path.length; j++)
+        {
+          allHisData[i].AS_Path_list[j] = new Array();
+
+          //console.log(allHisData[i].AS_Path[j],allHisData[i].AS_Path_list_flag[j])
+          allHisData[i].AS_Path_list[j]["path"] = allHisData[i].AS_Path[j];
+          allHisData[i].AS_Path_list[j]["flag"] = allHisData[i].AS_Path_list_flag[j];
+
+          //console.log("allHisData[i].AS_Path_list[",j,"][flag]",allHisData[i].AS_Path_list[j]["flag"]);
+          //console.log("allHisData[i].AS_Path_list[",j,"][path]",allHisData[i].AS_Path_list[j]["path"]);
+        }
+
         $scope.HisData[hour].push(allHisData[i]);
-        //$scope.asPathChangeNumber[0]
+        //$scope.HisData[hour].reverse();
       }
+      //$scope.HisData = $scope.HisData.reverse();
 
       //console.log("$scope.HisData:"+$scope.HisData);
       for(i = 0; i < 24; i++)
@@ -284,6 +346,9 @@ angular.module('bmpUiApp')
     {
       //$scope.showGrid = 'true';
       $scope.showGrid = "false";
+      $scope.showTip = "false";
+      //$scope.value = "202.70.64.0/21";
+      //getPrefixDataGrid($scope.value);
     }
 
     init();
