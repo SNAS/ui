@@ -723,7 +723,14 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           type: "pieChart",
           height: 150,
           width: 150,
+          margin : {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+          },
           donut: true,
+          donutRatio: 0.65,
           showLabels: false,
           showLegend: false,
           pie: {
@@ -745,9 +752,10 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       $scope.peerChartUpOptions = {
         chart: {
           type: "pieChart",
-          height: 150,
-          width: 150,
+          height: 250,
+          width: 250,
           donut: true,
+          donutRatio: 0.8,
           showLabels: false,
           showLegend: false,
           pie: {
@@ -771,7 +779,14 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           type: "pieChart",
           height: 150,
           width: 150,
+          margin : {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+          },
           donut: true,
+          donutRatio: 0.65,
           showLabels: false,
           showLegend: false,
           pie: {
@@ -821,12 +836,12 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       $scope.routerChartData = [
         {
           key: "Up",
-          color: "#00FF00",
+          color: "#5da571",
           y: $scope.routerTotals[0]
         },
         {
           key: "Down",
-          color: "#FF0000",
+          color: "#a65151",
           y: $scope.routerTotals[1]
         }
       ];
@@ -845,6 +860,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     apiFactory.getRouters()
       .success(function (result){
         var routers = result.routers.data;
+        $scope.routerCount = result.routers.data.length;
         //Loop through routers selecting and altering relevant data.
 
         loadPeersFromRouters(routers).then(function(results){
@@ -883,6 +899,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         //[ Up-ColDwn, Dwn-ColDwn, Up, Dwn, total ]
         var ips = [[0,0,0,0,0], //ipv4
                    [0,0,0,0,0]]; //ipv6
+
+        $scope.peerCount = peersData.v_peers.size;
 
         for(var i =0;i<peersData.v_peers.size;i++){
 
@@ -937,31 +955,31 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
         $scope.peerIpChartData = [
           {
-            key: "V4 UP",
-            color: "#00FF00",
+            key: "V4 Up",
+            color: "#40744f",
             y: ips[0][2]
           },
           {
             key: "V4 Down",
-            color: "#FF0000",
+            color: "#843737",
             y: ips[0][3]
           },
           {
             key: "V6 Down",
-            color: "#DD0000",
+            color: "#a65151",
             y: ips[1][3]
           },
           {
             key: "V6 Up",
-            color: "#00DD00",
+            color: "#5da571",
             y: ips[1][2]
           }
         ];
 
         $scope.peerChartUpData = [
           {
-            key: "UP",
-            color: "#00FF00",
+            key: "Up",
+            color: "#40744f",
             y: ips[0][2] + ips[1][2]
           },
           {
@@ -976,7 +994,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         console.log("api routers up bottom pannel error")
       });
     };
-
 }])
 
 .directive('map', function () {

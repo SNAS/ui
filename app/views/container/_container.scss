@@ -4,7 +4,7 @@
 .half-height{
   height: 50vh;
   overflow-y: scroll;
-  border:5px solid #999;
+  border:5px solid #bbb;
 }
 
 .dual-window-control{
@@ -174,7 +174,8 @@
 
 .sidebar{
   border-right: 1px solid #e5e5e5;
-  z-index: 1000;
+  background-color: white;
+  z-index: 1010;
   position: fixed;
   left: 250px;
   width: 0;
