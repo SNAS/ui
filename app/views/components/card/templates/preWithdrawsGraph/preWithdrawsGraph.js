@@ -15,7 +15,7 @@ angular.module('bmp.components.card')
             left: 70
           },
           color: function (d, i) {
-            return "#EAA546"
+            return d.color
           },
           x: function(d){return d.label;},
           y: function(d){return d.value;},
@@ -67,6 +67,7 @@ angular.module('bmp.components.card')
         var gData = [];
         for(var i = 0; i < len; i++){
           gData.push({
+            color: "#EAA546",
             label:data[i].Prefix + "/" + data[i].PrefixLen, value:parseInt(data[i].Count)
           });
         }

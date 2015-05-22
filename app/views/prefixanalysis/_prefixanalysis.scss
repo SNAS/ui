@@ -1,11 +1,18 @@
 .detailsPanel {
   height: 300px;
   overflow-y: scroll;
+
 }
 .detailsHistoryPanel {
   height: 300px;
   overflow-y: scroll;
+
 }
+
+.margin-small{
+  margin: 3%;
+}
+
 .green {
   //  background-color: #2dff07;
   color: green;
@@ -42,13 +49,32 @@
 }
 
 .redbar{
-  width:250px;
-  height:28px;
-  background-color: #e7e2ef;
+  width:42px;
+  height:32px;
+  background-color: white;
+  //height:auto;
+  float:left;
+  display:inline
 }
 
 .greenbar{
-  width:250px;
-  height:28px;
-  background-color: lightgreen;
+  width:42px;
+  height:32px;
+  background-color: white;
+  color:lightgreen;
+  //height:auto;
+  float:left;
+  display:inline;
+  //margin: 0.5%;
 }
+
+.whitebar{
+  width:42px;
+  height:32px;
+  background-color: white;
+  //height:auto;
+  float:left;
+  display:inline;
+  //margin: 0.5%;
+}
+.background { background-color: white !important;;}
