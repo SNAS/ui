@@ -44,7 +44,6 @@ angular.module('bmpUiApp')
       console.log(value);
       $timeout(function () {
         if (value == $scope.currentValue) {
-          if($scope.currentValue === "undefined"){value = $scope.value;}
           getPrefixDataGrid(value);
         }
       }, 500);
