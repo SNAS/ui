@@ -78,6 +78,20 @@ angular.module('bmpUiApp')
     ]
     };
 
+    $scope.calGridHeight = function(grid, gridapi){
+      gridapi.core.handleWindowResize();
+
+      var height;
+      var dataLength = 10;
+      if(grid.data.length > dataLength){
+        height = ((dataLength * 30) + 30);
+      }else{
+        height = ((grid.data.length * 30) + 50);
+      }
+      grid.changeHeight = height;
+      gridapi.grid.gridHeight = grid.changeHeight;
+    };
+
     // $scope.peerViewPeerOptions.onRegisterApi = function (height){
     //   $scope.whoIsPeerApi = height;
     // }
@@ -94,6 +108,9 @@ angular.module('bmpUiApp')
           success(function (result) {
             $scope.whoIsGridOptions.data = result.w.data;
             initSelect();
+            setTimeout(function(){
+              $scope.calGridHeight($scope.whoIsGridOptions, $scope.whoIsGridApi);
+            },10);
           }).
           error(function (error) {
             alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -105,6 +122,7 @@ angular.module('bmpUiApp')
           success(function (result) {
             $scope.whoIsGridOptions.data = result.gen_whois_asn.data;
             initSelect();
+            $scope.calGridHeight($scope.whoIsGridOptions, $scope.whoIsGridApi);
           }).
           error(function (error) {
             alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
