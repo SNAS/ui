@@ -169,8 +169,8 @@ angular.module('bmpUiApp')
 
         //console.log("$scope.HistoryPrefixOptions.data",$scope.HistoryPrefixOptions.data);
         $scope.$apply();
-        $location.hash('bottom');
-        $anchorScroll();
+        //$location.hash('bottom');
+        //$anchorScroll();
 
       }
       ;
@@ -180,6 +180,7 @@ angular.module('bmpUiApp')
       if ("All peers" == searchPrefix) {
         apiFactory.getHistoryPrefix(searchPrefix)
           .success(function (data) {
+            console.log("here is for all peers");
 
             // still dont know why we need $scope.HistoryPrefixOptions.data here
             $scope.HistoryPrefixOptions.data =  $scope.originHisData = data.v_routes_history.data;
@@ -214,7 +215,11 @@ angular.module('bmpUiApp')
 
             getPrefixHisDataHour();
           });
-        $scope.$apply();
+        if(!$scope.$$phase) {
+          //$digest or $apply
+          $scope.$apply();
+        }
+        //$scope.$apply();
       }
     };
 
@@ -379,8 +384,9 @@ angular.module('bmpUiApp')
       //$scope.showGrid = 'true';
       $scope.showGrid = "false";
       $scope.showTip = "false";
-      //$scope.value = "202.70.64.0/21";
-      //getPrefixDataGrid($scope.value);
+      $scope.value = "202.70.64.0/21";
+      getPrefixDataGrid($scope.value);
+      //getPrefixHisData($scope.value);
     }
 
     init();
@@ -390,6 +396,8 @@ angular.module('bmpUiApp')
       $scope.showGrid = "false";
 
       console.log("selectChange has been executed")
+      console.log("show the currentValue",$scope.currentValue);
+      if(typeof($scope.currentValue) == "undefined"){$scope.currentValue = $scope.value;console.log("show the Value",$scope.value);}
       getPrefixHisData($scope.currentValue);
 
       if(!$scope.$$phase) {
