@@ -8,7 +8,7 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', '$modal',function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,$modal) {
+  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', '$modal', '$stateParams', function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,$modal, $stateParams) {
     //DEBUG
 
     // resize the window
@@ -77,6 +77,11 @@ angular.module('bmpUiApp')
           createPrefixGridTable();
         });
     };
+
+    if($stateParams.prefix){
+      $scope.value = $stateParams.prefix;
+      getPrefixDataGrid($stateParams.prefix);
+    }
 
     // define the Prefix Data create function
     var createPrefixGridTable = function () {
@@ -164,8 +169,8 @@ angular.module('bmpUiApp')
 
         //console.log("$scope.HistoryPrefixOptions.data",$scope.HistoryPrefixOptions.data);
         $scope.$apply();
-        $location.hash('bottom');
-        $anchorScroll();
+        //$location.hash('bottom');
+        //$anchorScroll();
 
       }
       ;
@@ -175,6 +180,7 @@ angular.module('bmpUiApp')
       if ("All peers" == searchPrefix) {
         apiFactory.getHistoryPrefix(searchPrefix)
           .success(function (data) {
+            console.log("here is for all peers");
 
             // still dont know why we need $scope.HistoryPrefixOptions.data here
             $scope.HistoryPrefixOptions.data =  $scope.originHisData = data.v_routes_history.data;
@@ -209,7 +215,11 @@ angular.module('bmpUiApp')
 
             getPrefixHisDataHour();
           });
-        $scope.$apply();
+        if(!$scope.$$phase) {
+          //$digest or $apply
+          $scope.$apply();
+        }
+        //$scope.$apply();
       }
     };
 
@@ -301,6 +311,30 @@ angular.module('bmpUiApp')
       //$scope.HisData = $scope.HisData.reverse();
 
       //console.log("$scope.HisData:"+$scope.HisData);
+      Array.prototype.compare = function (array) {
+        // if the other array is a falsy value, return
+        if (!array)
+          return false;
+
+        // compare lengths - can save a lot of time
+        if (this.length != array.length)
+          return false;
+
+        for (var i = 0, l=this.length; i < l; i++) {
+          // Check if we have nested arrays
+          if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].compare(array[i]))
+              return false;
+          }
+          else if (this[i] != array[i]) {
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;
+          }
+        }
+        return true;
+      }
+
       for(i = 0; i < 24; i++)
       {
         $scope.asPathChangeNumber[i] = $scope.HisData[i].length;
@@ -309,19 +343,22 @@ angular.module('bmpUiApp')
 
         for(var j = 1;j < $scope.HisData[i].length;j++)
         {
-          if($scope.HisData[i][j-1].AS_Path != $scope.HisData[i][j].AS_Path){
+          console.log(i,j);
 
+          if(!$scope.HisData[i][j-1].AS_Path.compare($scope.HisData[i][j].AS_Path)){
             //console.log($scope.asPathChangeAS_PATH[i]);
+            //console.log($scope.HisData[i][j-1].AS_Path,$scope.HisData[i][j].AS_Path)
+            //console.log($scope.HisData[i][j-1].AS_Path == $scope.HisData[i][j].AS_Path)
 
             $scope.asPathChangeAS_PATH[i] = $scope.asPathChangeAS_PATH[i] + 1;
           }
-          if($scope.HisData[i][j-1].NH != $scope.HisData[i][j].NH){
+          if(!($scope.HisData[i][j-1].NH === $scope.HisData[i][j].NH)){
             $scope.asPathChangeHP[i] = $scope.asPathChangeHP[i] + 1;
           }
-          if($scope.HisData[i][j-1].Communities != $scope.HisData[i][j].Communities){
+          if(!($scope.HisData[i][j-1].Communities === $scope.HisData[i][j].Communities)){
             $scope.asPathChangeCommunites[i] = $scope.asPathChangeCommunites[i] + 1;
           }
-          if($scope.HisData[i][j-1].MED != $scope.HisData[i][j].MED){
+          if(!($scope.HisData[i][j-1].MED === $scope.HisData[i][j].MED)){
             $scope.asPathChangeMED[i] = $scope.asPathChangeMED[i] + 1;
         }
       }
@@ -347,8 +384,9 @@ angular.module('bmpUiApp')
       //$scope.showGrid = 'true';
       $scope.showGrid = "false";
       $scope.showTip = "false";
-      //$scope.value = "202.70.64.0/21";
-      //getPrefixDataGrid($scope.value);
+      $scope.value = "202.70.64.0/21";
+      getPrefixDataGrid($scope.value);
+      //getPrefixHisData($scope.value);
     }
 
     init();
@@ -358,6 +396,8 @@ angular.module('bmpUiApp')
       $scope.showGrid = "false";
 
       console.log("selectChange has been executed")
+      console.log("show the currentValue",$scope.currentValue);
+      if(typeof($scope.currentValue) == "undefined"){$scope.currentValue = $scope.value;console.log("show the Value",$scope.value);}
       getPrefixHisData($scope.currentValue);
 
       if(!$scope.$$phase) {
@@ -527,8 +567,8 @@ angular.module('bmpUiApp')
             $scope.createPrefixHisGrid(i);
             $scope.showGrid = "true";
 
-            $location.hash('bottom');
-            $anchorScroll();
+            //$location.hash('bottom');
+            //$anchorScroll();
           })
           .on("mouseout",function(d,i){
             tip.destroy(d);

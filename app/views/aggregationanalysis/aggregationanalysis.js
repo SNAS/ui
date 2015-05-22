@@ -12,7 +12,6 @@ angular.module('bmpUiApp')
     //DEBUG
     window.SCOPE = $scope;
 
-    $scope.searchPrefix = "";
 
     $scope.$on('menu-toggle', function (thing, args) {
       $timeout(function () {
@@ -59,7 +58,7 @@ angular.module('bmpUiApp')
         $scope.PrefixData[i].peer_name = $scope.PrefixData[i].PeerName;
         $scope.PrefixData[i].prefix = $scope.PrefixData[i].Prefix;
       }
-      $scope.apply();
+      // $scope.$apply();
     };
 
 
@@ -233,6 +232,9 @@ angular.module('bmpUiApp')
       ];
     }
 
+    //initalize the first view
+    $scope.searchPrefix = "109";
+    $scope.getsShowPrefixInfo();
   }]);
 
 

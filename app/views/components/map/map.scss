@@ -100,6 +100,7 @@
         transition: opacity 0.6s, transform 0.6s;
         text-align: center;
         z-index: 1002;
+        pointer-events: none;
         span{
             text-align: center;
             background-color: #333;
@@ -414,22 +415,24 @@
     transition: height 0.5s 0.5s;
 }
 
-$pane-height: 150px;
-$pane-colour: rgb(0,134,209);
+$pane-height: 160px;
+$pane-colour: #fafafa;;
 
 $collapsed-width: 100px;
 
 .bottom-pane {
-  color:#FFFFFF;
+  color:#555;
   .coll-icon{
     display: inline-block;
-    transition: transform 0.5s;
+    transform: rotate(-180deg);
+    transition: transform 0.8s;
   }
 
   .collapsed-section {
     background-color: $pane-colour;
     width: $collapsed-width;
     height: 20px;
+    transition: bottom 0.8s;
     position: absolute;
     z-index: 1002;
     bottom: 0;
@@ -438,22 +441,63 @@ $collapsed-width: 100px;
     text-align: center;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    cursor: pointer;
   }
 
   .top{
     bottom:$pane-height;
+    box-shadow: rgba(0,0,0,0.15) 0 -2px 15px;
      .coll-icon{
-       transform: rotate(180deg);
+       transform: rotate(0deg);
      }
    }
 
   .expanded-section {
     background-color: $pane-colour;
     width: 100%;
-    height: $pane-height;
+    height: 0; 
+    transition: height 0.8s;
     position: absolute;
     z-index: 1001;
     bottom: 0;
+    overflow: hidden;
+    padding: 5px;
+    box-shadow: rgba(0,0,0,0.15) 0 -2px 15px;
+
+    svg{
+        .nvd3.nv-pie path {
+            stroke: none;
+        }
+        // margin-bottom: 30px;
+    }
+
+    &.expanded{
+        height: $pane-height;
+    }
+  }
+
+  .peer-chart{
+      width: 150px;
+      height: 150px;
+      border-radius: 75px;
+      background-color: #fafafa;
+      float: left;
+      position: relative;
+      margin: 5px;
+      p{
+        text-align: center;
+        width: 75px;
+        position: absolute;
+        height: 50px;
+        left: 38px;
+        top: 49px;
+
+        .count{
+            font-size: 20pt;
+            display: block;
+            margin-bottom: -8px
+        }
+      }
   }
 
   .ip-section {
