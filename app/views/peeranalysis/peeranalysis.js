@@ -38,7 +38,7 @@ angular.module('bmpUiApp')
         },
         {field: 'RouterName', displayName: 'Router Name', width: '15%'},
         {field: 'PeerName', displayName: 'Peer Name', width: '22%'},
-        {field: 'PeerIP', displayName: 'Peer IP', width: '10%'},
+        {field: 'PeerIP', displayName: 'Peer IP', width: '12%'},
         {field: 'LocalASN', displayName: 'Local ASN', width: '8%'},
         {field: 'PeerASN', displayName: 'Peer ASN', width: '8%'},
         {field: 'IPv', displayName: 'IPv', width: '4%'},
