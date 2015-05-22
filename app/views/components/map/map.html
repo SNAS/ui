@@ -79,19 +79,41 @@
   <!--bottom pane-->
   <div class="bottom-pane" ng-show="!loading && location === 'globalView'">
 
-    <div ng-class="{'top':!bottomPaneState}" class="collapsed-section">
-      <div class="bmp-expand coll-icon" ng-click="bottomPaneState=!bottomPaneState"></div>
+    <div ng-click="bottomPaneState=!bottomPaneState" ng-class="{'top':!bottomPaneState}" class="collapsed-section">
+      <div class="bmp-expand coll-icon"></div>
     </div>
 
     <!--expanded-->
-    <div class="expanded-section" ng-show="!bottomPaneState && !loading">
-
-      <nvd3 options="peerIpChartOptions" data="peerIpChartData" config="showChartsConfig" style="float: left;"></nvd3>
-
-      <nvd3 options="peerChartUpOptions" data="peerChartUpData" config="showChartsConfig" style="float: left;"></nvd3>
-
-      <nvd3 options="routerChartOptions" data="routerChartData" config="showChartsConfig" style="float: left;"></nvd3>
-
+    <div class="expanded-section" ng-class="{expanded: !bottomPaneState && !loading}">
+      <div clas="row">
+        <div class="col-xs-2">
+          <div class="peer-chart">
+            <p>
+              <span class="count">{{peerCount}}</span>
+              Peers
+            </p>
+            <nvd3 options="peerIpChartOptions" data="peerIpChartData" config="showChartsConfig" style="float: left;"></nvd3>
+          </div>
+        </div>
+        <div class="col-xs-8">
+          <div style="background-color: white;width: 100%;height: 129px;float: left;margin: 10px auto 0;color:#555;">
+            <nvd3 options="topChartOptions" data="topChartData"></nvd3>
+          </div>
+        </div>
+        <div class="col-xs-2">
+          <div class="peer-chart">
+            <p>
+              <span class="count">{{routerCount}}</span>
+              Routers
+            </p>
+            <nvd3 options="routerChartOptions" data="routerChartData" config="showChartsConfig" style="float: left;"></nvd3>
+          </div>
+        </div>
+      </div>
+      
+<!--       <nvd3 options="peerChartUpOptions" data="peerChartUpData" config="showChartsConfig" style="float: left;"></nvd3>
+ -->
+      
       <!--<div class="left">-->
         <!--<div>BMP ROUTER</div>-->
         <!--&lt;!&ndash;Router Boxes&ndash;&gt;-->
@@ -119,14 +141,7 @@
         <!--</div>-->
       <!--</div>-->
 
-
       <!--Chart-->
-
-      <div style="float: left">
-        <div style="background-color: white;width: 600px;height: 129px;float: left;margin-top: 10px;color:#000000;">
-          <nvd3 options="topChartOptions" data="topChartData"></nvd3>
-        </div>
-      </div>
 
       <!--<div style="float: left">-->
         <!--<div>PEER</div>-->
@@ -158,7 +173,6 @@
           <!--</div>-->
         <!--</div>-->
       <!--</div>-->
-
     </div>
 
   </div>

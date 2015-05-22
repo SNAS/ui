@@ -293,7 +293,7 @@ angular.module('bmpUiApp')
       });
 
       //Upstream ASes
-      pushNodes(upstreamData, "upstream", width, -upstreamLayerHeight);
+      pushNodes(upstreamData, "upstream", width, - 2 * upstreamLayerHeight);
       if (upstreamData.length > 100) {
         groupNode(upstreamData, "", "upstream", "country", 0, width, -upstreamLayerHeight);
         var countrySetCount = nodeSet.length;
@@ -314,7 +314,7 @@ angular.module('bmpUiApp')
       }
 
       //Downstream ASes
-      pushNodes(downstreamData, "downstream", width, downstreamLayerHeight);
+      pushNodes(downstreamData, "downstream", width, 2 * downstreamLayerHeight);
       if (downstreamData.length > 100) {
         groupNode(downstreamData, "", "downstream", "country", 0, width, downstreamLayerHeight);
         var countrySetCount = nodeSet.length;
