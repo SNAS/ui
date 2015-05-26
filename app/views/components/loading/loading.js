@@ -11,8 +11,12 @@ angular.module('bmp.components.loading',[])
       scope: {
         loadingVar: "="
       },
-      link: function(scope) {
+      link: function(scope, $element) {
         scope.loadingVar = true;
+
+        var width = $element.width();
+
+        scope.fontWidth = width * (40/100); //40%
       }
     }
   });
