@@ -29,7 +29,7 @@
                   <div style="text-align: center" tooltip="{{path.topVal}}">{{ wordCheck(path.topVal) }}</div>
 
           <!--This is the actual AS icon-->
-          <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html=true data-popover="true"></div>
+          <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html=true data-popover></div>
                   <div style="text-align: center">{{ path.botVal }}</div>
                 </div>
                 <!--line-->
@@ -58,26 +58,26 @@
               </div>
             </div>
 
-            <br>
-            RouterName: {{values.RouterName}}<p>
-            PeerName: {{values.PeerName}}<p>
-            Prefix: {{values.Prefix}}<p>
-            PrefixLen: {{values.PrefixLen}}<p>
-            Origin: {{values.Origin}}<p>
-            Origin_AS: {{values.Origin_AS}}<p>
-            MED: {{values.MED}}<p>
-            LocalPref: {{values.LocalPref}}<p>
-            NH: {{values.NH}}<p>
-            AS_Path: {{values.AS_Path}}<p>
-            ASPath_Count: {{values.ASPath_Count}}<p>
-            Communities: {{values.Communities}}<p>
+            <br><br>
+            <p><span class="bold">RouterName:</span> {{values.RouterName}}</p>
+            <p><span class="bold">PeerName:</span> {{values.PeerName}}</p>
+            <p><span class="bold">Prefix:</span> {{values.Prefix}}</p>
+            <p><span class="bold">PrefixLen:</span> {{values.PrefixLen}}</p>
+            <p><span class="bold">Origin:</span> {{values.Origin}}</p>
+            <p><span class="bold">Origin_AS:</span> {{values.Origin_AS}}</p>
+            <p><span class="bold">MED:</span> {{values.MED}}</p>
+            <p><span class="bold">LocalPref:</span> {{values.LocalPref}}</p>
+            <p><span class="bold">NH:</span> {{values.NH}}</p>
+            <p><span class="bold">AS_Path:</span> {{values.AS_Path}}</p>
+            <p><span class="bold">ASPath_Count:</span> {{values.ASPath_Count}}</p>
+            <p><span class="bold">Communities:</span> {{values.Communities}}</p>
 
           </div>
 
           <div class="right-container"
                style="margin-left: 49%;">
             <div ng-if="latLong != undefined">
-              <map name="peer-view-peer-card" location="'peerCard'" plot-marker="latLong" style="top:0; bottom:0; width:100%;" />
+              <map name="peer-view-peer-card" location="'peerCard'" plot-marker="latLong" style="top:0; bottom:0; width:100%; height: 300px" />
             </div>
             <div style="width:49%;display: inline-block;">
               <!--"ip_start": "216.40.0.0",-->
@@ -85,19 +85,19 @@
               <!--"addr_type": "ipv4",-->
               <!--"ip_start_bin": "�(\u0000\u0000",-->
               <!--"ip_end_bin": "�(\u0005�"-->
-              country: {{values.geo.country}}<br>
-              state: {{values.geo.stateprov}}<br>
-              city: {{values.geo.city}}<br>
-              lat: {{values.geo.latitude}}<br>
-              long: {{values.geo.longitude}}
+              <p><span class="bold">Country:</span> {{values.geo.country}}</p>
+              <p><span class="bold">State:</span> {{values.geo.stateprov}}</p>
+              <p><span class="bold">City:</span> {{values.geo.city}}</p>
+              <p><span class="bold">Lat:</span> {{values.geo.latitude}}</p>
+              <p><span class="bold">Long:</span> {{values.geo.longitude}}</p>
             </div>
 
             <div style="width:49%;display: inline-block;">
-              timezone: {{values.geo.timezone_offset}}<br>
-              time name: {{values.geo.timzone_name}}<br>
-              isp name: {{values.geo.isp_name}}<br>
-              connection type: {{values.geo.connection_type}}<br>
-              org name: {{values.geo.organization_name}}
+              <p><span class="bold">Timezone:</span> {{values.geo.timezone_offset}}</p>
+              <p><span class="bold">Time name:</span> {{values.geo.timzone_name}}</p>
+              <p><span class="bold">ISP name:</span> {{values.geo.isp_name}}</p>
+              <p><span class="bold">Connection type:</span> {{values.geo.connection_type}}</p>
+              <p><span class="bold">Org name:</span> {{values.geo.organization_name}}</p>
             </div>
 
           </div>

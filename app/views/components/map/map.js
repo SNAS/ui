@@ -109,6 +109,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             loadBottomPane();
         }
         else if($scope.location === 'peerCard'){
+            $scope.selectionMade = true;
             if($scope.plotMarker != undefined){
                 if($scope.singlePoint != undefined){
                     $scope.map.removeLayer($scope.singlePoint);
