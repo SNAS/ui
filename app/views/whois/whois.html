@@ -2,12 +2,14 @@
   <!------------------WHO IS---------------->
   <!--<h1 class="pgtitle">Whois</h1>-->
   <div>
-    Search ASN or Name
-    <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
+    <label>AS Number or AS Name:</label>
+    <p>
+      <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
+    </p>
   </div>
   <!--Angular Table added here-->
-  <div class="margin-small">
-    <div class="grid" ui-grid-selection ui-grid="whoIsGridOptions" ui-grid-auto-resize></div>
+  <div>
+    <div class="grid" ui-grid-selection ui-grid="whoIsGridOptions" ng-style="{'height':whoIsGridOptions.changeHeight}"></div>
   </div>
   <div>
     <!--<div style="padding:12px">-->

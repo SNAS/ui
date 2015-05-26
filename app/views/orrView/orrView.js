@@ -110,6 +110,7 @@ angular.module('bmpUiApp')
       multiSelect: false,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
+      enableHorizontalScrollbar: 0,
 
       columnDefs: [
         {field: 'prefixWithLen', displayName: 'Prefix', width: '12%'},

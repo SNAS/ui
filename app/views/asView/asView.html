@@ -1,16 +1,18 @@
 <div class="margin-small" ng-controller="ASViewController">
   <!--<h1 class="pgtitle"> AS View</h1>-->
   <div>
-    AS Number or AS Name
-    <input id="suggestions" type="text" size="50" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
-    <span class="help-block">Example: 109/Cisco</span>
+    <label>AS Number or AS Name:</label>
+    <p>
+      <input id="suggestions" type="text" size="50" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
+      <span class="help-block">Example: 109/Cisco</span>
+    </p>
 
     <h3 ng-show="nodata">This AS doesn't exist</h3>
     <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
     <!--again! :)</h3>-->
   </div>
-
-  <div ng-show="!nodata" class = "margin-small">
+  <br>
+  <div ng-show="!nodata">
     <div class="row">
       <div class="col-lg-6">
         <p class="pgtitle-small">Whois Information for AS {{asn}}</p>

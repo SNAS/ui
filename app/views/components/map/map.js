@@ -79,9 +79,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         if(val === true){
             $scope.mapHeight = 400;
         }
-        else if(val === false){
-            $scope.mapHeight = angular.element($window).height();
-        }
         else{
             return;
         }
@@ -572,7 +569,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         $scope.panelSearch = '';
         $scope.selectionMade = false;
         //force map resize
-        $scope.getWindowDimensions();
+        $scope.forceResize();
         if($scope.selectedRouter != undefined){
             $scope.cardApi.removeCard($scope.selectedRouter);
             $scope.selectedRouter = false;
@@ -955,22 +952,22 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
         $scope.peerIpChartData = [
           {
-            key: "V4 Up",
+            key: "ipv4 Up",
             color: "#40744f",
             y: ips[0][2]
           },
           {
-            key: "V4 Down",
+            key: "ipv4 Down",
             color: "#843737",
             y: ips[0][3]
           },
           {
-            key: "V6 Down",
+            key: "ipv6 Down",
             color: "#a65151",
             y: ips[1][3]
           },
           {
-            key: "V6 Up",
+            key: "ipv6 Up",
             color: "#5da571",
             y: ips[1][2]
           }
@@ -1013,6 +1010,15 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 .directive('resize', ["$rootScope", "$window", "$timeout", function ($rootScope, $window, $timeout) {
     return function (scope, element) {
         var w = angular.element($window);
+        scope.forceResize = function() {
+            console.log('forcing resize');
+            scope.mapHeight =  (w.height() - 50) + 'px';
+            scope.panelHeight =  (w.height() - 130) + 'px';
+            console.log('forced:', scope.mapHeight);
+            $timeout(function(){
+                scope.map.invalidateSize();
+            }, 1000);
+        }
         scope.getWindowDimensions = function () {
             return { 'h': w.height()};
         };
@@ -1023,9 +1029,9 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 return;
             }
             if(!scope.selectionMade){
-                scope.windowHeight = newValue.h;
                 scope.mapHeight =  (newValue.h - 50) + 'px';
                 scope.panelHeight =  (newValue.h - 130) + 'px';
+                console.log('natural:', scope.mapHeight);
                 $timeout(function(){
                     scope.map.invalidateSize();
                 }, 1000);

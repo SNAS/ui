@@ -1,14 +1,12 @@
 <div class="margin-small" ng-controller="PrefixAnalysisController">
  <!------------------PREFIXANALYSIS---------------->
 
-   <h1>prefix analysis</h1>
-   <hr>
    <label>Prefix Number:</label>
 
    <p>
-     <input type="text" ng-change="enterValue(value)" ng-model="value" placeholder="Search ..."/>
-   <p class="help-block">Example: 202.70.64.0/21</p>
-   <hr>
+      <input type="text" ng-change="enterValue(value)" ng-model="value" placeholder="Search ..."/>
+      <span class="help-block">Example: 202.70.64.0/21</span>
+    </p>
    <div class="detailsPanel">
      <pre ng-bind-html="showValues"></pre>
    </div>
