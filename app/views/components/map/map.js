@@ -952,22 +952,22 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
         $scope.peerIpChartData = [
           {
-            key: "V4 Up",
+            key: "ipv4 Up",
             color: "#40744f",
             y: ips[0][2]
           },
           {
-            key: "V4 Down",
+            key: "ipv4 Down",
             color: "#843737",
             y: ips[0][3]
           },
           {
-            key: "V6 Down",
+            key: "ipv6 Down",
             color: "#a65151",
             y: ips[1][3]
           },
           {
-            key: "V6 Up",
+            key: "ipv6 Up",
             color: "#5da571",
             y: ips[1][2]
           }

@@ -130,20 +130,12 @@ angular
           'top': {
             templateUrl: function ($stateParams){
                 return 'views/' + $stateParams.a + '/' + $stateParams.a + '.html';
-            },
-            controller: function ($stateParams){
-              if($stateParams.a)
-                return $stateParams.a + 'Controller';
             }
           },
           'bottom': {
             templateUrl: function ($stateParams){
               if($stateParams.b)
                 return 'views/' + $stateParams.b + '/' + $stateParams.b + '.html';
-            },
-            controller: function ($stateParams){
-              if($stateParams.b)
-                return $stateParams.b + 'Controller';
             }
           }
         }
