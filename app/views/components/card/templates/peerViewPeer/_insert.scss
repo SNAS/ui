@@ -29,6 +29,10 @@
   }
 }
 
+.left-container .bold, .right-container .bold{
+  font-weight: bold;
+}
+
 .ribTable {
   width: 100%;
   border: solid 1px;
@@ -58,7 +62,7 @@
 .as-path{
   height:250px;
   overflow-x: scroll;
-  border: 1px solid black;
+  border: none;
   width:100%;
   padding-top: 75px;
   padding-left: 40px;

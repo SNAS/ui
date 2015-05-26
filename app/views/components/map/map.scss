@@ -124,6 +124,7 @@
             position: relative;
 
             .glyphicon-remove{
+                opacity: 0;
                 color: rgb(197, 23, 23);
                 cursor: pointer;
                 position: absolute;
@@ -131,7 +132,7 @@
                 top: 13px;
                 font-size: 12pt;
                 z-index: 8;
-                transition: color 0.2s;
+                transition: color 0.2s, opacity 0.5s;
                 &:hover{
                     color: rgb(255, 23, 23);
                 }
@@ -347,6 +348,9 @@
             width: 380px !important;
             .search{
                 width: 110px;
+                opacity: 1;
+            }
+            .glyphicon-remove{
                 opacity: 1;
             }
             .pointer{
