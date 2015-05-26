@@ -8,9 +8,11 @@
     </p>
   </div>
   <!--Angular Table added here-->
-  <div>
+  <div style="width: 1200px; position: relative" ng-style="{'height':whoIsGridInitHeight}">
+    <div ng-show="whoIsLoad" bmp-loading loading-var="whoIsLoad"></div>
     <div class="grid" ui-grid-selection ui-grid="whoIsGridOptions" ng-style="{'height':whoIsGridOptions.changeHeight}"></div>
   </div>
+
   <div>
     <!--<div style="padding:12px">-->
     <h3 class="pgtitle">Details</h3>

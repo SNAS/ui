@@ -16,7 +16,10 @@ angular.module('bmp.components.loading',[])
 
         var width = $element.width();
 
-        scope.fontWidth = width * (40/100); //40%
+        //alert($element.height());
+        //alert($element.width());
+
+        scope.fontWidth = width * (10/100); //10%
       }
     }
   });

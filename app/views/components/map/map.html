@@ -1,11 +1,10 @@
 <div class="relative" ng-style="{height: dualWindow == true ? '100%' : 'auto'}">
-  <div class="map-loading" ng-class="{active: loading}">
-      <span class="glyphicon glyphicon-refresh"></span>
-  </div>
 
   <div ng-show="error" class="error">
     {{error}}
   </div>
+
+  <div ng-show="loading" bmp-loading loading-var="loading"></div>
 
   <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}" ng-style="{ height: dualWindow == true ? '70%' : 'inherit' }">
     <div class="panel-search">
@@ -113,4 +112,6 @@
   </div>
 
   <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="100%" resize></leaflet>
+
+
 </div>

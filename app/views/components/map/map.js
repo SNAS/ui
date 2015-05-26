@@ -13,7 +13,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     window.SCOPEMAP = $scope;
 
     $scope.chosenIndex = -1;
-    $scope.loading = true;
+    //$scope.loading = true;
     $scope.selected = false;
     $scope.error;
     $scope.info;
@@ -97,7 +97,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         if($rootScope.dualWindow.active){
             $scope.dualWindow = true;
         }
-        
+
         if($scope.location === 'peerView'){
             $scope.panelTitle = "Peer List";
             $scope.selectedRouter = true;
