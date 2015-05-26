@@ -1,5 +1,5 @@
 <div class="relative" ng-style="{height: dualWindow == true ? '100%' : 'auto'}">
-  <div class="loading" ng-class="{active: loading}">
+  <div class="map-loading" ng-class="{active: loading}">
       <span class="glyphicon glyphicon-refresh"></span>
   </div>
 
@@ -107,10 +107,10 @@
             </p>
             <nvd3 options="peerIpChartOptions" data="peerIpChartData" config="showChartsConfig" style="float: left;"></nvd3>
           </div>
-        </div>  
+        </div>
       </div>
     </div>
-  </div> 
+  </div>
 
   <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="100%" resize></leaflet>
 </div>
