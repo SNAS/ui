@@ -17,7 +17,6 @@ angular
     'ngSanitize',
     'ngTouch',
     'ui.router',
-    'nsPopover',
     'nvd3',
     'ui.grid',
     'ui.grid.selection',
