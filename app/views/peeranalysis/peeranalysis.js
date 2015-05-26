@@ -22,6 +22,7 @@ angular.module('bmpUiApp')
       noUnselect: true,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
+      enableHorizontalScrollbar: 0,
 
       columnDefs: [
         {

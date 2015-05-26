@@ -23,7 +23,8 @@ angular.module('bmpUiApp')
     //Create the  prefix data grid
     $scope.AllPrefixOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: false
+      enableRowHeaderSelection: false,
+      enableHorizontalScrollbar: 0
     };
 
     //define the columns
@@ -130,7 +131,8 @@ angular.module('bmpUiApp')
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       multiSelect: true,
-      modifierKeysToMultiSelect: true
+      modifierKeysToMultiSelect: true,
+      enableHorizontalScrollbar: 0
     };
 
     $scope.HistoryPrefixOptions.onRegisterApi = function( gridApi ) {

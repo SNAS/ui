@@ -24,6 +24,7 @@ angular.module('bmpUiApp')
     $scope.prefixGridOptions = {
       rowHeight: 25,
       footerHeight: 0,
+      enableHorizontalScrollbar: 0,
       columnDefs: [
         {name: "prefixWithLen", displayName: 'Prefix', width: '*'}
       ]
@@ -33,6 +34,7 @@ angular.module('bmpUiApp')
     $scope.upstreamGridOptions = {
       enableColumnResizing: true,
       rowHeight: 25,
+      enableHorizontalScrollbar: 0,
       columnDefs: [
         {name: "asn", displayName: 'ASN', width: '30%'},
         {name: "as_name", displayName: 'AS Name', width: '70%'}
@@ -43,6 +45,7 @@ angular.module('bmpUiApp')
     $scope.downstreamGridOptions = {
       enableColumnResizing: true,
       rowHeight: 25,
+      enableHorizontalScrollbar: 0,
       columnDefs: [
         {name: "asn", displayName: 'ASN', width: '30%'},
         {name: "as_name", displayName: 'AS Name', width: '70%'}
