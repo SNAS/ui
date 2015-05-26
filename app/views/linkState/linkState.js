@@ -86,6 +86,7 @@ angular.module('bmpUiApp')
       multiSelect: false,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
+      enableHorizontalScrollbar: 0,
 
       columnDefs: [
         {field: 'prefixWithLen', displayName: 'Prefix', width: '*'},
@@ -107,6 +108,10 @@ angular.module('bmpUiApp')
         });
       }
     };
+
+    topo.view('stage').upon('mousewheel', function (sender, event) {
+      return false;
+    });
 
     topo.on('clickStage', function (sender, event) {
       clear();

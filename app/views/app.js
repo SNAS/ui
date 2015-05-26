@@ -72,53 +72,43 @@ angular
       })
       .state('app.globalView', {
         url: '/global-view',
-        templateUrl: 'views/globalView/globalView.html',
-        controller: 'GlobalViewController'
+        templateUrl: 'views/globalView/globalView.html'
       })
       .state('app.peerView', {
         url: '/peer-view',
-        templateUrl: 'views/peerView/peerView.html',
-        controller: 'PeerViewController'
+        templateUrl: 'views/peerView/peerView.html'
       })
       .state('app.asView', {
         url: '/AS-view?:as?',
-        templateUrl: 'views/asView/asView.html',
-        controller: 'ASViewController'
+        templateUrl: 'views/asView/asView.html'
       })
       .state('app.linkState', {
         url: '/link-state-view',
-        templateUrl: 'views/linkState/linkState.html',
-        controller: 'linkStateController'
+        templateUrl: 'views/linkState/linkState.html'
       })
       .state('app.orrView', {
         url: '/orr-view',
-        templateUrl: 'views/orrView/orrView.html',
-        controller: 'orrViewController'
+        templateUrl: 'views/orrView/orrView.html'
       })
       .state('app.peerAnalysis', {
         url: '/peer-analysis',
-        templateUrl: 'views/peeranalysis/peeranalysis.html',
-        controller: 'PeerAnalysisController'
+        templateUrl: 'views/peeranalysis/peeranalysis.html'
       })
       .state('app.asAnalysis', {
         url: '/AS-analysis',
-        templateUrl: 'views/asAnalysis/asAnalysis.html',
-        controller: 'ASAnalysisController'
+        templateUrl: 'views/asAnalysis/asAnalysis.html'
       })
       .state('app.prefixAnalysis', {
         url: '/prefix-analysis?:prefix?',
-        templateUrl: 'views/prefixanalysis/prefixanalysis.html',
-        controller: 'PrefixAnalysisController'
+        templateUrl: 'views/prefixanalysis/prefixanalysis.html'
       })
       .state('app.whoIs', {
         url: '/whois?:as?',
-        templateUrl: 'views/whois/whois.html',
-        controller: 'WhoIsController'
+        templateUrl: 'views/whois/whois.html'
       })
       .state('app.collectionServer', {
         url: '/collection-server',
-        templateUrl: 'views/collectionServer/collectionServer.html',
-        controller: 'CollectionServerController'
+        templateUrl: 'views/collectionServer/collectionServer.html'
 
       })
       .state('app.preferences', {
@@ -128,8 +118,7 @@ angular
       })
       .state('app.aggregationAnalysis', {
         url: '/aggregation-analysis?:as?',
-        templateUrl: 'views/aggregationanalysis/aggregationanalysis.html',
-        controller: 'aggregationanalysisController'
+        templateUrl: 'views/aggregationanalysis/aggregationanalysis.html'
       })
 
       //DUAL WINDOW MODE ENAGAAAGE
@@ -142,20 +131,12 @@ angular
           'top': {
             templateUrl: function ($stateParams){
                 return 'views/' + $stateParams.a + '/' + $stateParams.a + '.html';
-            },
-            controller: function ($stateParams){
-              if($stateParams.a)
-                return $stateParams.a + 'Controller';
             }
           },
           'bottom': {
             templateUrl: function ($stateParams){
               if($stateParams.b)
                 return 'views/' + $stateParams.b + '/' + $stateParams.b + '.html';
-            },
-            controller: function ($stateParams){
-              if($stateParams.b)
-                return $stateParams.b + 'Controller';
             }
           }
         }

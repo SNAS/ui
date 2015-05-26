@@ -8,7 +8,7 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', '$modal',function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,$modal) {
+  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', 'modal', '$stateParams','$rootScope', function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,modal, $stateParams,$rootScope) {
     //DEBUG
 
     // resize the window
@@ -23,7 +23,8 @@ angular.module('bmpUiApp')
     //Create the  prefix data grid
     $scope.AllPrefixOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: false
+      enableRowHeaderSelection: false,
+      enableHorizontalScrollbar: 0
     };
 
     //define the columns
@@ -37,7 +38,6 @@ angular.module('bmpUiApp')
       {name: "Communities", displayName: 'Communities'},
       {name: "LastModified", displayName: 'Last_Modified', width: 150}
     ];
-
 
     //Waits a bit for user to continue typing.
     $scope.enterValue = function (value) {
@@ -78,6 +78,11 @@ angular.module('bmpUiApp')
           createPrefixGridTable();
         });
     };
+
+    if($stateParams.prefix){
+      $scope.value = $stateParams.prefix;
+      getPrefixDataGrid($stateParams.prefix);
+    }
 
     // define the Prefix Data create function
     var createPrefixGridTable = function () {
@@ -126,9 +131,12 @@ angular.module('bmpUiApp')
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       multiSelect: true,
-      modifierKeysToMultiSelect: true
+      modifierKeysToMultiSelect: true,
+      enableHorizontalScrollbar: 0
     };
 
+
+    // here to get the intemValue , use this  to create table
     $scope.HistoryPrefixOptions.onRegisterApi = function( gridApi ) {
       $scope.gridApi = gridApi;
 
@@ -153,7 +161,7 @@ angular.module('bmpUiApp')
       {name: "PeerASN", displayName: 'Peer_ASN', width: 130,cellClass:'background'},
       {name: "MED", displayName: 'MED', width: 60,cellClass:'background'},
       {name: "Communities", displayName: 'Communities',cellClass:'background'},
-      {name: "LastModified", displayName: 'Last_Modified', width: 150,cellClass:'background'}
+      {name: "LastModified", displayName: 'Last_Modified', width: 180,cellClass:'background'}
     ];
 
     // the only Function is creatinga history prefix gird , inject data should be $scope.HisData
@@ -163,10 +171,10 @@ angular.module('bmpUiApp')
         $scope.HistoryPrefixOptions.data = [];
         $scope.HistoryPrefixOptions.data = $scope.HisData[hour];
 
+        //console.log("$scope.HistoryPrefixOptions.data",$scope.HistoryPrefixOptions.data);
         $scope.$apply();
-
-        $location.hash('bottom');
-        $anchorScroll();
+        //$location.hash('bottom');
+        //$anchorScroll();
 
       }
       ;
@@ -176,10 +184,15 @@ angular.module('bmpUiApp')
       if ("All peers" == searchPrefix) {
         apiFactory.getHistoryPrefix(searchPrefix)
           .success(function (data) {
+            console.log("here is for all peers");
 
             // still dont know why we need $scope.HistoryPrefixOptions.data here
             $scope.HistoryPrefixOptions.data =  $scope.originHisData = data.v_routes_history.data;
 
+            if($scope.HistoryPrefixOptions.data.length == 0)
+            {
+              $scope.showTip = "true";
+            }
             //prepared the data to put into grid
             getPrefixHisDataHour();
             //createPrefixHisGrid(7);
@@ -192,15 +205,32 @@ angular.module('bmpUiApp')
           .success(function (data) {
             console.log("getPrefixHisData has been executed:" + searchPrefix + ' ' + $scope.peerHashId);
             $scope.originHisData = data.v_routes_history.data;
+
+            //console.log("$scope.originHisData:" + $scope.originHisData);
+
+            if($scope.originHisData.length == 0)
+            {
+              $scope.showTip = "true";
+            }
+            else
+            {
+              $scope.showTip = "false";
+            }
+
             getPrefixHisDataHour();
           });
+        if(!$scope.$$phase) {
+          //$digest or $apply
+          $scope.$apply();
+        }
+        //$scope.$apply();
       }
     };
 
 
     var getPrefixHisDataHour = function () {
 
-      var allHisData = $scope.originHisData;
+      var allHisData = $scope.originHisData.reverse();
       $scope.asPathList = new Array();
 
       //console.log(allHisData);
@@ -255,16 +285,15 @@ angular.module('bmpUiApp')
         allHisData[i].AS_Path_list_flag = [];
         allHisData[i].AS_Path_list = new Array();
 
-        console.log("allHisData[",i,"].AS_Path",allHisData[i].AS_Path);
+        //console.log("allHisData[",i,"].AS_Path",allHisData[i].AS_Path);
 
         //initialize all the information
         for (j = 0; j < allHisData[i].AS_Path.length; j++)
         {
-          console.log("Hi i am here");
+          //console.log("Hi i am here");
           if (0 == i){ allHisData[i].AS_Path_list_flag[j] = true;console.log("hi , it's true");continue; }
           allHisData[i].AS_Path_list_flag[j] = allHisData[i-1].AS_Path.contains(allHisData[i].AS_Path[j]);
-          console.log("allHisData[i].AS_Path_list_flag[",j,"]",allHisData[i].AS_Path_list_flag[j]);
-
+          //console.log("allHisData[i].AS_Path_list_flag[",j,"]",allHisData[i].AS_Path_list_flag[j]);
         }
 
         //
@@ -278,15 +307,38 @@ angular.module('bmpUiApp')
 
           //console.log("allHisData[i].AS_Path_list[",j,"][flag]",allHisData[i].AS_Path_list[j]["flag"]);
           //console.log("allHisData[i].AS_Path_list[",j,"][path]",allHisData[i].AS_Path_list[j]["path"]);
-
         }
 
-        //$scope.HisData[hour] = new Array();
         $scope.HisData[hour].push(allHisData[i]);
-        //$scope.asPathChangeNumber[0]
+        //$scope.HisData[hour].reverse();
       }
+      //$scope.HisData = $scope.HisData.reverse();
 
       //console.log("$scope.HisData:"+$scope.HisData);
+      Array.prototype.compare = function (array) {
+        // if the other array is a falsy value, return
+        if (!array)
+          return false;
+
+        // compare lengths - can save a lot of time
+        if (this.length != array.length)
+          return false;
+
+        for (var i = 0, l=this.length; i < l; i++) {
+          // Check if we have nested arrays
+          if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].compare(array[i]))
+              return false;
+          }
+          else if (this[i] != array[i]) {
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;
+          }
+        }
+        return true;
+      }
+
       for(i = 0; i < 24; i++)
       {
         $scope.asPathChangeNumber[i] = $scope.HisData[i].length;
@@ -295,19 +347,22 @@ angular.module('bmpUiApp')
 
         for(var j = 1;j < $scope.HisData[i].length;j++)
         {
-          if($scope.HisData[i][j-1].AS_Path != $scope.HisData[i][j].AS_Path){
+          console.log(i,j);
 
+          if(!$scope.HisData[i][j-1].AS_Path.compare($scope.HisData[i][j].AS_Path)){
             //console.log($scope.asPathChangeAS_PATH[i]);
+            //console.log($scope.HisData[i][j-1].AS_Path,$scope.HisData[i][j].AS_Path)
+            //console.log($scope.HisData[i][j-1].AS_Path == $scope.HisData[i][j].AS_Path)
 
             $scope.asPathChangeAS_PATH[i] = $scope.asPathChangeAS_PATH[i] + 1;
           }
-          if($scope.HisData[i][j-1].NH != $scope.HisData[i][j].NH){
+          if(!($scope.HisData[i][j-1].NH === $scope.HisData[i][j].NH)){
             $scope.asPathChangeHP[i] = $scope.asPathChangeHP[i] + 1;
           }
-          if($scope.HisData[i][j-1].Communities != $scope.HisData[i][j].Communities){
+          if(!($scope.HisData[i][j-1].Communities === $scope.HisData[i][j].Communities)){
             $scope.asPathChangeCommunites[i] = $scope.asPathChangeCommunites[i] + 1;
           }
-          if($scope.HisData[i][j-1].MED != $scope.HisData[i][j].MED){
+          if(!($scope.HisData[i][j-1].MED === $scope.HisData[i][j].MED)){
             $scope.asPathChangeMED[i] = $scope.asPathChangeMED[i] + 1;
         }
       }
@@ -332,6 +387,9 @@ angular.module('bmpUiApp')
     {
       //$scope.showGrid = 'true';
       $scope.showGrid = "false";
+      $scope.showTip = "false";
+      $scope.value = "202.70.64.0/21";
+      getPrefixDataGrid($scope.value);
     }
 
     init();
@@ -341,6 +399,8 @@ angular.module('bmpUiApp')
       $scope.showGrid = "false";
 
       console.log("selectChange has been executed")
+      console.log("show the currentValue",$scope.currentValue);
+      if(typeof($scope.currentValue) == "undefined"){$scope.currentValue = $scope.value;console.log("show the Value",$scope.value);}
       getPrefixHisData($scope.currentValue);
 
       if(!$scope.$$phase) {
@@ -349,94 +409,46 @@ angular.module('bmpUiApp')
       }
     }
 
+    var myModal = new modal();
 
-    //modal part
+    $scope.showModal = function() {
+      $scope.createShowTable();
+      myModal.open();
+    };
 
-    //$scope.animationsEnabled = true;
+    $scope.createShowTable = function()
+    {
+      $scope.showItems = '<table>';
+      angular.forEach($scope.itemValue, function (value, key) {
+        if (key != "AS_Path_list_flag" && key != "AS_Path_list") {
+        //  if (key != "") {
+          $scope.showItems += (
+          '<tr>' +
+          '<td>' +
+          key + ': ' +
+          '</td>' +
 
-    //$scope.showItems = ['item1', 'item2', 'item3'];
-
-    //$scope.createShowTable = function()
-    //{
-    //  $scope.showItems = '<table>';
-    //  angular.forEach($scope.itemValue, function (value, key) {
-    //
-    //    if (key != "raw_output") {
-    //      $scope.showItems += (
-    //      '<tr>' +
-    //      '<td>' +
-    //      key + ': ' +
-    //      '</td>' +
-    //
-    //      '<td>' +
-    //      value +
-    //      '</td>' +
-    //      '</tr>'
-    //      );
-    //    }
-    //
-    //  });
-    //  $scope.showItems += '</table>';
-    //  console.log("ajfkjdflkajflafladla",$scope.showItems);
-    //}
-
-
-
-    //$scope.open = function () {
-    //
-    //  $modal.open({
-    //
-    //    animation: $scope.animationsEnabled,
-    //    templateUrl: 'myModal.html',
-    //    //template: '<my-modal></my-modal>',
-    //    controller: 'PrefixAnalysisController',
-    //    resolve: {
-    //      showItems: function () {
-    //      console.log("now let us have a look . what 's inside show items",$scope.showItems);
-    //      return "where is the data ,the heck!!!!",$scope.showItems;
-    //    }
-    //  }
-    //  });
-    //};
-
-    //$rootScope.gridOptions.data = $scope.showItems;
-
-    //app.factory('modal', ['$compile', '$rootScope', function ($compile, $rootScope) {
-    //  return function () {
-    //    $scope.createShowTable();
-    //    var elm;
-    //    var modal = {
-    //      open: function () {
-    //
-    //        var html = $scope.showItems;
-    //        elm = angular.element(html);
-    //        angular.element(document.body).prepend(elm);
-    //
-    //        $rootScope.close = function () {
-    //          modal.close();
-    //        };
-    //
-    //        $rootScope.modalStyle = {"display": "block"};
-    //
-    //        $compile(elm)($rootScope);
-    //      },
-    //      close: function () {
-    //        if (elm) {
-    //          elm.remove();
-    //        }
-    //      }
-    //    };
-    //    return modal;
-    //  };
-    //}])
-    //
-    //
-    //
-    //$scope.showModal = function() {
-    //  var myModal = new modal();
-    //  myModal.open();
-    //};
-
+          '<td>' +
+          value +
+          '</td>' +
+          '</tr>'
+          );
+        }
+        //if (key == "AS_Path")
+        //  {
+        //    console.log(typeof(value),value);
+        //    angular.forEach($scope.itemValue.AS_Path,function(key,value)
+        //    {
+        //      if($scope.itemValue.AS_Path_list_flag[key])
+        //      {value = }
+        //    })
+        //  }
+      });
+      if($scope.showItems==="<table>"){$scope.showItems = $scope.showItems + "There is no data right now ,please choose a row first!"}
+      $scope.showItems += '</table>';
+      //console.log("ajfkjdflkajflafladla",$scope.showItems);
+      $rootScope.showItems = $scope.showItems;
+    }
   }])
   .directive('d3Directive',['$compile', function($compile){
     function link($scope,element,scope){
@@ -510,8 +522,8 @@ angular.module('bmpUiApp')
             $scope.createPrefixHisGrid(i);
             $scope.showGrid = "true";
 
-            $location.hash('bottom');
-            $anchorScroll();
+            //$location.hash('bottom');
+            //$anchorScroll();
           })
           .on("mouseout",function(d,i){
             tip.destroy(d);
@@ -575,23 +587,40 @@ angular.module('bmpUiApp')
             $scope.$apply();
           }
       },true)
-
-
     }
     return {
       link: link,
       restrict: 'E'
     }
   }])
-  //.directive('myModal', function() {
-  //  return {
-  //    restrict: 'E',
-  //    //templateUrl: 'prefixanalysis.html',
-  //    link: function($scope) {
-  //      return $scope.showItems,"what the heck is going on";
-  //    }
-  //  };
-  //});
+  .factory('modal', ['$compile', '$rootScope', function ($compile, $rootScope) {
+    return function() {
+      var elm;
+      var modal = {
+        open: function() {
+
+         var html = '<div class="modal" ng-style="modalStyle"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"></div><div class="modal-body">' + $rootScope.showItems + '</div><div class="modal-footer"><button id="buttonClose" class="btn btn-primary" ng-click="close()">Close</button></div></div></div></div>';
+          elm = angular.element(html);
+          angular.element(document.body).prepend(elm);
+
+          $rootScope.close = function() {
+            modal.close();
+          };
+
+          $rootScope.modalStyle = {"display": "block"};
+
+          $compile(elm)($rootScope);
+        },
+        close: function() {
+          if (elm) {
+            elm.remove();
+          }
+        }
+      };
+
+      return modal;
+    };
+  }]);
 
 
 

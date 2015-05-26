@@ -1,11 +1,18 @@
 .detailsPanel {
-  height: 300px;
-  overflow-y: scroll;
+  pre{
+    height: 300px;
+  }
 }
 .detailsHistoryPanel {
-  height: 300px;
-  overflow-y: scroll;
+  pre{
+    height: 300px;
+  }
 }
+
+.margin-small{
+  margin: 3%;
+}
+
 .green {
   //  background-color: #2dff07;
   color: green;
@@ -57,7 +64,8 @@
   color:lightgreen;
   //height:auto;
   float:left;
-  display:inline
+  display:inline;
+  //margin: 0.5%;
 }
 
 .whitebar{
@@ -66,6 +74,7 @@
   background-color: white;
   //height:auto;
   float:left;
-  display:inline
+  display:inline;
+  //margin: 0.5%;
 }
 .background { background-color: white !important;;}
