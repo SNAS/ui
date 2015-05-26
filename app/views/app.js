@@ -24,6 +24,7 @@ angular
     'ui.grid.resizeColumns',
     'bmp.components.cardList',
     'bmp.components.card',
+    'bmp.components.loading',
     'ui.bootstrap',
     'bgDirectives',
     'leaflet-directive',

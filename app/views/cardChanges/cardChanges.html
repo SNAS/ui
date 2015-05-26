@@ -2,6 +2,12 @@
   <h1>CARD GLOBAL VIEW TEST</h1>
   <hr>
 
+  <div bmp-loading loading-var="testVar" style="width: 100px; height: 100px;background-color: brown;">
+    test
+  </div>
+
+  {{ testVar }}
+
   <!--This is the Router/Peers 'Card' so can use this aswell as the map-->
     <span ng-init="expand=true;" class="glyphicon" ng-class="{'glyphicon-plus': expand, 'glyphicon-minus': !expand}"
           ng-click="expand=!expand;">
