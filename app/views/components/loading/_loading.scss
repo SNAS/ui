@@ -1,0 +1,32 @@
+.loading{
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 1001;
+  opacity:0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+
+
+  @keyframes spin {
+    from{
+      transform: rotate(0deg);
+    }
+    to{
+      transform: rotate(359deg);
+    }
+  }
+
+  .glyphicon{
+    animation: spin 2s linear forwards infinite;
+    font-size: 10%;
+    color: #ddd;
+    text-shadow: 1px 1px #C3C3C3;
+    top: 30%;
+  }
+  &.active{
+    opacity: 1;
+    pointer-events: all;
+  }
+}
