@@ -8,7 +8,7 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', '$modal', '$stateParams', function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,$modal, $stateParams) {
+  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', 'modal', '$stateParams','$rootScope', function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,modal, $stateParams,$rootScope) {
     //DEBUG
 
     // resize the window
@@ -135,6 +135,8 @@ angular.module('bmpUiApp')
       enableHorizontalScrollbar: 0
     };
 
+
+    // here to get the intemValue , use this  to create table
     $scope.HistoryPrefixOptions.onRegisterApi = function( gridApi ) {
       $scope.gridApi = gridApi;
 
@@ -388,7 +390,6 @@ angular.module('bmpUiApp')
       $scope.showTip = "false";
       $scope.value = "202.70.64.0/21";
       getPrefixDataGrid($scope.value);
-      //getPrefixHisData($scope.value);
     }
 
     init();
@@ -408,94 +409,46 @@ angular.module('bmpUiApp')
       }
     }
 
+    var myModal = new modal();
 
-    //modal part
+    $scope.showModal = function() {
+      $scope.createShowTable();
+      myModal.open();
+    };
 
-    //$scope.animationsEnabled = true;
+    $scope.createShowTable = function()
+    {
+      $scope.showItems = '<table>';
+      angular.forEach($scope.itemValue, function (value, key) {
+        if (key != "AS_Path_list_flag" && key != "AS_Path_list") {
+        //  if (key != "") {
+          $scope.showItems += (
+          '<tr>' +
+          '<td>' +
+          key + ': ' +
+          '</td>' +
 
-    //$scope.showItems = ['item1', 'item2', 'item3'];
-
-    //$scope.createShowTable = function()
-    //{
-    //  $scope.showItems = '<table>';
-    //  angular.forEach($scope.itemValue, function (value, key) {
-    //
-    //    if (key != "raw_output") {
-    //      $scope.showItems += (
-    //      '<tr>' +
-    //      '<td>' +
-    //      key + ': ' +
-    //      '</td>' +
-    //
-    //      '<td>' +
-    //      value +
-    //      '</td>' +
-    //      '</tr>'
-    //      );
-    //    }
-    //
-    //  });
-    //  $scope.showItems += '</table>';
-    //  console.log("ajfkjdflkajflafladla",$scope.showItems);
-    //}
-
-
-
-    //$scope.open = function () {
-    //
-    //  $modal.open({
-    //
-    //    animation: $scope.animationsEnabled,
-    //    templateUrl: 'myModal.html',
-    //    //template: '<my-modal></my-modal>',
-    //    controller: 'PrefixAnalysisController',
-    //    resolve: {
-    //      showItems: function () {
-    //      console.log("now let us have a look . what 's inside show items",$scope.showItems);
-    //      return "where is the data ,the heck!!!!",$scope.showItems;
-    //    }
-    //  }
-    //  });
-    //};
-
-    //$rootScope.gridOptions.data = $scope.showItems;
-
-    //app.factory('modal', ['$compile', '$rootScope', function ($compile, $rootScope) {
-    //  return function () {
-    //    $scope.createShowTable();
-    //    var elm;
-    //    var modal = {
-    //      open: function () {
-    //
-    //        var html = $scope.showItems;
-    //        elm = angular.element(html);
-    //        angular.element(document.body).prepend(elm);
-    //
-    //        $rootScope.close = function () {
-    //          modal.close();
-    //        };
-    //
-    //        $rootScope.modalStyle = {"display": "block"};
-    //
-    //        $compile(elm)($rootScope);
-    //      },
-    //      close: function () {
-    //        if (elm) {
-    //          elm.remove();
-    //        }
-    //      }
-    //    };
-    //    return modal;
-    //  };
-    //}])
-    //
-    //
-    //
-    //$scope.showModal = function() {
-    //  var myModal = new modal();
-    //  myModal.open();
-    //};
-
+          '<td>' +
+          value +
+          '</td>' +
+          '</tr>'
+          );
+        }
+        //if (key == "AS_Path")
+        //  {
+        //    console.log(typeof(value),value);
+        //    angular.forEach($scope.itemValue.AS_Path,function(key,value)
+        //    {
+        //      if($scope.itemValue.AS_Path_list_flag[key])
+        //      {value = }
+        //    })
+        //  }
+      });
+      if($scope.showItems==="<table>"){$scope.showItems = $scope.showItems + "There is no data right now ,please choose a row first!"}
+      $scope.showItems += '</table>';
+      //console.log("ajfkjdflkajflafladla",$scope.showItems);
+      $rootScope.showItems = $scope.showItems;
+    }
   }])
   .directive('d3Directive',['$compile', function($compile){
     function link($scope,element,scope){
@@ -634,23 +587,40 @@ angular.module('bmpUiApp')
             $scope.$apply();
           }
       },true)
-
-
     }
     return {
       link: link,
       restrict: 'E'
     }
   }])
-  //.directive('myModal', function() {
-  //  return {
-  //    restrict: 'E',
-  //    //templateUrl: 'prefixanalysis.html',
-  //    link: function($scope) {
-  //      return $scope.showItems,"what the heck is going on";
-  //    }
-  //  };
-  //});
+  .factory('modal', ['$compile', '$rootScope', function ($compile, $rootScope) {
+    return function() {
+      var elm;
+      var modal = {
+        open: function() {
+
+         var html = '<div class="modal" ng-style="modalStyle"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"></div><div class="modal-body">' + $rootScope.showItems + '</div><div class="modal-footer"><button id="buttonClose" class="btn btn-primary" ng-click="close()">Close</button></div></div></div></div>';
+          elm = angular.element(html);
+          angular.element(document.body).prepend(elm);
+
+          $rootScope.close = function() {
+            modal.close();
+          };
+
+          $rootScope.modalStyle = {"display": "block"};
+
+          $compile(elm)($rootScope);
+        },
+        close: function() {
+          if (elm) {
+            elm.remove();
+          }
+        }
+      };
+
+      return modal;
+    };
+  }]);
 
 
 
