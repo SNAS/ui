@@ -510,4 +510,27 @@
     }
   }
 
+
+  .ip-section {
+    width: 120px;
+    height: 100%;
+    float: left;
+    padding:9px;
+  }
+
+  .top-chart .nvtooltip{
+    display: none !important;
+  }
+
+
+  .ui-grid-disable-selection {
+    -webkit-touch-callout: inherit;
+    -webkit-user-select: inherit;
+    -khtml-user-select: inherit;
+    -moz-user-select: inherit;
+    -ms-user-select: inherit;
+    user-select: inherit;
+    cursor: inherit;
+  }
 }
+

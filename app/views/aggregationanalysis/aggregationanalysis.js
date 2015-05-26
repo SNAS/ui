@@ -22,7 +22,8 @@ angular.module('bmpUiApp')
     //populate prefix data into ShowPrefixsOptions Grid
     $scope.ShowPrefixsOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: false
+      enableRowHeaderSelection: false,
+      enableHorizontalScrollbar: 0
     };
 
     $scope.ShowPrefixsOptions.columnDefs = [
@@ -188,7 +189,8 @@ angular.module('bmpUiApp')
     // show redundant prefix
     $scope.ShowRedundantOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: false
+      enableRowHeaderSelection: false,
+      enableHorizontalScrollbar: 0
     };
     $scope.ShowRedundantOptions.columnDefs = [
       {name: "Prefix", displayName: 'Prefix', width: '30%'},
