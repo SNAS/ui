@@ -1,6 +1,6 @@
 'use strict';
 
- /*angular.module('bmp.components.card').filter('unsafe', ['$sce', function ($sce){
+ angular.module('bmp.components.card').filter('unsafe', ['$sce', function ($sce){
     return function (val){
       return $sce.trustAsHtml(val);
     };
@@ -8,15 +8,17 @@
 
 angular.module("template/popover/popover.html", []).run(["$templateCache", function ($templateCache) {
     $templateCache.put("template/popover/popover.html",
-      "<div>  <div class=\"arrow\"></div>\n" +
+      "<div class=\"popover {{placement}}\" ng-class=\"{ in: isOpen(), fade: animation() }\">\n" +
+      "  <div class=\"arrow\"></div>\n" +
       "\n" +
       "  <div class=\"popover-inner\">\n" +
       "      <h3 class=\"popover-title\" ng-bind-html=\"title | unsafe\" ng-show=\"title\"></h3>\n" +
       "      <div class=\"popover-content\"ng-bind-html=\"content | unsafe\"></div>\n" +
       "  </div>\n" +
-      "</div>\n</div>" +
+      "</div>\n" +
       "");
-}]);*/
+}]);
+
 
 angular.module('bmp.components.card')
 
@@ -205,18 +207,6 @@ angular.module('bmp.components.card')
           var index = $scope.norepeat.indexOf((asname[i].asn).toString());
 
           //Here is where all fields/ info for popover should be.
-
-    /*  var popOutContent = "asn:" + asname[i].asn + " ";
-      popOutContent+= "as_name:" + asname[i].as_name + " ";
-      popOutContent+= "org_id:" + asname[i].org_id + " ";
-      popOutContent+= "org_name:" + asname[i].org_name + " ";
-      popOutContent+= "remarks:" + asname[i].remarks + " ";
-      popOutContent+= "address:" + asname[i].address + " ";
-      popOutContent+= "city:" + asname[i].city + " ";
-      popOutContent+= "state_prov:" + asname[i].state_prov + " ";
-      popOutContent+= "postal_code:" + asname[i].postal_code + " ";
-      popOutContent+= "country:" + asname[i].country;
-      popOutContent = popOutContent.replace(/[a-z_]*:null/gi, ' ');*/
 
     var popOutFields = ["asn","as_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
     var pcontent = "";
