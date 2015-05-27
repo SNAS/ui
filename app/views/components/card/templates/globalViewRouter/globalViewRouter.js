@@ -62,6 +62,10 @@ angular.module('bmp.components.card')
             //
             $scope.ipAmountData[0].values[index].value = ipAmount;
             $scope.ipAmountData[0].values[$scope.ipAmountData[0].values.length-1].value = ipTotal;
+
+            $scope.peersAmount = ipTotal;
+
+            $scope.ipGraphIsLoad = false; //stop loading
           }).
           error(function (error) {
             console.log(error.message);
@@ -161,10 +165,12 @@ angular.module('bmp.components.card')
       //AS Number	AS Name	Organization
       //PeerASN, PeerName, org_name
 
+    $scope.globalViewPeerGridInitHeight = 350;
 
       $scope.globalViewPeerOptions = {
         enableRowSelection: true,
         enableRowHeaderSelection: false,
+        height: $scope.globalViewPeerGridInitHeight,
         columnDefs: [
           {name: "PeerASN", displayName: 'AS Number', width: '*'},
           {name: "as_name", displayName: 'AS Name', width: '*'},
@@ -181,8 +187,12 @@ angular.module('bmp.components.card')
       apiFactory.getPeersByIp($scope.data.RouterIP).
         success(function (result){
           $scope.peersAmount = result.v_peers.size;
+
            // peersData = result.v_peers.data;
           $scope.globalViewPeerOptions.data = result.v_peers.data;
+
+          $scope.globalViewGridIsLoad = false; //stop loading
+          $scope.peerIconIsLoad = false;
 
           $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
         }).
@@ -225,36 +235,6 @@ angular.module('bmp.components.card')
         }
       });
       //End Router up time Graph
-
-    /*  var peersTableCreate = function() {
-        //<!--R/Peers info table-->
-        $scope.peerSummaryTable = [];
-        angular.forEach(peersData, function(obj,index){
-          apiFactory.getWhoIsWhereASN(peersData[index].PeerASN).
-            success(function (result) {
-              var data = result.w.data;
-              var orgName = '-';
-
-              try{
-                if(data[0].org_name != ""){
-                  orgName = data[0].org_name;
-                }
-              }catch(err) {
-                //Just to catch unfined exception
-              }
-              $scope.peerSummaryTable.push({
-                PeerASN: peersData[index].PeerASN,
-                PeerName: peersData[index].PeerName,
-                org_name: orgName
-              });
-              $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
-            }).
-            error(function (error) {
-              console.log(error.message);
-            });
-        });
-        $scope.globalViewPeerOptions.data = $scope.peerSummaryTable;
-      };*/
 
       $scope.isUP = ($scope.data.isConnected=='1')? '⬆':'⬇';
       $scope.locationInfo =  cardFactory.createLocationTable({
