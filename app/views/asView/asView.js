@@ -354,6 +354,8 @@ angular.module('bmpUiApp')
       };
 
       topo.data(topologyData);
+
+      $scope.topologyIsLoad = false; //stop loading
     }
 
     //Group nodes by the initial of  AS name
