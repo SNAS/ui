@@ -22,7 +22,10 @@
       </div>
       <div class="col-lg-6">
         <p class="pgtitle-small">Prefixes Originated by AS {{asn}}</p>
-        <div class="grid" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+        <div style="width: 100%; position: relative" ng-style="{'height':prefixGridInitHeight}">
+          <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
+          <div class="grid" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+        </div>
       </div>
     </div>
 
@@ -30,16 +33,25 @@
       <div class="col-lg-6">
         <p class="pgtitle-small">Upstream ASes of AS {{asn}}</p>
 
-        <div ng-show="!upstreamNodata" class="grid" ui-grid="upstreamGridOptions"
-             ui-grid-auto-resize></div>
-        <p ng-show="upstreamNodata">There is no upstream of this AS</p>
+        <div style="width: 100%; position: relative" ng-style="{'height':upstreamGridInitHeight}">
+          <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
+          <div ng-show="!upstreamNodata" class="grid" ui-grid="upstreamGridOptions"
+               ui-grid-auto-resize></div>
+          <p ng-show="upstreamNodata">There is no upstream of this AS</p>
+        </div>
+
       </div>
       <div class="col-lg-6">
         <p class="pgtitle-small">Downstream ASes of AS {{asn}}</p>
 
-        <div ng-show="!downstreamNodata" class="grid" ui-grid="downstreamGridOptions"
-             ui-grid-auto-resize></div>
-        <p ng-show="downstreamNodata">There is no downstream of this AS</p>
+        <div style="width: 100%; position: relative" ng-style="{'height':downstreamGridInitHeight}">
+          <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
+          <div ng-show="!downstreamNodata" class="grid" ui-grid="downstreamGridOptions"
+               ui-grid-auto-resize></div>
+          <p ng-show="downstreamNodata">There is no downstream of this AS</p>
+        </div>
+
+
       </div>
     </div>
 
