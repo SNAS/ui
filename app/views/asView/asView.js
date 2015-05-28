@@ -67,46 +67,6 @@ angular.module('bmpUiApp')
 
     //Main function
     $(function () {
-      //topology initialization
-      var App = nx.define(nx.ui.Application, {
-        methods: {
-          getContainer: function (comp) {
-            return new nx.dom.Element(document.getElementById('AS_topology'));
-          },
-          start: function () {
-            window.topo = new nx.graphic.Topology({
-              //padding: 10,
-              adaptive: true,
-              nodeConfig: {
-                label: 'model.asn',
-                iconType: 'model.iconType'
-              },
-              nodeSetConfig: {
-                label: 'model.name'
-              },
-              tooltipManagerConfig: {
-                nodeTooltipContentClass: 'MyNodeTooltip'
-              },
-              identityKey: 'id',
-              showIcon: true
-            });
-            topo.view('stage').upon('mousewheel', function (sender, event) {
-              return false;
-            });
-            topo.attach(this);
-
-            //topo.on('clickNodeSet', function (sender, nodeset) {
-            //  console.log("click nodeset" + nodeset.id);
-            //  for (var i = 0; i < nodeSet.length; i++) {
-            //    console.log(topo.getNode(nodeSet[i].id));
-            //  }
-            //});
-          }
-        }
-      });
-      var app = new App();
-      app.start();
-
       //predictive search
       $("#suggestions").autocomplete({
         source: suggestions,
@@ -133,6 +93,7 @@ angular.module('bmpUiApp')
       else {
         $scope.searchValue = 109;
       }
+      topoInit();
       searchValue();
     });
 
@@ -173,6 +134,7 @@ angular.module('bmpUiApp')
         getUpstream();
         getDownstream();
 
+        topoClear();
         downstreamPromise.success(function () {
           upstreamPromise.success(function () {
             drawTopology(data[0]);
@@ -214,6 +176,7 @@ angular.module('bmpUiApp')
 
     //Get prefixes information of this AS
     function getPrefixes() {
+      $scope.prefixGridOptions.data = [];
       apiFactory.getRIBbyASN($scope.asn).
         success(function (result) {
           var data = result.v_routes.data;
@@ -230,6 +193,8 @@ angular.module('bmpUiApp')
 
     //Get upstream data
     function getUpstream() {
+      upstreamData = [];
+      $scope.upstreamGridOptions.data = [];
       upstreamPromise = apiFactory.getUpstream($scope.asn);
       upstreamPromise.success(function (result) {
         upstreamData = result.upstreamASN.data.data;
@@ -249,6 +214,8 @@ angular.module('bmpUiApp')
 
     //Get downstream data
     function getDownstream() {
+      downstreamData = [];
+      $scope.downstreamGridOptions.data = [];
       downstreamPromise = apiFactory.getDownstream($scope.asn);
       downstreamPromise.success(function (result) {
         downstreamData = result.downstreamASN.data.data;
@@ -266,16 +233,87 @@ angular.module('bmpUiApp')
         });
     }
 
+    //topology initialization
+    function topoInit(){
+      var App = nx.define(nx.ui.Application, {
+        methods: {
+          getContainer: function (comp) {
+            return new nx.dom.Element(document.getElementById('AS_topology'));
+          },
+          start: function () {
+            window.topo = new nx.graphic.Topology({
+              //padding: 10,
+              adaptive: true,
+              nodeConfig: {
+                label: 'model.asn',
+                iconType: 'model.iconType'
+              },
+              nodeSetConfig: {
+                label: 'model.name'
+              },
+              tooltipManagerConfig: {
+                nodeTooltipContentClass: 'MyNodeTooltip'
+              },
+              identityKey: 'id',
+              showIcon: true
+            });
+            topo.view('stage').upon('mousewheel', function (sender, event) {
+              return false;
+            });
+            topo.attach(this);
+
+            topo.upon('clickNodeSet', function (sender, nodeset) {
+              var id = nodeset._model._data.id;
+              var level = nodeset._model._data.level;
+              var nodeSetLayer = topo.getLayer('nodeSet');
+              var nodeSets = nodeSetLayer.nodeSets();
+              for (var i = 0; i < nodeSets.length; i++) {
+                if (id == nodeSets[i]._model._data.id) {
+                  nodeSets[i].collapsed(false);
+                }
+                else if (level == nodeSets[i]._model._data.level && nodeSets[i].collapsed() == false) {
+                  var ns = nodeSets[i];
+                  setTimeout(function () {
+                    (function (ns) {
+                      ns.collapsed(true);
+                    })(ns);
+                  }, 0);
+                  console.log(nodeSets[i]);
+                }
+              }
+              //nodeSetLayer.nodeSetDictionary().getItem(id).collapsed(false);
+              //console.log(nodeSetLayer.nodeSetDictionary().getItem(id));
+
+              //return true;
+              return false;
+            });
+          }
+        }
+      });
+      var app = new App();
+      app.start();
+    }
+
+    function topoClear(){
+      nodes = [];
+      links = [];
+      nodeSet = [];
+      id = 0;
+
+      var topologyData = {
+        nodes: nodes,
+        links: links,
+        nodeSet: nodeSet
+      };
+
+      topo.data(topologyData);
+    }
+
     //draw AS topology with current AS in the middle
     function drawTopology(data) {
       var width = 1200;
       var upstreamLayerHeight = width / 20;
       var downstreamLayerHeight = width / 20;
-
-      nodes = [];
-      links = [];
-      nodeSet = [];
-      id = 0;
 
       //current AS
       nodes.push({
@@ -293,7 +331,7 @@ angular.module('bmpUiApp')
       });
 
       //Upstream ASes
-      pushNodes(upstreamData, "upstream", width, - 2 * upstreamLayerHeight);
+      pushNodes(upstreamData, "upstream", width, -2 * upstreamLayerHeight);
       if (upstreamData.length > 100) {
         groupNode(upstreamData, "", "upstream", "country", 0, width, -upstreamLayerHeight);
         var countrySetCount = nodeSet.length;
@@ -408,6 +446,7 @@ angular.module('bmpUiApp')
           id: id++,
           type: 'nodeSet',
           nodes: [],
+          level: key,
           name: nodeSet2Keys[i],
           parentNodeSetId: parentNodeSetId,
           allNodes: nodeSet2[nodeSet2Keys[i]],

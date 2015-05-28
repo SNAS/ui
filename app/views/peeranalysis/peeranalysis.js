@@ -117,7 +117,7 @@ angular.module('bmpUiApp')
       getPeerHistory(peer_hash_id, amount_of_entries);
     }
 
-    function getDetails(row){
+    function getDetails(row) {
       var detailsPanel = '<table class="tableStyle"><thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>';
       var noShow = ["$$hashKey", "Status", "IPv"];
 
@@ -146,7 +146,8 @@ angular.module('bmpUiApp')
       $scope.detailsPanel = detailsPanel;
     }
 
-    function getPeerHistory(peer_hash_id, amount_of_entries){
+    function getPeerHistory(peer_hash_id, amount_of_entries) {
+      $scope.peerHistoryData = [];
       apiFactory.getPeerHistory(peer_hash_id, amount_of_entries).success(
         function (result) {
 
@@ -262,7 +263,7 @@ angular.module('bmpUiApp')
               key: "Post-RIB",
               values: post_rib_values
             }
-          ]
+          ];
         }
       );
     }

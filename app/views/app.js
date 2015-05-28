@@ -27,7 +27,8 @@ angular
     'ui.bootstrap',
     'bgDirectives',
     'leaflet-directive',
-    'bmp.components.map'
+    'bmp.components.map',
+    'angular-loading-bar'
   ])
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise("/login");

@@ -1,4 +1,8 @@
-.margin-small{
+#loading-bar .bar {
+  background: #15c7ce;
+}
+
+.margin-small {
   margin: 2%;
 }
 
@@ -23,18 +27,18 @@
   // overflow-y: scroll;
 }
 
-.preStyle{
+.preStyle {
   background-color: #f4f6f9;
   max-height: 300px;
   overflow-y: scroll;
 }
 
-.tableStyle{
+.tableStyle {
   font-size: 11px;
   font-weight: lighter;
 }
 
-.grid{
+.grid {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 12px;
   font-style: normal;
