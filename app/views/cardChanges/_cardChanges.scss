@@ -13,7 +13,7 @@
 .as-path{
 	height:250px;
 	overflow-x: scroll;
-	border: 1px solid black;
+	border: none;
 	width:100%;
 	padding-top: 75px;
 	padding-left: 40px;
@@ -21,7 +21,36 @@
 		width:200px;
 		font-size:12px;
 	}
-	#here{
+	#menu{
 		white-space:pre;
 	}
+}
+
+.ns-popover-tooltip a {
+  text-decoration: none;
+}
+
+div.hover {
+  background-color: #0096d6;
+  border: lightgray solid 1px;
+  width: 200px;
+  cursor: move;
+  padding: 50px;
+  text-align: center;
+  color:white;
+  border-radius: 4px;
+  cursor: pointer;
+  cursor: hand;
+}
+
+
+div.section {
+  position: relative;
+  width: 100%;
+  max-width: 62.5em;
+  margin: 0 auto;
+  padding: 0 1.5em;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }

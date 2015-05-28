@@ -51,10 +51,11 @@
   <div class="template-content" ng-class="{expanded: cardExpand}">
     <div class="row">
       <div class="col-lg-4">
-      <div class="icon-container">
+      <div class="icon-container" >
         <h4>
           Router - Peer Diagram
         </h4>
+        <div ng-show="peerIconIsLoad" bmp-loading loading-var="peerIconIsLoad"></div>
         <div class="peer-amount-icon" style="position: relative;width: 280px;  margin: 50px auto 0;">
             <div style="color:#AFAFAF;width: 135px; text-align: center; " tooltip="{{ data.RouterName }}">
               {{ wordCheck(data.RouterName) }}
@@ -89,6 +90,7 @@
       <div class="col-lg-4" style="text-align: center">
         <div class="icon-container">
           <h4>Peer Types</h4>
+          <div ng-show="ipGraphIsLoad" bmp-loading loading-var="ipGraphIsLoad"></div>
           <nvd3 options="ipAmountOptions" data="ipAmountData"></nvd3>
         </div>
       </div>
@@ -116,7 +118,12 @@
         <div class="icon-container">
           <h4>Downstream ASes of Router {{ data.RouterName }}</h4>
           <!--R/Peers info table-->
-          <div class="gridStyle" ui-grid="globalViewPeerOptions" ui-grid-selection ng-style="{'height':globalViewPeerOptions.changeHeight}"></div>
+
+          <div class="loading-section" ng-style="{'height':globalViewPeerGridInitHeight}">
+            <div ng-show="globalViewGridIsLoad" bmp-loading loading-var="globalViewGridIsLoad"></div>
+            <div class="gridStyle" ui-grid="globalViewPeerOptions" ui-grid-selection ng-style="{'height':globalViewPeerOptions.changeHeight}"></div>
+          </div>
+
         </div>
       </div>
     </div>

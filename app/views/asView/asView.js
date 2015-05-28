@@ -16,6 +16,10 @@ angular.module('bmpUiApp')
     var nodes = [], links = [], nodeSet = [];
     var id = 0;
 
+    $scope.prefixGridInitHeight = 350;
+    $scope.upstreamGridInitHeight = 350;
+    $scope.downstreamGridInitHeight = 350;
+
     $scope.nodata = false;
     $scope.upstreamNodata = false;
     $scope.downstreamNodata = false;
@@ -23,7 +27,9 @@ angular.module('bmpUiApp')
     //prefix table options
     $scope.prefixGridOptions = {
       rowHeight: 25,
+      height: $scope.prefixGridInitHeight,
       footerHeight: 0,
+      enableHorizontalScrollbar: 0,
       columnDefs: [
         {name: "prefixWithLen", displayName: 'Prefix', width: '*'}
       ]
@@ -33,6 +39,8 @@ angular.module('bmpUiApp')
     $scope.upstreamGridOptions = {
       enableColumnResizing: true,
       rowHeight: 25,
+      height:$scope.upstreamGridInitHeight,
+      enableHorizontalScrollbar: 0,
       columnDefs: [
         {name: "asn", displayName: 'ASN', width: '30%'},
         {name: "as_name", displayName: 'AS Name', width: '70%'}
@@ -43,6 +51,8 @@ angular.module('bmpUiApp')
     $scope.downstreamGridOptions = {
       enableColumnResizing: true,
       rowHeight: 25,
+      height: $scope.downstreamGridInitHeight,
+      enableHorizontalScrollbar: 0,
       columnDefs: [
         {name: "asn", displayName: 'ASN', width: '30%'},
         {name: "as_name", displayName: 'AS Name', width: '70%'}
@@ -184,6 +194,7 @@ angular.module('bmpUiApp')
             data[i].prefixWithLen = data[i].Prefix + "/" + data[i].PrefixLen;
           }
           $scope.prefixGridOptions.data = data;
+          $scope.prefixIsLoad = false; //stop loading
         }).
         error(function (error) {
           alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -203,6 +214,7 @@ angular.module('bmpUiApp')
         }
         else {
           $scope.upstreamGridOptions.data = upstreamData;
+          $scope.upstreamIsLoad = false; //stop loading
           $scope.upstreamNodata = false;
         }
       }).
@@ -224,6 +236,7 @@ angular.module('bmpUiApp')
         }
         else {
           $scope.downstreamGridOptions.data = downstreamData;
+          $scope.downstreamIsLoad = false; //stop loading
           $scope.downstreamNodata = false;
         }
       }).
@@ -379,6 +392,8 @@ angular.module('bmpUiApp')
       };
 
       topo.data(topologyData);
+
+      $scope.topologyIsLoad = false; //stop loading
     }
 
     //Group nodes by the initial of  AS name

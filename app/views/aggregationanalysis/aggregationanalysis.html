@@ -1,8 +1,5 @@
  <!------------------Aggregation Analysis---------------->
 <div class="margin-small" ng-controller="aggregationanalysisController">
-
-  <h1>Aggregation analysis</h1>
-  <hr>
   <label>AS Number:</label>
   <p>
     <input type="text" ng-model="searchPrefix" placeholder="Search ..." />
@@ -15,11 +12,11 @@
   <!--this part is peer select.-->
   <label>Aggregate prefixes, originated by {{searchPrefix}}:</label>
   <div>
-    Selects BGP Peer please:
+    <!--Selects BGP Peer please:-->
     <p>
     <!--<select ng-model="peerData.selectPeer" ng-options="peer.PeerName as peer.title for peer in peerData" ng-change="selectChange()">-->
     <select ng-model="peerData.selectPeer" ng-options="peer.PeerName for peer in peerData | orderBy : 'PeerName'" ng-change="selectChange()">
-    <option value="">All peers</option>
+    <option value="">Selects BGP Peer please:</option>
     </select>
       <hr>
       Efficiency of aggregation:

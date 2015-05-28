@@ -1,11 +1,10 @@
 <div class="relative" ng-style="{height: dualWindow == true ? '100%' : 'auto'}">
-  <div class="loading" ng-class="{active: loading}">
-      <span class="glyphicon glyphicon-refresh"></span>
-  </div>
 
   <div ng-show="error" class="error">
     {{error}}
   </div>
+
+  <div ng-show="loading" bmp-loading loading-var="loading"></div>
 
   <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}" ng-style="{ height: dualWindow == true ? '70%' : 'inherit' }">
     <div class="panel-search">
@@ -88,32 +87,31 @@
         <div class="col-xs-2">
           <div class="peer-chart">
             <p>
-              <span class="count">{{peerCount}}</span>
-              Peers
-            </p>
-            <nvd3 options="peerIpChartOptions" data="peerIpChartData" config="showChartsConfig" style="float: left;"></nvd3>
-          </div>
-        </div>
-        <div class="col-xs-8">
-          <div style="background-color: white;width: 100%;height: 129px;float: left;margin: 10px auto 0;color:#555;">
-            <nvd3 options="topChartOptions" data="topChartData"></nvd3>
-          </div>
-        </div>
-        <div class="col-xs-2">
-          <div class="peer-chart">
-            <p>
               <span class="count">{{routerCount}}</span>
               Routers
             </p>
             <nvd3 options="routerChartOptions" data="routerChartData" config="showChartsConfig" style="float: left;"></nvd3>
           </div>
         </div>
+        <div class="col-xs-8">
+          <div style="background-color: white;width: 100%;height: 129px;float: left;margin: 10px auto 0;color:#555;">
+            <nvd3 class="top-chart" options="topChartOptions" data="topChartData"></nvd3>
+          </div>
+        </div>
+        <div class="col-xs-2">
+          <div class="peer-chart">
+            <p>
+              <span class="count">{{peerCount}}</span>
+              Peers
+            </p>
+            <nvd3 options="peerIpChartOptions" data="peerIpChartData" config="showChartsConfig" style="float: left;"></nvd3>
+          </div>
+        </div>
       </div>
-      
-       <nvd3 options="peerChartUpOptions" data="peerChartUpData" config="showChartsConfig" style="float: left;"></nvd3>
-
     </div>
-  </div> 
+  </div>
 
   <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="100%" resize></leaflet>
+
+
 </div>

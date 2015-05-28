@@ -53,6 +53,7 @@ a{
  $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
 // bower:scss
 @import "bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
+@import "nsPopover/sass/ns-popover.scss";
 // endbower
 
 @import "compass/css3";
@@ -70,6 +71,11 @@ a{
 
 .right {
   float: right;
+}
+
+.loading-section{
+  width: 100%;
+  position: relative;
 }
 
 //=============================================================
@@ -121,3 +127,4 @@ icon.bmp-down {
 
 //map
 @import "components/map/map";
+@import "components/loading/loading";

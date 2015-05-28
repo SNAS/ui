@@ -2,6 +2,12 @@
   <h1>CARD GLOBAL VIEW TEST</h1>
   <hr>
 
+  <div bmp-loading loading-var="testVar" style="width: 100px; height: 100px;background-color: brown;">
+    test
+  </div>
+
+  <input type="submit" ng-click="testVar= !testVar" />
+
   <!--This is the Router/Peers 'Card' so can use this aswell as the map-->
     <span ng-init="expand=true;" class="glyphicon" ng-class="{'glyphicon-plus': expand, 'glyphicon-minus': !expand}"
           ng-click="expand=!expand;">
@@ -193,9 +199,29 @@
           <div style="text-align: center" tooltip="{{path.topVal}}">{{ wordCheck(path.topVal) }}</div>
 
           <!--This is the actual AS icon-->
-          <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html=true data-popover="true"></div>
+          <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html=true data-popover></div>
+
+          <!--div class="{{ path.icon }}" id="here" style="font-size: 50px"><a ns-popover ns-popover-template="" ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-list-theme" ns-popover-timeout="3"> hover me</a></div-->
+
+          <!--script type="text/ng-template" id="menu">
+          <div class="triangle"></div>
+          <div class="ns-popover-tooltip">
+            <span ng-bind-html="path.popOut">
+              
+            </span>
+          </div>
+         </script-->
+
+          <!--div class="{{ path.icon }}" id="here" style="font-size: 50px"
+           ns-popover
+            ns-popover-template="menu"
+             ns-popover-trigger="mouseenter"
+               ns-popover-timeout="2"
+               ns-popover-placement="right"></div-->
+
           <div style="text-align: center">{{ path.botVal }}</div>
         </div>
+
         <!--line-->
         <div style="display: table-cell;" ng-if="path.isEnd">
           <div style="width: 100px;height: 2px;background-color:#000000;position: absolute;margin-top: 45px;"

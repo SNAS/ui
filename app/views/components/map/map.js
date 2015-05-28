@@ -13,7 +13,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     window.SCOPEMAP = $scope;
 
     $scope.chosenIndex = -1;
-    $scope.loading = true;
+    //$scope.loading = true;
     $scope.selected = false;
     $scope.error;
     $scope.info;
@@ -97,7 +97,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         if($rootScope.dualWindow.active){
             $scope.dualWindow = true;
         }
-        
+
         if($scope.location === 'peerView'){
             $scope.panelTitle = "Peer List";
             $scope.selectedRouter = true;
@@ -109,6 +109,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             loadBottomPane();
         }
         else if($scope.location === 'peerCard'){
+            $scope.selectionMade = true;
             if($scope.plotMarker != undefined){
                 if($scope.singlePoint != undefined){
                     $scope.map.removeLayer($scope.singlePoint);
@@ -952,22 +953,22 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
         $scope.peerIpChartData = [
           {
-            key: "V4 Up",
+            key: "ipv4 Up",
             color: "#40744f",
             y: ips[0][2]
           },
           {
-            key: "V4 Down",
+            key: "ipv4 Down",
             color: "#843737",
             y: ips[0][3]
           },
           {
-            key: "V6 Down",
+            key: "ipv6 Down",
             color: "#a65151",
             y: ips[1][3]
           },
           {
-            key: "V6 Up",
+            key: "ipv6 Up",
             color: "#5da571",
             y: ips[1][2]
           }

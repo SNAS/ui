@@ -1,14 +1,12 @@
 <div class="margin-small" ng-controller="PrefixAnalysisController">
  <!------------------PREFIXANALYSIS---------------->
 
-   <h1>prefix analysis</h1>
-   <hr>
    <label>Prefix Number:</label>
 
    <p>
-     <input type="text" ng-change="enterValue(value)" ng-model="value" placeholder="Search ..."/>
-   <p class="help-block">Example: 202.70.64.0/21</p>
-   <hr>
+      <input type="text" ng-change="enterValue(value)" ng-model="value" placeholder="Search ..."/>
+      <span class="help-block">Example: 202.70.64.0/21</span>
+    </p>
    <div class="detailsPanel">
      <pre ng-bind-html="showValues"></pre>
    </div>
@@ -22,13 +20,14 @@
    <hr>
 
    <div>
-     Selects BGP Peer please:
+     <!--Selects BGP Peer please:-->
      <!--| orderBy : 'PeerName'-->
      <p>
      <div>
        <div>
          <select ng-model="peerData.selectPeer" ng-options="peer.PeerName for peer in peerData | orderBy : 'PeerName'" ng-change="selectChange()">
-           <option value="">All peers</option>
+           <!--<option value="">All peers</option>-->
+           <option value="">Selects BGP Peer please:</option>
          </select>
        </div>
        <div ng-show="showTip">
@@ -46,36 +45,9 @@
    <p></p>
    <br>
 
-
-   <!--<script type="text/ng-template" id="myModal.html">-->
-   <!--<div>where is the data !!!</div>-->
-   <!--<div ng-bind-html="showItems">why you not show</div>-->
-   <!--</script>-->
-
-   <!--<button ng-click="showModal()">Open me!</button>-->
-
-   <!--modal control-->
-   <!--<my-modal class="detailsPanel">-->
-   <!--<pre ng-bind-html="showItems" ></pre>-->
-   <!--</my-modal>-->
-   <!--<div>-->
-   <!--&lt;!&ndash;<script type="text/ng-template" id="myModalContent.html">&ndash;&gt;-->
-   <!--<script type="text/ng-template" id="prefixanalysis.html">-->
-   <!--<div>-->
-   <!--<h3>I'm a modal!</h3>-->
-   <!--</div>-->
-   <!--<div>-->
-   <!--{{ showItems }}-->
-   <!--&lt;!&ndash;<pre ng-bind-html="showItems"></pre>&ndash;&gt;-->
-   <!--&lt;!&ndash;<ul>&ndash;&gt;-->
-   <!--&lt;!&ndash;<li ng-repeat="item in showItems">&ndash;&gt;-->
-   <!--&lt;!&ndash;{{ showItems }}&ndash;&gt;-->
-   <!--&lt;!&ndash;</li>&ndash;&gt;-->
-   <!--&lt;!&ndash;</ul>&ndash;&gt;-->
-   <!--</div>-->
-   <!--</script>-->
-   <!--<button ng-click="open()">Open me!</button>-->
-   <!--</div>-->
+  <div>
+    <button id="showButton" ng-click="showModal()">Show details</button>
+  </div>
 
    <div id = "bottom"></div>
 

@@ -20,14 +20,19 @@ angular.module('bmpUiApp')
     //  }, 550);
     //});
 
+    $scope.whoIsGridInitHeight = 350;
+
     $scope.whoIsGridOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableColumnResizing: true,
       rowHeight: 25,
+      height: $scope.whoIsGridInitHeight,
+      width: 1200,
       multiSelect: false,
       noUnselect: true,
       modifierKeysToMultiSelect: false,
+      enableHorizontalScrollbar: 0,
       rowTemplate:
         '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
 
@@ -36,6 +41,7 @@ angular.module('bmpUiApp')
         $scope.whoIsGridApi.selection.on.rowSelectionChanged($scope,function(row) {
           changeSelected();
         });
+        $scope.whoIsGridOptions.changeHeight = 200;
       },
 
     columnDefs : [
@@ -78,6 +84,13 @@ angular.module('bmpUiApp')
     ]
     };
 
+
+    //setTimeout(function(){
+    //  alert($scope.whoIsGridApi.grid.gridHeight);
+    //  alert($scope.whoIsGridApi.grid.gridWidth);
+    //});
+
+
     $scope.calGridHeight = function(grid, gridapi){
       gridapi.core.handleWindowResize();
 
@@ -90,6 +103,7 @@ angular.module('bmpUiApp')
       }
       grid.changeHeight = height;
       gridapi.grid.gridHeight = grid.changeHeight;
+      $scope.whoIsGridInitHeight = grid.changeHeight;
     };
 
     // $scope.peerViewPeerOptions.onRegisterApi = function (height){
@@ -111,6 +125,7 @@ angular.module('bmpUiApp')
             setTimeout(function(){
               $scope.calGridHeight($scope.whoIsGridOptions, $scope.whoIsGridApi);
             },10);
+            $scope.whoIsLoad=false;
           }).
           error(function (error) {
             alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -123,6 +138,7 @@ angular.module('bmpUiApp')
             $scope.whoIsGridOptions.data = result.gen_whois_asn.data;
             initSelect();
             $scope.calGridHeight($scope.whoIsGridOptions, $scope.whoIsGridApi);
+            $scope.whoIsLoad=false;
           }).
           error(function (error) {
             alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
