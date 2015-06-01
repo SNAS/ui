@@ -187,6 +187,7 @@ angular.module('bmpUiApp')
     //Get prefixes information of this AS
     function getPrefixes() {
       $scope.prefixGridOptions.data = [];
+      $scope.prefixIsLoad = true; //begin loading
       apiFactory.getRIBbyASN($scope.asn).
         success(function (result) {
           var data = result.v_routes.data;
@@ -205,6 +206,7 @@ angular.module('bmpUiApp')
     //Get upstream data
     function getUpstream() {
       upstreamData = [];
+      $scope.upstreamIsLoad = true; //begin loading
       $scope.upstreamGridOptions.data = [];
       upstreamPromise = apiFactory.getUpstream($scope.asn);
       upstreamPromise.success(function (result) {
@@ -227,6 +229,7 @@ angular.module('bmpUiApp')
     //Get downstream data
     function getDownstream() {
       downstreamData = [];
+      $scope.downstreamIsLoad = true; //begin loading
       $scope.downstreamGridOptions.data = [];
       downstreamPromise = apiFactory.getDownstream($scope.asn);
       downstreamPromise.success(function (result) {
@@ -308,6 +311,8 @@ angular.module('bmpUiApp')
     }
 
     function topoClear(){
+      $scope.topologyIsLoad = true; //stop loading
+
       nodes = [];
       links = [];
       nodeSet = [];
