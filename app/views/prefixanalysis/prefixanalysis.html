@@ -14,7 +14,8 @@
    <label>All entries for prefix {{searchPrefix}} stored in DB:</label>
    <hr>
    <!--Angular Grid added here-->
-   <div ui-grid="AllPrefixOptions" ui-grid-resize-columns></div>
+  <div ng-show="allPreLoad" bmp-loading loading-var="allPreLoad"></div>
+  <div ui-grid="AllPrefixOptions" ui-grid-resize-columns></div>
    <hr>
    <label>History of prefix: {{searchPrefix}} </label>
    <hr>

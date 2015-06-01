@@ -76,6 +76,7 @@ angular.module('bmpUiApp')
           var peerDataOriginal = data.v_routes.data;
           $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
           createPrefixGridTable();
+          $scope.allPreLoad=false;
         });
     };
 
