@@ -122,7 +122,7 @@ angular.module('bmp.components.card')
             PeerASN: $scope.data.PeerASN
           };
 
-          console.log($scope.data.PeerASN);
+          console.log($scope.data.PeerASN); // printing out the first no.
 
           createASpath($scope.values.AS_Path);
         }).
@@ -130,8 +130,6 @@ angular.module('bmp.components.card')
           console.log(error.message);
         });
     };
-
-
 
   var createASpath = function(path){
       //e.g. " 64543 1221 4637 852 852 29810 29810 29810 29810 29810"
@@ -166,46 +164,55 @@ angular.module('bmp.components.card')
       }
     }
 
-    //"bmp-ebgp_router10-17" check if the numbers are same 64543
- /* var x = "bmp-as_router10-17";
-      var repeat = [];
-      for (var i = 0; i < $scope.norepeat.length; i++){
-        if ($scope.data.PeerASN == $scope.norepeat[0]){
-          repeat = x;
-         //repeat[0].unshift("bmp-ebgp_router10-17");
-         var t = repeat.split(",").concat();
-         console.log(t);
-        //var team = repeat[0].unshift("bmp-ebgp_router10-17");
-         //"bmp-ebgp_router10-17";
-            }
-          }*/
+   // console.log($scope.values.PeerAddress); // printing out the 2nd no.
 
+    if($scope.data.PeerASN == $scope.norepeat[0]){
+      $scope.as_path.push({
+        icon : "bmp-ebgp_router10-17",
+        topVal: $scope.values.PeerAddress,
+        colour : "#EAA546",
+        botVal : $scope.values.PeerAddress,
+        isEnd : true
+    });
+    /*}
+    else{
+     // $scope.iBGP_node = [];
+      $scope.as_path.push({
+        icon : "bmp-ibgp_router10-17",
+        topVal: $scope.values.PeerAddress,
+        colour : "#EAA546",
+        botVal : $scope.values.PeerAddress,
+        isEnd : true
+    });*/
+    };
+
+    // eBGP
+    // if ($scope.data.PeerASN == $scope.norepeat[0])
+    // replace "bmp-as_router10-17" first icon (64543) with "bmp-ebgp_router10-17"
+    // else its iBGP
+    // insert iBGP icon between the router icon and first AS icon
 
     //var cloneNorepeat = $scope.norepeat.slice(0);
     //cloneNorepeat.sort();
-    for(var i = 0; i < $scope.norepeat.length; i++){
+
+    for(var i = 1; i < $scope.norepeat.length; i++){
       //AS nodes "bmp-as_router10-17"
       $scope.as_path.push({
         icon : "bmp-as_router10-17",
         topVal:$scope.norepeat[i],
         colour:"#9467b0",
         botVal:$scope.norepeat[i],
-        //popOut: "popOutContent",
         isEnd:true
       });
     }
     //make last as not have connecting line
     $scope.as_path[$scope.as_path.length-1].isEnd = false;
-    console.log($scope.norepeat[0]);
-
 
    var asname;
     apiFactory.getWhoIsASNameList($scope.norepeat).
       success(function (result) {
         var asname = result.w.data;
         for(var i=0; i < asname.length; i++){
-         //console.dir(asname[i]);
-
           var index = $scope.norepeat.indexOf((asname[i].asn).toString());
 
           //Here is where all fields/ info for popover should be.
