@@ -7,6 +7,8 @@ angular.module('bmp.components.card')
 
     window.GPEERSCO = $scope;
 
+    console.log($scope.data.peer_hash_id);
+
     //  PEER DATA
     //  {
     //  "RouterName":"csr1.openbmp.org",     //  "RouterIP":"173.39.209.78",
@@ -96,13 +98,6 @@ angular.module('bmp.components.card')
           $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
         },10)
       }
-    });
-
-    //Redraw Tables when menu state changed
-    $scope.$on('menu-toggle', function(thing, args) {
-      $timeout( function(){
-        $scope.summaryPeerOptionsApi.core.handleWindowResize();
-      }, 550);
     });
 
     //DownstreamAS, as_name, and org_name (working)

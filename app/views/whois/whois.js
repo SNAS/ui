@@ -13,13 +13,6 @@ angular.module('bmpUiApp')
     //DEBUG
     window.SCOPE = $scope;
 
-    //Redraw Tables when menu state changed
-    //$scope.$on('menu-toggle', function (thing, args) {
-    //  $timeout(function () {
-    //    resize();
-    //  }, 550);
-    //});
-
     $scope.whoIsGridInitHeight = 350;
 
     $scope.whoIsGridOptions = {
@@ -85,12 +78,6 @@ angular.module('bmpUiApp')
     };
 
 
-    //setTimeout(function(){
-    //  alert($scope.whoIsGridApi.grid.gridHeight);
-    //  alert($scope.whoIsGridApi.grid.gridWidth);
-    //});
-
-
     $scope.calGridHeight = function(grid, gridapi){
       gridapi.core.handleWindowResize();
 
@@ -105,10 +92,6 @@ angular.module('bmpUiApp')
       gridapi.grid.gridHeight = grid.changeHeight;
       $scope.whoIsGridInitHeight = grid.changeHeight;
     };
-
-    // $scope.peerViewPeerOptions.onRegisterApi = function (height){
-    //   $scope.whoIsPeerApi = height;
-    // }
 
     //Loop through data selecting and altering relevant data.
     var searchValue = function (value) {
@@ -162,10 +145,6 @@ angular.module('bmpUiApp')
         }
       }, 500);
     };
-
-    //var resize = function () {
-    //  $scope.whoIsGridApi.core.handleWindowResize();
-    //};
 
     //Decided to put the data into a table in the pre to align it
     function changeSelected () {

@@ -29,17 +29,6 @@ angular.module('bmp.components.card')
 
     $scope.showRib = false;
 
-    //Redraw Tables when menu state changed
-    $scope.$on('menu-toggle', function(thing, args) {
-      $timeout( function(){
-        $scope.ribGridApi.core.handleWindowResize();
-      }, 550);
-    });
-
-    $scope.$watch('summaryPeerOptions.gridIsLoading', function(val) {
-      $scope.summaryGridIsLoad = $scope.summaryPeerOptions.gridIsLoading;
-    });
-
     //this is for the graph cards.
     $scope.graphVisibility = false;
     $scope.showGraphs = function(){

@@ -14,12 +14,6 @@ angular.module('bmpUiApp')
     // resize the window
     window.SCOPE = $scope;
 
-    $scope.$on('menu-toggle', function (thing, args) {
-      $timeout(function () {
-        resize();
-      }, 550);
-    })
-
     //Create the  prefix data grid
     $scope.AllPrefixOptions = {
       enableRowSelection: true,
