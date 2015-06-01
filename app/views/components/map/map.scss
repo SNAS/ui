@@ -127,11 +127,12 @@
                   color: rgb(197, 23, 23);
                   cursor: pointer;
                   position: absolute;
-                  right: 130px;
+                  right: 0;
                   top: 13px;
                   font-size: 12pt;
                   z-index: 8;
-                  transition: color 0.2s;
+                  transition: right 0.5s, opacity 0.5s, color 0.2s;
+                  opacity: 0;
                   &:hover{
                       color: rgb(255, 23, 23);
                   }
@@ -351,6 +352,10 @@
               }
               .pointer{
                   transform: rotate(180deg);
+              }
+              .glyphicon-remove{
+                opacity: 1;
+                right: 130px;
               }
           }
           &.with-router{
