@@ -5,6 +5,7 @@
     <input type="text" ng-model="searchPrefix" placeholder="Search ..." />
     <button ng-click="getsShowPrefixInfo()">Get it!</button>
 
+  <div ng-show="allPrefixLoad" bmp-loading loading-var="allPrefixLoad"></div>
   <div ui-grid-selection ui-grid="ShowPrefixsOptions" ></div>
 
   <hr>

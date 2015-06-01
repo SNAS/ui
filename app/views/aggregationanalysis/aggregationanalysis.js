@@ -44,6 +44,7 @@ angular.module('bmpUiApp')
               var peerDataOriginal = result.v_routes.data;
               $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
               createShowPrefixsOptions();
+              $scope.allPrefixLoad=false;
             });
       });
     };
