@@ -27,12 +27,17 @@ angular.module('bmp.components.card')
 
     $scope.graphs = [];
 
+    $scope.showRib = false;
 
     //Redraw Tables when menu state changed
     $scope.$on('menu-toggle', function(thing, args) {
       $timeout( function(){
         $scope.ribGridApi.core.handleWindowResize();
       }, 550);
+    });
+
+    $scope.$watch('summaryPeerOptions.gridIsLoading', function(val) {
+      $scope.summaryGridIsLoad = $scope.summaryPeerOptions.gridIsLoading;
     });
 
     //this is for the graph cards.
@@ -63,7 +68,10 @@ angular.module('bmp.components.card')
     //  "isPeerVPN": "0",
     //  "LastModified": "2015-04-16 17:53:41"
 
+    $scope.ribGridInitHeight = 350;
+
     $scope.ribGridOptions = {
+      height: $scope.ribGridInitHeight,
       enableRowSelection: true,
       enableRowHeaderSelection: true
     };
@@ -86,13 +94,18 @@ angular.module('bmp.components.card')
 
     //when select Routing tab
     $scope.getRibData = function() {
+      $scope.showRib = true;
+
+      $scope.ribGridApi.core.handleWindowResize();
       apiFactory.getPeerRib($scope.data.peer_hash_id).
         success(function (result) {
           var resultData = result.v_routes.data;
-          for(var i = 0; i < resultData.length; i++){
+          for(var i = 0; i < resultData.length; i++) {
             resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
           }
+          //$scope.ribGridIsLoad = false; //stop loading
           $scope.ribGridOptions.data = $scope.initalRibdata = resultData;
+
           $scope.ribGridApi.core.handleWindowResize();
         }).
         error(function (error) {
@@ -208,20 +221,20 @@ angular.module('bmp.components.card')
 
           //Here is where all fields/ info for popover should be.
 
-    var popOutFields = ["asn","as_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
-    var pcontent = "";
-    for(var j = 0; j < popOutFields.length; j++){
-      if(asname[i][popOutFields[j]] != null){
-        pcontent+= popOutFields[j] + " : " + asname[i][popOutFields[j]] + "<br>";
-        pcontent = pcontent.replace(/ASN-|ASN/g,"");
-      }
-    }
+          var popOutFields = ["asn","as_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
+          var pcontent = "";
+          for(var j = 0; j < popOutFields.length; j++){
+            if(asname[i][popOutFields[j]] != null){
+              pcontent+= popOutFields[j] + " : " + asname[i][popOutFields[j]] + "<br>";
+              pcontent = pcontent.replace(/ASN-|ASN/g,"");
+            }
+          }
 
-      asname[i].as_name = asname[i].as_name.replace(/ASN-|ASN/g,"");
-      //changed the name of the as to name from results.
-        $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
-       //$scope.as_path[index+1].popOut = asname[i].as_name;//+1 cause starting router node
-        $scope.as_path[index+1].popOut = pcontent;//+1 cause starting router node
+          asname[i].as_name = asname[i].as_name.replace(/ASN-|ASN/g,"");
+          //changed the name of the as to name from results.
+          $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
+          //$scope.as_path[index+1].popOut = asname[i].as_name;//+1 cause starting router node
+          $scope.as_path[index+1].popOut = pcontent;//+1 cause starting router node
 
         }
       }).

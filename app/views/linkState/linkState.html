@@ -9,7 +9,12 @@
   </div>
   <!--<nextTopology data="topologyData" options="topologyOptions" protocol="protocol" peer-hash-id="peerHashId" get-spf-table="getSPFtable" path="path"></nextTopology>-->
   <!--<topology></topology>-->
-  <div id="link_state_topology"></div>
+
+  <div class="loading-section">
+    <div id="link_state_topology"></div>
+    <div ng-show="topologyIsLoad" bmp-loading loading-var="topologyIsLoad"></div>
+  </div>
+
   <div class="margin-small">
     <div class="grid" ng-show="show===true" ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
   </div>

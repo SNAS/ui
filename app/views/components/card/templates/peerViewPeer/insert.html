@@ -2,14 +2,20 @@
   <h4>Further Peer Information</h4>
   <tabset>
     <tab heading="Downstream ASes of Peer" select="downStreamTab()">
-      <div class="gridStyle" ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
+      <!--<div class="loading-section">-->
+        <!--<div ng-show="summaryGridIsLoad" bmp-loading loading-var="summaryGridIsLoad"></div>-->
+        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
+      <!--</div>-->
     </tab>
     <tab heading="Routing Table" select="getRibData()">
 
       <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
 
       <!--Angular Table added here-->
-      <div class="gridStyle" ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}"></div>
+      <div class="loading-section" ng-style="{'height':ribGridInitHeight}">
+        <div ng-show="ribGridIsLoad" bmp-loading loading-var="ribsGridIsLoad" font-width="80"></div>
+        <div ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}"></div>
+      </div>
 
 
       <!--like the more details section.-->

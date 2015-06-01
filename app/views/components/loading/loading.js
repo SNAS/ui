@@ -9,17 +9,16 @@ angular.module('bmp.components.loading',[])
       replace: false,
       transclude: true,
       scope: {
-        loadingVar: "="
+        loadingVar: "=",  //variable name to be used in parent
+        fontWidth: "=?"   //optional set width
       },
       link: function(scope, $element) {
         scope.loadingVar = true;
 
         var width = $element.width();
 
-        //alert($element.height());
-        //alert($element.width());
-
-        scope.fontWidth = width * (10/100); //10%
+        if(scope.fontWidth == undefined)
+          scope.fontWidth = width * (10/100); //10%
       }
     }
   });

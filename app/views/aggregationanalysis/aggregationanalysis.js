@@ -12,6 +12,7 @@ angular.module('bmpUiApp')
     //DEBUG
     window.SCOPE = $scope;
 
+    $scope.showGraphTable = false;
 
     $scope.$on('menu-toggle', function (thing, args) {
       $timeout(function () {
@@ -40,6 +41,7 @@ angular.module('bmpUiApp')
           apiFactory.getAsnInfo(109,$scope.prefix_amount)
             .success(function(result) {
               $scope.ShowPrefixsOptions.data = $scope.PrefixData = result.v_routes.data;
+              $scope.PrefixTableIsLoad = false; //stop loading
 
               var peerDataOriginal = result.v_routes.data;
               $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
@@ -91,8 +93,13 @@ angular.module('bmpUiApp')
     //getPeers();
 
     $scope.selectChange = function(){
-      $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
-      showaggregatePrefixes();
+      if($scope.peerData.selectPeer != null){
+        $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
+        showaggregatePrefixes();
+        $scope.showGraphTable = true;
+      }else{
+        $scope.showGraphTable = false;
+      }
     }
 
     //calculate redundant route information.

@@ -101,6 +101,7 @@ angular.module('bmpUiApp')
       apiFactory.getTopTransitIpv4Data().success(
         function(results){
           $scope.top_transit_ipv4_data = processData(results,"transit_v4_prefixes");
+          $scope.ipv4TransitGraphIsLoad = false; // stop loading
         }
       ).
         error(function (error){
@@ -110,6 +111,7 @@ angular.module('bmpUiApp')
       apiFactory.getTopTransitIpv6Data().success(
         function(results){
           $scope.top_transit_ipv6_data = processData(results,"transit_v6_prefixes");
+          $scope.ipv6TransitGraphIsLoad = false; // stop loading
         }
       ).
         error(function (error){
@@ -119,6 +121,7 @@ angular.module('bmpUiApp')
       apiFactory.getTopOriginIpv4Data().success(
         function(results){
           $scope.top_origin_ipv4_data = processData(results,"origin_v4_prefixes");
+          $scope.ipv4OriginGraphIsLoad = false; // stop loading
         }
       ).
         error(function (error){
@@ -128,6 +131,7 @@ angular.module('bmpUiApp')
       apiFactory.getTopOriginIpv6Data().success(
         function(results){
           $scope.top_origin_ipv6_data = processData(results,"origin_v6_prefixes");
+          $scope.ipv6OriginGraphIsLoad = false; // stop loading
         }
       ).
         error(function (error){

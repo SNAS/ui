@@ -202,6 +202,8 @@ angular.module('bmpUiApp')
           };
           topo.data(topologyData);
 
+          $scope.topologyIsLoad = false; //stop loading
+
           $scope.SPFtableOptions.data = {};
           $scope.show = false;
         });

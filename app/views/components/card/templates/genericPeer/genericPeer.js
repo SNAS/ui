@@ -75,6 +75,8 @@ angular.module('bmp.components.card')
       $scope.summaryPeerOptionsApi= gridApi;
     };
 
+    $scope.summaryPeerOptions.gridIsLoading = true;
+
     $scope.calGridHeight = function(grid, gridapi){
       gridapi.core.handleWindowResize();
 
@@ -112,6 +114,7 @@ angular.module('bmp.components.card')
         }else {
           $scope.summaryPeerOptions.data = result.downstreamASN.data;
         }
+        $scope.summaryPeerOptions.gridIsLoading = false; //stop loading
         $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
       }).
       error(function (error){

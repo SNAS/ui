@@ -13,6 +13,8 @@ angular.module('bmpUiApp')
     var peers, peer_prefix;
     var peerPrefixPromise, peersPromise;
 
+    $scope.peerGridInitHeight = 300;
+
     // Table with peers
     $scope.peerTableOptions = {
       enableRowSelection: true,
@@ -20,6 +22,7 @@ angular.module('bmpUiApp')
       enableColumnResizing: true,
       multiSelect: false,
       noUnselect: true,
+      height: $scope.peerGridInitHeight,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
       enableHorizontalScrollbar: 0,
@@ -70,6 +73,7 @@ angular.module('bmpUiApp')
             peers[i].Post_RIB = (prefix == null ) ? 0 : prefix.Post_RIB;
           }
           $scope.peerTableOptions.data = peers;
+          $scope.peerTableIsLoad = false; //stop loading
 
           $timeout(function () {
             $scope.gridApi.selection.selectRow($scope.peerTableOptions.data[0]);

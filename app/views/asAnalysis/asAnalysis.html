@@ -4,24 +4,45 @@
     <div class="col-lg-6">
       <h3 class="pgtitle-small">Top Transit ASes</h3>
       <div class="panel panel-default">
-        <nvd3 options="ipv4Options" data="top_transit_ipv4_data"
-              config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+
+        <div class="loading-section">
+          <nvd3 options="ipv4Options" data="top_transit_ipv4_data"
+                config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+          <div bmp-loading loading-var="ipv4TransitGraphIsLoad"></div>
+        </div>
+
+
       </div>
       <div class="panel panel-default">
-        <nvd3 options="ipv6Options" data="top_transit_ipv6_data"
-              config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+
+        <div class="loading-section">
+          <nvd3 options="ipv6Options" data="top_transit_ipv6_data"
+                config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+          <div bmp-loading loading-var="ipv6TransitGraphIsLoad"></div>
+        </div>
+
       </div>
     </div>
 
     <div class="col-lg-6">
       <h3 class="pgtitle-small">Top Origin ASes</h3>
       <div class="panel panel-default">
-        <nvd3 options="ipv4Options" data="top_origin_ipv4_data"
-              config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+
+        <div class="loading-section">
+          <nvd3 options="ipv4Options" data="top_origin_ipv4_data"
+                config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+          <div bmp-loading loading-var="ipv4OriginGraphIsLoad"></div>
+        </div>
+
       </div>
       <div class="panel panel-default">
-        <nvd3 options="ipv6Options" data="top_origin_ipv6_data"
-              config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+
+        <div class="loading-section">
+          <nvd3 options="ipv6Options" data="top_origin_ipv6_data"
+                config="{autorefresh: true, refreshDataOnly:ture}"></nvd3>
+          <div bmp-loading loading-var="ipv6OriginGraphIsLoad"></div>
+        </div>
+
       </div>
     </div>
   </div>

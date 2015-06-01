@@ -54,3 +54,24 @@ div.section {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+
+//  background-color: rgba(255, 255, 255, 0.6);
+//  z-index: 1001;
+//  opacity:0;
+//  transition: opacity 0.2s;
+//  pointer-events: none;
+
+  @keyframes spin2 {
+    0%{transform: rotate(0deg);}
+    50%{transform: rotate(0deg);}
+    75%{transform: rotate(72deg);}
+    100%{transform: rotate(72deg);}
+  }
+
+  .bmp-net{
+    animation: spin2 1.5s linear forwards infinite;
+    font-size: 80pt;
+    color: #ddd;
+//    text-shadow: 1px 1px #C3C3C3;
+    top: 30%;
+  }
