@@ -27,11 +27,14 @@ angular.module('bmpUiApp')
     //prefix table options
     $scope.prefixGridOptions = {
       rowHeight: 25,
+      gridFooterHeight: 15,
       height: $scope.prefixGridInitHeight,
       footerHeight: 0,
       enableHorizontalScrollbar: 0,
+      showGridFooter: true,
       columnDefs: [
-        {name: "prefixWithLen", displayName: 'Prefix', width: '*'}
+        {name: "prefixWithLen", displayName: 'Prefix', width: '*'},
+        {name: "IPv", displayName: 'IPv', width: '*'}
       ]
     };
 
@@ -145,6 +148,7 @@ angular.module('bmpUiApp')
         getDownstream();
 
         topoClear();
+        $scope.topologyIsLoad = true; //start loading
         downstreamPromise.success(function () {
           upstreamPromise.success(function () {
             drawTopology(data[0]);
@@ -193,6 +197,7 @@ angular.module('bmpUiApp')
           var data = result.v_routes.data;
           for (var i = 0; i < result.v_routes.size; i++) {
             data[i].prefixWithLen = data[i].Prefix + "/" + data[i].PrefixLen;
+            data[i].IPv = (data[i].isIPv4 === 1) ? '4' : '6';
           }
           $scope.prefixGridOptions.data = data;
           $scope.prefixIsLoad = false; //stop loading
@@ -278,31 +283,31 @@ angular.module('bmpUiApp')
             });
             topo.attach(this);
 
-            topo.upon('clickNodeSet', function (sender, nodeset) {
-              var id = nodeset._model._data.id;
-              var level = nodeset._model._data.level;
-              var nodeSetLayer = topo.getLayer('nodeSet');
-              var nodeSets = nodeSetLayer.nodeSets();
-              for (var i = 0; i < nodeSets.length; i++) {
-                if (id == nodeSets[i]._model._data.id) {
-                  nodeSets[i].collapsed(false);
-                }
-                else if (level == nodeSets[i]._model._data.level && nodeSets[i].collapsed() == false) {
-                  var ns = nodeSets[i];
-                  setTimeout(function () {
-                    (function (ns) {
-                      ns.collapsed(true);
-                    })(ns);
-                  }, 0);
-                  console.log(nodeSets[i]);
-                }
-              }
-              //nodeSetLayer.nodeSetDictionary().getItem(id).collapsed(false);
-              //console.log(nodeSetLayer.nodeSetDictionary().getItem(id));
-
-              //return true;
-              return false;
-            });
+            //topo.upon('clickNodeSet', function (sender, nodeset) {
+            //  var id = nodeset._model._data.id;
+            //  var level = nodeset._model._data.level;
+            //  var nodeSetLayer = topo.getLayer('nodeSet');
+            //  var nodeSets = nodeSetLayer.nodeSets();
+            //  for (var i = 0; i < nodeSets.length; i++) {
+            //    if (id == nodeSets[i]._model._data.id) {
+            //      nodeSets[i].collapsed(false);
+            //    }
+            //    else if (level == nodeSets[i]._model._data.level && nodeSets[i].collapsed() == false) {
+            //      var ns = nodeSets[i];
+            //      setTimeout(function () {
+            //        (function (ns) {
+            //          ns.collapsed(true);
+            //        })(ns);
+            //      }, 0);
+            //      console.log(nodeSets[i]);
+            //    }
+            //  }
+            //  //nodeSetLayer.nodeSetDictionary().getItem(id).collapsed(false);
+            //  //console.log(nodeSetLayer.nodeSetDictionary().getItem(id));
+            //
+            //  //return true;
+            //  return false;
+            //});
           }
         }
       });
@@ -311,8 +316,6 @@ angular.module('bmpUiApp')
     }
 
     function topoClear(){
-      $scope.topologyIsLoad = true; //stop loading
-
       nodes = [];
       links = [];
       nodeSet = [];
