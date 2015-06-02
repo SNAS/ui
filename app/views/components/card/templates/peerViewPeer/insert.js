@@ -185,17 +185,41 @@ angular.module('bmp.components.card')
         botVal : $scope.values.PeerAddress,
         isEnd : true
     });
-    /*}
-    else{
-     // $scope.iBGP_node = [];
-      $scope.as_path.push({
+
+          for(var i = 1; i < $scope.norepeat.length; i++){
+          //AS nodes "bmp-as_router10-17"
+          $scope.as_path.push({
+            icon : "bmp-as_router10-17",
+            topVal:$scope.norepeat[i],
+            colour:"#9467b0",
+            botVal:$scope.norepeat[i],
+            isEnd:true
+          });
+        }
+      };
+    
+    if ($scope.data.PeerASN != $scope.norepeat[0]){
+     /* $scope.as_path.push({
         icon : "bmp-ibgp_router10-17",
         topVal: $scope.values.PeerAddress,
         colour : "#EAA546",
         botVal : $scope.values.PeerAddress,
         isEnd : true
     });*/
-    };
+
+        for(var i = 0; i < $scope.norepeat.length; i++){
+          //AS nodes "bmp-as_router10-17"
+          $scope.as_path.push({
+            icon : "bmp-as_router10-17",
+            topVal:$scope.norepeat[i],
+            colour:"#9467b0",
+            botVal:$scope.norepeat[i],
+            isEnd:true
+          }); 
+        }
+      };
+
+   // };
 
     // eBGP
     // if ($scope.data.PeerASN == $scope.norepeat[0])
@@ -206,7 +230,7 @@ angular.module('bmp.components.card')
     //var cloneNorepeat = $scope.norepeat.slice(0);
     //cloneNorepeat.sort();
 
-    for(var i = 1; i < $scope.norepeat.length; i++){
+/*    for(var i = 1; i < $scope.norepeat.length; i++){
       //AS nodes "bmp-as_router10-17"
       $scope.as_path.push({
         icon : "bmp-as_router10-17",
@@ -215,7 +239,7 @@ angular.module('bmp.components.card')
         botVal:$scope.norepeat[i],
         isEnd:true
       });
-    }
+    }*/
     //make last as not have connecting line
     $scope.as_path[$scope.as_path.length-1].isEnd = false;
 
