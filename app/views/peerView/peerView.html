@@ -1,14 +1,15 @@
 <div class="relative" ng-controller="PeerViewController">
-  
-  <map name="name" type="peers" card-api="cardApi" location="location"/>
-
-  <!--This is card Controller-->
-  <!--Cards are drawn in here-->
-  <div bmp-card-list
-       length="[10]"
-       priority="['Peer']"
-       api="cardApi"
-       page-location="location">
-  </div>
+	<div ng-if="cardApi != undefined">  
+  		<map name="name" type="peers" card-api="cardApi" location="location"/>
+  	</div>
+  	
+	<!--This is card Controller-->
+	<!--Cards are drawn in here-->
+	<div bmp-card-list
+	   length="[10]"
+	   priority="['Peer']"
+	   api="cardApi"
+	   page-location="location">
+	</div>
 
 </div>

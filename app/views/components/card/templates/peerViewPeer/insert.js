@@ -27,7 +27,7 @@ angular.module('bmp.components.card')
 
     $scope.graphs = [];
 
-    $scope.showRib = false;
+    $scope.ribGridIsLoad = true;
 
     //this is for the graph cards.
     $scope.graphVisibility = false;
@@ -92,8 +92,9 @@ angular.module('bmp.components.card')
           for(var i = 0; i < resultData.length; i++) {
             resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
           }
-          //$scope.ribGridIsLoad = false; //stop loading
           $scope.ribGridOptions.data = $scope.initalRibdata = resultData;
+
+          $scope.ribGridIsLoad = false; //stop loading
 
           $scope.ribGridApi.core.handleWindowResize();
         }).

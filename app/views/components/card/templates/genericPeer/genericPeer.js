@@ -9,6 +9,8 @@ angular.module('bmp.components.card')
 
     console.log($scope.data.peer_hash_id);
 
+    $scope.summaryGridIsLoad = true;
+
     //  PEER DATA
     //  {
     //  "RouterName":"csr1.openbmp.org",     //  "RouterIP":"173.39.209.78",
@@ -109,7 +111,7 @@ angular.module('bmp.components.card')
         }else {
           $scope.summaryPeerOptions.data = result.downstreamASN.data;
         }
-        $scope.summaryPeerOptions.gridIsLoading = false; //stop loading
+        $scope.summaryGridIsLoad = false; //stop loading
         $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
       }).
       error(function (error){
