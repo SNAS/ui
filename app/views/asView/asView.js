@@ -33,7 +33,7 @@ angular.module('bmpUiApp')
       enableHorizontalScrollbar: 0,
       showGridFooter: true,
       columnDefs: [
-        {name: "prefixWithLen", displayName: 'Prefix', width: '*'},
+        {name: "prefixWithLen", displayName: 'Prefix', width: '*', sortingAlgorithm: addressSort},
         {name: "IPv", displayName: 'IPv', width: '*'}
       ]
     };
@@ -526,6 +526,90 @@ angular.module('bmpUiApp')
       }
       return -1;
     }
+
+    function addressSort(a,b) {
+      var lastSlashA = a.lastIndexOf("/");
+      var lastSlashB = a.lastIndexOf("/");
+      var stringA = a;
+      if (lastSlashA !== -1) {
+          stringA = a.substr(0, lastSlashA);
+      }
+      var colonsA = stringA.indexOf(":");
+      var periodsA = stringA.indexOf(".");
+
+      var stringB = b;
+      if (lastSlashB !== -1) {
+          stringB = b.substr(0, lastSlashB);
+      }
+      var colonsB = stringB.indexOf(":");
+      var periodsB = stringB.indexOf(".");
+
+      if (colonsA == -1) {
+        if (colonsB == -1) {
+          //compare as ipv4
+              
+          //gets an array of all the values to be compared
+          var aVals = stringA.split(".");
+          var bVals = stringB.split(".");
+          //Should be the same length, but want to prevent index oob error
+          for (var i = 0; i < Math.min(aVals.length, bVals.length); i++) {
+              var currA = parseInt(aVals[i]);
+              var currB = parseInt(bVals[i]);
+              if (currA > currB) {
+                  return 1;
+              } else if (currA < currB) {
+                  return -1;
+              }
+          }
+
+          //If the numbers are the same up until the min prefix length, compare
+          //the lengths of the numbers and give priority to the longer one
+          if (aVals.length > bVals.length) {
+            return 1;
+          } else if (aVals.length < bVals.length) {
+            return -1;
+          } else {
+            return 0;    
+          }
+
+        } else {
+          //The a value is ipv4 while the b value is ipv6, so we automatically
+          //deem the b node to be greater
+          return -1;
+        }
+      } else {
+        if (periodsB == -1) {
+          //compare as ipv6
+          
+          //gets an array of all the values to be compared
+          var aVals = stringA.split(":");
+          var bVals = stringB.split(":");
+          for (var i = 0; i < Math.min(aVals.length, bVals.length); i++) {
+            //Parse as a hex string b/c of ipv6 convention
+            var currA = parseInt(aVals[i], 16);
+            var currB = parseInt(bVals[i], 16);
+            if (currA > currB) {
+              return 1;
+            } else if (currA < currB) {
+              return -1;
+            }
+          }
+
+          if (aVals.length > bVals.length) {
+            return 1;
+          } else if (aVals.length < bVals.length) {
+            return -1;
+          } else {
+            return 0;    
+          }
+        } else {
+          //The a value is ipv6 while the b value is ipv4, so we automatically
+          //deem the a node to be greater
+          return 1;
+        }
+        }
+      };
+
 
     nx.define('MyNodeTooltip', nx.ui.Component, {
       properties: {
