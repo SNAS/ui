@@ -117,10 +117,19 @@ angular.module('bmp.components.card')
           $scope.rpiconData = {
             RouterName: $scope.values.Origin_AS,
             RouterIP: $scope.data.RouterIP,
+            RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
             RouterASN: $scope.data.LocalASN,
             PeerName: $scope.values.PeerName,
             PeerIP: $scope.values.PeerAddress,
             PeerASN: $scope.data.PeerASN
+          };
+
+          function getAsLength(theValue) {
+            console.log("Getting length of " + theValue);
+            var theString = theValue + "";
+            theString = theString.replace(":", "");
+            theString = theString.replace(".", "");
+            return theString.length;
           };
 
           console.log($scope.data.PeerASN); // printing out the first no.
@@ -187,7 +196,7 @@ angular.module('bmp.components.card')
           });
         }
       };
-    
+
     if ($scope.data.PeerASN != $scope.norepeat[0]){
      /* $scope.as_path.push({
         icon : "bmp-ibgp_router10-17",
@@ -205,7 +214,7 @@ angular.module('bmp.components.card')
             colour:"#9467b0",
             botVal:$scope.norepeat[i],
             isEnd:true
-          }); 
+          });
         }
       };
 

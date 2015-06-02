@@ -5,12 +5,12 @@
       <div class="router-peer-line"></div>
       <div class="left-section">
         <div class="centre" style="position: relative;">
-          <div style="position: absolute;top: -45px;left: 20px;"> 
+          <div style="position: absolute;top: -45px;left: 20px;">
             <div class="router-name-text" tooltip="{{ data.RouterASN }}">{{ wordCheck(data.RouterASN) }}</div>
             <div class="router-name-text" tooltip="{{ data.RouterName }}">{{ wordCheck(data.RouterName) }}</div>
           </div>
           <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
-          <div class="router-name-text" tooltip="{{data.RouterIP}}" tooltip-placement="bottom">{{ wordCheck(data.RouterIP) }}</div>
+          <div class="router-name-text" tooltip="{{data.RouterIPWithLength}}" tooltip-placement="bottom">{{ wordCheck(data.RouterIPWithLength) }}</div>
         </div>
       </div>
 
@@ -18,7 +18,7 @@
 
       <div class="left-section">
         <div class="centre" style="position: relative;">
-          <div style="position: absolute;top: -45px;left: 20px;"> 
+          <div style="position: absolute;top: -45px;left: 20px;">
             <div class="router-name-text" tooltip="{{ data.PeerASN }}">{{ wordCheck(data.PeerASN) }}</div>
             <div class="router-name-text" tooltip="{{ data.PeerName }}">{{ wordCheck(data.PeerName) }}</div>
           </div>

@@ -10,6 +10,15 @@ angular.module('bmp.components.card')
         $scope.data.RouterName = $scope.data.RouterIP;
       }
 
+      $scope.data.RouterIPWithLength = $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP);
+
+      function getAsLength(theValue) {
+        var theString = theValue + "";
+        theString = theString.replace(":", "");
+        theString = theString.replace(".", "");
+        return theString.length;
+      };
+
       $scope.wordCheck = function(word){
         if(word.length > 13){
           return word.slice(0,10) + " ...";

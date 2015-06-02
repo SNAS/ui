@@ -136,10 +136,18 @@ angular.module('bmp.components.card')
     $scope.rpIconData = {
       RouterName: $scope.data.RouterName,
       RouterIP: $scope.data.RouterIP,
+      RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
       RouterASN: $scope.data.LocalASN,
       PeerName: $scope.data.PeerName,
       PeerIP: $scope.peerFullIp,
       PeerASN: $scope.data.PeerASN
+    };
+
+    function getAsLength(theValue) {
+      var theString = theValue + "";
+      theString = theString.replace(":", "");
+      theString = theString.replace(".", "");
+      return theString.length;
     };
 
     $scope.locationInfo = cardFactory.createLocationTable({
