@@ -60,26 +60,13 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }, 500);
     });
 
-
-    if($scope.cardApi === undefined){
-        var apiWatcher = function(){
-            $scope.$watch('cardApi', function(val) {
-                if(val != undefined){
-                    $scope.init();
-                    apiWatcher();
-                }
-            });
-        }
-    }
-
-    var plotMarker = function(){
+    var plotMarker = 
         $scope.$watch('plotMarker', function(val) {
             if(val != undefined){
                 $scope.init();
                 plotMarker();
             }
         });
-    }
 
     $scope.$watch('selectionMade', function(val){
         if($rootScope.dualWindow.active){
