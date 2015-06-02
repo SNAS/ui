@@ -28,10 +28,9 @@ angular.module('bmpUiApp')
     $scope.prefixGridOptions = {
       rowHeight: 25,
       gridFooterHeight: 15,
-      height: $scope.prefixGridInitHeight,
-      footerHeight: 0,
-      enableHorizontalScrollbar: 0,
       showGridFooter: true,
+      height: $scope.prefixGridInitHeight,
+      enableHorizontalScrollbar: 0,
       columnDefs: [
         {name: "prefixWithLen", displayName: 'Prefix', width: '*', sortingAlgorithm: addressSort},
         {name: "IPv", displayName: 'IPv', width: '*'}
@@ -42,6 +41,8 @@ angular.module('bmpUiApp')
     $scope.upstreamGridOptions = {
       enableColumnResizing: true,
       rowHeight: 25,
+      gridFooterHeight: 15,
+      showGridFooter: true,
       height: $scope.upstreamGridInitHeight,
       enableHorizontalScrollbar: 0,
       columnDefs: [
@@ -54,6 +55,8 @@ angular.module('bmpUiApp')
     $scope.downstreamGridOptions = {
       enableColumnResizing: true,
       rowHeight: 25,
+      gridFooterHeight: 15,
+      showGridFooter: true,
       height: $scope.downstreamGridInitHeight,
       enableHorizontalScrollbar: 0,
       columnDefs: [
@@ -554,6 +557,7 @@ angular.module('bmpUiApp')
         }
       }
     });
+
     function addressSort(a,b) {
       var lastSlashA = a.lastIndexOf("/");
       var lastSlashB = a.lastIndexOf("/");
@@ -635,7 +639,7 @@ angular.module('bmpUiApp')
           return 1;
         }
         }
-      };
+      }
 
 
     nx.define('MyNodeTooltip', nx.ui.Component, {
