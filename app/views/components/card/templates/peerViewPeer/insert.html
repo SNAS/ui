@@ -13,8 +13,9 @@
 
       <!--Angular Table added here-->
       <div class="loading-section" ng-style="{'height':ribGridInitHeight}">
-        <div ng-show="ribGridIsLoad" bmp-loading loading-var="ribsGridIsLoad" font-width="80"></div>
+
         <div ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}"></div>
+        <div bmp-loading loading-var="ribsGridIsLoad" font-width="80"></div> <!--ng-show="ribGridIsLoad"-->
       </div>
 
 
@@ -48,10 +49,6 @@
             </div>
 
           </div>
-
-        <!--div ng-controller="CanvasController">
-          <canvas id="tutorial" style="border: 1px solid black;width:100%;height: 200px;"></canvas>
-        </div-->
 
         <section style="width: 100%;margin: auto;padding: 10px;">
           <div class="left-container"

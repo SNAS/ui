@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 /**
  * @ngdoc function
@@ -27,11 +27,14 @@ angular.module('bmpUiApp')
     //prefix table options
     $scope.prefixGridOptions = {
       rowHeight: 25,
+      gridFooterHeight: 15,
       height: $scope.prefixGridInitHeight,
       footerHeight: 0,
       enableHorizontalScrollbar: 0,
+      showGridFooter: true,
       columnDefs: [
-        {name: "prefixWithLen", displayName: 'Prefix', width: '*'}
+        {name: "prefixWithLen", displayName: 'Prefix', width: '*', sortingAlgorithm: addressSort},
+        {name: "IPv", displayName: 'IPv', width: '*'}
       ]
     };
 
@@ -39,7 +42,7 @@ angular.module('bmpUiApp')
     $scope.upstreamGridOptions = {
       enableColumnResizing: true,
       rowHeight: 25,
-      height:$scope.upstreamGridInitHeight,
+      height: $scope.upstreamGridInitHeight,
       enableHorizontalScrollbar: 0,
       columnDefs: [
         {name: "asn", displayName: 'ASN', width: '30%'},
@@ -145,6 +148,7 @@ angular.module('bmpUiApp')
         getDownstream();
 
         topoClear();
+        $scope.topologyIsLoad = true; //start loading
         downstreamPromise.success(function () {
           upstreamPromise.success(function () {
             drawTopology(data[0]);
@@ -193,6 +197,7 @@ angular.module('bmpUiApp')
           var data = result.v_routes.data;
           for (var i = 0; i < result.v_routes.size; i++) {
             data[i].prefixWithLen = data[i].Prefix + "/" + data[i].PrefixLen;
+            data[i].IPv = (data[i].isIPv4 === 1) ? '4' : '6';
           }
           $scope.prefixGridOptions.data = data;
           $scope.prefixIsLoad = false; //stop loading
@@ -249,8 +254,9 @@ angular.module('bmpUiApp')
         });
     }
 
+
     //topology initialization
-    function topoInit(){
+    function topoInit() {
       var App = nx.define(nx.ui.Application, {
         methods: {
           getContainer: function (comp) {
@@ -278,31 +284,34 @@ angular.module('bmpUiApp')
             });
             topo.attach(this);
 
-            topo.upon('clickNodeSet', function (sender, nodeset) {
-              var id = nodeset._model._data.id;
-              var level = nodeset._model._data.level;
-              var nodeSetLayer = topo.getLayer('nodeSet');
-              var nodeSets = nodeSetLayer.nodeSets();
-              for (var i = 0; i < nodeSets.length; i++) {
-                if (id == nodeSets[i]._model._data.id) {
-                  nodeSets[i].collapsed(false);
-                }
-                else if (level == nodeSets[i]._model._data.level && nodeSets[i].collapsed() == false) {
-                  var ns = nodeSets[i];
-                  setTimeout(function () {
-                    (function (ns) {
-                      ns.collapsed(true);
-                    })(ns);
-                  }, 0);
-                  console.log(nodeSets[i]);
-                }
-              }
-              //nodeSetLayer.nodeSetDictionary().getItem(id).collapsed(false);
-              //console.log(nodeSetLayer.nodeSetDictionary().getItem(id));
+            topo.registerScene('nodeset', 'NodeSetScene');
+            topo.activateScene('nodeset');
 
-              //return true;
-              return false;
-            });
+            //topo.upon('clickNodeSet', function (sender, nodeset) {
+            //  var id = nodeset._model._data.id;
+            //  var level = nodeset._model._data.level;
+            //  var nodeSetLayer = topo.getLayer('nodeSet');
+            //  var nodeSets = nodeSetLayer.nodeSets();
+            //  for (var i = 0; i < nodeSets.length; i++) {
+            //    if (id == nodeSets[i]._model._data.id) {
+            //      nodeSets[i].collapsed(false);
+            //    }
+            //    else if (level == nodeSets[i]._model._data.level && nodeSets[i].collapsed() == false) {
+            //      var ns = nodeSets[i];
+            //      setTimeout(function () {
+            //        (function (ns) {
+            //          ns.collapsed(true);
+            //        })(ns);
+            //      }, 0);
+            //      console.log(nodeSets[i]);
+            //    }
+            //  }
+            //  //nodeSetLayer.nodeSetDictionary().getItem(id).collapsed(false);
+            //  //console.log(nodeSetLayer.nodeSetDictionary().getItem(id));
+            //
+            //  //return true;
+            //  return false;
+            //});
           }
         }
       });
@@ -310,9 +319,7 @@ angular.module('bmpUiApp')
       app.start();
     }
 
-    function topoClear(){
-      $scope.topologyIsLoad = true; //stop loading
-
+    function topoClear() {
       nodes = [];
       links = [];
       nodeSet = [];
@@ -354,39 +361,36 @@ angular.module('bmpUiApp')
         groupNode(upstreamData, "", "upstream", "country", 0, width, -upstreamLayerHeight);
         var countrySetCount = nodeSet.length;
         for (var i = 0; i < countrySetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "state_prov",
-            i * width / countrySetCount, width / countrySetCount, -2 * upstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "state_prov", width, -2 * upstreamLayerHeight);
         }
         var stateSetCount = nodeSet.length - countrySetCount;
         for (var i = countrySetCount; i < countrySetCount + stateSetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "city",
-            (i - countrySetCount) * width / stateSetCount, width / stateSetCount, -3 * upstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "city", width, -3 * upstreamLayerHeight);
         }
         var citySetCount = nodeSet.length - countrySetCount - stateSetCount;
         for (var i = countrySetCount + stateSetCount; i < countrySetCount + stateSetCount + citySetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "",
-            (i - countrySetCount - stateSetCount) * width / citySetCount, width / citySetCount, -4 * upstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "", width, -4 * upstreamLayerHeight);
         }
       }
 
       //Downstream ASes
       pushNodes(downstreamData, "downstream", width, 2 * downstreamLayerHeight);
       if (downstreamData.length > 100) {
-        groupNode(downstreamData, "", "downstream", "country", 0, width, downstreamLayerHeight);
+        groupNode(downstreamData, "", "downstream", "country", width, downstreamLayerHeight);
         var countrySetCount = nodeSet.length;
         for (var i = 0; i < countrySetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "state_prov",
-            i * width / countrySetCount, width / countrySetCount, 2 * downstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "state_prov", width , 2 * downstreamLayerHeight);
+          //i * width / countrySetCount, width / countrySetCount, 2 * downstreamLayerHeight);
         }
         var stateSetCount = nodeSet.length - countrySetCount;
         for (var i = countrySetCount; i < countrySetCount + stateSetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "city",
-            (i - countrySetCount) * width / stateSetCount, width / stateSetCount, 3 * downstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "city", width, 3 * downstreamLayerHeight);
+          //(i - countrySetCount) * width / stateSetCount, width / stateSetCount, 3 * downstreamLayerHeight);
         }
         var citySetCount = nodeSet.length - countrySetCount - stateSetCount;
         for (var i = countrySetCount + stateSetCount; i < countrySetCount + stateSetCount + citySetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "",
-            (i - countrySetCount - stateSetCount) * width / citySetCount, width / citySetCount, 4 * downstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "", width , 4 * downstreamLayerHeight);
+          //(i - countrySetCount - stateSetCount) * width / citySetCount, width / citySetCount, 4 * downstreamLayerHeight);
         }
       }
 
@@ -402,7 +406,8 @@ angular.module('bmpUiApp')
     }
 
     //Group nodes by the initial of  AS name
-    function groupNode(data, parentNodeSetId, type, key, positionStart, width, height) {
+    function groupNode(data, parentNodeSetId, type, key, width, height) {
+      //function groupNode(data, parentNodeSetId, type, key, positionStart, width, height) {
       var nodeSet1 = {}, nodeSet2 = {};
       var singleNodes = [];
       var groupedNodesId = [];
@@ -448,13 +453,18 @@ angular.module('bmpUiApp')
       }
 
       var nodesCount = singleNodes.length + nodeSet2Keys.length;
-      var space = (nodesCount == 1) ? 0 : width / nodesCount;
+      var space = (nodesCount == 1) ? 0 : width / (nodesCount - 1);
 
       //push all the single nodes
       for (var i = 0; i < singleNodes.length; i++) {
         var nodeId = getNodeId(singleNodes[i].asn, type);
         if (nodeId >= 0) {
-          nodes[nodeId].x = positionStart + (i < singleNodes.length / 2 ? i * space : (nodeSet2Keys.length + i) * space);
+          if(nodesCount == 1){
+            nodes[nodeId].x = width/2;
+          }
+          else {
+            nodes[nodeId].x = i < singleNodes.length / 2 ? i * space : (nodeSet2Keys.length + i) * space;
+          }
           nodes[nodeId].y = height;
           groupedNodesId.push(nodes[nodeId].id);
         }
@@ -470,7 +480,7 @@ angular.module('bmpUiApp')
           name: nodeSet2Keys[i],
           parentNodeSetId: parentNodeSetId,
           allNodes: nodeSet2[nodeSet2Keys[i]],
-          x: positionStart + (singleNodes.length / 2 + i) * space,
+          x: nodesCount == 1 ? width/2: (singleNodes.length / 2 + i) * space,
           y: height
         });
         groupedNodesId.push(id - 1);
@@ -523,6 +533,110 @@ angular.module('bmpUiApp')
       }
       return -1;
     }
+
+    nx.define("NodeSetScene", nx.graphic.Topology.DefaultScene, {
+      methods: {
+        beforeExpandNodeSet: function (sender, nodeSet) {
+          var id = nodeSet._model._data.id;
+          var level = nodeSet._model._data.level;
+          var nodeSetLayer = topo.getLayer('nodeSet');
+          var nodeSets = nodeSetLayer.nodeSets();
+
+          for (var i = 0; i < nodeSets.length; i++) {
+            if (nodeSets[i]._model && level == nodeSets[i]._model._data.level &&
+              id != nodeSets[i]._model._data.id && nodeSets[i].collapsed() == false) {
+              nodeSets[i].collapse(false);
+              //console.log(nodeSets[i]);
+            }
+          }
+
+          this.inherited(sender, nodeSet);
+        }
+      }
+    });
+    function addressSort(a,b) {
+      var lastSlashA = a.lastIndexOf("/");
+      var lastSlashB = a.lastIndexOf("/");
+      var stringA = a;
+      if (lastSlashA !== -1) {
+          stringA = a.substr(0, lastSlashA);
+      }
+      var colonsA = stringA.indexOf(":");
+      var periodsA = stringA.indexOf(".");
+
+      var stringB = b;
+      if (lastSlashB !== -1) {
+          stringB = b.substr(0, lastSlashB);
+      }
+      var colonsB = stringB.indexOf(":");
+      var periodsB = stringB.indexOf(".");
+
+      if (colonsA == -1) {
+        if (colonsB == -1) {
+          //compare as ipv4
+
+          //gets an array of all the values to be compared
+          var aVals = stringA.split(".");
+          var bVals = stringB.split(".");
+          //Should be the same length, but want to prevent index oob error
+          for (var i = 0; i < Math.min(aVals.length, bVals.length); i++) {
+              var currA = parseInt(aVals[i]);
+              var currB = parseInt(bVals[i]);
+              if (currA > currB) {
+                  return 1;
+              } else if (currA < currB) {
+                  return -1;
+              }
+          }
+
+          //If the numbers are the same up until the min prefix length, compare
+          //the lengths of the numbers and give priority to the longer one
+          if (aVals.length > bVals.length) {
+            return 1;
+          } else if (aVals.length < bVals.length) {
+            return -1;
+          } else {
+            return 0;
+          }
+
+        } else {
+          //The a value is ipv4 while the b value is ipv6, so we automatically
+          //deem the b node to be greater
+          return -1;
+        }
+      } else {
+        if (periodsB == -1) {
+          //compare as ipv6
+
+          //gets an array of all the values to be compared
+          var aVals = stringA.split(":");
+          var bVals = stringB.split(":");
+          for (var i = 0; i < Math.min(aVals.length, bVals.length); i++) {
+            //Parse as a hex string b/c of ipv6 convention
+            var currA = parseInt(aVals[i], 16);
+            var currB = parseInt(bVals[i], 16);
+            if (currA > currB) {
+              return 1;
+            } else if (currA < currB) {
+              return -1;
+            }
+          }
+
+          if (aVals.length > bVals.length) {
+            return 1;
+          } else if (aVals.length < bVals.length) {
+            return -1;
+          } else {
+            return 0;
+          }
+        } else {
+          //The a value is ipv6 while the b value is ipv4, so we automatically
+          //deem the a node to be greater
+          return 1;
+        }
+        }
+      };
+
 
     nx.define('MyNodeTooltip', nx.ui.Component, {
       properties: {

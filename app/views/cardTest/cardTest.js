@@ -15,17 +15,6 @@ angular.module('bmpUiApp')
     //DEBUG
     window.SCOPE = $scope;
 
-    //Redraw Tables when menu state changed
-    $scope.$on('menu-toggle', function(thing, args) {
-      $timeout( function(){
-        resize();
-      }, 550);
-    });
-
-    var resize = function() {
-      $scope.whoIsGridApi.core.handleWindowResize();
-    };
-
     $scope.whoIsGridOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false

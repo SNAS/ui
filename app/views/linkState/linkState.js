@@ -155,6 +155,7 @@ angular.module('bmpUiApp')
       getNodes();
       getLinks();
 
+      $scope.topologyIsLoad = true; //start loading
       linksPromise.success(function () {
         nodesPromise.success(function () {
           var topologyData = {
