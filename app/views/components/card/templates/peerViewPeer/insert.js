@@ -210,12 +210,6 @@ angular.module('bmp.components.card')
 
    // };
 
-    // eBGP
-    // if ($scope.data.PeerASN == $scope.norepeat[0])
-    // replace "bmp-as_router10-17" first icon (64543) with "bmp-ebgp_router10-17"
-    // else its iBGP
-    // insert iBGP icon between the router icon and first AS icon
-
     //var cloneNorepeat = $scope.norepeat.slice(0);
     //cloneNorepeat.sort();
 
