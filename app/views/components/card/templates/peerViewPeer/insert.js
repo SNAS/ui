@@ -115,7 +115,7 @@ angular.module('bmp.components.card')
           };
 
           $scope.rpiconData = {
-            RouterName: $scope.values.Origin_AS,
+            RouterName: $scope.data.RouterName,
             RouterIP: $scope.data.RouterIP,
             RouterASN: $scope.data.LocalASN,
             PeerName: $scope.values.PeerName,
@@ -148,16 +148,6 @@ angular.module('bmp.components.card')
     var path = $scope.path.split(" ");
     path.shift();
 
-    //Router node
-    $scope.as_path=[];
-    $scope.as_path.push({
-      icon:"bmp-bmp_router10-17",
-      topVal:$scope.data.LocalASN,
-      colour:"#4b84ca",
-      botVal:"IP",
-      isEnd:true
-    });
-
     $scope.norepeat = [];
     for(var i = 0; i < path.length; i++){
       if($scope.norepeat.indexOf(path[i]) == -1){
@@ -165,56 +155,38 @@ angular.module('bmp.components.card')
       }
     }
 
-   // console.log($scope.values.PeerAddress); // printing out the 2nd no.
+    //Router node
+    $scope.as_path=[];
+    $scope.as_path.push({
+      icon:"bmp-bmp_router10-17",
+      topVal:$scope.data.LocalASN,
+      colour:"#4b84ca",
+      botVal:$scope.data.LocalASN,
+      isEnd:true
+    });
 
+    var index;
     if($scope.data.PeerASN == $scope.norepeat[0]){
       $scope.as_path.push({
         icon : "bmp-ebgp_router10-17",
-        topVal: $scope.values.PeerAddress,
+        topVal: $scope.values.PeerName,
         colour : "#EAA546",
-        botVal : $scope.values.PeerAddress,
+        botVal : $scope.values.Origin_AS,
         isEnd : true
-    });
-
-          for(var i = 1; i < $scope.norepeat.length; i++){
-          //AS nodes "bmp-as_router10-17"
-          $scope.as_path.push({
-            icon : "bmp-as_router10-17",
-            topVal:$scope.norepeat[i],
-            colour:"#9467b0",
-            botVal:$scope.norepeat[i],
-            isEnd:true
-          });
-        }
-      };
-    
-    if ($scope.data.PeerASN != $scope.norepeat[0]){
-     /* $scope.as_path.push({
+      });
+      index = 1;
+    }else if($scope.data.PeerASN != $scope.norepeat[0]){
+      $scope.as_path.push({
         icon : "bmp-ibgp_router10-17",
-        topVal: $scope.values.PeerAddress,
+        topVal: $scope.values.PeerName,
         colour : "#EAA546",
-        botVal : $scope.values.PeerAddress,
+        botVal : $scope.values.Origin_AS,
         isEnd : true
-    });*/
+      });
+      index = 0;
+    };
 
-        for(var i = 0; i < $scope.norepeat.length; i++){
-          //AS nodes "bmp-as_router10-17"
-          $scope.as_path.push({
-            icon : "bmp-as_router10-17",
-            topVal:$scope.norepeat[i],
-            colour:"#9467b0",
-            botVal:$scope.norepeat[i],
-            isEnd:true
-          }); 
-        }
-      };
-
-   // };
-
-    //var cloneNorepeat = $scope.norepeat.slice(0);
-    //cloneNorepeat.sort();
-
-/*    for(var i = 1; i < $scope.norepeat.length; i++){
+    for(var i = index; i < $scope.norepeat.length; i++){
       //AS nodes "bmp-as_router10-17"
       $scope.as_path.push({
         icon : "bmp-as_router10-17",
@@ -223,7 +195,9 @@ angular.module('bmp.components.card')
         botVal:$scope.norepeat[i],
         isEnd:true
       });
-    }*/
+    }
+    $scope.index = !index;
+
     //make last as not have connecting line
     $scope.as_path[$scope.as_path.length-1].isEnd = false;
 
@@ -235,7 +209,6 @@ angular.module('bmp.components.card')
           var index = $scope.norepeat.indexOf((asname[i].asn).toString());
 
           //Here is where all fields/ info for popover should be.
-
           var popOutFields = ["asn","as_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
           var pcontent = "";
           for(var j = 0; j < popOutFields.length; j++){
@@ -247,9 +220,8 @@ angular.module('bmp.components.card')
 
           asname[i].as_name = asname[i].as_name.replace(/ASN-|ASN/g,"");
           //changed the name of the as to name from results.
-          $scope.as_path[index+1].topVal = asname[i].as_name;//+1 cause starting router node
-          //$scope.as_path[index+1].popOut = asname[i].as_name;//+1 cause starting router node
-          $scope.as_path[index+1].popOut = pcontent;//+1 cause starting router node
+          $scope.as_path[index+1+$scope.index].topVal = asname[i].as_name;//+1 cause starting router node
+          $scope.as_path[index+1+$scope.index].popOut = pcontent;//+1 cause starting router node
 
         }
       }).
@@ -283,7 +255,7 @@ angular.module('bmp.components.card')
 
     //set width of whole container depending on result size.
     //len + 1 for router     + 80 stop wrapping and padding
-    $scope.asPath.width = nodeWidth * ($scope.norepeat.length + 1) + 80 + "px";
+    $scope.asPath.width = nodeWidth * $scope.as_path.length + 80 + "px";
 
     //for the tooltip
     $scope.wordCheck = function(word){
