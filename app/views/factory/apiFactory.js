@@ -126,7 +126,7 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getRIBbyASN = function (asn) {
-      return $http.get(urlBase + "rib/asn/" + asn);
+      return $http.get(urlBase + "rib/asn/" + asn + "?distinct");
     };
 
     //Peer Analysis

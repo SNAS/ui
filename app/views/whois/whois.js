@@ -22,6 +22,8 @@ angular.module('bmpUiApp')
       rowHeight: 25,
       height: $scope.whoIsGridInitHeight,
       width: 1200,
+      gridFooterHeight: 15,
+      showGridFooter: true,
       multiSelect: false,
       noUnselect: true,
       modifierKeysToMultiSelect: false,

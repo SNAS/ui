@@ -110,6 +110,8 @@ angular.module('bmpUiApp')
       multiSelect: false,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
+      gridFooterHeight: 15,
+      showGridFooter: true,
       enableHorizontalScrollbar: 0,
 
       columnDefs: [

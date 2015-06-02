@@ -18,13 +18,15 @@ angular.module('bmpUiApp')
     // Table with peers
     $scope.peerTableOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: true,
+      enableRowHeaderSelection: false,
       enableColumnResizing: true,
       multiSelect: false,
       noUnselect: true,
       height: $scope.peerGridInitHeight,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
+      gridFooterHeight: 15,
+      showGridFooter: true,
       enableHorizontalScrollbar: 0,
 
       columnDefs: [
