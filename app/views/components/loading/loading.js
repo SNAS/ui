@@ -9,7 +9,7 @@ angular.module('bmp.components.loading',[])
       replace: false,
       transclude: true,
       scope: {
-        loadingVar: "=",  //variable name to be used in parent
+        loadingVar: "=?",  //variable name to be used in parent
         fontWidth: "=?"   //optional set width
       },
       link: function(scope, $element) {
