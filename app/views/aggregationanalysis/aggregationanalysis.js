@@ -14,12 +14,6 @@ angular.module('bmpUiApp')
 
     $scope.showGraphTable = false;
 
-    $scope.$on('menu-toggle', function (thing, args) {
-      $timeout(function () {
-        resize();
-      }, 550);
-    });
-
     //populate prefix data into ShowPrefixsOptions Grid
     $scope.ShowPrefixsOptions = {
       enableRowSelection: true,

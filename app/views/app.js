@@ -107,16 +107,6 @@ angular
         url: '/whois?:as?',
         templateUrl: 'views/whois/whois.html'
       })
-      .state('app.collectionServer', {
-        url: '/collection-server',
-        templateUrl: 'views/collectionServer/collectionServer.html'
-
-      })
-      .state('app.preferences', {
-        url: '/preferences',
-        templateUrl: 'views/preferences/preferences.html',
-        controller: 'PreferencesController'
-      })
       .state('app.aggregationAnalysis', {
         url: '/aggregation-analysis?:as?',
         templateUrl: 'views/aggregationanalysis/aggregationanalysis.html'
