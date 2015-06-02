@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 /**
  * @ngdoc function
@@ -42,7 +42,7 @@ angular.module('bmpUiApp')
     $scope.upstreamGridOptions = {
       enableColumnResizing: true,
       rowHeight: 25,
-      height:$scope.upstreamGridInitHeight,
+      height: $scope.upstreamGridInitHeight,
       enableHorizontalScrollbar: 0,
       columnDefs: [
         {name: "asn", displayName: 'ASN', width: '30%'},
@@ -254,8 +254,9 @@ angular.module('bmpUiApp')
         });
     }
 
+
     //topology initialization
-    function topoInit(){
+    function topoInit() {
       var App = nx.define(nx.ui.Application, {
         methods: {
           getContainer: function (comp) {
@@ -282,6 +283,9 @@ angular.module('bmpUiApp')
               return false;
             });
             topo.attach(this);
+
+            topo.registerScene('nodeset', 'NodeSetScene');
+            topo.activateScene('nodeset');
 
             //topo.upon('clickNodeSet', function (sender, nodeset) {
             //  var id = nodeset._model._data.id;
@@ -315,7 +319,7 @@ angular.module('bmpUiApp')
       app.start();
     }
 
-    function topoClear(){
+    function topoClear() {
       nodes = [];
       links = [];
       nodeSet = [];
@@ -357,39 +361,36 @@ angular.module('bmpUiApp')
         groupNode(upstreamData, "", "upstream", "country", 0, width, -upstreamLayerHeight);
         var countrySetCount = nodeSet.length;
         for (var i = 0; i < countrySetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "state_prov",
-            i * width / countrySetCount, width / countrySetCount, -2 * upstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "state_prov", width, -2 * upstreamLayerHeight);
         }
         var stateSetCount = nodeSet.length - countrySetCount;
         for (var i = countrySetCount; i < countrySetCount + stateSetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "city",
-            (i - countrySetCount) * width / stateSetCount, width / stateSetCount, -3 * upstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "city", width, -3 * upstreamLayerHeight);
         }
         var citySetCount = nodeSet.length - countrySetCount - stateSetCount;
         for (var i = countrySetCount + stateSetCount; i < countrySetCount + stateSetCount + citySetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "",
-            (i - countrySetCount - stateSetCount) * width / citySetCount, width / citySetCount, -4 * upstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "", width, -4 * upstreamLayerHeight);
         }
       }
 
       //Downstream ASes
       pushNodes(downstreamData, "downstream", width, 2 * downstreamLayerHeight);
       if (downstreamData.length > 100) {
-        groupNode(downstreamData, "", "downstream", "country", 0, width, downstreamLayerHeight);
+        groupNode(downstreamData, "", "downstream", "country", width, downstreamLayerHeight);
         var countrySetCount = nodeSet.length;
         for (var i = 0; i < countrySetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "state_prov",
-            i * width / countrySetCount, width / countrySetCount, 2 * downstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "state_prov", width , 2 * downstreamLayerHeight);
+          //i * width / countrySetCount, width / countrySetCount, 2 * downstreamLayerHeight);
         }
         var stateSetCount = nodeSet.length - countrySetCount;
         for (var i = countrySetCount; i < countrySetCount + stateSetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "city",
-            (i - countrySetCount) * width / stateSetCount, width / stateSetCount, 3 * downstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "city", width, 3 * downstreamLayerHeight);
+          //(i - countrySetCount) * width / stateSetCount, width / stateSetCount, 3 * downstreamLayerHeight);
         }
         var citySetCount = nodeSet.length - countrySetCount - stateSetCount;
         for (var i = countrySetCount + stateSetCount; i < countrySetCount + stateSetCount + citySetCount; i++) {
-          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "",
-            (i - countrySetCount - stateSetCount) * width / citySetCount, width / citySetCount, 4 * downstreamLayerHeight);
+          groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "", width , 4 * downstreamLayerHeight);
+          //(i - countrySetCount - stateSetCount) * width / citySetCount, width / citySetCount, 4 * downstreamLayerHeight);
         }
       }
 
@@ -405,7 +406,8 @@ angular.module('bmpUiApp')
     }
 
     //Group nodes by the initial of  AS name
-    function groupNode(data, parentNodeSetId, type, key, positionStart, width, height) {
+    function groupNode(data, parentNodeSetId, type, key, width, height) {
+      //function groupNode(data, parentNodeSetId, type, key, positionStart, width, height) {
       var nodeSet1 = {}, nodeSet2 = {};
       var singleNodes = [];
       var groupedNodesId = [];
@@ -451,13 +453,18 @@ angular.module('bmpUiApp')
       }
 
       var nodesCount = singleNodes.length + nodeSet2Keys.length;
-      var space = (nodesCount == 1) ? 0 : width / nodesCount;
+      var space = (nodesCount == 1) ? 0 : width / (nodesCount - 1);
 
       //push all the single nodes
       for (var i = 0; i < singleNodes.length; i++) {
         var nodeId = getNodeId(singleNodes[i].asn, type);
         if (nodeId >= 0) {
-          nodes[nodeId].x = positionStart + (i < singleNodes.length / 2 ? i * space : (nodeSet2Keys.length + i) * space);
+          if(nodesCount == 1){
+            nodes[nodeId].x = width/2;
+          }
+          else {
+            nodes[nodeId].x = i < singleNodes.length / 2 ? i * space : (nodeSet2Keys.length + i) * space;
+          }
           nodes[nodeId].y = height;
           groupedNodesId.push(nodes[nodeId].id);
         }
@@ -473,7 +480,7 @@ angular.module('bmpUiApp')
           name: nodeSet2Keys[i],
           parentNodeSetId: parentNodeSetId,
           allNodes: nodeSet2[nodeSet2Keys[i]],
-          x: positionStart + (singleNodes.length / 2 + i) * space,
+          x: nodesCount == 1 ? width/2: (singleNodes.length / 2 + i) * space,
           y: height
         });
         groupedNodesId.push(id - 1);
@@ -526,6 +533,27 @@ angular.module('bmpUiApp')
       }
       return -1;
     }
+
+    nx.define("NodeSetScene", nx.graphic.Topology.DefaultScene, {
+      methods: {
+        beforeExpandNodeSet: function (sender, nodeSet) {
+          var id = nodeSet._model._data.id;
+          var level = nodeSet._model._data.level;
+          var nodeSetLayer = topo.getLayer('nodeSet');
+          var nodeSets = nodeSetLayer.nodeSets();
+
+          for (var i = 0; i < nodeSets.length; i++) {
+            if (nodeSets[i]._model && level == nodeSets[i]._model._data.level &&
+              id != nodeSets[i]._model._data.id && nodeSets[i].collapsed() == false) {
+              nodeSets[i].collapse(false);
+              //console.log(nodeSets[i]);
+            }
+          }
+
+          this.inherited(sender, nodeSet);
+        }
+      }
+    });
 
     nx.define('MyNodeTooltip', nx.ui.Component, {
       properties: {
