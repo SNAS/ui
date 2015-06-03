@@ -60,7 +60,13 @@ angular.module('bmp.components.card')
         console.log(error.message);
       });
 
+    //$scope.summaryGridIsLoad = true;
+
+    $scope.summaryGridInitHeight = 300;
+
     $scope.summaryPeerOptions = {
+      summaryGridIsLoad : true,
+      height: $scope.summaryGridInitHeight,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       columnDefs:[
@@ -94,13 +100,13 @@ angular.module('bmp.components.card')
       gridapi.grid.gridHeight = grid.changeHeight;
     };
 
-    $scope.$watch('cardExpand', function(val) {
-      if($scope.cardExpand == true){
-        setTimeout(function(){
-          $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
-        },10)
-      }
-    });
+    //$scope.$watch('cardExpand', function(val) {
+    //  if($scope.cardExpand == true){
+    //    setTimeout(function(){
+    //      $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
+    //    },10)
+    //  }
+    //});
 
     //DownstreamAS, as_name, and org_name (working)
     $scope.peerDownData = [];
@@ -111,7 +117,7 @@ angular.module('bmp.components.card')
         }else {
           $scope.summaryPeerOptions.data = result.downstreamASN.data;
         }
-        $scope.summaryGridIsLoad = false; //stop loading
+        $scope.summaryPeerOptions.summaryGridIsLoad = false; //stop loading
         $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
       }).
       error(function (error){
@@ -129,8 +135,11 @@ angular.module('bmp.components.card')
 
     $scope.peerFullIp = $scope.data.PeerIP;
     if($scope.data.isPeerIPv4 == "1"){
-      //is ipv4 so add ' :<port'
+      //is ipv4 so add ' :<port>'
       $scope.peerFullIp = $scope.data.PeerIP + ":" + $scope.data.PeerPort;
+    }else{
+      //is ipv6 so add ' <port>'
+      $scope.peerFullIp = $scope.data.PeerIP + " " + $scope.data.PeerPort;
     }
 
     $scope.rpIconData = {

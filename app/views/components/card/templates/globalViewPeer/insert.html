@@ -1,8 +1,8 @@
 <div ng-controller="BmpCardGlobalPeerInsertController">
   <!--Peer info table-->
   <h4>Downstream ASes of Peer {{ data.PeerName }}</h4>
-  <div class="loading-section">
-    <div class="gridStyle" ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
-    <div ng-show="summaryGridIsLoad" bmp-loading loading-var="summaryGridIsLoad"></div>
+  <div class="loading-section" ng-style="{'height':summaryPeerOptions.changeHeight}">
+    <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading></div>
+    <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
   </div>
 </div>

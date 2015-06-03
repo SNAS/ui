@@ -171,10 +171,7 @@ angular.module('bmp.components.card')
       //<!--Router Up Time-->
       $scope.upTime = timeFactory.calTimeFromNow($scope.data.LastModified);
 
-      //AS Number	AS Name	Organization
-      //PeerASN, PeerName, org_name
-
-    $scope.globalViewPeerGridInitHeight = 350;
+      $scope.globalViewPeerGridInitHeight = 350;
 
       $scope.globalViewPeerOptions = {
         enableRowSelection: true,
@@ -235,12 +232,12 @@ angular.module('bmp.components.card')
       //Listen for card expand to resize the graph and table
       $scope.$watch('cardExpand', function() {
         if ($scope.cardExpand == true) {
-          //resize
+          //resize graph
           $scope.upTimeConfig.visible = true;
-          setTimeout(function(){
-            //$scope.peerViewPeerApi.core.handleWindowResize();
-            $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
-          },10)
+          //setTimeout(function(){
+          //  //$scope.peerViewPeerApi.core.handleWindowResize();
+          //  $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
+          //},10)
         }
       });
       //End Router up time Graph
