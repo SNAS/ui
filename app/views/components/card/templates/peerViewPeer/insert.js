@@ -117,10 +117,19 @@ angular.module('bmp.components.card')
           $scope.rpiconData = {
             RouterName: $scope.data.RouterName,
             RouterIP: $scope.data.RouterIP,
+            RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
             RouterASN: $scope.data.LocalASN,
             PeerName: $scope.values.PeerName,
             PeerIP: $scope.values.PeerAddress,
             PeerASN: $scope.data.PeerASN
+          };
+
+          function getAsLength(theValue) {
+            console.log("Getting length of " + theValue);
+            var theString = theValue + "";
+            theString = theString.replace(":", "");
+            theString = theString.replace(".", "");
+            return theString.length;
           };
 
           console.log($scope.data.PeerASN); // printing out the first no.

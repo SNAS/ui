@@ -274,11 +274,37 @@ angular.module('bmpUiApp')
         //allHisData[i].AS_Path = [];
 
         //console.log("allHisData[",i,"].AS_Path",allHisData[i].AS_Path);
-        allHisData[i].AS_Path = allHisData[i].AS_Path.split(" ");
-        allHisData[i].AS_Path =  allHisData[i].AS_Path.slice(1);
+        //if(0==i%2)
+        //{
+        //  allHisData[i].AS_Path = allHisData[i].AS_Path.split(" ");
+        //  allHisData[i].AS_Path =  allHisData[i].AS_Path.slice(1);
+        //  allHisData[i+1].AS_Path = allHisData[i+1].AS_Path.split(" ");
+        //  allHisData[i+1].AS_Path =  allHisData[i+1].AS_Path.slice(1);
+        //}
+
+        if(typeof(allHisData[i].AS_Path) == "string")
+        {
+          allHisData[i].AS_Path = allHisData[i].AS_Path.split(" ");
+          allHisData[i].AS_Path =  allHisData[i].AS_Path.slice(1);
+        }
+
+        if(i < allHisData.length-1)
+        {
+          if(typeof(allHisData[i+1].AS_Path) == "string")
+          {
+            allHisData[i+1].AS_Path = allHisData[i+1].AS_Path.split(" ");
+            allHisData[i+1].AS_Path =  allHisData[i+1].AS_Path.slice(1);
+          }
+        }
+        //to record all the last flag and the last line
+
+        allHisData[i].AS_Path_list = new Array();
+
+        allHisData[i].AS_Path_list_last = new Array();
 
         allHisData[i].AS_Path_list_flag = [];
-        allHisData[i].AS_Path_list = new Array();
+
+        allHisData[i].AS_Path_list_flag_last = [];
 
         //console.log("allHisData[",i,"].AS_Path",allHisData[i].AS_Path);
 
@@ -287,29 +313,40 @@ angular.module('bmpUiApp')
         {
           //console.log("Hi i am here");
           if (0 == i){ allHisData[i].AS_Path_list_flag[j] = true;console.log("hi , it's true");continue; }
+
           allHisData[i].AS_Path_list_flag[j] = allHisData[i-1].AS_Path.contains(allHisData[i].AS_Path[j]);
-          //console.log("allHisData[i].AS_Path_list_flag[",j,"]",allHisData[i].AS_Path_list_flag[j]);
+
+          if(allHisData.length-1 == i)
+          {
+            console.log("has this been executed ?!!!!!");
+            allHisData[i].AS_Path_list_flag_last[j] = true;
+          }
+          else
+          {
+            //console.log("has this been executed ?!!!!AS_Path_list_flag_last!");
+            //console.log("i",i,typeof(i));
+            //console.log("allHisData[i+1].AS_Path",allHisData[i+1].AS_Path,typeof(allHisData[i+1].AS_Path));
+            //console.log("allHisData[i].AS_Path[j] ",allHisData[i].AS_Path[j] );
+            allHisData[i].AS_Path_list_flag_last[j] = allHisData[i+1].AS_Path.contains(allHisData[i].AS_Path[j]);
+          }
         }
 
-        //
         for (j = 0; j < allHisData[i].AS_Path.length; j++)
         {
           allHisData[i].AS_Path_list[j] = new Array();
 
+          //allHisData[i].AS_Path_list_last[j] = new Array();
           //console.log(allHisData[i].AS_Path[j],allHisData[i].AS_Path_list_flag[j])
           allHisData[i].AS_Path_list[j]["path"] = allHisData[i].AS_Path[j];
           allHisData[i].AS_Path_list[j]["flag"] = allHisData[i].AS_Path_list_flag[j];
-
+          allHisData[i].AS_Path_list[j]["last_flag"] = allHisData[i].AS_Path_list_flag_last[j];
           //console.log("allHisData[i].AS_Path_list[",j,"][flag]",allHisData[i].AS_Path_list[j]["flag"]);
           //console.log("allHisData[i].AS_Path_list[",j,"][path]",allHisData[i].AS_Path_list[j]["path"]);
         }
 
         $scope.HisData[hour].push(allHisData[i]);
-        //$scope.HisData[hour].reverse();
       }
-      //$scope.HisData = $scope.HisData.reverse();
 
-      //console.log("$scope.HisData:"+$scope.HisData);
       Array.prototype.compare = function (array) {
         // if the other array is a falsy value, return
         if (!array)
@@ -342,7 +379,7 @@ angular.module('bmpUiApp')
 
         for(var j = 1;j < $scope.HisData[i].length;j++)
         {
-          console.log(i,j);
+          //console.log(i,j);
 
           if(!$scope.HisData[i][j-1].AS_Path.compare($scope.HisData[i][j].AS_Path)){
             //console.log($scope.asPathChangeAS_PATH[i]);
@@ -414,9 +451,99 @@ angular.module('bmpUiApp')
     $scope.createShowTable = function()
     {
       $scope.showItems = '<table>';
-      angular.forEach($scope.itemValue, function (value, key) {
-        if (key != "AS_Path_list_flag" && key != "AS_Path_list") {
-        //  if (key != "") {
+      $scope.itemValueLast = "";
+
+      //console.log("$scope.itemValue",$scope.itemValue);
+      //console.log("$scope.itemValue",$scope.itemValue);
+      //console.log("$scope.itemValue",$scope.itemValue);
+      //console.log("$scope.itemValue",$scope.itemValue);
+
+      angular.forEach($scope.itemValue, function (value,key) {
+        if (key == "AS_Path")
+        {
+          //$scope.itemValueTemp = $scope.itemValue;
+          //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
+          //console.log("$scope.itemValueLast", $scope.itemValueLast);
+          //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
+          //
+          //console.log(typeof(value),value);
+
+          var valueAs = "";
+          var valusAsLast = "";
+
+          angular.forEach($scope.itemValue.AS_Path,function(value,key)
+          {
+            //var valueTemp = value;
+
+            //console.log("****************************");
+            //console.log("$scope.itemValue",$scope.itemValue);
+            //console.log("key",+key);
+            //console.log("typeof(key)",typeof(key));
+            //console.log("valueTemp",+valueTemp);
+            //console.log("$scope.itemValue.AS_Path_list[key].flag",$scope.itemValue.AS_Path_list[key].flag);
+            //if(typeof($scope.itemValueTemp) == "undefined")
+            //{
+            //  console.log("$scope.itemValueTemp is undefined now")
+            //}
+            //else
+            //{
+            //  //console.log("$scope.itemValueTemp.AS_Path_list[key].flag",$scope.itemValueTemp.AS_Path_list[key].flag);
+            //  console.log("$scope.itemValueTemp",$scope.itemValueTemp);
+            //}
+            //console.log("****************************");
+
+            if($scope.itemValue.AS_Path_list[key].flag)
+            {
+              valueAs = valueAs + "<div class='whitebar'>" + value +"</div>";
+            }
+            else
+            {
+              valueAs = valueAs + "<div class='greenbar'>" + value +"</div>";
+            }
+          })
+
+          $scope.showItems += (
+          '<tr>' +
+          '<td>' +
+          'Current_AS_Path: ' +
+          '</td>' +
+
+          '<td>' +
+          valueAs +
+          '</td>' +
+          '</tr>'
+          );
+
+          // this part to insert last path as , the same .
+          if($scope.itemValueLast != "")
+          {
+            angular.forEach($scope.itemValueLast.AS_Path,function(value,key)
+            {
+
+              if($scope.itemValueLast.AS_Path_list[key].last_flag)
+              {
+                valusAsLast = valusAsLast + "<div class='redbar'>" + value +"</div>";
+              }
+              else
+              {
+                valusAsLast = valusAsLast + "<div class='whitebar'>" + value +"</div>";
+              }
+            })
+          }
+
+          $scope.showItems += (
+          '<tr>' +
+          '<td>' +
+          'Last_AS_Path: ' +
+          '</td>' +
+
+          '<td>' +
+          valusAsLast +
+          '</td>' +
+          '</tr>'
+          );
+        }
+        else if(key != "AS_Path_list_flag" && key != "AS_Path_list") {
           $scope.showItems += (
           '<tr>' +
           '<td>' +
@@ -429,19 +556,10 @@ angular.module('bmpUiApp')
           '</tr>'
           );
         }
-        //if (key == "AS_Path")
-        //  {
-        //    console.log(typeof(value),value);
-        //    angular.forEach($scope.itemValue.AS_Path,function(key,value)
-        //    {
-        //      if($scope.itemValue.AS_Path_list_flag[key])
-        //      {value = }
-        //    })
-        //  }
       });
+
       if($scope.showItems==="<table>"){$scope.showItems = $scope.showItems + "There is no data right now ,please choose a row first!"}
       $scope.showItems += '</table>';
-      //console.log("ajfkjdflkajflafladla",$scope.showItems);
       $rootScope.showItems = $scope.showItems;
     }
   }])
