@@ -27,9 +27,9 @@
 
         <div class = "as-path">
 
-            <div  ng-style="{'width':asPath.width}">
+            <div ng-style="{'width':asPath.width}">
 
-              <div ng-repeat="path in as_path" style="position: relative;float: left;width:150px;">
+              <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}" style="position: relative;float: left;">
                 <!--icon-->
                 <div style="display: table-cell;">
 

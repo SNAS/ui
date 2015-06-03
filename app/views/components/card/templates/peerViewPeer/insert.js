@@ -142,8 +142,8 @@ angular.module('bmp.components.card')
     };
 
   var createASpath = function(path){
-      //e.g. " 64543 1221 4637 852 852 29810 29810 29810 29810 29810"
-   $scope.asPath={};
+    //e.g. " 64543 1221 4637 852 852 29810 29810 29810 29810 29810"
+    $scope.asPath={};
     var iconWidth = 50;
     var lineWidth = 100;
     var nodeWidth = iconWidth + lineWidth;
@@ -173,7 +173,8 @@ angular.module('bmp.components.card')
         topVal:$scope.norepeat[i],
         colour:"#9467b0",
         botVal:$scope.norepeat[i],
-        isEnd:true
+        isEnd:true,
+        addWidth: nodeWidth
       });
     }
 
@@ -204,34 +205,38 @@ angular.module('bmp.components.card')
 
           //changed the name of the as to name from results.
           $scope.as_path[index].topVal = asname[i].as_name;//+1 cause starting router node
+          $scope.as_path[index].noTopText = false;
           $scope.as_path[index].popOut = pcontent;//+1 cause starting router node
         }
 
         if($scope.data.PeerASN == $scope.norepeat[0]){
           //EBGP
-          $scope.as_path[0].icon="bmp-ebgp_router10-17";
-          $scope.as_path[0].colour ="#EAA546"
+          $scope.as_path[0].icon = "bmp-ebgp_router10-17";
+          $scope.as_path[0].colour = "#EAA546";
+          $scope.as_path[0].noTopText = true;
+          $scope.as_path[0].addWidth = nodeWidth + 28;
         }else if($scope.data.PeerASN != $scope.norepeat[0]){
           //IBGP
           $scope.as_path = [{
-            icon : "bmp-ibgp_router10-17",
+            icon: "bmp-ibgp_router10-17",
             topVal: "",
             noTopText: true,
-            colour : "#EAA546",
-            botVal : $scope.data.PeerASN,
-            isEnd : true
+            colour: "#7bad85",
+            botVal: $scope.data.PeerASN,
+            isEnd: true,
+            addWidth: nodeWidth + 28
           }].concat($scope.as_path);
         }
 
         $scope.as_path = [{
-          icon:"bmp-bmp_router10-17",
-          topVal:$scope.data.LocalASN,
-          colour:"#4b84ca",
-          botVal:$scope.data.LocalASN,
-          isEnd:true
+          icon: "bmp-bmp_router10-17",
+          topVal: "",
+          noTopText: true,
+          colour: "#4b84ca",
+          botVal: $scope.data.LocalASN,
+          isEnd: true,
+          addWidth: nodeWidth
         }].concat($scope.as_path);
-
-        console.dir($scope.as_path);
 
         //set width of whole container depending on result size.
         //len + 1 for router     + 80 stop wrapping and padding
