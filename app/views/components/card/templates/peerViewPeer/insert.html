@@ -32,10 +32,17 @@
               <div ng-repeat="path in as_path" style="position: relative;float: left;width:150px;">
                 <!--icon-->
                 <div style="display: table-cell;">
-                  <div style="text-align: center" tooltip="{{path.topVal}}">{{ wordCheck(path.topVal) }}</div>
 
-          <!--This is the actual AS icon-->
-          <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html=true data-popover></div>
+                  <span ng-if="path.noTopText">
+                    <div style="text-align: center">&nbsp;</div>
+                  </span>
+
+                  <span ng-if="!path.noTopText">
+                    <div style="text-align: center" tooltip="{{path.topVal}}">{{ wordCheck(path.topVal) }}</div>
+                  </span>
+
+                  <!--This is the actual AS icon-->
+                  <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html=true data-popover></div>
                   <div style="text-align: center">{{ path.botVal }}</div>
                 </div>
                 <!--line-->
