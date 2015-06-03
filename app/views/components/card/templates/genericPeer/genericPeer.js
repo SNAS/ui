@@ -50,8 +50,7 @@ angular.module('bmp.components.card')
           if(peerPrefix[0].Post_RIB == peerPrefix[0].Pre_RIB)
             $scope.filerRate = 0.00;
           else
-            $scope.filterRate = Math.floor(((peerPrefix[0].Post_RIB/ peerPrefix[0].Pre_RIB ) * 100) * 100) / 100;
-
+            $scope.filterRate = Math.floor(((1 - (peerPrefix[0].Post_RIB/ peerPrefix[0].Pre_RIB) ) * 100) * 100) / 100;
         }catch(err){
           //catch if RIB is undefined
         }
