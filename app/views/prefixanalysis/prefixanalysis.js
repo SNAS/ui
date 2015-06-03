@@ -130,7 +130,6 @@ angular.module('bmpUiApp')
       enableHorizontalScrollbar: 0
     };
 
-
     // here to get the intemValue , use this  to create table
     $scope.HistoryPrefixOptions.onRegisterApi = function( gridApi ) {
       $scope.gridApi = gridApi;
@@ -138,11 +137,14 @@ angular.module('bmpUiApp')
       gridApi.selection.on.rowSelectionChanged($scope,function(row){
         var msg = 'row selected ' + row.isSelected;
         var rowMsg = row.entity.PeerASN;
-        $scope.itemValue = row.entity;
 
-        console.log("$scope.itemValue",msg,$scope.itemValue );
-        console.log(rowMsg);
-        console.log("now it 's time to exectute create show table function")
+        $scope.itemValue = row.entity; //how can i get data from one row before
+
+        //$scope.gridApi.selection.selectRow(row);
+        //rowColSelectIndex(row);
+        //console.log("$scope.itemValue",msg,$scope.itemValue );
+        //console.log(rowMsg);
+        //console.log("now it 's time to exectute create show table function")
         $scope.createShowTable();
         $scope.$apply()
       });
@@ -267,20 +269,17 @@ angular.module('bmpUiApp')
       }
 
       for (i = 0; i < allHisData.length; i++) {
+
+        if(0 == i)
+        {
+          allHisData[i].preData = "";
+        }
+        else
+        {
+          allHisData[i].preData = allHisData[i-1];
+        }
+
         var hour = parseInt(allHisData[i].LastModified.substring(11, 13));
-
-        //added the as path list
-        //$scope.asPathList.push(allHisData[i].AS_Path.split(" ").slice(1));
-        //allHisData[i].AS_Path = [];
-
-        //console.log("allHisData[",i,"].AS_Path",allHisData[i].AS_Path);
-        //if(0==i%2)
-        //{
-        //  allHisData[i].AS_Path = allHisData[i].AS_Path.split(" ");
-        //  allHisData[i].AS_Path =  allHisData[i].AS_Path.slice(1);
-        //  allHisData[i+1].AS_Path = allHisData[i+1].AS_Path.split(" ");
-        //  allHisData[i+1].AS_Path =  allHisData[i+1].AS_Path.slice(1);
-        //}
 
         if(typeof(allHisData[i].AS_Path) == "string")
         {
@@ -323,10 +322,6 @@ angular.module('bmpUiApp')
           }
           else
           {
-            //console.log("has this been executed ?!!!!AS_Path_list_flag_last!");
-            //console.log("i",i,typeof(i));
-            //console.log("allHisData[i+1].AS_Path",allHisData[i+1].AS_Path,typeof(allHisData[i+1].AS_Path));
-            //console.log("allHisData[i].AS_Path[j] ",allHisData[i].AS_Path[j] );
             allHisData[i].AS_Path_list_flag_last[j] = allHisData[i+1].AS_Path.contains(allHisData[i].AS_Path[j]);
           }
         }
@@ -334,14 +329,9 @@ angular.module('bmpUiApp')
         for (j = 0; j < allHisData[i].AS_Path.length; j++)
         {
           allHisData[i].AS_Path_list[j] = new Array();
-
-          //allHisData[i].AS_Path_list_last[j] = new Array();
-          //console.log(allHisData[i].AS_Path[j],allHisData[i].AS_Path_list_flag[j])
           allHisData[i].AS_Path_list[j]["path"] = allHisData[i].AS_Path[j];
           allHisData[i].AS_Path_list[j]["flag"] = allHisData[i].AS_Path_list_flag[j];
           allHisData[i].AS_Path_list[j]["last_flag"] = allHisData[i].AS_Path_list_flag_last[j];
-          //console.log("allHisData[i].AS_Path_list[",j,"][flag]",allHisData[i].AS_Path_list[j]["flag"]);
-          //console.log("allHisData[i].AS_Path_list[",j,"][path]",allHisData[i].AS_Path_list[j]["path"]);
         }
 
         $scope.HisData[hour].push(allHisData[i]);
@@ -371,6 +361,7 @@ angular.module('bmpUiApp')
         return true;
       }
 
+      // to caculate the data color
       for(i = 0; i < 24; i++)
       {
         $scope.asPathChangeNumber[i] = $scope.HisData[i].length;
@@ -451,19 +442,24 @@ angular.module('bmpUiApp')
     $scope.createShowTable = function()
     {
       $scope.showItems = '<table>';
-      $scope.itemValueLast = "";
-
-      //console.log("$scope.itemValue",$scope.itemValue);
-      //console.log("$scope.itemValue",$scope.itemValue);
-      //console.log("$scope.itemValue",$scope.itemValue);
-      //console.log("$scope.itemValue",$scope.itemValue);
+      $scope.itemValueLast = $scope.itemValue.preData;
 
       angular.forEach($scope.itemValue, function (value,key) {
+
+        console.log("in the top");
+        console.log("$scope.itemValue",$scope.itemValue);
+        console.log("in the top");
+
+
         if (key == "AS_Path")
         {
+
           //$scope.itemValueTemp = $scope.itemValue;
           //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
           //console.log("$scope.itemValueLast", $scope.itemValueLast);
+          console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+          console.log("$scope.itemValue",$scope.itemValue);
+          console.log("##################################");
           //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
           //
           //console.log(typeof(value),value);
@@ -473,25 +469,6 @@ angular.module('bmpUiApp')
 
           angular.forEach($scope.itemValue.AS_Path,function(value,key)
           {
-            //var valueTemp = value;
-
-            //console.log("****************************");
-            //console.log("$scope.itemValue",$scope.itemValue);
-            //console.log("key",+key);
-            //console.log("typeof(key)",typeof(key));
-            //console.log("valueTemp",+valueTemp);
-            //console.log("$scope.itemValue.AS_Path_list[key].flag",$scope.itemValue.AS_Path_list[key].flag);
-            //if(typeof($scope.itemValueTemp) == "undefined")
-            //{
-            //  console.log("$scope.itemValueTemp is undefined now")
-            //}
-            //else
-            //{
-            //  //console.log("$scope.itemValueTemp.AS_Path_list[key].flag",$scope.itemValueTemp.AS_Path_list[key].flag);
-            //  console.log("$scope.itemValueTemp",$scope.itemValueTemp);
-            //}
-            //console.log("****************************");
-
             if($scope.itemValue.AS_Path_list[key].flag)
             {
               valueAs = valueAs + "<div class='whitebar'>" + value +"</div>";
@@ -515,33 +492,36 @@ angular.module('bmpUiApp')
           );
 
           // this part to insert last path as , the same .
-          if($scope.itemValueLast != "")
+
+          if(!angular.equals($scope.itemValueLast.AS_Path, $scope.itemValue.AS_Path))
           {
-            angular.forEach($scope.itemValueLast.AS_Path,function(value,key)
-            {
 
-              if($scope.itemValueLast.AS_Path_list[key].last_flag)
+              angular.forEach($scope.itemValueLast.AS_Path,function(value,key)
               {
-                valusAsLast = valusAsLast + "<div class='redbar'>" + value +"</div>";
-              }
-              else
-              {
-                valusAsLast = valusAsLast + "<div class='whitebar'>" + value +"</div>";
-              }
-            })
+
+                if($scope.itemValueLast.AS_Path_list[key].last_flag)
+                {
+                  valusAsLast = valusAsLast + "<div class='whitebar'>" + value +"</div>";
+                }
+                else
+                {
+                  valusAsLast = valusAsLast + "<div class='redbar'>" + value +"</div>";
+                }
+              })
+
+
+            $scope.showItems += (
+            '<tr>' +
+            '<td>' +
+            'Previous_AS_Path: ' +
+            '</td>' +
+
+            '<td>' +
+            valusAsLast +
+            '</td>' +
+            '</tr>'
+            );
           }
-
-          $scope.showItems += (
-          '<tr>' +
-          '<td>' +
-          'Last_AS_Path: ' +
-          '</td>' +
-
-          '<td>' +
-          valusAsLast +
-          '</td>' +
-          '</tr>'
-          );
         }
         else if(key != "AS_Path_list_flag" && key != "AS_Path_list") {
           $scope.showItems += (
