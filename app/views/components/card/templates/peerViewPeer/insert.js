@@ -164,11 +164,11 @@ angular.module('bmp.components.card')
     }
 
     //Router node
-    $scope.as_path=[];
+    var as_path=[];
 
     for(var i = 0; i < $scope.norepeat.length; i++){
       //AS nodes "bmp-as_router10-17"
-      $scope.as_path.push({
+      as_path.push({
         icon : "bmp-as_router10-17",
         topVal:$scope.norepeat[i],
         colour:"#9467b0",
@@ -178,16 +178,20 @@ angular.module('bmp.components.card')
     }
 
     //make last as not have connecting line
-    $scope.as_path[$scope.as_path.length-1].isEnd = false;
+    as_path[as_path.length-1].isEnd = false;
 
-   var asname;
+    var asname;
+    $scope.as_path = [];
     apiFactory.getWhoIsASNameList($scope.norepeat).
       success(function (result) {
+
+        $scope.as_path = as_path;
+
         var asname = result.w.data;
         for(var i=0; i < asname.length; i++){
           var index = $scope.norepeat.indexOf((asname[i].asn).toString());
 
-          //Here is where all fields/ info for popover should be.
+          //all fields/ info for popover.
           var popOutFields = ["asn","as_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
           var pcontent = "";
           for(var j = 0; j < popOutFields.length; j++){
@@ -196,8 +200,8 @@ angular.module('bmp.components.card')
               pcontent = pcontent.replace(/ASN-|ASN/g,"");
             }
           }
-
           asname[i].as_name = asname[i].as_name.replace(/ASN-|ASN/g,"");
+
           //changed the name of the as to name from results.
           $scope.as_path[index].topVal = asname[i].as_name;//+1 cause starting router node
           $scope.as_path[index].popOut = pcontent;//+1 cause starting router node
