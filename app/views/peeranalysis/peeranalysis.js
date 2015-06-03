@@ -18,13 +18,15 @@ angular.module('bmpUiApp')
     // Table with peers
     $scope.peerTableOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: true,
+      enableRowHeaderSelection: false,
       enableColumnResizing: true,
       multiSelect: false,
       noUnselect: true,
       height: $scope.peerGridInitHeight,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
+      gridFooterHeight: 15,
+      showGridFooter: true,
       enableHorizontalScrollbar: 0,
 
       columnDefs: [
@@ -57,6 +59,58 @@ angular.module('bmpUiApp')
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           changeSelected(row.entity);
         });
+      }
+    };
+
+    $scope.peerHistoryOptions = {
+      chart: {
+        type: 'linePlusBarWithFocusChart',
+        height: 450,
+        margin: {
+          top: 20,
+          right: 100,
+          bottom: 60,
+          left: 100
+        },
+        color: ['#4ec0f1', '#9ec654'],
+        //color: ['#9ec654' ,'#f7a031'],
+        focusShowAxisY: true,
+        interactive: false,
+
+        xAxis: {
+          axisLabel: 'Time',
+          showMaxMin: true,
+          tickFormat: function (d) {
+            return d3.time.format('%X')(new Date(d))
+          }
+        },
+        x2Axis: {
+          tickFormat: function (d) {
+            return d3.time.format('%m/%d-%I%p')(new Date(d))
+          }
+        },
+        y1Axis: {
+          axisLabel: 'Pre-RIB',
+          tickFormat: function (d) {
+            return d3.format('d')(d);
+          }
+        },
+        y2Axis: {
+          axisLabel: 'Post-RIB',
+          tickFormat: function (d) {
+            return d3.format('d')(d);
+          }
+        },
+        y3Axis: {
+          tickFormat: function (d) {
+            return d3.format('d')(d);
+          }
+        },
+        y4Axis: {
+          tickFormat: function (d) {
+            return d3.format('d')(d);
+          }
+        }
       }
     };
 
@@ -153,6 +207,7 @@ angular.module('bmpUiApp')
 
     function getPeerHistory(peer_hash_id, amount_of_entries) {
       $scope.peerHistoryData = [];
+
       apiFactory.getPeerHistory(peer_hash_id, amount_of_entries).success(
         function (result) {
 
@@ -193,69 +248,17 @@ angular.module('bmpUiApp')
             post_rib_max = pre_rib_min;
           }
 
-          $scope.peerHistoryOptions = {
-            chart: {
-              type: 'linePlusBarWithFocusChart',
-              height: 450,
-              margin: {
-                top: 20,
-                right: 100,
-                bottom: 60,
-                left: 100
-              },
-              color: ['#4ec0f1', '#9ec654'],
-              //color: ['#9ec654' ,'#f7a031'],
-              focusShowAxisY: true,
-              interactive: false,
-
-              xAxis: {
-                axisLabel: 'Time',
-                showMaxMin: true,
-                tickFormat: function (d) {
-                  return d3.time.format('%X')(new Date(d))
-                }
-              },
-              x2Axis: {
-                tickFormat: function (d) {
-                  return d3.time.format('%m/%d-%I%p')(new Date(d))
-                }
-              },
-              y1Axis: {
-                axisLabel: 'Pre-RIB',
-                tickFormat: function (d) {
-                  return d3.format('d')(d);
-                }
-              },
-              y2Axis: {
-                axisLabel: 'Post-RIB',
-                tickFormat: function (d) {
-                  return d3.format('d')(d);
-                }
-              },
-              y3Axis: {
-                tickFormat: function (d) {
-                  return d3.format('d')(d);
-                }
-              },
-              y4Axis: {
-                tickFormat: function (d) {
-                  return d3.format('d')(d);
-                }
-              },
-
-              bars: { // for bar chart 1
-                yDomain: [pre_rib_min, pre_rib_max]
-              },
-              bars2: { // for bar chart 2
-                yDomain: [pre_rib_min, pre_rib_max]
-              },
-              lines: { // for line chart 1
-                yDomain: [post_rib_min, post_rib_max]
-              },
-              lines2: { // for line chart 2
-                yDomain: [post_rib_min, post_rib_max]
-              }
-            }
+          $scope.peerHistoryOptions.chart.bars = { // for bar chart 1
+            yDomain: [pre_rib_min, pre_rib_max]
+          };
+          $scope.peerHistoryOptions.chart.bars2 = { // for bar chart 1
+            yDomain: [pre_rib_min, pre_rib_max]
+          };
+          $scope.peerHistoryOptions.chart.lines = { // for bar chart 1
+            yDomain: [post_rib_min, post_rib_max]
+          };
+          $scope.peerHistoryOptions.chart.line2 = { // for bar chart 1
+            yDomain: [post_rib_min, post_rib_max]
           };
 
           $scope.peerHistoryData = [

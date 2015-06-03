@@ -53,7 +53,6 @@ a{
  $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
 // bower:scss
 @import "bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
-@import "nsPopover/sass/ns-popover.scss";
 // endbower
 
 @import "compass/css3";
@@ -88,16 +87,13 @@ a{
 // Sections
 //===================================================================================
 @import "asAnalysis/asAnalysis";
-@import "collectionServer/collectionServer";
 @import "login/login";
 @import "peerAnalysis/peerAnalysis";
-@import "preferences/preferences";
 @import "prefixAnalysis/prefixAnalysis";
 @import "whoIs/whoIs";
 @import "container/container";
 @import "globalView/globalView";
 @import "peerView/peerView";
-@import "summary/summary";
 @import "bmpglyph";
 @import "linkState/linkState";
 @import "asView/asView";

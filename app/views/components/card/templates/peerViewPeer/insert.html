@@ -2,10 +2,10 @@
   <h4>Further Peer Information</h4>
   <tabset>
     <tab heading="Downstream ASes of Peer" select="downStreamTab()">
-      <!--<div class="loading-section">-->
-        <!--<div ng-show="summaryGridIsLoad" bmp-loading loading-var="summaryGridIsLoad"></div>-->
+      <div class="loading-section">
+        <div ng-show="summaryGridIsLoad" bmp-loading></div>
         <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
-      <!--</div>-->
+      </div>
     </tab>
     <tab heading="Routing Table" select="getRibData()">
 
@@ -13,7 +13,7 @@
 
       <!--Angular Table added here-->
       <div class="loading-section" ng-style="{'height':ribGridInitHeight}">
-        <div ng-show="ribGridIsLoad" bmp-loading loading-var="ribsGridIsLoad" font-width="80"></div>
+        <div ng-show="ribGridIsLoad" bmp-loading loading-var="ribGridIsLoad" font-width="80"></div>
         <div ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}"></div>
       </div>
 
@@ -49,10 +49,6 @@
 
           </div>
 
-        <!--div ng-controller="CanvasController">
-          <canvas id="tutorial" style="border: 1px solid black;width:100%;height: 200px;"></canvas>
-        </div-->
-
         <section style="width: 100%;margin: auto;padding: 10px;">
           <div class="left-container"
             style="float: left;width:49%;">
@@ -86,11 +82,6 @@
               <map name="peer-view-peer-card" location="'peerCard'" plot-marker="latLong" style="top:0; bottom:0; width:100%; height: 300px" />
             </div>
             <div style="width:49%;display: inline-block;">
-              <!--"ip_start": "216.40.0.0",-->
-              <!--"ip_end": "216.40.5.255",-->
-              <!--"addr_type": "ipv4",-->
-              <!--"ip_start_bin": "�(\u0000\u0000",-->
-              <!--"ip_end_bin": "�(\u0005�"-->
               <p><span class="bold">Country:</span> {{values.geo.country}}</p>
               <p><span class="bold">State:</span> {{values.geo.stateprov}}</p>
               <p><span class="bold">City:</span> {{values.geo.city}}</p>

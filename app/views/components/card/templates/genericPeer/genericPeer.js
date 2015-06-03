@@ -7,6 +7,10 @@ angular.module('bmp.components.card')
 
     window.GPEERSCO = $scope;
 
+    console.log($scope.data.peer_hash_id);
+
+    $scope.summaryGridIsLoad = true;
+
     //  PEER DATA
     //  {
     //  "RouterName":"csr1.openbmp.org",     //  "RouterIP":"173.39.209.78",
@@ -98,13 +102,6 @@ angular.module('bmp.components.card')
       }
     });
 
-    //Redraw Tables when menu state changed
-    $scope.$on('menu-toggle', function(thing, args) {
-      $timeout( function(){
-        $scope.summaryPeerOptionsApi.core.handleWindowResize();
-      }, 550);
-    });
-
     //DownstreamAS, as_name, and org_name (working)
     $scope.peerDownData = [];
     apiFactory.getPeerDownStream($scope.data.peer_hash_id).
@@ -114,7 +111,7 @@ angular.module('bmp.components.card')
         }else {
           $scope.summaryPeerOptions.data = result.downstreamASN.data;
         }
-        $scope.summaryPeerOptions.gridIsLoading = false; //stop loading
+        $scope.summaryGridIsLoad = false; //stop loading
         $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
       }).
       error(function (error){
@@ -139,10 +136,18 @@ angular.module('bmp.components.card')
     $scope.rpIconData = {
       RouterName: $scope.data.RouterName,
       RouterIP: $scope.data.RouterIP,
+      RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
       RouterASN: $scope.data.LocalASN,
       PeerName: $scope.data.PeerName,
       PeerIP: $scope.peerFullIp,
       PeerASN: $scope.data.PeerASN
+    };
+
+    function getAsLength(theValue) {
+      var theString = theValue + "";
+      theString = theString.replace(":", "");
+      theString = theString.replace(".", "");
+      return theString.length;
     };
 
     $scope.locationInfo = cardFactory.createLocationTable({

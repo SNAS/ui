@@ -86,6 +86,8 @@ angular.module('bmpUiApp')
       multiSelect: false,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
+      gridFooterHeight: 15,
+      showGridFooter: true,
       enableHorizontalScrollbar: 0,
 
       columnDefs: [
@@ -155,6 +157,7 @@ angular.module('bmpUiApp')
       getNodes();
       getLinks();
 
+      $scope.topologyIsLoad = true; //start loading
       linksPromise.success(function () {
         nodesPromise.success(function () {
           var topologyData = {

@@ -1,6 +1,7 @@
 <div class="relative" ng-controller="GlobalViewController">
-    
-    <map name="name" type="routers" card-api="cardApi" location="location"/>
+    <div ng-if="cardApi != undefined">
+    	<map name="name" type="routers" card-api="cardApi" location="location"/>
+    </div>
 
     <!--This is card Controller-->
     <!--Cards are drawn in here-->

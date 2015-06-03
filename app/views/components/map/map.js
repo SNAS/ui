@@ -43,7 +43,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     /****************************************
         Store map object when available
     *****************************************/
-    console.log($scope.id);
     leafletData.getMap($scope.id).then(function(map) {
         $scope.map = map;
         L.control.zoomslider().addTo(map);
@@ -61,11 +60,13 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }, 500);
     });
 
-
-    $scope.$watch('plotMarker', function(val) {
-        if(val != undefined)
-            $scope.init();
-    });
+    var plotMarker = 
+        $scope.$watch('plotMarker', function(val) {
+            if(val != undefined){
+                $scope.init();
+                plotMarker();
+            }
+        });
 
     $scope.$watch('selectionMade', function(val){
         if($rootScope.dualWindow.active){
@@ -264,7 +265,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 var latlng = [curr.latitude, curr.longitude];
                 var temp = curr.latitude + ',' + curr.longitude;
 
-                //
                 var dist = {km: 99999, m : 999999};
                 for(var key in $scope.peerDictionary){
                     var p = $scope.peerDictionary[key]._latlng;
@@ -388,26 +388,26 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         if(marker.options.type === 'Peer')
             if(state === 'default')
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.peers.length + '</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+DFC089.png"/></div>',
+                    html: '<div><span>' + marker.options.peers.length + '</span><img src="../images/peer-default.png"/></div>',
                     className: 'marker',
                     iconSize: [30, 70]
                 }));
             else
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.peers.length + '</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+F7C875.png"/></div>',
+                    html: '<div><span>' + marker.options.peers.length + '</span><img src="../images/peer-active.png"/></div>',
                     className: 'marker',
                     iconSize: [30, 70]
                 }));
         else if(marker.options.type === 'Router')
             if(state === 'default')
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.routers.length + '</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+758CAB.png"/></div>',
+                    html: '<div><span>' + marker.options.routers.length + '</span><img src="../images/router-default.png"/></div>',
                     className: 'marker',
                     iconSize: [30, 70]
                 }));
             else
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.routers.length + '</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+0386D2.png"/></div>',
+                    html: '<div><span>' + marker.options.routers.length + '</span><img src="../images/router-active.png"/></div>',
                     className: 'marker',
                     iconSize: [30, 70]
                 }));
@@ -577,7 +577,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             $scope.selectedRouter = undefined;
         }
         if($scope.selectedLocation != undefined){
-            console.log($scope.selectedLocation);
             $scope.selectedLocation.closePopup();
             setIcon($scope.selectedLocation, 'default');
             $scope.selectedLocation.expandRouters = false;
@@ -678,6 +677,13 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     //this after page loads so when loading = false;
 
     //TODO:still need to make this only show on certain pages
+
+    $scope.bottomPaneGraphSelect = function(){
+        $scope.expandList = true;
+        for (var i = 0; i < $scope.locations.length; i++) {
+            $scope.locations[i].expandRouters = true;
+        }
+    }
 
     $scope.bottomPaneState = true; //is closed
 
@@ -879,7 +885,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             }
           ];
 
-          console.dir(results);
           return results
         });
 
@@ -1012,10 +1017,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     return function (scope, element) {
         var w = angular.element($window);
         scope.forceResize = function() {
-            console.log('forcing resize');
             scope.mapHeight =  (w.height() - 50) + 'px';
             scope.panelHeight =  (w.height() - 130) + 'px';
-            console.log('forced:', scope.mapHeight);
             $timeout(function(){
                 scope.map.invalidateSize();
             }, 1000);
@@ -1032,7 +1035,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             if(!scope.selectionMade){
                 scope.mapHeight =  (newValue.h - 50) + 'px';
                 scope.panelHeight =  (newValue.h - 130) + 'px';
-                console.log('natural:', scope.mapHeight);
                 $timeout(function(){
                     scope.map.invalidateSize();
                 }, 1000);
