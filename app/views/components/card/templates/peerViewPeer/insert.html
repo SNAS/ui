@@ -12,7 +12,7 @@
       <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
 
       <!--Angular Table added here-->
-      <div class="loading-section" ng-style="{'height':ribGridInitHeight}">
+      <div class="loading-section" ng-style="{'height':ribGridOptions.changeHeight}">
         <div ng-show="ribGridIsLoad" bmp-loading loading-var="ribGridIsLoad" font-width="80"></div>
         <div ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}"></div>
       </div>

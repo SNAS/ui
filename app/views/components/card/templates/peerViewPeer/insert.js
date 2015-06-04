@@ -96,7 +96,7 @@ angular.module('bmp.components.card')
 
           $scope.ribGridIsLoad = false; //stop loading
 
-          $scope.ribGridApi.core.handleWindowResize();
+          $scope.calGridHeight($scope.ribGridOptions,$scope.ribGridApi);
         }).
         error(function (error) {
           console.log(error.message);
