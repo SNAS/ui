@@ -4,13 +4,6 @@ angular.module('bmp.components.card')
 
   .controller('BmpCardPeerController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
 
-
-    window.GPEERSCO = $scope;
-
-    console.log($scope.data.peer_hash_id);
-
-    $scope.summaryGridIsLoad = true;
-
     //  PEER DATA
     //  {
     //  "RouterName":"csr1.openbmp.org",     //  "RouterIP":"173.39.209.78",
@@ -30,6 +23,13 @@ angular.module('bmp.components.card')
     //  "peer_hash_id":"c33f36c12036e98d89ae3ea54cce0be2",
     //  "router_hash_id":"0314f419a33ec8819e78724f51348ef9"
     // }
+
+
+    window.GPEERSCO = $scope;
+
+    console.log($scope.data.peer_hash_id);
+
+    $scope.summaryGridIsLoad = true;
 
     //peer stuff here
     var peerPrefix;
