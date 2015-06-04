@@ -132,4 +132,11 @@
   display:inline;
   //margin: 0.5%;
 }
+
+.modalTable{
+  table, th, td {
+    border: 1px solid cadetblue;
+  }
+}
+
 .background { background-color: white !important;;}

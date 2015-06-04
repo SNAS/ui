@@ -509,7 +509,7 @@ angular.module('bmpUiApp')
     // createShowTable function is to add a table in showDetails modal.
     $scope.createShowTable = function()
     {
-      $scope.showItems = '<table>';
+      $scope.showItems = '<table class="modalTable">';
       $scope.itemValueLast = $scope.itemValue.preData;
 
       angular.forEach($scope.itemValue, function (value,key) {
