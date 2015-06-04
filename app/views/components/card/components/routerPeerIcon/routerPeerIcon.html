@@ -22,7 +22,7 @@
             <div class="router-name-text" tooltip="{{ data.PeerASN }}">{{ wordCheck(data.PeerASN) }}</div>
             <div class="router-name-text" tooltip="{{ data.PeerName }}">{{ wordCheck(data.PeerName) }}</div>
           </div>
-          <div class="{{ routerIcon }} peer bmp-outline-route"></div>
+          <div class="{{ routerIcon }} peer bmp-outline-route" ng-style="{'color':colour}"></div>
           <div class="router-name-text" tooltip="{{ data.PeerIP }}" tooltip-placement="bottom">{{ wordCheck(data.PeerIP) }}</div>
         </div>
       </div>

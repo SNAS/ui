@@ -24,8 +24,11 @@ angular.module('bmp.components.card')
         }
 
         scope.routerIcon = "bmp-ebgp_router10-17";
-        if(scope.data.RouterASN == scope.data.PeerASN)
+        scope.colour = "#EAA546";
+        if(scope.data.RouterASN == scope.data.PeerASN) {
           scope.routerIcon = "bmp-ibgp_router10-17";
+          scope.colour = "#7bad85";
+        }
 
         scope.wordCheck = function(word){
           if(word.length > 13){
