@@ -114,6 +114,13 @@ a{
   }
 }
 
+h3{
+  font-size: 14pt;
+  text-transform: uppercase;
+  color: #1C2B36;
+  margin-left: 15px;
+}
+
 body{
   font-family: 'CiscoSans';
   background-color: #f6f6f6;
@@ -181,10 +188,12 @@ $grid-text-colour: #71818D;
 .ui-grid {
   border:none;
   color: $grid-text-colour;
+  border-bottom: 1px solid #efefef;
 }
 
 .ui-grid-header {
   border:none;
+  border-bottom: 1px solid #efefef;
 }
 .ui-grid-top-panel {
   border:none;
@@ -207,7 +216,7 @@ $grid-text-colour: #71818D;
   background-color: $row-colour-dark;
 }
 
-.ui-grid-row:nth-child(even) .ui-grid-cell {
+.ui-grid-row:nth-child(odd) .ui-grid-cell {
   background-color: $row-colour-light;
 }
 .ui-grid-row:last-child .ui-grid-cell {
@@ -301,6 +310,14 @@ div.ui-grid-cell input.ng-valid {
 }
 .ui-grid[dir=rtl] .ui-grid-header-cell:last-child .ui-grid-column-resizer.left {
   border:none;
+}
+
+.ui-grid-cell-contents{
+  font-size: 9pt;
+}
+
+.ui-grid-header-cell .ui-grid-cell-contents{
+  font-size: 10pt
 }
 
 .loading-section .ui-grid-row-selected > [ui-grid-row] > .ui-grid-cell {
