@@ -13,14 +13,14 @@ angular.module('bmpUiApp')
     //DEBUG
     window.SCOPE = $scope;
 
-    $scope.whoIsGridInitHeight = 350;
+    var whoIsGridInitHeight = 350;
 
     $scope.whoIsGridOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableColumnResizing: true,
       rowHeight: 25,
-      height: $scope.whoIsGridInitHeight,
+      height: whoIsGridInitHeight,
       width: 1200,
       gridFooterHeight: 15,
       showGridFooter: true,
@@ -30,7 +30,6 @@ angular.module('bmpUiApp')
       enableHorizontalScrollbar: 0,
       rowTemplate:
         '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
-
       onRegisterApi: function (gridApi) {
         $scope.whoIsGridApi = gridApi;
         $scope.whoIsGridApi.selection.on.rowSelectionChanged($scope,function(row) {
@@ -92,7 +91,6 @@ angular.module('bmpUiApp')
       }
       grid.changeHeight = height;
       gridapi.grid.gridHeight = grid.changeHeight;
-      $scope.whoIsGridInitHeight = grid.changeHeight;
     };
 
     //Loop through data selecting and altering relevant data.

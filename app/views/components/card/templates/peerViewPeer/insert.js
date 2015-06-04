@@ -25,17 +25,6 @@ angular.module('bmp.components.card')
 .controller('BmpCardPeerPeerInsertController', ["$scope", "apiFactory", "$timeout", "$element", "$document", function ($scope, apiFactory, $timeout, $element, $document) {
     window.SCOPEZ = $scope;
 
-    $scope.graphs = [];
-
-    $scope.ribGridIsLoad = true;
-
-    //this is for the graph cards.
-    $scope.graphVisibility = false;
-    $scope.showGraphs = function(){
-      $scope.graphs = ["preUpdatesGraph","preWithdrawsGraph","updatesGraph","withdrawsGraph"];
-      $scope.graphVisibility = true;
-    };
-
     //  "RouterName": "csr1.openbmp.org",
     //  "PeerName": "lo-0.edge5.Washington1.Level3.net",
     //  "Prefix": "216.40.30.0",
@@ -56,6 +45,17 @@ angular.module('bmp.components.card')
     //  "isPeerIPv4": "1",
     //  "isPeerVPN": "0",
     //  "LastModified": "2015-04-16 17:53:41"
+
+    $scope.graphs = [];
+
+    $scope.ribGridIsLoad = true;
+
+    //this is for the graph cards.
+    $scope.graphVisibility = false;
+    $scope.showGraphs = function(){
+      $scope.graphs = ["preUpdatesGraph","preWithdrawsGraph","updatesGraph","withdrawsGraph"];
+      $scope.graphVisibility = true;
+    };
 
     $scope.ribGridInitHeight = 350;
 
@@ -214,7 +214,7 @@ angular.module('bmp.components.card')
           $scope.as_path[0].icon = "bmp-ebgp_router10-17";
           $scope.as_path[0].colour = "#EAA546";
           $scope.as_path[0].noTopText = true;
-          $scope.as_path[0].addWidth = nodeWidth + 28;
+          $scope.as_path[0].addWidth = nodeWidth + 28; //width of label from icon
         }else if($scope.data.PeerASN != $scope.norepeat[0]){
           //IBGP
           $scope.as_path = [{
@@ -224,7 +224,7 @@ angular.module('bmp.components.card')
             colour: "#7bad85",
             botVal: $scope.data.PeerASN,
             isEnd: true,
-            addWidth: nodeWidth + 28
+            addWidth: nodeWidth + 28 //width of label from icon
           }].concat($scope.as_path);
         }
 
@@ -269,14 +269,14 @@ angular.module('bmp.components.card')
       };
       $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 20}});
 
-    //for the tooltip
-    $scope.wordCheck = function(word){
-      if(word.length > 6){
-        return word.slice(0,4) + " ...";
-      }else{
-        return word;
-      }
-    };
+      //for the tooltip
+      $scope.wordCheck = function(word){
+        if(word.length > 6){
+          return word.slice(0,4) + " ...";
+        }else{
+          return word;
+        }
+      };
 
     };
 
