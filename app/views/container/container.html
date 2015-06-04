@@ -1,103 +1,105 @@
 <div id="wrapper" class="toggled">
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
-    <button ng-click="toggleDualWindows()" ng-class="{'dual-control-active': dualWindow.active}" class="dual-window-control">{{dualState}} Dual Window Mode (beta)</button>
-    <span class="sidebar-icon glyphicon glyphicon-dashboard"></span>
-    <h4>DASHBOARDS</h4>
-    <ul class="nav sidebar-nav">
-      <li active-item><a ui-sref="app.globalView" ui-sref-opts="{reload: true}">Global View</a>
-        <dual-control d="dualWindow" l="globalView"></dual-control>
-      </li>
-      <li active-item><a ui-sref="app.peerView" ui-sref-opts="{reload: true}">Peer View</a>
-        <dual-control d="dualWindow" l="peerView"></dual-control>
-      </li>
-      <li active-item><a ui-sref="app.asView" ui-sref-opts="{reload: true}">AS View</a>
-        <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iias" class="instant-input"/></form>
-        <dual-control d="dualWindow" l="asView"></dual-control>
-      </li>
-      <li active-item><a ui-sref="app.orrView" ui-sref-opts="{reload: true}">Orr View</a>
-        <dual-control d="dualWindow" l="orrView"></dual-control>
-      </li>
-      <li active-item><a ui-sref="app.linkState" ui-sref-opts="{reload: true}">Link State View</a>
-        <dual-control d="dualWindow" l="linkState"></dual-control>
-      </li>
-      <!--<li active-item><a ui-sref-opts="{reload: true}">Looking Glass</a>-->
-        <!--&lt;!&ndash; <dual-control d="dualWindow" l="globalView"></dual-control> &ndash;&gt;-->
-      <!--</li>-->
-      <li active-item><a ui-sref="app.whoIs" ui-sref-opts="{reload: true}">Whois</a>
-        <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iiwi" class="instant-input"/></form>
-        <dual-control d="dualWindow" l="whoIs"></dual-control>
-      </li>
-      <!--<li active-item><a ui-sref-opts="{reload: true}">Collector View</a></li>-->
-      <!-- <li active-item><a ui-sref="app.worldWatch" ui-sref-opts="{reload: true}">World Watch</a></li>
-      <li active-item><a ui-sref="app.summary" ui-sref-opts="{reload: true}">Summary</a></li> -->
-  </ul>
-  <span class="sidebar-icon glyphicon glyphicon-list-alt"></span>
-  <h4>ANALYSIS</h4>
-  <ul class="nav sidebar-nav">
-      <li active-item><a ui-sref="app.peerAnalysis" ui-sref-opts="{reload: true}">Peer Analysis</a>
-        <dual-control d="dualWindow" l="peerAnalysis"></dual-control>
-      </li>
-      <li active-item><a ui-sref="app.asAnalysis" ui-sref-opts="{reload: true}">AS Analysis</a>
-        <dual-control d="dualWindow" l="asAnalysis"></dual-control>
-      </li>
-      <li active-item><a ui-sref="app.prefixAnalysis"ui-sref-opts="{reload: true}">Prefix Analysis</a>
-        <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="Prefix..." type="text" ng-model="iipa" class="instant-input"/></form>
-        <dual-control d="dualWindow" l="prefixAnalysis"></dual-control>
-      </li>
-      <li active-item><a ui-sref="app.aggregationAnalysis">Aggregation Analysis</a>
-        <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iiaa" class="instant-input"/></form>
-        <dual-control d="dualWindow" l="aggregationAnalysis"></dual-control>
-      </li>
-  </ul>
-  <!--<span class="sidebar-icon glyphicon glyphicon-wrench"></span>-->
-  <!--<h4>ADMINISTRATION</h4>-->
-  <!--<ul class="nav sidebar-nav">-->
-      <!--<li active-item><a ui-sref="app.collectionServer" ui-sref-opts="{reload: true}">Collector</a></li>-->
-      <!--<li active-item><a ui-sref-opts="{reload: true}">Database</a></li>-->
-      <!--<li active-item><a ui-sref="app.preferences" ui-sref-opts="{reload: true}">Preferences</a></li>-->
-  <!--</ul>-->
-</div>
-<!-- END SIDEBAR -->
-
-<!-- CONTENT -->
-<div class="main">
-
-  <!-- HEADER -->
-  <nav class="navbar navbar-default" ng-class="{hidden: dualWindow.active}">
-    <div class="container-fluid">
-      <!--<div class="navbar-header">-->
-      <!--<button type="button" ng-click="toggleMenu()" id="menu-toggle" class="navbar-toggle">-->
-          <!--<span class="sr-only">Toggle navigation</span>-->
-          <!--<span class="icon-bar" id="bar-one"></span>-->
-          <!--<span class="icon-bar" id="bar-two"></span>-->
-          <!--<span class="icon-bar" id="bar-three"></span>-->
-      <!--</button>-->
-      <a class="navbar-left navbar-brand" ui-sref="app.globalView"><img src="../images/logo.png"/> Routing Analytics</a>
-      <!--</div>-->
-      <div class="main-header">
-        <a>{{title}}</a>
+    <div class="sidebar-wrapper">
+      <div class="sidebar-logo">
+        <a ui-sref="app.globalView"><img src="../images/logo.png" width="50%" alt="Cisco Routing Analytics"/></a>
       </div>
-      <div class="navbar-right account">
-        <span class="text-white">Hello, {{username}}</span>
-        <br>
-        <a class="text-white" ng-click="logout()" href="#">Log out</a>
+      <div class="nav-section">
+        <div class="shadow"></div>
+        <h4>Dashboards</h4>
+        <ul class="nav sidebar-nav">
+          <li active-item><a ui-sref="app.globalView" ui-sref-opts="{reload: true}">Global View</a>
+            <dual-control d="dualWindow" l="globalView"></dual-control>
+          </li>
+          <li active-item><a ui-sref="app.peerView" ui-sref-opts="{reload: true}">Peer View</a>
+            <dual-control d="dualWindow" l="peerView"></dual-control>
+          </li>
+          <li active-item><a ui-sref="app.asView" ui-sref-opts="{reload: true}">AS View</a>
+            <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iias" class="instant-input"/></form>
+            <dual-control d="dualWindow" l="asView"></dual-control>
+          </li>
+          <li active-item><a ui-sref="app.orrView" ui-sref-opts="{reload: true}">Orr View</a>
+            <dual-control d="dualWindow" l="orrView"></dual-control>
+          </li>
+          <li active-item><a ui-sref="app.linkState" ui-sref-opts="{reload: true}">Link State View</a>
+            <dual-control d="dualWindow" l="linkState"></dual-control>
+          </li>
+          <li active-item><a ui-sref="app.whoIs" ui-sref-opts="{reload: true}">Whois</a>
+            <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iiwi" class="instant-input"/></form>
+            <dual-control d="dualWindow" l="whoIs"></dual-control>
+          </li>
+        </ul>
       </div>
+      <div class="nav-section last">
+        <div class="shadow"></div>
+        <h4>Analysis</h4>
+        <ul class="nav sidebar-nav">
+            <li active-item><a ui-sref="app.peerAnalysis" ui-sref-opts="{reload: true}">Peer Analysis</a>
+              <dual-control d="dualWindow" l="peerAnalysis"></dual-control>
+            </li>
+            <li active-item><a ui-sref="app.asAnalysis" ui-sref-opts="{reload: true}">AS Analysis</a>
+              <dual-control d="dualWindow" l="asAnalysis"></dual-control>
+            </li>
+            <li active-item><a ui-sref="app.prefixAnalysis"ui-sref-opts="{reload: true}">Prefix Analysis</a>
+              <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="Prefix..." type="text" ng-model="iipa" class="instant-input"/></form>
+              <dual-control d="dualWindow" l="prefixAnalysis"></dual-control>
+            </li>
+            <li active-item><a ui-sref="app.aggregationAnalysis">Aggregation Analysis</a>
+              <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iiaa" class="instant-input"/></form>
+              <dual-control d="dualWindow" l="aggregationAnalysis"></dual-control>
+            </li>
+        </ul> 
+      </div>
+      <button ng-click="toggleDualWindows()" ng-class="{'dual-control-active': dualWindow.active}" class="dual-window-control">
+        Dual Window Mode
+      </button>
+      <!--<span class="sidebar-icon glyphicon glyphicon-wrench"></span>-->
+      <!--<h4>ADMINISTRATION</h4>-->
+      <!--<ul class="nav sidebar-nav">-->
+          <!--<li active-item><a ui-sref="app.collectionServer" ui-sref-opts="{reload: true}">Collector</a></li>-->
+          <!--<li active-item><a ui-sref-opts="{reload: true}">Database</a></li>-->
+          <!--<li active-item><a ui-sref="app.preferences" ui-sref-opts="{reload: true}">Preferences</a></li>-->
+      <!--</ul>-->
     </div>
-  </nav>
-  <!-- END HEADER -->
+  </div>
+  <!-- END SIDEBAR -->
 
-<!-- MAIN -->
-<div ng-class="page">
-  <div ui-view></div>
-  <!-- FOOTER -->
-  <div class="footer">
-    <!-- <p><span class="glyphicon glyphicon-heart"></span> from Harry</p> -->
-</div>
-<!-- END FOOTER -->
+  <!-- CONTENT -->
+  <div class="main">
 
-</div>
-<!-- END MAIN -->
+    <!-- HEADER -->
+    <nav class="navbar" ng-class="{hidden: dualWindow.active}">
+      <div class="container-fluid">
+        <!--<div class="navbar-header">-->
+        <!--<button type="button" ng-click="toggleMenu()" id="menu-toggle" class="navbar-toggle">-->
+            <!--<span class="sr-only">Toggle navigation</span>-->
+            <!--<span class="icon-bar" id="bar-one"></span>-->
+            <!--<span class="icon-bar" id="bar-two"></span>-->
+            <!--<span class="icon-bar" id="bar-three"></span>-->
+        <!--</button>-->
+        <span class="navbar-left navbar-brand">
+          <span class="breadcrumbs">Dashboards &gt; </span>{{title}}
+        </span>
+        <div class="navbar-right account">
+          <span class="account-name">{{username}}</span>
+          <a class="account-logout" ng-click="logout()" href="#">Logout</a>
+        </div>
+      </div>
+    </nav>
+    <!-- END HEADER -->
+
+  <!-- MAIN -->
+  <div class="main-container" ng-class="page">
+    <div ui-view></div>
+    <!-- FOOTER -->
+    <div class="footer">
+      <!-- <p><span class="glyphicon glyphicon-heart"></span> from Harry</p> -->
+  </div>
+  <!-- END FOOTER -->
+
+  </div>
+  <!-- END MAIN -->
 
 </div>
 <!-- END CONTENT -->

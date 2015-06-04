@@ -72,7 +72,6 @@ angular.module('bmpUiApp')
       $scope.location = $location;
       $scope.$watch('location.path()', function(newPath) {
         if($state.current.name === "app.dualWindow.contents" && !$rootScope.dualWindow.active){
-          console.log('get us outta here');
           $state.transitionTo('app.globalView');
           $timeout(function(){
             $state.reload();
