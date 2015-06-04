@@ -28,6 +28,7 @@ angular.module('bmpUiApp')
       gridFooterHeight: 15,
       showGridFooter: true,
       enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 0,
 
       columnDefs: [
         {

@@ -18,7 +18,8 @@ angular.module('bmpUiApp')
     $scope.AllPrefixOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
-      enableHorizontalScrollbar: 0
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 0
     };
 
     //define the columns
@@ -127,7 +128,8 @@ angular.module('bmpUiApp')
       enableRowHeaderSelection: false,
       multiSelect: true,
       modifierKeysToMultiSelect: true,
-      enableHorizontalScrollbar: 0
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 0
     };
 
     // here to get the intemValue , use this  to create table
