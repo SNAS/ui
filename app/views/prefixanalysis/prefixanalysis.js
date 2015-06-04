@@ -201,6 +201,7 @@ angular.module('bmpUiApp')
         apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId)
           .success(function (data) {
             console.log("getPrefixHisData has been executed:" + searchPrefix + ' ' + $scope.peerHashId);
+            console.log("http://odl-dev.openbmp.org:8001/db_rest/v1/" + "rib/peer/" + $scope.peerHashId +"/history/"+ searchPrefix);
             $scope.originHisData = data.v_routes_history.data;
 
             //console.log("$scope.originHisData:" + $scope.originHisData);
@@ -281,12 +282,15 @@ angular.module('bmpUiApp')
 
         var hour = parseInt(allHisData[i].LastModified.substring(11, 13));
 
+
+        // ********* the following code is to create two field to record the As Path changing
         if(typeof(allHisData[i].AS_Path) == "string")
         {
           allHisData[i].AS_Path = allHisData[i].AS_Path.split(" ");
           allHisData[i].AS_Path =  allHisData[i].AS_Path.slice(1);
         }
 
+        //split two rows into list
         if(i < allHisData.length-1)
         {
           if(typeof(allHisData[i+1].AS_Path) == "string")
@@ -295,17 +299,15 @@ angular.module('bmpUiApp')
             allHisData[i+1].AS_Path =  allHisData[i+1].AS_Path.slice(1);
           }
         }
+
+
         //to record all the last flag and the last line
 
         allHisData[i].AS_Path_list = new Array();
 
-        allHisData[i].AS_Path_list_last = new Array();
-
         allHisData[i].AS_Path_list_flag = [];
 
         allHisData[i].AS_Path_list_flag_last = [];
-
-        //console.log("allHisData[",i,"].AS_Path",allHisData[i].AS_Path);
 
         //initialize all the information
         for (j = 0; j < allHisData[i].AS_Path.length; j++)
@@ -333,6 +335,69 @@ angular.module('bmpUiApp')
           allHisData[i].AS_Path_list[j]["flag"] = allHisData[i].AS_Path_list_flag[j];
           allHisData[i].AS_Path_list[j]["last_flag"] = allHisData[i].AS_Path_list_flag_last[j];
         }
+        // ********* the  above code is to create two field to record the As Path changing
+
+
+
+// ********* the following code is to create two field to record the Communities changing
+//        console.log("#################################");
+//        console.log("allHisData[i]",allHisData[i]);
+//        console.log("allHisData[i].Communities",allHisData[i].Communities);
+//        console.log("#################################");
+
+        if(typeof(allHisData[i].Communities) == "string")
+        {
+          allHisData[i].Communities = allHisData[i].Communities.split(" ");
+          allHisData[i].Communities =  allHisData[i].Communities.slice(1);
+        }
+
+//split two rows into list
+        if(i < allHisData.length-1)
+        {
+          if(typeof(allHisData[i+1].Communities) == "string")
+          {
+            allHisData[i+1].Communities = allHisData[i+1].Communities.split(" ");
+            allHisData[i+1].Communities =  allHisData[i+1].Communities.slice(1);
+          }
+        }
+
+
+//to record all the last flag and the last line
+
+        allHisData[i].Communities_list = new Array();
+
+        allHisData[i].Communities_list_flag = [];
+
+        allHisData[i].Communities_list_flag_last = [];
+
+//initialize all the information
+        for (j = 0; j < allHisData[i].Communities.length; j++)
+        {
+          //console.log("Hi i am here");
+          if (0 == i){ allHisData[i].Communities_list_flag[j] = true;console.log("hi , it's true");continue; }
+
+          allHisData[i].Communities_list_flag[j] = allHisData[i-1].Communities.contains(allHisData[i].Communities[j]);
+
+          if(allHisData.length-1 == i)
+          {
+            console.log("has this been executed ?!!!!!");
+            allHisData[i].Communities_list_flag_last[j] = true;
+          }
+          else
+          {
+            allHisData[i].Communities_list_flag_last[j] = allHisData[i+1].Communities.contains(allHisData[i].Communities[j]);
+          }
+        }
+
+        for (j = 0; j < allHisData[i].Communities.length; j++)
+        {
+          allHisData[i].Communities_list[j] = new Array();
+          allHisData[i].Communities_list[j]["path"] = allHisData[i].Communities[j];
+          allHisData[i].Communities_list[j]["flag"] = allHisData[i].Communities_list_flag[j];
+          allHisData[i].Communities_list[j]["last_flag"] = allHisData[i].Communities_list_flag_last[j];
+        }
+// ********* the  above code is to create two field to record the Communities changing
+
 
         $scope.HisData[hour].push(allHisData[i]);
       }
@@ -382,16 +447,17 @@ angular.module('bmpUiApp')
           if(!($scope.HisData[i][j-1].NH === $scope.HisData[i][j].NH)){
             $scope.asPathChangeHP[i] = $scope.asPathChangeHP[i] + 1;
           }
-          if(!($scope.HisData[i][j-1].Communities === $scope.HisData[i][j].Communities)){
+
+          if(!(angular.equals($scope.HisData[i][j-1].Communities,$scope.HisData[i][j].Communities))){
+          //if(!($scope.HisData[i][j-1].Communities === $scope.HisData[i][j].Communities)){
             $scope.asPathChangeCommunites[i] = $scope.asPathChangeCommunites[i] + 1;
           }
+
           if(!($scope.HisData[i][j-1].MED === $scope.HisData[i][j].MED)){
             $scope.asPathChangeMED[i] = $scope.asPathChangeMED[i] + 1;
         }
       }
-      //console.log($scope.asPathChangeAS_PATH);
-      //console.log($scope.asPathChangeHP);
-      //console.log($scope.asPathChangeCommunites);
+
       $scope.asPathChange = new Array();
       $scope.asPathChange[0] = $scope.asPathChangeMED ;
       $scope.asPathChange[1] = $scope.asPathChangeAS_PATH;
@@ -446,9 +512,9 @@ angular.module('bmpUiApp')
 
       angular.forEach($scope.itemValue, function (value,key) {
 
-        console.log("in the top");
-        console.log("$scope.itemValue",$scope.itemValue);
-        console.log("in the top");
+        //console.log("in the top");
+        //console.log("$scope.itemValue",$scope.itemValue);
+        //console.log("in the top");
 
 
         if (key == "AS_Path")
