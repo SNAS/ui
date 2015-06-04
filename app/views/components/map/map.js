@@ -983,7 +983,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     return function (scope, element) {
         var w = angular.element($window);
         scope.forceResize = function() {
-            scope.mapHeight =  (w.height() - 85) + 'px';
+            scope.mapHeight =  (w.height() - 87) + 'px';
             $timeout(function(){
                 scope.map.invalidateSize();
             }, 1000);
@@ -997,7 +997,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 return;
             }
             if(!scope.selectionMade){
-                scope.mapHeight =  (newValue.h - 85) + 'px';
+                scope.mapHeight =  (newValue.h - 87) + 'px';
                 $timeout(function(){
                     scope.map.invalidateSize();
                 }, 1000);
