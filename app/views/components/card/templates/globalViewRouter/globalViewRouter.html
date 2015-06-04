@@ -22,11 +22,9 @@
 
   <!--EXPANDED view-->
   <div class="card-expand row">
-    <span class="col-md-1">
-        <icon class="bmp-outline_router" style="  font-size: 26px; color: #6197d1; margin-left: 30px;"></icon>
-    </span>
     <span class="col-xs-2">
-        <h4>BMP Router</h4>
+      <icon class="bmp-outline_router left" style="  font-size: 26px; color: #6197d1; margin: 0 10px;"></icon>
+      <h4>BMP Router</h4>
     </span>
     <span class="col-xs-4">
         <h5>{{data.RouterName}}</h5>
@@ -34,15 +32,15 @@
     <span class="col-xs-2">
       <h5>{{data.RouterIP}}</h5>
     </span>
-    <span class="col-xs-3">
-      <span style="float: right;text-align: right;">
-        <h5>BMP Connection Up Time</h5>
+    <span class="col-xs-4">
+      <h5 class="right">
+        Up Time
         <span class="green ng-binding">
           {{upTime}}
         </span>
-        <icon ng-class="{'bmp-down': data.isConnected!='1', 'bmp-up': data.isConnected=='1'}" ng-style="data.isConnected != '1' &amp;&amp; {'color': '#f2732d'} || data.isConnected == '1' &amp;&amp; {'color': '#7ec35c'}" style="font-size: 18px; color: rgb(126, 195, 92);" class="bmp-up">
+        <icon ng-class="{'bmp-down': data.isConnected!='1', 'bmp-up': data.isConnected=='1'}" ng-style="data.isConnected != '1' &amp;&amp; {'color': '#f2732d'} || data.isConnected == '1' &amp;&amp; {'color': '#7ec35c'}" style="font-size: 14px; color: rgb(126, 195, 92);" class="bmp-up">
         </icon>
-      </span>
+      </h5>
     </span>
   </div>
 

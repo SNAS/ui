@@ -16,3 +16,83 @@
 .fixedHeight{
    height: 297px;
 }
+
+.whois-info {
+
+  background-color: #FFFFFF;
+
+  border: solid 1px;
+
+  border-color: #D4D4D4;
+
+  border-radius: 0px;
+
+  padding: 30px;
+
+
+
+  p {
+
+    text-transform: uppercase;
+
+    color: black;
+
+    font-weight: normal;
+
+  }
+
+  .preStyle {
+
+    line-height: 1.8;
+
+    text-transform: capitalize;
+
+    background-color: #FFFFFF;
+
+    border: none;
+
+    overflow: auto;
+
+    max-height: 800px;
+
+
+
+    //need to override pre font
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    padding: 30px auto;
+
+    margin: 0;
+
+    color: #576D7C;
+
+    font-weight: 200;
+
+    table{
+
+      .hoz-line {
+
+        border-bottom: solid 1px #D4D4D4
+
+      }
+
+      width: 70%;
+
+      td:nth-child(odd) {
+
+        font-weight: normal;
+
+        padding-right: 15px;
+
+        color: #3F5869;
+
+      }
+
+    }
+
+  }
+
+}

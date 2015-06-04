@@ -41,8 +41,6 @@ $navbar-default-bg:#15bdf4;
 $navbar-default-brand-color:#fff;
 $text-color:#888;
 
-
-
 a{
     cursor: pointer;
 }
@@ -51,6 +49,35 @@ a{
 // Imports
 //=================================================================================
  $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
+ @font-face {
+  font-family: 'CiscoSansThin';
+  src: url('../fonts/CiscoSansTTThin.ttf'); /* IE9 Compat Modes */
+  src: url('../fonts/CiscoSansTTThin.ttf') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/CiscoSansTTThin.ttf') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/CiscoSansTTThin.ttf') format('woff'), /* Pretty Modern Browsers */
+       url('../fonts/CiscoSansTTThin.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/CiscoSansTTThin.ttf') format('svg'); /* Legacy iOS */
+}
+
+@font-face {
+  font-family: 'CiscoSansExtraLight';
+  src: url('../fonts/CiscoSansTTExtraLight.ttf'); /* IE9 Compat Modes */
+  src: url('../fonts/CiscoSansTTExtraLight.ttf') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/CiscoSansTTExtraLight.ttf') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/CiscoSansTTExtraLight.ttf') format('woff'), /* Pretty Modern Browsers */
+       url('../fonts/CiscoSansTTExtraLight.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/CiscoSansTTExtraLight.ttf') format('svg'); /* Legacy iOS */
+}
+
+@font-face {
+  font-family: 'CiscoSans';
+  src: url('../fonts/CiscoSansTTRegular.ttf'); /* IE9 Compat Modes */
+  src: url('../fonts/CiscoSansTTRegular.ttf') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/CiscoSansTTRegular.ttf') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/CiscoSansTTRegular.ttf') format('woff'), /* Pretty Modern Browsers */
+       url('../fonts/CiscoSansTTRegular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/CiscoSansTTRegular.ttf') format('svg'); /* Legacy iOS */
+}
 // bower:scss
 @import "bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
 // endbower
@@ -81,6 +108,22 @@ a{
   background-color: #fff;
   border-bottom: 2px solid #0096d6;
   box-sizing: content-box;
+}
+
+a{
+  color: #0386d2;
+  transition: color 0.2s;
+
+  &:hover, &:focus, &:active{
+    color: #45A8E2;
+    text-decoration: none;
+  }
+}
+
+body{
+  font-family: 'CiscoSans';
+  background-color: #f6f6f6;
+  min-width: 1300px;
 }
 
 //=============================================================
