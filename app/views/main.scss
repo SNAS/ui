@@ -77,12 +77,6 @@ a{
   position: relative;
 }
 
-.ui-grid-header {
-  background-color: #fff;
-  border-bottom: 2px solid #0096d6;
-  box-sizing: content-box;
-}
-
 //=============================================================
 // Sections
 //===================================================================================
@@ -130,3 +124,142 @@ icon.bmp-down {
 //map
 @import "components/map/map";
 @import "components/loading/loading";
+
+
+
+//UI - GRID override style
+
+$header-colour: #F6F6F6;
+$row-colour-dark: #FBFBFB;
+$row-colour-light: #FFFFFF;
+$row-select-colour: #EFF7FF;
+$grid-text-colour: #71818D;
+
+.ui-grid {
+  border:none;
+  color: $grid-text-colour;
+}
+
+.ui-grid-header {
+  border:none;
+}
+.ui-grid-top-panel {
+  border:none;
+}
+
+.ui-grid-header-cell {
+  border:none;
+}
+
+//colour the extra scroll space on header
+.ui-grid-header-canvas {
+  background-color: $header-colour;
+}
+
+.ui-grid-header-cell-row {
+  background-color: $header-colour;
+}
+
+.ui-grid-row:nth-child(even) .ui-grid-cell {
+  background-color: $row-colour-dark;
+}
+
+.ui-grid-row:nth-child(even) .ui-grid-cell {
+  background-color: $row-colour-light;
+}
+.ui-grid-row:last-child .ui-grid-cell {
+  border:none;
+}
+
+.ui-grid-cell {
+  border:none;
+}
+
+.ui-grid-row-header-cell {
+  border:none;
+}
+
+.ui-grid-footer-panel {
+  border:none;
+}
+
+.loading-section .ui-grid-grid-footer {
+  position: absolute;
+  text-align: right;
+  margin-top: -26px;
+}
+
+.ui-grid-menu-button {
+  border:none;
+}
+
+.ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
+  border:none;
+}
+
+.ui-grid-menu .ui-grid-menu-inner {
+  border:none;
+}
+
+.ui-grid-menu .ui-grid-menu-inner ul li:not(:last-child) {
+  border:none;
+}
+
+.ui-grid[dir=rtl] .ui-grid-cell:last-child,
+.ui-grid[dir=rtl] .ui-grid-header-cell:last-child {
+  border:none;
+}
+
+.ui-grid[dir=rtl] .ui-grid-menu-button {
+  border:none;
+}
+
+div.ui-grid-cell input.ng-invalid {
+  border:none;
+}
+div.ui-grid-cell input.ng-valid {
+  border:none;
+}
+
+.movingColumn {
+  border:none;
+}
+
+.ui-grid-pager-control .first-bar {
+  border:none;
+}
+.ui-grid-pager-control .first-triangle {
+  border:none;
+}
+
+.ui-grid-pager-control .last-triangle {
+  border:none;
+}
+.ui-grid-pager-control .last-bar {
+  border:none;
+}
+
+.ui-grid-pinned-container.ui-grid-pinned-container-left .ui-grid-header-cell:last-child {
+  border:none;
+}
+.ui-grid-pinned-container.ui-grid-pinned-container-left .ui-grid-cell:last-child {
+  border:none;
+}
+
+.ui-grid-pinned-container.ui-grid-pinned-container-right .ui-grid-header-cell:first-child {
+  border:none;
+}
+.ui-grid-pinned-container.ui-grid-pinned-container-right .ui-grid-cell:first-child {
+  border:none;
+}
+
+.ui-grid-header-cell:last-child .ui-grid-column-resizer.right {
+  border:none;
+}
+.ui-grid[dir=rtl] .ui-grid-header-cell:last-child .ui-grid-column-resizer.left {
+  border:none;
+}
+
+.loading-section .ui-grid-row-selected > [ui-grid-row] > .ui-grid-cell {
+  background-color: $row-select-colour !important;
+}
