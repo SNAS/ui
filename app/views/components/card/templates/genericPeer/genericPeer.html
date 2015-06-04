@@ -2,7 +2,7 @@
 
   <div class="card-expand row">
     <span class="col-xs-1">
-        <icon class="bmp-outline_router" style="  font-size: 26px; color: #e9a445; margin-left: 30px;"></icon>
+        <icon class="bmp-outline_router bmp-outline-router"></icon>
     </span>
     <span class="col-xs-2">
         <h4>BGP Peer</h4>
@@ -17,7 +17,7 @@
         <h5>{{data.PeerASN}}</h5>
     </span>
     <span class="col-xs-2">
-      <span style="float: right;text-align: right;">
+      <span class="up-time">
         <h5>Up Time</h5>
         <span class="green ng-binding">
           {{ peerTime }}
@@ -76,7 +76,7 @@
 
     <div class="row">
       <div class="col-lg-12">
-        <div class="icon-container" style="height: auto;">
+        <div class="icon-container import">
           <div ng-include="templatePath + data.template + '/insert.html'"></div>
         </div>
       </div>

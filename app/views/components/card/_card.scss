@@ -90,6 +90,18 @@
 .card-expand{
   margin: 0 18px !important;
   width: inherit !important;
+
+  .bmp-outline-router{
+    font-size: 26px;
+    color: #e9a445;
+    margin-left: 30px;
+  }
+
+  .up-time {
+    float: right;
+    text-align: right;
+  }
+
   h5{
     display: inline-block;
     margin-top: 7px;

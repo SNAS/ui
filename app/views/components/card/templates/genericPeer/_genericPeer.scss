@@ -4,17 +4,6 @@
     color: #EAA546;
   }
 
-  .peerCard {
-    .routerLoc{
-      margin: 3em 1em 1em 6em;
-    }
-  }
-  .routerCard {
-    .routerLoc{
-      margin-top: 2em;
-    }
-  }
-
   .rib-image {
     text-align: center;
     color:#AFAFAF;
@@ -35,4 +24,7 @@
       }
     }
   }
+}
+.import {
+  height: auto;
 }
