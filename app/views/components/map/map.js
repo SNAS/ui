@@ -20,6 +20,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
     $scope.showBottomPane = false;
     $scope.selectionMade = false;
+    $scope.mapWidth = "72%"
 
     $scope.locations = [];
     $scope.peers = [];
@@ -108,6 +109,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             loadBottomPane();
         }
         else if($scope.location === 'peerCard'){
+            $scope.mapWidth = "100%";
             $scope.selectionMade = true;
             if($scope.plotMarker != undefined){
                 if($scope.singlePoint != undefined){
