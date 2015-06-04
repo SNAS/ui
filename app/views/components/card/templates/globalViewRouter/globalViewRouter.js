@@ -4,8 +4,6 @@ angular.module('bmp.components.card')
 
   .controller('BmpCardGlobalRouterController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
 
-      console.log($scope.data);
-
       if($scope.data.RouterName === " " || $scope.data.RouterName === ""){
         $scope.data.RouterName = $scope.data.RouterIP;
       }
@@ -198,14 +196,13 @@ angular.module('bmp.components.card')
           $scope.globalViewPeerOptions.data = result.v_peers.data;
 
           $scope.globalViewGridIsLoad = false; //stop loading
-          $scope.peerIconIsLoad = false;
+          $scope.peerIconIsLoad = false; //stop loading
 
           $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
         }).
         error(function (error){
           console.log(error.message);
         });
-       // $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
 
       var peerViewPeerDefaultData = [{"as_name":"NO DATA"}];
       $scope.globalViewPeerOptions.onRegisterApi = function (gridApi) {

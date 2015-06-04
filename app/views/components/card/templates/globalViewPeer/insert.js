@@ -24,8 +24,4 @@ angular.module('bmp.components.card')
     ////  "router_hash_id":"0314f419a33ec8819e78724f51348ef9"
     //// }
 
-    $scope.$watch('summaryPeerOptions.gridIsLoading', function(val) {
-      $scope.summaryGridIsLoad = $scope.summaryPeerOptions.gridIsLoading;
-    });
-
 }]);

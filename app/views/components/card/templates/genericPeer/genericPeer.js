@@ -59,8 +59,6 @@ angular.module('bmp.components.card')
         console.log(error.message);
       });
 
-    //$scope.summaryGridIsLoad = true;
-
     $scope.summaryGridInitHeight = 300;
 
     $scope.summaryPeerOptions = {

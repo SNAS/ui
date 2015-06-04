@@ -352,7 +352,6 @@ angular.module('bmp.components.card')
       }
 
       if (fullIpWithPreLenReg.exec(value) != null || partCompIpRegex.exec(value) != null) {
-        console.log(value);
         //Full ip with prefix or partial ip
         apiFactory.getPeerRibPrefix($scope.data.peer_hash_id, value).
           success(function (result) {
@@ -363,7 +362,6 @@ angular.module('bmp.components.card')
             console.log(error.message);
           });
       }else if(fullIpRegex.exec(value) != null){
-        console.log(value);
         //full ip
         //pass in peer hash and the matched regex value
         apiFactory.getPeerRibLookup($scope.data.peer_hash_id,value).
