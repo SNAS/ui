@@ -200,6 +200,9 @@ angular.module('bmpUiApp')
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
           if (key != "raw_output" && key != "remarks") {
+            if(key == "transit_v4_prefixes")
+                showValues += '<tr class="hoz-line"><td>&nbsp;<td></td></tr>';
+              
             var value = data[key];
             showValues += (
             '<tr>' +
@@ -237,8 +240,7 @@ angular.module('bmpUiApp')
             console.log(error.message);
           });
       }
-<<<<<<< HEAD
-
+      
       //Get upstream data
       function getUpstream() {
         upstreamData = [];
@@ -260,34 +262,6 @@ angular.module('bmpUiApp')
             alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
             console.log(error.message);
           });
-=======
-    }
-
-    //Get detailed information of this AS
-    function getDetails(data) {
-      var keys = Object.keys(data);
-      var showValues = '<table class="tableStyle"><tbody>';
-
-      for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        if (key != "raw_output" && key != "remarks") {
-          if(key == "transit_v4_prefixes")
-              showValues += '<tr class="hoz-line"><td>&nbsp;<td></td></tr>';
-            
-          var value = data[key];
-          showValues += (
-          '<tr>' +
-          '<td>' +
-          key + ' ' +
-          '</td>' +
-
-          '<td>' +
-          value +
-          '</td>' +
-          '</tr>'
-          );
-        }
->>>>>>> HARRY-DESIGN
       }
 
       //Get downstream data
