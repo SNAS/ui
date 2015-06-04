@@ -157,7 +157,7 @@ angular.module('bmpUiApp')
       {name: "AS_Path_list", displayName: 'AS_Path', cellClass:'background',cellTemplate: '<div ng-class="{greenbar: !AS_Path_list.flag, whitebar: AS_Path_list.flag,}" ng-repeat="AS_Path_list in row.entity.AS_Path_list">{{AS_Path_list.path}}</div>'},
       {name: "PeerASN", displayName: 'Peer_ASN', width: 130,cellClass:'background'},
       {name: "MED", displayName: 'MED', width: 60,cellClass:'background'},
-      {name: "Communities", displayName: 'Communities',cellClass:'background'},
+      {name: "Communities", displayName: 'Communities',cellClass:'background',cellTemplate: '<div ng-class="{greenbarCommunities: !Communities_list.flag, whitebarCommunities: Communities_list.flag,}" ng-repeat="Communities_list in row.entity.Communities_list">{{Communities_list.path}}</div>'},
       {name: "LastModified", displayName: 'Last_Modified', width: 180,cellClass:'background'}
     ];
 
