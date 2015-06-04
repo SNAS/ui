@@ -369,19 +369,13 @@
             }
         }
         &.with-router{
-            .panel-header{
-                //background-color: #DFC089;
-            }
             .main .locations{
               margin-bottom: 0;
               margin-top: 97px;
             }
-            .pointer{
-                transform: rotate(180deg);
-            }
-            &.expanded .pointer{
-                transform: rotate(270deg);
-            }
+        }
+        &.peers-only .main .locations{
+          margin-top: 55px;
         }
     }
     &:hover{
