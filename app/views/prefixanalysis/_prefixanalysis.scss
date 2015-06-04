@@ -139,4 +139,26 @@
   }
 }
 
+.singleWordGreen{
+  width:80px;
+  height:32px;
+  background-color: white;
+  color:lightgreen;
+  //height:auto;
+  float:left;
+  display:inline;
+  //margin: 0.5%;
+}
+
+.singleWordRed{
+  width:80px;
+  height:32px;
+  background-color: white;
+  color:red;
+  //height:auto;
+  float:left;
+  display:inline;
+  //margin: 0.5%;
+}
+
 .background { background-color: white !important;;}

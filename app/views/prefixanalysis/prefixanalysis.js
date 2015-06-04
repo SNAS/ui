@@ -517,9 +517,38 @@ angular.module('bmpUiApp')
         //console.log("in the top");
         //console.log("$scope.itemValue",$scope.itemValue);
         //console.log("in the top");
+        if (key == "Origin")
+        {
+          {
+            if(!angular.equals($scope.itemValueLast.Origin, $scope.itemValue.Origin))
+            {
+              $scope.showItems += (
+              '<tr>' +
+              '<td>' +
+              'Current_Origin: ' +
+              '</td>' +
 
+              '<td>' + "<div class='singleWordGreen'>" + $scope.itemValue.Origin  + "</div>" +
+              '</td>' +
+              '</tr>'
+              );
 
-        if (key == "AS_Path")
+              $scope.showItems += (
+              '<tr>' +
+              '<td>' +
+              'Previous_Origin: ' +
+              '</td>' +
+
+              '<td>' + "<div class='singleWordRed'>" +
+              $scope.itemValueLast.Origin + "</div>" +
+              '</td>' +
+              '</tr>'
+              );
+            }
+          }
+
+        }
+        else if (key == "AS_Path")
         {
 
           //$scope.itemValueTemp = $scope.itemValue;
@@ -591,7 +620,95 @@ angular.module('bmpUiApp')
             );
           }
         }
-        if (key == "Communities")
+        else if (key == "MED")
+        {
+            if(!angular.equals($scope.itemValueLast.MED, $scope.itemValue.MED))
+            {
+              $scope.showItems += (
+              '<tr>' +
+              '<td>' +
+              'Current_MED: ' +
+              '</td>' +
+
+              '<td>' + "<div class='singleWordGreen'>" +
+              $scope.itemValue.MED + "</div>" +
+              '</td>' +
+              '</tr>'
+              );
+
+              $scope.showItems += (
+              '<tr>' +
+              '<td>' +
+              'Previous_MED: ' +
+              '</td>' +
+
+              '<td>' +  "<div class='singleWordRed'>" +
+              $scope.itemValueLast.MED + "</div>" +
+              '</td>' +
+              '</tr>'
+              );
+            }
+
+        }
+        else if (key == "NH")
+        {
+          if(!angular.equals($scope.itemValueLast.NH, $scope.itemValue.NH))
+          {
+            $scope.showItems += (
+            '<tr>' +
+            '<td>' +
+            'Current_NH: ' +
+            '</td>' +
+
+            '<td>' + "<div class='singleWordGreen'>" +
+            $scope.itemValue.NH + "</div>" +
+            '</td>' +
+            '</tr>'
+            );
+
+            $scope.showItems += (
+            '<tr>' +
+            '<td>' +
+            'Previous_NH: ' +
+            '</td>' +
+
+            '<td>' +  "<div class='singleWordRed'>" +
+            $scope.itemValueLast.NH + "</div>" +
+            '</td>' +
+            '</tr>'
+            );
+          }
+        }
+        else if (key == "LocalPref")
+        {
+          if(!angular.equals($scope.itemValueLast.LocalPref, $scope.itemValue.LocalPref))
+          {
+            $scope.showItems += (
+            '<tr>' +
+            '<td>' +
+            'Current_LocalPref: ' +
+            '</td>' +
+
+            '<td>' +  "<div class='singleWordGreen'>" +
+            $scope.itemValue.LocalPref +  "</div>" +
+            '</td>' +
+            '</tr>'
+            );
+
+            $scope.showItems += (
+            '<tr>' +
+            '<td>' +
+            'Previous_LocalPref: ' +
+            '</td>' +
+
+            '<td>' +  "<div class='singleWordRed'>" +
+            $scope.itemValueLast.LocalPref + "</div>" +
+            '</td>' +
+            '</tr>'
+            );
+          }
+        }
+        else if (key == "Communities")
         {
           //$scope.itemValueTemp = $scope.itemValue;
           //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
@@ -662,7 +779,8 @@ angular.module('bmpUiApp')
             );
           }
         }
-        else if(key != "AS_Path_list_flag" && key != "AS_Path_list") {
+        else if(key != "AS_Path_list_flag" && key != "AS_Path_list" && key != "Communities_list" && key != "Communities_list"
+          && key != "preData" && key != "AS_Path_list_flag_last" && key != "Communities_list_flag" && key != "Communities_list_flag_last") {
           $scope.showItems += (
           '<tr>' +
           '<td>' +
