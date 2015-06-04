@@ -90,6 +90,11 @@ angular.module('bmpUiApp')
         }, 500);
       };
 
+      $scope.keypress = function(keyEvent){
+        if (keyEvent.which === 13)
+          searchValue($scope.searchValue);
+      };
+
       //Main function
       $(function () {
         //predictive search
@@ -139,20 +144,33 @@ angular.module('bmpUiApp')
 
       //get all the information of this AS
       function searchValue() {
-        apiFactory.getWhoIsASN($scope.searchValue).
-          success(function (result) {
-            var data = result.gen_whois_asn.data;
-            getData(data);
-          }).
-          error(function (error) {
-            alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
-            console.log(error.message);
-          });
+        if (isNaN($scope.searchValue)) {
+          apiFactory.getWhoIsASName($scope.searchValue).
+            success(function (result) {
+              var data = result.w.data;
+              getData(data);
+            }).
+            error(function (error) {
+              alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+              console.log(error.message);
+            });
+        }
+        else {
+          apiFactory.getWhoIsASN($scope.searchValue).
+            success(function (result) {
+              var data = result.gen_whois_asn.data;
+              getData(data);
+            }).
+            error(function (error) {
+              alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+              console.log(error.message);
+            });
+        }
       }
 
       //get data about details, prefixes, upstream and downstream
       function getData(data) {
-        if (data.size != 0) {
+        if (data.length != 0) {
           $scope.asn = data[0].asn;
           getDetails(data[0]);
           getPrefixes();

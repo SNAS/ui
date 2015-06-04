@@ -1,12 +1,10 @@
 <div class="margin-small" ng-controller="ASViewController">
   <!--<h1 class="pgtitle"> AS View</h1>-->
   <div>
-    <label>AS Number or AS Name:</label>
-    <p>
-      <input id="suggestions" type="text" size="50" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
+    <div>AS Number or AS Name:
+      <input id="suggestions" type="text" size="50" ng-keypress="keypress($event)" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
       <span class="help-block">Example: 109/Cisco</span>
-    </p>
-
+    </div>
     <h3 ng-show="nodata">This AS doesn't exist</h3>
     <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
     <!--again! :)</h3>-->
