@@ -174,6 +174,8 @@ angular.module('bmp.components.card')
       $scope.globalViewPeerOptions = {
         enableRowSelection: true,
         enableRowHeaderSelection: false,
+        enableHorizontalScrollbar: 0,
+        enableVerticalScrollbar: 0,
         height: $scope.globalViewPeerGridInitHeight,
         columnDefs: [
           {name: "PeerASN", displayName: 'AS Number', width: '*'},

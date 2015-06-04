@@ -62,7 +62,9 @@ angular.module('bmp.components.card')
     $scope.ribGridOptions = {
       height: $scope.ribGridInitHeight,
       enableRowSelection: true,
-      enableRowHeaderSelection: true
+      enableRowHeaderSelection: true,
+      enableVerticalScrollbar: 0,
+      enableHorizontalScrollbar: 0
     };
 
     $scope.ribGridOptions.columnDefs = [

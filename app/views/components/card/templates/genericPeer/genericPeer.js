@@ -66,6 +66,8 @@ angular.module('bmp.components.card')
       height: $scope.summaryGridInitHeight,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 0,
       columnDefs:[
         {name: "asn", displayName: 'AS Number', width: '*'},
         {name: "as_name", displayName: 'AS Name', width: '*'},

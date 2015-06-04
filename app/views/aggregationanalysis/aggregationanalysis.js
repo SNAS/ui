@@ -18,7 +18,8 @@ angular.module('bmpUiApp')
     $scope.ShowPrefixsOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
-      enableHorizontalScrollbar: 0
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 0
     };
 
     $scope.ShowPrefixsOptions.columnDefs = [
@@ -192,7 +193,8 @@ angular.module('bmpUiApp')
     $scope.ShowRedundantOptions = {
       enableRowSelection: true,
       enableRowHeaderSelection: false,
-      enableHorizontalScrollbar: 0
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 0
     };
     $scope.ShowRedundantOptions.columnDefs = [
       {name: "Prefix", displayName: 'Prefix', width: '30%'},

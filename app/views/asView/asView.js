@@ -32,6 +32,7 @@ angular.module('bmpUiApp')
         showGridFooter: true,
         height: $scope.prefixGridInitHeight,
         enableHorizontalScrollbar: 0,
+        enableVerticalScrollbar: 0,
         columnDefs: [
           {
             name: "prefixWithLen", displayName: 'Prefix', width: '*'
@@ -54,6 +55,7 @@ angular.module('bmpUiApp')
         showGridFooter: true,
         height: $scope.upstreamGridInitHeight,
         enableHorizontalScrollbar: 0,
+        enableVerticalScrollbar: 0,
         columnDefs: [
           {name: "asn", displayName: 'ASN', width: '30%'},
           {name: "as_name", displayName: 'AS Name', width: '70%'}
@@ -68,6 +70,7 @@ angular.module('bmpUiApp')
         showGridFooter: true,
         height: $scope.downstreamGridInitHeight,
         enableHorizontalScrollbar: 0,
+        enableVerticalScrollbar: 0,
         columnDefs: [
           {name: "asn", displayName: 'ASN', width: '30%'},
           {name: "as_name", displayName: 'AS Name', width: '70%'}
