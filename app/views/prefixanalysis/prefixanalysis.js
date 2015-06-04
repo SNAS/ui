@@ -505,6 +505,8 @@ angular.module('bmpUiApp')
       myModal.open();
     };
 
+
+    // createShowTable function is to add a table in showDetails modal.
     $scope.createShowTable = function()
     {
       $scope.showItems = '<table>';
@@ -580,6 +582,77 @@ angular.module('bmpUiApp')
             '<tr>' +
             '<td>' +
             'Previous_AS_Path: ' +
+            '</td>' +
+
+            '<td>' +
+            valusAsLast +
+            '</td>' +
+            '</tr>'
+            );
+          }
+        }
+        if (key == "Communities")
+        {
+          //$scope.itemValueTemp = $scope.itemValue;
+          //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
+          //console.log("$scope.itemValueLast", $scope.itemValueLast);
+          console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+          console.log("$scope.itemValue",$scope.itemValue);
+          console.log("##################################");
+          //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
+
+          //console.log(typeof(value),value);
+
+          var valueAs = "";
+          var valusAsLast = "";
+
+          angular.forEach($scope.itemValue.Communities,function(value,key)
+          {
+            if($scope.itemValue.Communities_list[key].flag)
+            {
+              valueAs = valueAs + "<div class='whitebarCommunities'>" + value +"</div>";
+            }
+            else
+            {
+              valueAs = valueAs + "<div class='greenbarCommunities'>" + value +"</div>";
+            }
+          })
+
+          $scope.showItems += (
+          '<tr>' +
+          '<td>' +
+          'Current_Communities: ' +
+          '</td>' +
+
+          '<td>' +
+          valueAs +
+          '</td>' +
+          '</tr>'
+          );
+
+          // this part to insert last path as , the same .
+
+          if(!angular.equals($scope.itemValueLast.Communities, $scope.itemValue.Communities))
+          {
+
+            angular.forEach($scope.itemValueLast.Communities,function(value,key)
+            {
+
+              if($scope.itemValueLast.Communities_list[key].last_flag)
+              {
+                valusAsLast = valusAsLast + "<div class='whitebarCommunities'>" + value +"</div>";
+              }
+              else
+              {
+                valusAsLast = valusAsLast + "<div class='redbarCommunities'>" + value +"</div>";
+              }
+            })
+
+
+            $scope.showItems += (
+            '<tr>' +
+            '<td>' +
+            'Previous_Communities: ' +
             '</td>' +
 
             '<td>' +
@@ -752,34 +825,34 @@ angular.module('bmpUiApp')
       restrict: 'E'
     }
   }])
-  .factory('modal', ['$compile', '$rootScope', function ($compile, $rootScope) {
-    return function() {
-      var elm;
-      var modal = {
-        open: function() {
+.factory('modal', ['$compile', '$rootScope', function ($compile, $rootScope) {
+  return function() {
+    var elm;
+    var modal = {
+      open: function() {
 
-         var html = '<div class="modal" ng-style="modalStyle"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"></div><div class="modal-body">' + $rootScope.showItems + '</div><div class="modal-footer"><button id="buttonClose" class="btn btn-primary" ng-click="close()">Close</button></div></div></div></div>';
-          elm = angular.element(html);
-          angular.element(document.body).prepend(elm);
+        var html = '<div class="modal" ng-style="modalStyle"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"></div><div class="modal-body">' + $rootScope.showItems + '</div><div class="modal-footer"><button id="buttonClose" class="btn btn-primary" ng-click="close()">Close</button></div></div></div></div>';
+        elm = angular.element(html);
+        angular.element(document.body).prepend(elm);
 
-          $rootScope.close = function() {
-            modal.close();
-          };
+        $rootScope.close = function() {
+          modal.close();
+        };
 
-          $rootScope.modalStyle = {"display": "block"};
+        $rootScope.modalStyle = {"display": "block"};
 
-          $compile(elm)($rootScope);
-        },
-        close: function() {
-          if (elm) {
-            elm.remove();
-          }
+        $compile(elm)($rootScope);
+      },
+      close: function() {
+        if (elm) {
+          elm.remove();
         }
-      };
-
-      return modal;
+      }
     };
-  }]);
+
+    return modal;
+  };
+}]);
 
 
 
