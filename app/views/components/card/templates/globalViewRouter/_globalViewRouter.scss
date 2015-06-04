@@ -57,8 +57,17 @@ svg.title {
   height: 250px;
   position:relative;
   h4{
-    text-align: center; 
+    text-align: left;
     margin: 20px 0;
+    color: #677885;
+    font-size: 11pt;
+    text-transform: uppercase;
+  }
+  .table{
+    color: #677885;
+    td:nth-of-type(even){
+      font-family: 'CiscoSansExtraLight';
+    }
   }
 }
 

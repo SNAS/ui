@@ -6,85 +6,84 @@
 
   <div ng-show="loading" bmp-loading loading-var="loading"></div>
 
-  <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list" ng-class="{expanded: expandList, 'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}" ng-style="{ height: dualWindow == true ? '70%' : 'inherit' }">
-    <div class="panel-search">
-      <span class="glyphicon glyphicon-remove" ng-show="panelSearch" ng-click="panelSearch = ''"></span>
-      <input type="text" placeholder="Search" class="search" ng-model="panelSearch" ng-click="expandPanelLocations()"/>
-    </div>
-    <h3 class="panel-header" ng-init="expandList = false" ng-click="expandList = !expandList">
-      <strong class="pointer">&lt;</strong> {{panelTitle}}
-    </h3>
+  <div class="map-container">
 
-    <div ng-show="selectedRouter != undefined && selectedRouter != true" class="panel-header selected-router">
-      <div class="row">
-        <div class="col-xs-6"><h3>{{selectedRouter.RouterName}}</h3></div>
-        <div class="col-xs-6"><h3>{{selectedRouter.RouterIP}}</h3></div>
-        <span ng-click="deselectPanelRouter()" class="remove-router">x</span>
+    <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list expanded" ng-class="{'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}" ng-style="{ height: dualWindow == true ? '70%' : mapHeight }">
+      
+      <h3 class="panel-header">
+        {{panelTitle}}
+        <div class="panel-search">
+          <span class="glyphicon glyphicon-remove" ng-show="panelSearch" ng-click="panelSearch = ''"></span>
+          <input type="text" placeholder="Search..." class="search" ng-model="panelSearch" ng-click="expandPanelLocations()"/>
+        </div>
+      </h3>
+
+      <div ng-show="selectedRouter != undefined && selectedRouter != true" class="panel-header selected-router">
+        <div class="row">
+          <div class="col-xs-6"><h3>{{selectedRouter.RouterName}}</h3></div>
+          <div class="col-xs-6"><h3>{{selectedRouter.RouterIP}}</h3></div>
+          <span ng-click="deselectPanelRouter()" class="remove-router">x</span>
+        </div>
       </div>
-    </div>
 
-    <div class="main" ng-class="{expanded: expandList, 'peers-only': selectedRouter === true, tall: !selectionMade}" ng-style="{ height: dualWindow == true ? '100%' : 'inherit' }">
-      <ul class="locations" ng-hide="selectedRouter"  ng-style="{'max-height': panelHeight}">
-        <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
-          <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
-            <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
-            <span class="count">({{location.options.routers.length}})</span>
+      <div class="main expanded" ng-class="{'peers-only': selectedRouter === true, tall: !selectionMade}" ng-style="{ height: dualWindow == true ? '100%' : '100%' }">
+        <ul class="locations" ng-hide="selectedRouter">
+          <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
+            <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
+              <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
+              <span class="count">({{location.options.routers.length}})</span>
+            </p>
+            <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
+            <ul class="routers" ng-show="location.expandRouters">
+              <li ng-repeat="router in filteredRouters = (location.options.routers | filter:panelSearch)" ng-click="selectPanelRouter(location, router)">
+                <div class="row">
+                  <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true" tooltip="Name: {{router.RouterName}}" tooltip-placement="top">{{router.RouterName}}</div>
+                  <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true" tooltip="IP: {{router.RouterIP}}" tooltip-placement="top">{{router.RouterIP}}</div>
+                </div>
+                <span class="is-up">
+                  <icon ng-show="router.isConnected" class="bmp-up"></icon>
+                  <icon ng-show="!router.isConnected" class="bmp-down"></icon>
+                </span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <ul class="locations" ng-show="selectedRouter">
+          <li ng-repeat="(latlng, location) in peerDictionary | orderBy: 'location.options.city'" ng-show="filteredPeers.length">
+            <p class="router-list-city" ng-class="{expanded: location.options.expandPeers}" ng-click="selectPanelPeerLocation(location)">
+              <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
+              <span class="count">({{location.options.peers.length}})</span>
+            </p>
+            <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
+            <ul class="peers" ng-show="location.options.expandPeers">
+              <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location, peer)" tooltip-popup-delay="1000" data-container="body" tooltip-append-to-body="true" tooltip="Router: {{peer.RouterName}}" tooltip-placement="bottom">
+                <div class="row">
+                  <div class="col-xs-6" tooltip-popup-delay="1000" tooltip="Name: {{peer.PeerName}}" tooltip-append-to-body="true" tooltip-placement="top">{{peer.PeerName}}</div>
+                  <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true" tooltip="IP: {{peer.PeerIP}}" tooltip-placement="top">{{peer.PeerIP}}</div>
+                </div>
+                <span class="is-up">
+                  <icon ng-show="peer.isUp" class="bmp-up"></icon>
+                  <icon ng-show="!peer.isUp" class="bmp-down"></icon>
+                </span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="expanded-section expanded" ng-show="showBottomPane">
+        <div class="peers-up-down">
+          <p class="peers-up">
+            ipv4 up: {{ips[0][2]}}<br>
+            ipv6 up: {{ips[1][2]}}
           </p>
-          <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
-          <ul class="routers" ng-show="location.expandRouters">
-            <li ng-repeat="router in filteredRouters = (location.options.routers | filter:panelSearch)" ng-click="selectPanelRouter(location, router)">
-              <div class="row">
-                <div class="col-xs-6" tooltip-popup-delay="1000" tooltip="Name: {{router.RouterName}}" tooltip-placement="top">{{router.RouterName}}</div>
-                <div class="col-xs-6">{{router.RouterIP}}</div>
-              </div>
-              <span class="is-up">
-                <icon ng-show="router.isConnected" class="bmp-up"></icon>
-                <icon ng-show="!router.isConnected" class="bmp-down"></icon>
-              </span>
-            </li>
-          </ul>
-        </li>
-      </ul>
-
-      <ul class="locations" ng-show="selectedRouter"  ng-style="{'max-height': panelHeight}">
-        <li ng-attr-id="id{{location.options.id}}" ng-repeat="(latlng, location) in peerDictionary | orderBy: 'location.options.city'" ng-show="filteredPeers.length">
-          <p class="router-list-city" ng-class="{expanded: location.options.expandPeers}" ng-click="selectPanelPeerLocation(location)">
-            <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
-            <span class="count">({{location.options.peers.length}})</span>
+          <p class="peers-down">
+            ipv4 down: {{ips[0][3]}}<br>
+            ipv6 down: {{ips[1][3]}}
           </p>
-          <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
-          <ul class="peers" ng-show="location.options.expandPeers">
-            <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location, peer)" tooltip-popup-delay="1000" tooltip="Router: {{peer.RouterName}}" tooltip-placement="bottom">
-              <div class="row">
-                <div class="col-xs-6" tooltip-popup-delay="1000" tooltip="Name: {{peer.PeerName}}" tooltip-placement="top">{{peer.PeerName}}</div>
-                <div class="col-xs-6">{{peer.PeerIP}}</div>
-              </div>
-              <span class="is-up">
-                <icon ng-show="peer.isUp" class="bmp-up"></icon>
-                <icon ng-show="!peer.isUp" class="bmp-down"></icon>
-              </span>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <div ng-class="{active: activeInfo}" class="map-control info">
-    <span>{{info}}</span>
-  </div>
-
-
-  <!--bottom pane-->
-  <div class="bottom-pane" ng-show="!loading && location === 'globalView'">
-
-    <div ng-click="bottomPaneState=!bottomPaneState" ng-class="{'top':!bottomPaneState}" class="collapsed-section">
-      <div class="bmp-expand coll-icon"></div>
-    </div>
-
-    <div class="expanded-section" ng-class="{expanded: !bottomPaneState && !loading}">
-      <div clas="row">
-        <div class="col-xs-2">
+        </div>
+        <div class="col-xs-6">
           <div class="peer-chart">
             <p>
               <span class="count">{{routerCount}}</span>
@@ -93,13 +92,13 @@
             <nvd3 ng-click="bottomPaneGraphSelect()" options="routerChartOptions" data="routerChartData" config="showChartsConfig" style="float: left;"></nvd3>
           </div>
         </div>
-        <div class="col-xs-8">
+        <!-- <div class="col-xs-8">
           <div style="background-color: white;width: 100%;height: 129px;float: left;margin: 10px auto 0;color:#555;">
             <nvd3 ng-click="bottomPaneGraphSelect()" class="top-chart" options="topChartOptions" data="topChartData" config="showChartsConfig"></nvd3>
           </div>
-        </div>
-        <div class="col-xs-2">
-          <div class="peer-chart">
+        </div> -->
+        <div class="col-xs-6">
+          <div class="peer-chart right">
             <p>
               <span class="count">{{peerCount}}</span>
               Peers
@@ -109,9 +108,13 @@
         </div>
       </div>
     </div>
+
+    <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="72%" resize></leaflet>  
+
   </div>
 
-  <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="100%" resize></leaflet>
-
+  <div ng-class="{active: activeInfo}" class="map-control info">
+    <span>{{info}}</span>
+  </div>
 
 </div>

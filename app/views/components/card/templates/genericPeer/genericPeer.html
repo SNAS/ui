@@ -1,11 +1,9 @@
 <div ng-controller="BmpCardPeerController">
 
   <div class="card-expand row">
-    <span class="col-xs-1">
-        <icon class="bmp-outline_router bmp-outline-router"></icon>
-    </span>
     <span class="col-xs-2">
-        <h4>BGP Peer</h4>
+      <icon class="bmp-outline_router left" style="  font-size: 26px; color: #e9a445; margin: 0 10px;"></icon>
+      <h4>BGP Peer</h4>
     </span>
     <span class="col-xs-4">
       <h5>{{data.PeerName}}</h5>
@@ -16,15 +14,15 @@
     <span class="col-xs-1">
         <h5>{{data.PeerASN}}</h5>
     </span>
-    <span class="col-xs-2">
-      <span class="up-time">
-        <h5>Up Time</h5>
-        <span class="green ng-binding">
-          {{ peerTime }}
-        </span>
-        <icon ng-class="{'bmp-down': !data.isUp, 'bmp-up': data.isUp}" ng-style="!data.isUp &amp;&amp; {'color': '#f2732d'} || data.isUp &amp;&amp; {'color': '#7ec35c'}" style="font-size: 18px;">
-        </icon>
-      </span>
+    <span class="col-xs-3">
+        <h5 class="right">
+          Up Time
+          <span class="green ng-binding">
+            {{ peerTime }}
+          </span>
+          <icon ng-class="{'bmp-down': !data.isUp, 'bmp-up': data.isUp}" ng-style="!data.isUp &amp;&amp; {'color': '#f2732d'} || data.isUp &amp;&amp; {'color': '#7ec35c'}" style="font-size: 14px;">
+          </icon>
+        </h5>
     </span>
   </div>
 
