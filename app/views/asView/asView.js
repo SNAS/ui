@@ -98,7 +98,7 @@ angular.module('bmpUiApp')
         if(grid.data.length > dataLength){
           height = (dataLength * 30);
         }else{
-          height = (grid.data.length * 30);
+          height = ((grid.data.length * grid.rowHeight) + 50);
         }
         grid.changeHeight = height;
         gridapi.grid.gridHeight = grid.changeHeight;
