@@ -1,13 +1,6 @@
 <div ng-controller="BmpCardUpdatesGraphController">
-  <!--COLLAPSED view-->
-  <div ng-hide="cardExpand" class="collapsed"  style="display: block;">
-    <h5 class="graph-collapsed">Count of Withdrawns</h5>
-  </div>
-
-  <!--EXPANDED view-->
-  <div ng-show="cardExpand">
-    <br>
-    <h1 class="pgtitle">Count of Withdrawns</h1>
+  <div>
+    <h4>Count of Withdrawns</h1>
     <nvd3 options="updatesGraph" data="updatesData" config="updatesDataConfig"></nvd3>
   </div>
 </div>

@@ -1,0 +1,6 @@
+<div class="margin-small" ng-controller="SecurityAnalysisController">
+  <div class="loading-section" ng-style="{'height':securityGridInitHeight}">
+    <div ng-show="securityIsLoad" bmp-loading loading-var="securityIsLoad"></div>
+    <div class="grid" ui-grid="securityGridOptions" ui-grid-auto-resize></div>
+  </div>
+</div>

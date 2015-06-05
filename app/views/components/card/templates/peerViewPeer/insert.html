@@ -47,7 +47,7 @@
                 </div>
                 <!--line-->
                 <div style="display: table-cell;" ng-if="path.isEnd">
-                  <div style="width: 100px;height: 2px;background-color:#000000;position: absolute;margin-top: 45px;"
+                  <div style="width: 100px;height: 2px;background-color:#eaeaea;position: absolute;margin-top: 45px;"
                        ng-style="{'width':asPath.lineWidth}"></div>
                 </div>
               </div>
@@ -59,13 +59,6 @@
         <section style="width: 100%;margin: auto;padding: 10px;">
           <div class="left-container"
             style="float: left;width:49%;">
-
-
-            <div ng-if="rpiconData != undefined">
-              <div bmp-card-router-peer-icon
-                   data="rpiconData">
-              </div>
-            </div>
 
             <br><br>
             <p><span class="bold">RouterName:</span> {{values.RouterName}}</p>

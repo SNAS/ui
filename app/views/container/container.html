@@ -49,7 +49,11 @@
               <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iiaa" class="instant-input"/></form>
               <dual-control d="dualWindow" l="aggregationAnalysis"></dual-control>
             </li>
-        </ul> 
+          <li active-item><a ui-sref="app.securityAnalysis">Security Analysis</a>
+            <form ng-hide="dualWindow.active" ng-submit="submit()"></form>
+            <dual-control d="dualWindow" l="securityAnalysis"></dual-control>
+          </li>
+        </ul>
       </div>
       <button ng-click="toggleDualWindows()" ng-class="{'dual-control-active': dualWindow.active}" class="dual-window-control">
         Dual Window Mode

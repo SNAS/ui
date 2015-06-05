@@ -205,7 +205,7 @@ angular.module('bmpUiApp')
           if (key != "raw_output" && key != "remarks") {
             if(key == "transit_v4_prefixes")
                 showValues += '<tr class="hoz-line"><td>&nbsp;<td></td></tr>';
-              
+
             var value = data[key];
             showValues += (
             '<tr>' +
@@ -243,7 +243,7 @@ angular.module('bmpUiApp')
             console.log(error.message);
           });
       }
-      
+
       //Get upstream data
       function getUpstream() {
         upstreamData = [];
