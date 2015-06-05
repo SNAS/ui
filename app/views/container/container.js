@@ -114,6 +114,8 @@ angular.module('bmpUiApp')
         //console.log('mug', newPath);
         $scope.page = newPath.substring(1);
         $scope.title = $scope.page.replace(/-/g, ' ');
+        var titleArray = $scope.title.split(' ');
+        $scope.module = titleArray.pop() == 'analysis' ? 'Analysis': 'Dashboards';
 
         if (path === newPath) {
           element.addClass('active');
