@@ -1,7 +1,14 @@
 <div ng-controller="BmpCardPreWithdrawsGraphController">
   <div>
-    <h4>Top prefixes by number of updates in past two hours</h1>
-    <nvd3 options="preWithdrawsGraph" data="preWithdrawsData" config="preUpdatesConfig"></nvd3>
+
+    <h4>Top prefixes by number of updates in past two hours</h4>
+
+    <nvd3
+      options="preWithdrawsGraph"
+      data="preWithdrawsData"
+      config="preUpdatesConfig">
+    </nvd3>
+
     Prefix: {{ hover }}
   </div>
 </div>
