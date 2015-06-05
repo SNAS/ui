@@ -57,7 +57,7 @@ angular.module('bmp.components.card')
       $scope.graphVisibility = true;
     };
 
-    $scope.ribGridInitHeight = 350;
+    $scope.ribGridInitHeight = 300;
 
     $scope.ribGridOptions = {
       height: $scope.ribGridInitHeight,

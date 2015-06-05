@@ -14,33 +14,20 @@
 }
 
 .whois-info {
-
   background-color: #FFFFFF;
-
   border: solid 1px;
-
   border-color: #D4D4D4;
-
   border-radius: 0px;
-
   padding: 30px;
 
-
-
   p {
-
     text-transform: uppercase;
-
     color: black;
-
     font-weight: normal;
-
   }
-
 }
 
 .preStyle {
-
   line-height: 2;
   text-transform: capitalize;
   background-color: #FFFFFF;
@@ -60,7 +47,10 @@
     width: 100%;
 
     .hoz-line {
-      border-bottom: solid 1px #D4D4D4
+      hr{
+        margin: 10px 0;
+        border-top: 2px solid #f6f6f6;
+      }
     }
     td:nth-child(odd) {
       font-weight: normal;

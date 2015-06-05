@@ -204,7 +204,7 @@ angular.module('bmpUiApp')
           var key = keys[i];
           if (key != "raw_output" && key != "remarks") {
             if(key == "transit_v4_prefixes")
-                showValues += '<tr class="hoz-line"><td>&nbsp;<td></td></tr>';
+                showValues += '<tr class="hoz-line"><td colspan="2"><hr></td></tr>';
 
             var value = data[key];
             showValues += (

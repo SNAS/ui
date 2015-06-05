@@ -132,10 +132,11 @@ a{
 }
 
 h3{
-  font-size: 14pt;
+  font-size: 13pt;
   text-transform: uppercase;
   color: #1C2B36;
   margin-left: 15px;
+  margin-bottom: 25px;
 }
 
 body{
@@ -150,9 +151,16 @@ pre {
   overflow-y: scroll;
 }
 
+.table-container{
+  background-color: #FFFFFF;
+  border: solid 1px;
+  border-color: #D4D4D4;
+  border-radius: 0px;
+  padding: 10px;
+}
+
 table {
-  font-size: 11px;
-  font-weight: lighter;
+  font-size: 10pt;
 }
 
 icon.bmp-up {
@@ -192,21 +200,23 @@ icon.bmp-down {
   margin-right: 2%;
 }
 
+.nav-tabs li a{
+  color: #aaa;
+
+  &:hover{
+    background-color: #fafafa;
+  }
+}
+
 .pgtitle {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'CiscoSans';
   font-size: 18px;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: 100;
   line-height: 19.8px;
 }
 
 .pgtitle-small {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'CiscoSans';
   font-size: 14px;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: 100;
   line-height: 19.8px;
 }
 
@@ -230,11 +240,9 @@ $grid-text-colour: #71818D;
   border:none;
   color: $grid-text-colour;
   border-bottom: 1px solid #efefef;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 12px;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
+  font-family: 'CiscoSans';
+  font-size: 10pt;
+  margin: 0 40px;
 }
 
 .ui-grid-header {
@@ -388,6 +396,10 @@ div.ui-grid-cell input.ng-valid {
 
 .ui-grid-header-cell .ui-grid-cell-contents{
   font-size: 10pt
+}
+
+.ui-grid-viewport {
+  min-height: 30px;
 }
 
 .loading-section .ui-grid-row-selected > [ui-grid-row] > .ui-grid-cell {
