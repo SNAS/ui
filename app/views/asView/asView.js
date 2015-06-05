@@ -309,7 +309,7 @@ angular.module('bmpUiApp')
           }
           else {
             $scope.downstreamGridOptions.data = downstreamData;
-            $scope.calGridHeight($scope,downstreamGridOptions, $scope.downstreamGridApi);
+            $scope.calGridHeight($scope.downstreamGridOptions, $scope.downstreamGridApi);
             $scope.downstreamIsLoad = false; //stop loading
             $scope.downstreamNodata = false;
           }
