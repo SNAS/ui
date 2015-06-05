@@ -520,7 +520,7 @@ angular.module('bmpUiApp')
         if (key == "Origin")
         {
           {
-            if(!angular.equals($scope.itemValueLast.Origin, $scope.itemValue.Origin))
+            if((typeof($scope.itemValueLast.Origin)!= "undefined")&&(!angular.equals($scope.itemValueLast.Origin, $scope.itemValue.Origin)))
             {
               $scope.showItems += (
               '<tr>' +
@@ -622,7 +622,7 @@ angular.module('bmpUiApp')
         }
         else if (key == "MED")
         {
-            if(!angular.equals($scope.itemValueLast.MED, $scope.itemValue.MED))
+            if((typeof($scope.itemValueLast.MED)!= "undefined")&&(!angular.equals($scope.itemValueLast.MED, $scope.itemValue.MED)))
             {
               $scope.showItems += (
               '<tr>' +
@@ -652,7 +652,7 @@ angular.module('bmpUiApp')
         }
         else if (key == "NH")
         {
-          if(!angular.equals($scope.itemValueLast.NH, $scope.itemValue.NH))
+          if((typeof($scope.itemValueLast.NH)!= "undefined")&&(!angular.equals($scope.itemValueLast.NH, $scope.itemValue.NH)))
           {
             $scope.showItems += (
             '<tr>' +
@@ -681,7 +681,7 @@ angular.module('bmpUiApp')
         }
         else if (key == "LocalPref")
         {
-          if(!angular.equals($scope.itemValueLast.LocalPref, $scope.itemValue.LocalPref))
+          if((typeof($scope.itemValueLast.LocalPref)!= "undefined")&&(!angular.equals($scope.itemValueLast.LocalPref, $scope.itemValue.LocalPref)))
           {
             $scope.showItems += (
             '<tr>' +
@@ -848,7 +848,7 @@ angular.module('bmpUiApp')
           .html(function(d,i) {
             //console.log(i);
 
-            var content = "<strong>Number:</strong> " + d;
+            var content = "<strong>Number:</strong>" + d;
             return content;
           });
 
