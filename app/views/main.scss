@@ -15,36 +15,6 @@
  * terms of the license you have entered into with Cisco.
  *
  */
- //===================================================================================
-// Variables
-//===================================================================================
-//$brand-primary: 							#3491df;
-//$text-light:								#fff;
-//
-//$navbar-default-toggle-hover-bg:			darken($brand-primary, 10%);
-//$navbar-default-toggle-icon-bar-bg:       	#fff;
-//$navbar-default-toggle-border-color:       	#fff;
-//$navbar-default-color:             			#fff;
-//$navbar-default-link-color:  				#fff;
-//$navbar-default-bg:                			#3491df;
-
-
-$brand-primary: #00ccff;
-$text-light: #a6a6a6;
-
-$navbar-default-toggle-hover-bg:darken($brand-primary, 10%);
-$navbar-default-toggle-icon-bar-bg:#fff;
-$navbar-default-toggle-border-color:#fff;
-$navbar-default-color:#00ccff;
-$navbar-default-link-color:#fff;
-$navbar-default-bg:#15bdf4;
-$navbar-default-brand-color:#fff;
-$text-color:#888;
-
-a{
-    cursor: pointer;
-}
-
 //=================================================================================
 // Imports
 //=================================================================================
@@ -84,27 +54,74 @@ a{
 
 @import "compass/css3";
 
-.browsehappy {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
-}
+//=============================================================
+// Components
+//===================================================================================
 
-.left {
-  float: left;
-}
+//card imports
+@import "components/card/components/routerPeerIcon/routerPeerIcon";
 
-.right {
-  float: right;
-}
+@import "components/card/card";
+@import "components/card/templates/globalViewRouter/globalViewRouter";
+@import "components/card/templates/genericPeer/genericPeer";
+@import "components/card/templates/globalViewPeer/insert";
+@import "components/card/templates/peerViewPeer/insert";
+@import "components/card/templates/preUpdatesGraph/preUpdatesGraph";
+@import "components/card/templates/preWithdrawsGraph/preWithdrawsGraph";
+@import "components/card/templates/updatesGraph/updatesGraph";
+@import "components/card/templates/withdrawsGraph/withdrawsGraph";
 
-.loading-section{
-  width: 100%;
-  position: relative;
-}
+//map
+@import "components/map/map";
+@import "components/loading/loading";
+
+//============================================================
+// Sections
+//===================================================================================
+@import "asAnalysis/asAnalysis";
+@import "login/login";
+@import "peerAnalysis/peerAnalysis";
+@import "prefixAnalysis/prefixAnalysis";
+@import "whoIs/whoIs";
+@import "container/container";
+@import "globalView/globalView";
+@import "peerView/peerView";
+@import "bmpglyph";
+@import "linkState/linkState";
+@import "asView/asView";
+@import "orrView/orrView";
+
+//test pages
+@import "cardChanges/cardChanges";
+
+//===================================================================================
+// Variables
+//===================================================================================
+//$brand-primary: 							#3491df;
+//$text-light:								#fff;
+//
+//$navbar-default-toggle-hover-bg:			darken($brand-primary, 10%);
+//$navbar-default-toggle-icon-bar-bg:       	#fff;
+//$navbar-default-toggle-border-color:       	#fff;
+//$navbar-default-color:             			#fff;
+//$navbar-default-link-color:  				#fff;
+//$navbar-default-bg:                			#3491df;
+
+
+$brand-primary: #00ccff;
+$text-light: #a6a6a6;
+
+$navbar-default-toggle-hover-bg:darken($brand-primary, 10%);
+$navbar-default-toggle-icon-bar-bg:#fff;
+$navbar-default-toggle-border-color:#fff;
+$navbar-default-color:#00ccff;
+$navbar-default-link-color:#fff;
+$navbar-default-bg:#15bdf4;
+$navbar-default-brand-color:#fff;
+$text-color:#888;
 
 a{
+  cursor: pointer;
   color: #0386d2;
   transition: color 0.2s;
 
@@ -127,55 +144,79 @@ body{
   min-width: 1300px;
 }
 
-//============================================================
-// Sections
-//===================================================================================
-@import "asAnalysis/asAnalysis";
-@import "login/login";
-@import "peerAnalysis/peerAnalysis";
-@import "prefixAnalysis/prefixAnalysis";
-@import "whoIs/whoIs";
-@import "container/container";
-@import "globalView/globalView";
-@import "peerView/peerView";
-@import "bmpglyph";
-@import "linkState/linkState";
-@import "asView/asView";
-@import "orrView/orrView";
+pre {
+  background-color: #f4f6f9;
+  //max-height: 300px;
+  overflow-y: scroll;
+}
+
+table {
+  font-size: 11px;
+  font-weight: lighter;
+}
 
 icon.bmp-up {
-	color: #7ec35c;
+  color: #7ec35c;
 }
 
 icon.bmp-down {
-	color: #f2732d;
+  color: #f2732d;
 }
 
-//test pages
-@import "cardChanges/cardChanges";
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
 
-//=============================================================
-// Components
-//===================================================================================
+.left {
+  float: left;
+}
 
-//card imports
-@import "components/card/components/routerPeerIcon/routerPeerIcon";
+.right {
+  float: right;
+}
 
-@import "components/card/card";
-@import "components/card/templates/globalViewRouter/globalViewRouter";
-@import "components/card/templates/genericPeer/genericPeer";
-@import "components/card/templates/globalViewPeer/insert";
-@import "components/card/templates/peerViewPeer/insert";
-@import "components/card/templates/preUpdatesGraph/preUpdatesGraph";
-@import "components/card/templates/preWithdrawsGraph/preWithdrawsGraph";
-@import "components/card/templates/updatesGraph/updatesGraph";
-@import "components/card/templates/withdrawsGraph/withdrawsGraph";
+.loading-section{
+  width: 100%;
+  position: relative;
+}
 
-//map
-@import "components/map/map";
-@import "components/loading/loading";
+#loading-bar .bar {
+  background: #15c7ce;
+}
 
+.margin-small {
+  margin-left: 2%;
+  margin-right: 2%;
+}
 
+.pgtitle {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 100;
+  line-height: 19.8px;
+}
+
+.pgtitle-small {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 100;
+  line-height: 19.8px;
+}
+
+.help-block{
+  display: inline;
+}
+
+.input{
+  padding-bottom:12px;
+}
 
 //UI - GRID override style
 
@@ -189,6 +230,11 @@ $grid-text-colour: #71818D;
   border:none;
   color: $grid-text-colour;
   border-bottom: 1px solid #efefef;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
 }
 
 .ui-grid-header {
@@ -197,6 +243,30 @@ $grid-text-colour: #71818D;
 }
 .ui-grid-top-panel {
   border:none;
+  position: relative;
+  overflow: hidden;
+  font-weight: bold;
+  background: #ffffff;
+  //background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(1, #ffffff));
+  //background: -ms-linear-gradient(bottom, #eeeeee, #ffffff);
+  //background: -moz-linear-gradient(center bottom, #eeeeee 0%, #ffffff 100%);
+  //background: -o-linear-gradient(#ffffff, #eeeeee);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);
+  -webkit-border-top-right-radius: -1px;
+  -webkit-border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-top-left-radius: -1px;
+  -moz-border-radius-topright: -1px;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-topleft: -1px;
+  border-top-right-radius: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: -1px;
+  -moz-background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
 }
 
 .ui-grid-header-cell {

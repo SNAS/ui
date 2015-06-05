@@ -37,7 +37,7 @@ angular.module('bmpUiApp')
         );
       } else {
         //DEFAULT Data
-        return "<table class='routerLoc noRouterLoc'><tr><td>There is no Location Data ...</td></tr></table>";
+        return "<table class='table'><tr><td>There is no Location Data ...</td></tr></table>";
       }
     };
 

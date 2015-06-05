@@ -1,7 +1,7 @@
 <div class="margin-small" ng-controller="ASViewController">
   <!--<h1 class="pgtitle"> AS View</h1>-->
   <div>
-    <div>AS Number or AS Name:
+    <div class="input">AS Number or AS Name:
       <input id="suggestions" type="text" size="50" ng-keypress="keypress($event)" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
       <span class="help-block">Example: 109/Cisco</span>
     </div>
@@ -9,7 +9,6 @@
     <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
     <!--again! :)</h3>-->
   </div>
-  <br>
   <div ng-show="!nodata">
     <div class="row">
       <div class="col-lg-6 whois-info">
@@ -22,7 +21,7 @@
         <p class="pgtitle-small">Prefixes Originated by AS {{asn}}</p>
         <div class="loading-section" ng-style="{'height':prefixGridInitHeight}">
           <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
-          <div class="grid" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+          <div ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
         </div>
       </div>
     </div>

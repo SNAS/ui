@@ -1,42 +1,41 @@
- <!------------------Aggregation Analysis---------------->
+<!------------------Aggregation Analysis---------------->
 <div class="margin-small" ng-controller="aggregationanalysisController">
-  <label>AS Number:</label>
-  <p>
-    <input type="text" ng-model="searchPrefix" placeholder="Search ..." />
+  <div class="input">
+    AS Number:
+    <input type="text" ng-model="searchPrefix" placeholder="Search ..."/>
     <button ng-click="getsShowPrefixInfo()">Get it!</button>
-
+  </div>
   <div class="loading-section" ng-style="{'height':peerGridInitHeight}">
     <div ng-show="PrefixTableIsLoad" bmp-loading loading-var="PrefixTableIsLoad"></div>
-    <div ui-grid-selection ui-grid="ShowPrefixsOptions" ></div>
+    <div ui-grid-selection ui-grid="ShowPrefixsOptions"></div>
   </div>
 
   <hr>
 
   <!--this part is peer select.-->
-  <label>Aggregate prefixes, originated by {{searchPrefix}}:</label>
-  <div>
+  <div class="input">
+
+    Aggregate prefixes, originated by {{searchPrefix}}:
+
     <!--Selects BGP Peer please:-->
-    <p>
     <!--<select ng-model="peerData.selectPeer" ng-options="peer.PeerName as peer.title for peer in peerData" ng-change="selectChange()">-->
-    <select ng-model="peerData.selectPeer" ng-options="peer.PeerName for peer in peerData | orderBy : 'PeerName'" ng-change="selectChange()">
-    <option value="">Selects BGP Peer please:</option>
+    <select ng-model="peerData.selectPeer" ng-options="peer.PeerName for peer in peerData | orderBy : 'PeerName'"
+            ng-change="selectChange()">
+      <option value="">Selects BGP Peer please:</option>
     </select>
-
-    <div ng-show="showGraphTable">
-      <hr>
-      Efficiency of aggregation:
-      <p ng-bind="efficiency"></p>
-    </div>
-
   </div>
+
+  <div ng-show="showGraphTable">
+    Efficiency of aggregation:
+    <span ng-bind="efficiency"></span>
+  </div>
+
 
   <div ng-show="showGraphTable">
     <!--show the efficiency chart-->
     <nvd3 options="chartOptions" data="data"></nvd3>
 
     <!--show redundant options-->
-    <div ui-grid-selection ui-grid="ShowRedundantOptions" ui-grid-resize-columns ></div>
+    <div ui-grid-selection ui-grid="ShowRedundantOptions" ui-grid-resize-columns></div>
   </div>
-
-  <hr>
 </div>

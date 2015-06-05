@@ -5,24 +5,32 @@
       <icon class="bmp-outline_router left" style="  font-size: 26px; color: #e9a445; margin: 0 10px;"></icon>
       <h4>BGP Peer</h4>
     </span>
+
     <span class="col-xs-4">
       <h5>{{data.PeerName}}</h5>
     </span>
+
     <span class="col-xs-2">
       <h5>{{data.PeerIP}}</h5>
     </span>
+
     <span class="col-xs-1">
         <h5>{{data.PeerASN}}</h5>
     </span>
+
     <span class="col-xs-3">
-        <h5 class="right">
-          Up Time
-          <span class="green ng-binding">
-            {{ peerTime }}
-          </span>
-          <icon ng-class="{'bmp-down': !data.isUp, 'bmp-up': data.isUp}" ng-style="!data.isUp &amp;&amp; {'color': '#f2732d'} || data.isUp &amp;&amp; {'color': '#7ec35c'}" style="font-size: 14px;">
-          </icon>
-        </h5>
+      <h5 class="right">
+
+        Up Time
+        <span class="green ng-binding">
+          {{ peerTime }}
+        </span>
+        <icon
+          ng-class="{'bmp-down': !data.isUp, 'bmp-up': data.isUp}"
+          ng-style="!data.isUp &amp;&amp; {'color': '#f2732d'} || data.isUp &amp;&amp; {'color': '#7ec35c'}"
+          style="font-size: 14px;">
+        </icon>
+      </h5>
     </span>
   </div>
 
@@ -34,16 +42,20 @@
 
       <div class="col-lg-4">
         <div class="icon-container">
-          <div bmp-card-router-peer-icon
-               data="rpIconData">
+          <div
+            bmp-card-router-peer-icon
+            data="rpIconData">
           </div>
         </div>
       </div>
 
       <div class="col-lg-4">
+
         <div class="icon-container">
+
           <h4>Number Of Prefixes</h4>
           <div class="rib-image">
+
             <div class="rib-section" ng-repeat="item in ribData">
               <div class="rib-part">
                 <div class="{{ item[2] }} rib-icon"></div>
@@ -53,12 +65,14 @@
                 {{ item[1] }}
               </div>
             </div>
+
             <div class="rib-section">
               <div class="rib-part">
                 <div>Filter Rate</div>
                 <div style="font-size: 20px">{{ filterRate }}%</div>
               </div>
             </div>
+
           </div>
         </div>
       </div>

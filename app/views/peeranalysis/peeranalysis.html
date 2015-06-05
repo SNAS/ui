@@ -6,7 +6,7 @@
 
     <div class="loading-section" ng-style="{'height':peerGridInitHeight}">
       <div ng-show="peerTableIsLoad" bmp-loading loading-var="peerTableIsLoad"></div>
-      <div id="peerTable" class="grid" ui-grid="peerTableOptions" ui-grid-selection ui-grid-auto-resize></div>
+      <div id="peerTable" ui-grid="peerTableOptions" ui-grid-selection ui-grid-auto-resize></div>
     </div>
 
   </div>
@@ -17,9 +17,9 @@
     <span ng-class="PeerStatus">{{RouterName}}  {{PeerName}}</span>
   </h3>
 
-  <div class="detailspanel margin-small">
+  <div class="margin-small">
     <div class="loading-section">
-      <pre class="preStyle" style="height:300px" ng-bind-html="detailsPanel"></pre>
+      <pre ng-bind-html="detailsPanel"></pre>
       <div bmp-loading loading-var="peerTableIsLoad"></div>
     </div>
   </div>

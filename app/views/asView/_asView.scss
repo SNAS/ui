@@ -9,10 +9,6 @@
   font-weight: lighter;
 }
 
-.help-block{
-  display: inline;
-}
-
 .fixedHeight{
    height: 297px;
 }
@@ -60,19 +56,20 @@
   color: #5c6e7c;
   word-wrap: normal;
 
-    table{
-      width: 100%;
+  table{
+    width: 100%;
 
-      .hoz-line {
-        border-bottom: solid 1px #D4D4D4
-      }
-      td:nth-child(odd) {
-        font-weight: normal;
-        padding-right: 50px;
-        color: #3F5869;
-      }
-      td:nth-child(even) {
-        font-family: 'CiscoSansExtraLight';
-      }
+    .hoz-line {
+      border-bottom: solid 1px #D4D4D4
+    }
+    td:nth-child(odd) {
+      font-weight: normal;
+      padding-right: 50px;
+      color: #3F5869;
+    }
+    td:nth-child(even) {
+      font-family: 'CiscoSansExtraLight';
     }
   }
+}
+

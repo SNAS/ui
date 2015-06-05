@@ -1,45 +1,35 @@
 <div ng-controller="BmpCardGlobalRouterController">
-  <!--
-  <div ng-hide="cardExpand" class="collapsed">
-
-    <icon class="bmp-outline_router" style="font-size:36px;color:#6197d1"></icon>
-    <div class="collapsedContent">
-      <ul class="collContentItems">
-        <li>BMP ROUTER</li>
-        <li>{{data.RouterName}}</li>
-        <li>{{data.RouterIP}}</li>
-        <li>
-          <icon
-            ng-class="{'bmp-down': data.isConnected!='1', 'bmp-up': data.isConnected=='1'}"
-            ng-style="data.isConnected != '1' && {'color': '#f2732d'} ||
-                      data.isConnected == '1' && {'color': '#7ec35c'}"
-            style="font-size:18px;">
-          </icon>
-        </li>
-      </ul>
-    </div>
-  </div> -->
 
   <!--EXPANDED view-->
   <div class="card-expand row">
+
     <span class="col-xs-2">
-      <icon class="bmp-outline_router left" style="  font-size: 26px; color: #6197d1; margin: 0 10px;"></icon>
+      <icon class="bmp-outline_router min-router left"></icon>
       <h4>BMP Router</h4>
     </span>
+
     <span class="col-xs-4">
-        <h5>{{data.RouterName}}</h5>
+      <h5>{{data.RouterName}}</h5>
     </span>
+
     <span class="col-xs-2">
       <h5>{{data.RouterIP}}</h5>
     </span>
+
     <span class="col-xs-4">
       <h5 class="right">
         Up Time
         <span class="green ng-binding">
           {{upTime}}
         </span>
-        <icon ng-class="{'bmp-down': data.isConnected!='1', 'bmp-up': data.isConnected=='1'}" ng-style="data.isConnected != '1' &amp;&amp; {'color': '#f2732d'} || data.isConnected == '1' &amp;&amp; {'color': '#7ec35c'}" style="font-size: 14px; color: rgb(126, 195, 92);" class="bmp-up">
+
+        <icon
+          ng-class="{'bmp-down': data.isConnected!='1', 'bmp-up': data.isConnected=='1'}"
+          ng-style="data.isConnected != '1' &amp;&amp; {'color': '#f2732d'} || data.isConnected == '1' &amp;&amp; {'color': '#7ec35c'}"
+          style="font-size: 14px; color: rgb(126, 195, 92);"
+          class="bmp-up">
         </icon>
+
       </h5>
     </span>
   </div>
@@ -50,19 +40,29 @@
     <div class="row">
       <div class="col-lg-4">
       <div class="icon-container" >
+
         <h4>
           Router - Peer Diagram
         </h4>
-        <div ng-show="peerIconIsLoad" bmp-loading loading-var="peerIconIsLoad"></div>
-        <div class="peer-amount-icon" style="position: relative;width: 280px;  margin: 50px auto 0;">
-            <div style="color:#AFAFAF;width: 135px; text-align: center; " tooltip="{{ data.RouterName }}">
+
+        <div
+          ng-show="peerIconIsLoad"
+          bmp-loading
+          loading-var="peerIconIsLoad">
+        </div>
+
+        <div class="peer-amount-icon">
+
+            <div class="top-val" tooltip="{{ data.RouterName }}">
               {{ wordCheck(data.RouterName) }}
             </div>
-            <div class="peers-amount-img" style="height: 70px;">
+
+            <div class="peers-amount-img">
+
               <div class="left-section">
                 <div class="centre">
                   <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
-                  <div class="router-name-text">{{ data.RouterIPWithLength }} </div>
+                  <div class="router-name-text">{{ data.RouterIP }} </div>
                 </div>
               </div>
 
@@ -78,6 +78,7 @@
                 </div>
                 <icon class="bmp-peer_label"></icon>
               </div>
+
             </div>
             <div class="router-peer-line"></div>
           </div>
@@ -85,11 +86,22 @@
       </div>
 
       <!--IP's Graph-->
-      <div class="col-lg-4" style="text-align: center">
+      <div class="col-lg-4 graph">
         <div class="icon-container">
+
           <h4>Peer Types</h4>
-          <div ng-show="ipGraphIsLoad" bmp-loading loading-var="ipGraphIsLoad"></div>
-          <nvd3 options="ipAmountOptions" data="ipAmountData"></nvd3>
+
+          <div
+            ng-show="ipGraphIsLoad"
+            bmp-loading
+            loading-var="ipGraphIsLoad">
+          </div>
+
+          <nvd3
+            options="ipAmountOptions"
+            data="ipAmountData">
+          </nvd3>
+
         </div>
       </div>
 
@@ -103,23 +115,42 @@
 
     </div>
 
-    <!--ROUTER up time graph-->
-    <div class="row" style="margin-bottom: 0">
+    <div class="row up-graph">
       <div class="col-lg-6">
         <div class="icon-container">
+          <!--ROUTER up time graph-->
           <div>
-            <nvd3 options="upTimeOptions" data="upTimeData" config="upTimeConfig"></nvd3>
+            <nvd3
+              options="upTimeOptions"
+              data="upTimeData"
+              config="upTimeConfig">
+            </nvd3>
           </div>
         </div>
       </div>
+
       <div class="col-lg-6">
         <div class="icon-container">
+
           <h4>Downstream ASes of Router {{ data.RouterName }}</h4>
           <!--R/Peers info table-->
+          <div
+            class="loading-section"
+            ng-style="{'height':globalViewPeerGridInitHeight}">
 
-          <div class="loading-section" ng-style="{'height':globalViewPeerGridInitHeight}">
-            <div ng-show="globalViewGridIsLoad" bmp-loading loading-var="globalViewGridIsLoad"></div>
-            <div class="gridStyle" ui-grid="globalViewPeerOptions" ui-grid-selection ng-style="{'height':globalViewPeerOptions.changeHeight}"></div>
+            <div
+              ng-show="globalViewGridIsLoad"
+              bmp-loading
+              loading-var="globalViewGridIsLoad">
+            </div>
+
+            <div
+              class="gridStyle"
+              ui-grid="globalViewPeerOptions"
+              ui-grid-selection
+              ng-style="{'height':globalViewPeerOptions.changeHeight}">
+            </div>
+
           </div>
 
         </div>
