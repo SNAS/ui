@@ -1,27 +1,28 @@
 <!------------------Aggregation Analysis---------------->
 <div class="margin-small" ng-controller="aggregationanalysisController">
-  <div class="input">
+  <div>
     AS Number:
     <input type="text" ng-model="searchPrefix" placeholder="Search ..."/>
     <button ng-click="getsShowPrefixInfo()">Get it!</button>
   </div>
+  <hr>
   <div class="loading-section" ng-style="{'height':peerGridInitHeight}">
     <div ng-show="PrefixTableIsLoad" bmp-loading loading-var="PrefixTableIsLoad"></div>
     <div ui-grid-selection ui-grid="ShowPrefixsOptions"></div>
   </div>
 
-  <hr>
+  <!--<hr>-->
 
   <!--this part is peer select.-->
+  <h3 class="pgtitle">
+    Aggregate prefixes, originated by {{searchPrefix}}
+  </h3>
+  <!--Selects BGP Peer please:-->
+  <!--<select ng-model="peerData.selectPeer" ng-options="peer.PeerName as peer.title for peer in peerData" ng-change="selectChange()">-->
   <div class="input">
-
-    Aggregate prefixes, originated by {{searchPrefix}}:
-
-    <!--Selects BGP Peer please:-->
-    <!--<select ng-model="peerData.selectPeer" ng-options="peer.PeerName as peer.title for peer in peerData" ng-change="selectChange()">-->
     <select ng-model="peerData.selectPeer" ng-options="peer.PeerName for peer in peerData | orderBy : 'PeerName'"
             ng-change="selectChange()">
-      <option value="">Selects BGP Peer please:</option>
+      <option value="">Selects BGP Peer please</option>
     </select>
   </div>
 
@@ -29,7 +30,6 @@
     Efficiency of aggregation:
     <span ng-bind="efficiency"></span>
   </div>
-
 
   <div ng-show="showGraphTable">
     <!--show the efficiency chart-->

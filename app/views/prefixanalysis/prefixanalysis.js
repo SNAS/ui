@@ -20,7 +20,8 @@ angular.module('bmpUiApp')
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0
+      enableVerticalScrollbar: 0,
+      rowHeight: 25
     };
 
     //define the columns
@@ -130,7 +131,8 @@ angular.module('bmpUiApp')
       multiSelect: true,
       modifierKeysToMultiSelect: true,
       enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0
+      enableVerticalScrollbar: 0,
+      rowHeight: 25
     };
 
     // here to get the intemValue , use this  to create table

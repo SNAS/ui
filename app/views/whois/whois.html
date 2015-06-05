@@ -1,23 +1,21 @@
 <div class="margin-small" ng-controller="WhoIsController">
   <!------------------WHO IS---------------->
   <!--<h1 class="pgtitle">Whois</h1>-->
-  <div class="input">
+  <div>
     AS Number or AS Name:
-      <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Cisco"/>
+    <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Cisco"/>
     <span class="help-block">Example: 109/Cisco</span>
   </div>
+  <!--<hr>-->
   <!--Angular Table added here-->
   <div class="loading-section" ng-style="{'height':whoIsGridOptions.changeHeight}">
     <div ng-show="whoIsLoad" bmp-loading loading-var="whoIsLoad"></div>
     <div ui-grid-selection ui-grid="whoIsGridOptions" ng-style="{'height':whoIsGridOptions.changeHeight}"></div>
   </div>
-
+  <hr>
   <div>
     <!--<div style="padding:12px">-->
     <h3 class="pgtitle">Details</h3>
-
-    <div>
-      <pre ng-bind-html="selectedItem"></pre>
-    </div>
+    <pre ng-bind-html="selectedItem"></pre>
   </div>
 </div>
