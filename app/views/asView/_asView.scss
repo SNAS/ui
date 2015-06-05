@@ -13,20 +13,6 @@
    height: 297px;
 }
 
-.whois-info {
-  background-color: #FFFFFF;
-  border: solid 1px;
-  border-color: #D4D4D4;
-  border-radius: 0px;
-  padding: 30px;
-
-  p {
-    text-transform: uppercase;
-    color: black;
-    font-weight: normal;
-  }
-}
-
 .preStyle {
   line-height: 2;
   text-transform: capitalize;
@@ -63,3 +49,17 @@
   }
 }
 
+#AS_topology{
+  border: 1px solid #D4D4D4;
+}
+
+.main-page-search{
+  margin-bottom: 30px;
+  background-color: #fff;
+  border: 1px solid #d4d4d4;
+  padding: 20px;
+
+  .input{
+    padding-bottom: 0;
+  }
+}

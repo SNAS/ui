@@ -4,7 +4,7 @@
 .half-height{
   height: 50vh;
   overflow-y: scroll;
-  border:5px solid #bbb;
+  border: 2px solid #1C2B36;
 }
 
 .dual-window-control{
@@ -28,8 +28,9 @@
   }
 
   &.dual-control-active{
-    background-color: #B56060;
-    border-color: #944848;
+    background-color: #542C2C;
+    border-color: #2E1717;
+    box-shadow: inset 0 2px 2px #613535, inset 0 -2px 2px #442323;
   }
 }
 
@@ -42,8 +43,8 @@
 
   button{
     width: 40px;
-    border: 1px solid #eee;
-    background-color: #f7f7f7;
+    border: 1px solid #1C2B36;
+    background-color: #9CB2C3;
     height: 15px;
     margin: 0;
     padding: 0;
@@ -63,8 +64,20 @@
 }
 
 .main-container{
-  padding: 15px;
+  padding: 35px;
   background-color: #f6f6f6;
+
+  &.global-view, &.peer-view{
+    padding: 15px;
+  }
+
+  &.no-padding{
+    padding: 0;
+  }
+
+  .row.main-area{
+    margin-bottom: 35px;
+  }
 }
 
 .navbar-header {

@@ -83,7 +83,7 @@
             <!--<span class="icon-bar" id="bar-three"></span>-->
         <!--</button>-->
         <span class="navbar-left navbar-brand">
-          <span class="breadcrumbs">Dashboards &gt; </span>{{title}}
+          <span class="breadcrumbs">{{category}} &gt; </span>{{title}}
         </span>
         <div class="navbar-right account">
           <span class="account-name">{{username}}</span>
@@ -94,7 +94,7 @@
     <!-- END HEADER -->
 
   <!-- MAIN -->
-  <div class="main-container" ng-class="page">
+  <div class="main-container {{page}}" ng-class="{'no-padding': dualWindow.active}">
     <div ui-view></div>
     <!-- FOOTER -->
     <div class="footer">

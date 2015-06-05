@@ -110,7 +110,8 @@ angular
       .state('app.aggregationAnalysis', {
         url: '/aggregation-analysis?:as?',
         templateUrl: 'views/aggregationanalysis/aggregationanalysis.html'
-      }).state('app.securityAnalysis', {
+      })
+      .state('app.securityAnalysis', {
         url: '/security-analysis?:as?',
         templateUrl: 'views/securityAnalysis/securityAnalysis.html'
       })

@@ -27,7 +27,7 @@
       </div>
 
       <div class="main expanded" ng-class="{'peers-only': selectedRouter === true, tall: !selectionMade}" ng-style="{ height: dualWindow == true ? '100%' : '100%' }">
-        <ul class="locations" ng-hide="selectedRouter">
+        <ul class="locations" ng-class="{'no-panel': dualWindow}" ng-hide="selectedRouter">
           <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
             <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
               <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
@@ -49,7 +49,7 @@
           </li>
         </ul>
 
-        <ul class="locations" ng-show="selectedRouter">
+        <ul class="locations" ng-class="{'no-panel': dualWindow}" ng-show="selectedRouter">
           <li ng-repeat="(latlng, location) in peerDictionary | orderBy: 'location.options.city'" ng-show="filteredPeers.length">
             <p class="router-list-city" ng-class="{expanded: location.options.expandPeers}" ng-click="selectPanelPeerLocation(location)">
               <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
@@ -72,7 +72,7 @@
         </ul>
       </div>
 
-      <div class="expanded-section expanded" ng-show="showBottomPane">
+      <div class="expanded-section expanded" ng-hide="dualWindow">
         <div class="peers-up-down">
           <p class="peers-up">
             ipv4 up: {{ips[0][2]}}<br>

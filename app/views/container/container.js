@@ -89,7 +89,25 @@ angular.module('bmpUiApp')
 
     $scope.location = $location;
     $scope.$watch('location.path()', function(newPath) {
-      console.log($state);
+
+      switch($state.current.name){
+        case "app.globalView": 
+        case "app.peerView": 
+        case "app.asView": 
+        case "app.app.linkState": 
+        case "app.app.orrView": 
+        case "app.app.whoIs": 
+          $scope.category = "Dashboards";
+          break;
+        case "app.peerAnalysis":
+        case "app.asAnalysis":
+        case "app.prefixAnalysis":
+        case "app.aggregationAnalysis":
+        case "app.securityAnalysis":
+          $scope.category = "Analysis";
+          break;
+      }
+
       if($state.current.name != "app.dualWindow.contents" && $rootScope.dualWindow.active){
         $state.transitionTo('app.' + $rootScope.dualWindow.a);
         $window.location.reload();

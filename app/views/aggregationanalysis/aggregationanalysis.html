@@ -5,12 +5,15 @@
     <input type="text" ng-model="searchPrefix" placeholder="Search ..."/>
     <button ng-click="getsShowPrefixInfo()">Get it!</button>
   </div>
-  <div class="loading-section" ng-style="{'height':peerGridInitHeight}">
-    <div ng-show="PrefixTableIsLoad" bmp-loading loading-var="PrefixTableIsLoad"></div>
-    <div ui-grid-selection ui-grid="ShowPrefixsOptions"></div>
+  <div class="row main-area">
+    <div class="table-container">
+      <h3>Prefix Information</h3>
+      <div class="loading-section" ng-style="{'height':peerGridInitHeight}">
+        <div ng-show="PrefixTableIsLoad" bmp-loading loading-var="PrefixTableIsLoad"></div>
+        <div ui-grid-selection ui-grid="ShowPrefixsOptions"></div>
+      </div>
+    </div>
   </div>
-
-  <hr>
 
   <!--this part is peer select.-->
   <div class="input">

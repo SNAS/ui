@@ -304,7 +304,9 @@
                 li{
                     position:relative;
                 }
-
+                &.no-panel{
+                  margin-bottom: 0;
+                }
             }
 
             .go-to-location{

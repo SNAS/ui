@@ -129,6 +129,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.fitMap('single');
             }
         }
+
+        //Reset map view to avoid 'blank map' error
+        $timeout(function(){
+            $scope.map._resetView($scope.map.getCenter(), $scope.map.getZoom(), true);
+        }, 100);
     }
 
 

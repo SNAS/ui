@@ -27,7 +27,7 @@ angular.module('bmpUiApp')
 
       //prefix table options
       $scope.prefixGridOptions = {
-        rowHeight: 25,
+        rowHeight: 32,
         gridFooterHeight: 15,
         showGridFooter: true,
         height: $scope.prefixGridInitHeight,
@@ -50,7 +50,7 @@ angular.module('bmpUiApp')
       //upstream table options
       $scope.upstreamGridOptions = {
         enableColumnResizing: true,
-        rowHeight: 25,
+        rowHeight: 32,
         gridFooterHeight: 15,
         showGridFooter: true,
         height: $scope.upstreamGridInitHeight,
@@ -65,7 +65,7 @@ angular.module('bmpUiApp')
       //downstream table options
       $scope.downstreamGridOptions = {
         enableColumnResizing: true,
-        rowHeight: 25,
+        rowHeight: 32,
         gridFooterHeight: 15,
         showGridFooter: true,
         height: $scope.downstreamGridInitHeight,
