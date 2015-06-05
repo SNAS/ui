@@ -9,15 +9,15 @@
   <!--Angular Table added here-->
   <div class="loading-section" ng-style="{'height':whoIsGridOptions.changeHeight}">
     <div ng-show="whoIsLoad" bmp-loading loading-var="whoIsLoad"></div>
-    <div class="grid" ui-grid-selection ui-grid="whoIsGridOptions" ng-style="{'height':whoIsGridOptions.changeHeight}"></div>
+    <div ui-grid-selection ui-grid="whoIsGridOptions" ng-style="{'height':whoIsGridOptions.changeHeight}"></div>
   </div>
 
   <div>
     <!--<div style="padding:12px">-->
     <h3 class="pgtitle">Details</h3>
 
-    <div class="detailspanel">
-      <pre class="preStyle" ng-bind-html="selectedItem"></pre>
+    <div>
+      <pre ng-bind-html="selectedItem"></pre>
     </div>
   </div>
 </div>
