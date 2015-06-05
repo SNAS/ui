@@ -94,9 +94,9 @@ angular.module('bmpUiApp')
         case "app.globalView": 
         case "app.peerView": 
         case "app.asView": 
-        case "app.app.linkState": 
-        case "app.app.orrView": 
-        case "app.app.whoIs": 
+        case "app.linkState": 
+        case "app.orrView": 
+        case "app.whoIs": 
           $scope.category = "Dashboards";
           break;
         case "app.peerAnalysis":
@@ -131,6 +131,7 @@ angular.module('bmpUiApp')
       $scope.$watch('location.path()', function(newPath) {
         //console.log('mug', newPath);
         $scope.page = newPath.substring(1);
+        $scope.title = $scope.page.replace(/-/g, ' ');
 
         if (path === newPath) {
           element.addClass('active');

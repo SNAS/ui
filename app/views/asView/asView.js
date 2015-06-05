@@ -17,9 +17,9 @@ angular.module('bmpUiApp')
       var nodes = [], links = [], nodeSet = [];
       var id = 0;
 
-      $scope.prefixGridInitHeight = 300;
-      $scope.upstreamGridInitHeight = 300;
-      $scope.downstreamGridInitHeight = 300;
+      $scope.prefixGridInitHeight = 400;
+      $scope.upstreamGridInitHeight = 400;
+      $scope.downstreamGridInitHeight = 400;
 
       $scope.nodata = false;
       $scope.upstreamNodata = false;

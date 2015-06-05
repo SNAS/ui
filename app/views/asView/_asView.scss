@@ -40,7 +40,6 @@
     }
     td:nth-child(odd) {
       font-weight: normal;
-      padding-right: 50px;
       color: #3F5869;
     }
     td:nth-child(even) {
@@ -49,7 +48,7 @@
   }
 }
 
-#AS_topology{
+#AS_topology, #link_state_topology{
   border: 1px solid #D4D4D4;
 }
 
