@@ -15,36 +15,6 @@
  * terms of the license you have entered into with Cisco.
  *
  */
- //===================================================================================
-// Variables
-//===================================================================================
-//$brand-primary: 							#3491df;
-//$text-light:								#fff;
-//
-//$navbar-default-toggle-hover-bg:			darken($brand-primary, 10%);
-//$navbar-default-toggle-icon-bar-bg:       	#fff;
-//$navbar-default-toggle-border-color:       	#fff;
-//$navbar-default-color:             			#fff;
-//$navbar-default-link-color:  				#fff;
-//$navbar-default-bg:                			#3491df;
-
-
-$brand-primary: #00ccff;
-$text-light: #a6a6a6;
-
-$navbar-default-toggle-hover-bg:darken($brand-primary, 10%);
-$navbar-default-toggle-icon-bar-bg:#fff;
-$navbar-default-toggle-border-color:#fff;
-$navbar-default-color:#00ccff;
-$navbar-default-link-color:#fff;
-$navbar-default-bg:#15bdf4;
-$navbar-default-brand-color:#fff;
-$text-color:#888;
-
-a{
-    cursor: pointer;
-}
-
 //=================================================================================
 // Imports
 //=================================================================================
@@ -84,27 +54,74 @@ a{
 
 @import "compass/css3";
 
-.browsehappy {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
-}
+//=============================================================
+// Components
+//===================================================================================
 
-.left {
-  float: left;
-}
+//card imports
+@import "components/card/components/routerPeerIcon/routerPeerIcon";
 
-.right {
-  float: right;
-}
+@import "components/card/card";
+@import "components/card/templates/globalViewRouter/globalViewRouter";
+@import "components/card/templates/genericPeer/genericPeer";
+@import "components/card/templates/globalViewPeer/insert";
+@import "components/card/templates/peerViewPeer/insert";
+@import "components/card/templates/preUpdatesGraph/preUpdatesGraph";
+@import "components/card/templates/preWithdrawsGraph/preWithdrawsGraph";
+@import "components/card/templates/updatesGraph/updatesGraph";
+@import "components/card/templates/withdrawsGraph/withdrawsGraph";
 
-.loading-section{
-  width: 100%;
-  position: relative;
-}
+//map
+@import "components/map/map";
+@import "components/loading/loading";
+
+//============================================================
+// Sections
+//===================================================================================
+@import "asAnalysis/asAnalysis";
+@import "login/login";
+@import "peerAnalysis/peerAnalysis";
+@import "prefixAnalysis/prefixAnalysis";
+@import "whoIs/whoIs";
+@import "container/container";
+@import "globalView/globalView";
+@import "peerView/peerView";
+@import "bmpglyph";
+@import "linkState/linkState";
+@import "asView/asView";
+@import "orrView/orrView";
+
+//test pages
+@import "cardChanges/cardChanges";
+
+//===================================================================================
+// Variables
+//===================================================================================
+//$brand-primary: 							#3491df;
+//$text-light:								#fff;
+//
+//$navbar-default-toggle-hover-bg:			darken($brand-primary, 10%);
+//$navbar-default-toggle-icon-bar-bg:       	#fff;
+//$navbar-default-toggle-border-color:       	#fff;
+//$navbar-default-color:             			#fff;
+//$navbar-default-link-color:  				#fff;
+//$navbar-default-bg:                			#3491df;
+
+
+$brand-primary: #00ccff;
+$text-light: #a6a6a6;
+
+$navbar-default-toggle-hover-bg:darken($brand-primary, 10%);
+$navbar-default-toggle-icon-bar-bg:#fff;
+$navbar-default-toggle-border-color:#fff;
+$navbar-default-color:#00ccff;
+$navbar-default-link-color:#fff;
+$navbar-default-bg:#15bdf4;
+$navbar-default-brand-color:#fff;
+$text-color:#888;
 
 a{
+  cursor: pointer;
   color: #0386d2;
   transition: color 0.2s;
 
@@ -127,9 +144,43 @@ body{
   min-width: 1300px;
 }
 
+pre {
+  background-color: #f4f6f9;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
 table {
   font-size: 11px;
   font-weight: lighter;
+}
+
+icon.bmp-up {
+  color: #7ec35c;
+}
+
+icon.bmp-down {
+  color: #f2732d;
+}
+
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.loading-section{
+  width: 100%;
+  position: relative;
 }
 
 #loading-bar .bar {
@@ -137,7 +188,8 @@ table {
 }
 
 .margin-small {
-  margin: 2%;
+  margin-left: 2%;
+  margin-right: 2%;
 }
 
 .pgtitle {
@@ -149,61 +201,22 @@ table {
   line-height: 19.8px;
 }
 
-.pre {
-  background-color: #f4f6f9;
-  max-height: 300px;
-  overflow-y: scroll;
+.pgtitle-small {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 100;
+  line-height: 19.8px;
 }
 
-//============================================================
-// Sections
-//===================================================================================
-@import "asAnalysis/asAnalysis";
-@import "login/login";
-@import "peerAnalysis/peerAnalysis";
-@import "prefixAnalysis/prefixAnalysis";
-@import "whoIs/whoIs";
-@import "container/container";
-@import "globalView/globalView";
-@import "peerView/peerView";
-@import "bmpglyph";
-@import "linkState/linkState";
-@import "asView/asView";
-@import "orrView/orrView";
-
-icon.bmp-up {
-	color: #7ec35c;
+.help-block{
+  display: inline;
 }
 
-icon.bmp-down {
-	color: #f2732d;
+.input{
+  padding-bottom:12px;
 }
-
-//test pages
-@import "cardChanges/cardChanges";
-
-//=============================================================
-// Components
-//===================================================================================
-
-//card imports
-@import "components/card/components/routerPeerIcon/routerPeerIcon";
-
-@import "components/card/card";
-@import "components/card/templates/globalViewRouter/globalViewRouter";
-@import "components/card/templates/genericPeer/genericPeer";
-@import "components/card/templates/globalViewPeer/insert";
-@import "components/card/templates/peerViewPeer/insert";
-@import "components/card/templates/preUpdatesGraph/preUpdatesGraph";
-@import "components/card/templates/preWithdrawsGraph/preWithdrawsGraph";
-@import "components/card/templates/updatesGraph/updatesGraph";
-@import "components/card/templates/withdrawsGraph/withdrawsGraph";
-
-//map
-@import "components/map/map";
-@import "components/loading/loading";
-
-
 
 //UI - GRID override style
 
