@@ -91,11 +91,11 @@ angular.module('bmpUiApp')
         gridapi.core.handleWindowResize();
 
         var height;
-        var dataLength = 14;
+        var dataLength = 15;
         if(grid.data.length > dataLength){
           height = (dataLength * 30);
         }else{
-          height = (grid.data.length * 32);
+          height = (grid.data.length * 30);
         }
         grid.changeHeight = height;
         gridapi.grid.gridHeight = grid.changeHeight + 50;
