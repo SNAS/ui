@@ -13,7 +13,7 @@
   <hr>
 
   <!--this part is peer select.-->
-  <div>
+  <div class="input">
 
     Aggregate prefixes, originated by {{searchPrefix}}:
 
@@ -26,9 +26,8 @@
   </div>
 
   <div ng-show="showGraphTable">
-    <hr>
     Efficiency of aggregation:
-    <p ng-bind="efficiency"></p>
+    <span ng-bind="efficiency"></span>
   </div>
 
 
@@ -39,6 +38,4 @@
     <!--show redundant options-->
     <div ui-grid-selection ui-grid="ShowRedundantOptions" ui-grid-resize-columns></div>
   </div>
-
-  <hr>
 </div>
