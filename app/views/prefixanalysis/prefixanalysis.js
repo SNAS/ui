@@ -20,7 +20,7 @@ angular.module('bmpUiApp')
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0,
+      enableVerticalScrollbar: 1,
       rowHeight: 25
     };
 
@@ -131,7 +131,7 @@ angular.module('bmpUiApp')
       multiSelect: true,
       modifierKeysToMultiSelect: true,
       enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0,
+      enableVerticalScrollbar: 1,
       rowHeight: 25
     };
 

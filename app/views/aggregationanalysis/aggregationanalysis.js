@@ -20,7 +20,7 @@ angular.module('bmpUiApp')
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0,
+      enableVerticalScrollbar: 1,
       rowHeight: 32
     };
 
@@ -197,7 +197,7 @@ angular.module('bmpUiApp')
       enableRowSelection: false,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0,
+      enableVerticalScrollbar: 1,
       rowHeight: 25
     };
     $scope.ShowRedundantOptions.columnDefs = [

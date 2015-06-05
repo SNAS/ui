@@ -28,7 +28,7 @@ angular.module('bmpUiApp')
       noUnselect: true,
       modifierKeysToMultiSelect: false,
       enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0,
+      enableVerticalScrollbar: 1,
       rowTemplate:
         '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
       onRegisterApi: function (gridApi) {

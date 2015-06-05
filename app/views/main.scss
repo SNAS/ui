@@ -392,10 +392,13 @@ div.ui-grid-cell input.ng-valid {
 
 .ui-grid-cell-contents{
   font-size: 9pt;
+  margin-top: 3px;
+  font-family: 'CiscoSansExtraLight';
 }
 
 .ui-grid-header-cell .ui-grid-cell-contents{
-  font-size: 10pt
+  font-size: 10pt;
+  font-family: 'CiscoSans';
 }
 
 .ui-grid-viewport {
