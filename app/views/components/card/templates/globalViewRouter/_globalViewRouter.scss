@@ -7,46 +7,28 @@ svg.title {
  font: bold 56px Arial;
 }
 
-.routerLoc {
-  text-align: left;
-  border-style: hidden;
-  margin-left: 4px;
+.min-router {
+  font-size: 26px;
+  color: #6197d1;
+  margin: 0 10px;
 }
 
-.noRouterLoc {
-  border: 0px;
-  border-left-width: 2px;
-  width: 200px;
-  height: 150px;
-  td {
-    padding: 20px;
-    text-align: center;
-  }
+.peer-amount-icon {
+  position: relative;
+  width: 280px;
+  margin: 50px auto 0;
 }
-.routerCard {
-  .routerLoc{
-    margin-top: 2em;
-  }
+
+.peers-amount-img {
+  height: 70px;
 }
-.tableSummary {
-  width: 100%;
-  td, th {
-    padding: 3px;
-    border-width: 1px;
-  }
+
+.graph {
+  text-align: center
 }
-.ribTable {
-  width: 100%;
-  border: solid 1px;
-  td, th {
-    padding: 3px;
-  }
-  th {
-    border-bottom: solid 1px #808080;
-  }
-  td:nth-of-type(odd) {
-    text-align: right;
-  }
+
+.up-graph {
+  margin-bottom: 0
 }
 
 .icon-container{
@@ -57,8 +39,22 @@ svg.title {
   height: 250px;
   position:relative;
   h4{
-    text-align: center; 
+    text-align: left;
     margin: 20px 0;
+    color: #677885;
+    font-size: 11pt;
+    text-transform: uppercase;
+  }
+  .table{
+    color: #677885;
+    td:nth-of-type(even){
+      font-family: 'CiscoSansExtraLight';
+    }
+  }
+  .top-val {
+    color: #AFAFAF;
+    width: 135px;
+    text-align: center;
   }
 }
 

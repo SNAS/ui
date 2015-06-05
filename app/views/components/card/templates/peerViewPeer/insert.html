@@ -12,7 +12,7 @@
       <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
 
       <!--Angular Table added here-->
-      <div class="loading-section" ng-style="{'height':ribGridInitHeight}">
+      <div class="loading-section" ng-style="{'height':ribGridOptions.changeHeight}">
         <div ng-show="ribGridIsLoad" bmp-loading loading-var="ribGridIsLoad" font-width="80"></div>
         <div ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}"></div>
       </div>
@@ -21,65 +21,67 @@
       <!--like the more details section.-->
       <div ng-if="values !== undefined">
         <!--{{ values }}-->
+        <br>
         <h3>Prefix Detail</h3>
-
-      <!-- AS path -->
-
-        <div class = "as-path">
-
-            <div ng-style="{'width':asPath.width}">
-
-              <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}" style="position: relative;float: left;">
-                <!--icon-->
-                <div style="display: table-cell;">
-
-                  <span ng-if="path.noTopText">
-                    <div style="text-align: center">&nbsp;</div>
-                  </span>
-
-                  <span ng-if="!path.noTopText">
-                    <div style="text-align: center" tooltip="{{path.topVal}}">{{ wordCheck(path.topVal) }}</div>
-                  </span>
-
-                  <!--This is the actual AS icon-->
-                  <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html=true data-popover></div>
-                  <div style="text-align: center">{{ path.botVal }}</div>
-                </div>
-                <!--line-->
-                <div style="display: table-cell;" ng-if="path.isEnd">
-                  <div style="width: 100px;height: 2px;background-color:#000000;position: absolute;margin-top: 45px;"
-                       ng-style="{'width':asPath.lineWidth}"></div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
 
         <section style="width: 100%;margin: auto;padding: 10px;">
           <div class="left-container"
             style="float: left;width:49%;">
 
-
-            <div ng-if="rpiconData != undefined">
-              <div bmp-card-router-peer-icon
-                   data="rpiconData">
-              </div>
+            <div class="detailspanel">
+              <pre class="preStyle">
+                <table>
+                  <tr>
+                    <td>RouterName:</td>
+                    <td>{{values.RouterName}}</td>
+                  </tr>
+                  <tr>
+                    <td>PeerName:</td>
+                    <td>{{values.PeerName}}</td>
+                  </tr>
+                  <tr>
+                    <td>Prefix:</td>
+                    <td>{{values.Prefix}}</td>
+                  </tr>
+                  <tr>
+                    <td>Prefix Length:</td>
+                    <td>{{values.PrefixLen}}</td>
+                  </tr>
+                  <tr>
+                    <td>Origin:</td>
+                    <td>{{values.Origin}}</td>
+                  </tr>
+                  <tr>
+                    <td>Origin AS:</td>
+                    <td>{{values.Origin_AS}}</td>
+                  </tr>
+                  <tr>
+                    <td>MED:</td>
+                    <td>{{values.MED}}</td>
+                  </tr>
+                  <tr>
+                    <td>Local Pref:</td>
+                    <td>{{values.LocalPref}}</td>
+                  </tr>
+                  <tr>
+                    <td>NH:</td>
+                    <td>{{values.NH}}</td>
+                  </tr>
+                  <tr>
+                    <td>AS Path:</td>
+                    <td>{{values.AS_Path}}</td>
+                  </tr>
+                  <tr>
+                    <td>AS Path Count:</td>
+                    <td>{{values.ASPath_Count}}</td>
+                  </tr>
+                  <tr>
+                    <td>Communities:</td>
+                    <td>{{values.Communities}}</td>
+                  </tr>
+                </table>
+              </pre>
             </div>
-
-            <br><br>
-            <p><span class="bold">RouterName:</span> {{values.RouterName}}</p>
-            <p><span class="bold">PeerName:</span> {{values.PeerName}}</p>
-            <p><span class="bold">Prefix:</span> {{values.Prefix}}</p>
-            <p><span class="bold">PrefixLen:</span> {{values.PrefixLen}}</p>
-            <p><span class="bold">Origin:</span> {{values.Origin}}</p>
-            <p><span class="bold">Origin_AS:</span> {{values.Origin_AS}}</p>
-            <p><span class="bold">MED:</span> {{values.MED}}</p>
-            <p><span class="bold">LocalPref:</span> {{values.LocalPref}}</p>
-            <p><span class="bold">NH:</span> {{values.NH}}</p>
-            <p><span class="bold">AS_Path:</span> {{values.AS_Path}}</p>
-            <p><span class="bold">ASPath_Count:</span> {{values.ASPath_Count}}</p>
-            <p><span class="bold">Communities:</span> {{values.Communities}}</p>
 
           </div>
 
@@ -105,6 +107,38 @@
             </div>
 
           </div>
+
+          <div class = "as-path">
+
+            <div ng-style="{'width':asPath.width}">
+
+              <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}" style="position: relative;float: left;">
+                <!--icon-->
+                <div style="display: table-cell;">
+
+                  <span ng-if="path.noTopText">
+                    <div style="text-align: center">&nbsp;</div>
+                  </span>
+
+                  <span ng-if="!path.noTopText">
+                    <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{ wordCheck(path.topVal) }}</div>
+                  </span>
+
+                  <!--This is the actual AS icon-->
+                  <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html="true" popover-placement="right" popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
+                  <div style="text-align: center">{{ path.botVal }}</div>
+                </div>
+                <!--line-->
+                <div style="display: table-cell;" ng-if="path.isEnd">
+                  <div style="width: 100px;height: 2px;background-color:#eaeaea;position: absolute;margin-top: 45px;"
+                       ng-style="{'width':asPath.lineWidth}"></div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
         </section>
 
       </div>

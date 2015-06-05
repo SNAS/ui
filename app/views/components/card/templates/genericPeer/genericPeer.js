@@ -4,13 +4,6 @@ angular.module('bmp.components.card')
 
   .controller('BmpCardPeerController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
 
-
-    window.GPEERSCO = $scope;
-
-    console.log($scope.data.peer_hash_id);
-
-    $scope.summaryGridIsLoad = true;
-
     //  PEER DATA
     //  {
     //  "RouterName":"csr1.openbmp.org",     //  "RouterIP":"173.39.209.78",
@@ -30,6 +23,13 @@ angular.module('bmp.components.card')
     //  "peer_hash_id":"c33f36c12036e98d89ae3ea54cce0be2",
     //  "router_hash_id":"0314f419a33ec8819e78724f51348ef9"
     // }
+
+
+    window.GPEERSCO = $scope;
+
+    console.log($scope.data.peer_hash_id);
+
+    $scope.summaryGridIsLoad = true;
 
     //peer stuff here
     var peerPrefix;
@@ -66,6 +66,9 @@ angular.module('bmp.components.card')
       height: $scope.summaryGridInitHeight,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      showGridFooter: true,
       columnDefs:[
         {name: "asn", displayName: 'AS Number', width: '*'},
         {name: "as_name", displayName: 'AS Name', width: '*'},
@@ -89,9 +92,9 @@ angular.module('bmp.components.card')
 
       var height;
       if(grid.data.length > 10){
-        height = ((10 * 30) + 30);
+        height = ((10 * 30));
       }else{
-        height = ((grid.data.length * 30) + 50);
+        height = ((grid.data.length * 30) + 30);
       }
       grid.changeHeight = height;
       gridapi.grid.gridHeight = grid.changeHeight;
@@ -130,30 +133,24 @@ angular.module('bmp.components.card')
       $scope.peerTime = timeFactory.calTimeFromNow($scope.data.LastDownTimestamp);
     }
 
-    $scope.peerFullIp = $scope.data.PeerIP;
-    if($scope.data.isPeerIPv4 == "1"){
-      //is ipv4 so add ' :<port>'
-      $scope.peerFullIp = $scope.data.PeerIP + ":" + $scope.data.PeerPort;
-    }else{
-      //is ipv6 so add ' <port>'
-      $scope.peerFullIp = $scope.data.PeerIP + " " + $scope.data.PeerPort;
-    }
+    $scope.fullIp = function(ip, port){
+      if(ip.indexOf("." != -1)){
+        //is ipv4 so add ' :<port>'
+        return ip +":" + port;
+      }else{
+        //is ipv6 so add ' <port>'
+        return ip + " " + port;
+      }
+    };
 
     $scope.rpIconData = {
       RouterName: $scope.data.RouterName,
-      RouterIP: $scope.data.RouterIP,
-      RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
+      RouterIP: $scope.fullIp ($scope.data.RouterIP, $scope.data.LocalPort),
+      //RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
       RouterASN: $scope.data.LocalASN,
       PeerName: $scope.data.PeerName,
-      PeerIP: $scope.peerFullIp,
+      PeerIP: $scope.fullIp ($scope.data.PeerIP, $scope.data.PeerPort),
       PeerASN: $scope.data.PeerASN
-    };
-
-    function getAsLength(theValue) {
-      var theString = theValue + "";
-      theString = theString.replace(":", "");
-      theString = theString.replace(".", "");
-      return theString.length;
     };
 
     $scope.locationInfo = cardFactory.createLocationTable({

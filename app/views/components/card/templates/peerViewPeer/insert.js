@@ -57,12 +57,15 @@ angular.module('bmp.components.card')
       $scope.graphVisibility = true;
     };
 
-    $scope.ribGridInitHeight = 350;
+    $scope.ribGridInitHeight = 300;
 
     $scope.ribGridOptions = {
       height: $scope.ribGridInitHeight,
+      showGridFooter: true,
       enableRowSelection: true,
-      enableRowHeaderSelection: true
+      enableRowHeaderSelection: true,
+      enableVerticalScrollbar: 1,
+      enableHorizontalScrollbar: 0
     };
 
     $scope.ribGridOptions.columnDefs = [
@@ -96,7 +99,7 @@ angular.module('bmp.components.card')
 
           $scope.ribGridIsLoad = false; //stop loading
 
-          $scope.ribGridApi.core.handleWindowResize();
+          $scope.calGridHeight($scope.ribGridOptions,$scope.ribGridApi);
         }).
         error(function (error) {
           console.log(error.message);
@@ -113,26 +116,6 @@ angular.module('bmp.components.card')
             latitude: $scope.values.geo.latitude,
             longitude: $scope.values.geo.longitude
           };
-
-          $scope.rpiconData = {
-            RouterName: $scope.data.RouterName,
-            RouterIP: $scope.data.RouterIP,
-            RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
-            RouterASN: $scope.data.LocalASN,
-            PeerName: $scope.values.PeerName,
-            PeerIP: $scope.values.PeerAddress,
-            PeerASN: $scope.data.PeerASN
-          };
-
-          function getAsLength(theValue) {
-            console.log("Getting length of " + theValue);
-            var theString = theValue + "";
-            theString = theString.replace(":", "");
-            theString = theString.replace(".", "");
-            return theString.length;
-          };
-
-          console.log($scope.data.PeerASN); // printing out the first no.
 
           createASpath($scope.values.AS_Path);
         }).
@@ -197,7 +180,7 @@ angular.module('bmp.components.card')
           var pcontent = "";
           for(var j = 0; j < popOutFields.length; j++){
             if(asname[i][popOutFields[j]] != null){
-              pcontent+= popOutFields[j] + " : " + asname[i][popOutFields[j]] + "<br>";
+              pcontent+= popOutFields[j] + " : <span class='thin'>" + asname[i][popOutFields[j]] + "</span><br>";
               pcontent = pcontent.replace(/ASN-|ASN/g,"");
             }
           }
@@ -267,7 +250,7 @@ angular.module('bmp.components.card')
           })
         }
       };
-      $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 20}});
+      //$('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 20}});
 
       //for the tooltip
       $scope.wordCheck = function(word){

@@ -60,12 +60,14 @@
   border-top: none;
 }
 .as-path{
-  height:250px;
+  height: 140px;
   overflow-x: scroll;
   border: none;
-  width:100%;
-  padding-top: 75px;
+  width: 100%;
+  padding-top: 15px;
   padding-left: 40px;
+  padding-right: 70px;
+  background-color: #fafafa;
     .popover{
     width:200px;
     font-size:12px;
@@ -73,4 +75,8 @@
   #here{
     white-space:pre;
   }
+}
+
+.popover-content .thin{
+  font-family: 'CiscoSansExtraLight';
 }

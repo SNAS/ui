@@ -11,7 +11,7 @@ angular.module('bmpUiApp')
     .controller('LoginController', function ($scope, $cookies, $state) {
         $scope.login = function(){
             if($scope.username === 'demo' && $scope.password === 'demo'){
-                $cookies.username = $scope.username;
+                $cookies.username = 'Demo Account';
                 $state.transitionTo('app.globalView');
             } else {
                 $scope.error = 'Incorrect username or password';

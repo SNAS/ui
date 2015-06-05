@@ -1,5 +1,5 @@
 <div class="margin-small" ng-controller="linkStateController">
-  <div style="padding-bottom:12px">
+  <div class="main-page-search">
     Select Peer
     <select ng-model="selectedPeer"
             ng-options="(peer.PeerName != '' ? peer.PeerName : peer.PeerIP + ' (' + peer.protocol + ')' ) for peer in peerData"
@@ -15,7 +15,10 @@
     <div bmp-loading loading-var="topologyIsLoad"></div>
   </div>
 
-  <div class="margin-small">
-    <div class="grid" ng-show="show===true" ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
+  <div class="main-area" style="margin-top: 15px" ng-show="show===true">
+    <div class="table-container">
+      <h3>Node Information</h3>
+      <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
+    </div>
   </div>
 </div>

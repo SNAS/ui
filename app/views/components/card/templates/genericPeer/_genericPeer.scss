@@ -4,21 +4,11 @@
     color: #EAA546;
   }
 
-  .peerCard {
-    .routerLoc{
-      margin: 3em 1em 1em 6em;
-    }
-  }
-  .routerCard {
-    .routerLoc{
-      margin-top: 2em;
-    }
-  }
-
   .rib-image {
     text-align: center;
-    color:#AFAFAF;
+    font-family: 'CiscoSansExtraLight';
       padding-top: 40px;
+      color: #afafaf;
     .rib-section {
       display: table-cell;
       .rib-part {
@@ -35,4 +25,20 @@
       }
     }
   }
+}
+.import {
+  height: auto;
+}
+
+.tab-content h4 {
+  margin: 8px 0 20px 35px;
+}
+
+.tab-pane input{
+  margin: 5px 0 10px;
+  border: 1px solid #efefef;
+  padding: 3px;
+  font-size: 9pt;
+  font-family: 'CiscoSansExtraLight';
+  outline: none;
 }

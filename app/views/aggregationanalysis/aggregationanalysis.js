@@ -16,9 +16,12 @@ angular.module('bmpUiApp')
 
     //populate prefix data into ShowPrefixsOptions Grid
     $scope.ShowPrefixsOptions = {
+      showGridFooter: true,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
-      enableHorizontalScrollbar: 0
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      rowHeight: 32
     };
 
     $scope.ShowPrefixsOptions.columnDefs = [
@@ -190,13 +193,16 @@ angular.module('bmpUiApp')
 
     // show redundant prefix
     $scope.ShowRedundantOptions = {
-      enableRowSelection: true,
+      //showGridFooter: true,
+      enableRowSelection: false,
       enableRowHeaderSelection: false,
-      enableHorizontalScrollbar: 0
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      rowHeight: 25
     };
     $scope.ShowRedundantOptions.columnDefs = [
       {name: "Prefix", displayName: 'Prefix', width: '30%'},
-      {name: "Covers", displayName: 'Covered Prefix', width: '*'},
+      {name: "Covers", displayName: 'Covered Prefix', width: '*'}
     ];
 
     var createShowRedundantOptions = function () {

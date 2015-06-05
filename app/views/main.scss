@@ -15,7 +15,86 @@
  * terms of the license you have entered into with Cisco.
  *
  */
- //===================================================================================
+//=================================================================================
+// Imports
+//=================================================================================
+ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
+ @font-face {
+  font-family: 'CiscoSansThin';
+  src: url('../fonts/CiscoSansTTThin.ttf'); /* IE9 Compat Modes */
+  src: url('../fonts/CiscoSansTTThin.ttf') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/CiscoSansTTThin.ttf') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/CiscoSansTTThin.ttf') format('woff'), /* Pretty Modern Browsers */
+       url('../fonts/CiscoSansTTThin.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/CiscoSansTTThin.ttf') format('svg'); /* Legacy iOS */
+}
+
+@font-face {
+  font-family: 'CiscoSansExtraLight';
+  src: url('../fonts/CiscoSansTTExtraLight.ttf'); /* IE9 Compat Modes */
+  src: url('../fonts/CiscoSansTTExtraLight.ttf') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/CiscoSansTTExtraLight.ttf') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/CiscoSansTTExtraLight.ttf') format('woff'), /* Pretty Modern Browsers */
+       url('../fonts/CiscoSansTTExtraLight.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/CiscoSansTTExtraLight.ttf') format('svg'); /* Legacy iOS */
+}
+
+@font-face {
+  font-family: 'CiscoSans';
+  src: url('../fonts/CiscoSansTTRegular.ttf'); /* IE9 Compat Modes */
+  src: url('../fonts/CiscoSansTTRegular.ttf') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/CiscoSansTTRegular.ttf') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/CiscoSansTTRegular.ttf') format('woff'), /* Pretty Modern Browsers */
+       url('../fonts/CiscoSansTTRegular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/CiscoSansTTRegular.ttf') format('svg'); /* Legacy iOS */
+}
+// bower:scss
+@import "bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
+// endbower
+
+@import "compass/css3";
+
+//=============================================================
+// Components
+//===================================================================================
+
+//card imports
+@import "components/card/components/routerPeerIcon/routerPeerIcon";
+
+@import "components/card/card";
+@import "components/card/templates/globalViewRouter/globalViewRouter";
+@import "components/card/templates/genericPeer/genericPeer";
+@import "components/card/templates/globalViewPeer/insert";
+@import "components/card/templates/peerViewPeer/insert";
+@import "components/card/templates/preUpdatesGraph/preUpdatesGraph";
+@import "components/card/templates/preWithdrawsGraph/preWithdrawsGraph";
+@import "components/card/templates/updatesGraph/updatesGraph";
+@import "components/card/templates/withdrawsGraph/withdrawsGraph";
+
+//map
+@import "components/map/map";
+@import "components/loading/loading";
+
+//============================================================
+// Sections
+//===================================================================================
+@import "asAnalysis/asAnalysis";
+@import "login/login";
+@import "peerAnalysis/peerAnalysis";
+@import "prefixAnalysis/prefixAnalysis";
+@import "whoIs/whoIs";
+@import "container/container";
+@import "globalView/globalView";
+@import "peerView/peerView";
+@import "bmpglyph";
+@import "linkState/linkState";
+@import "asView/asView";
+@import "orrView/orrView";
+
+//test pages
+@import "cardChanges/cardChanges";
+
+//===================================================================================
 // Variables
 //===================================================================================
 //$brand-primary: 							#3491df;
@@ -41,21 +120,56 @@ $navbar-default-bg:#15bdf4;
 $navbar-default-brand-color:#fff;
 $text-color:#888;
 
-
-
 a{
-    cursor: pointer;
+  cursor: pointer;
+  color: #0386d2;
+  transition: color 0.2s;
+
+  &:hover, &:focus, &:active{
+    color: #45A8E2;
+    text-decoration: none;
+  }
 }
 
-//=================================================================================
-// Imports
-//=================================================================================
- $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
-// bower:scss
-@import "bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
-// endbower
+h3{
+  font-size: 13pt;
+  text-transform: uppercase;
+  color: #1C2B36;
+  margin-left: 15px;
+  margin-bottom: 25px;
+}
 
-@import "compass/css3";
+body{
+  font-family: 'CiscoSans';
+  background-color: #f6f6f6;
+  min-width: 1300px;
+}
+
+pre {
+  background-color: #f4f6f9;
+  //max-height: 300px;
+  //overflow-y: scroll;
+}
+
+.table-container{
+  background-color: #FFFFFF;
+  border: solid 1px;
+  border-color: #D4D4D4;
+  border-radius: 0px;
+  padding: 10px 10px 30px;
+}
+
+table {
+  font-size: 10pt;
+}
+
+icon.bmp-up {
+  color: #7ec35c;
+}
+
+icon.bmp-down {
+  color: #f2732d;
+}
 
 .browsehappy {
   margin: 0.2em 0;
@@ -77,56 +191,229 @@ a{
   position: relative;
 }
 
+#loading-bar .bar {
+  background: #15c7ce;
+}
+
+.margin-small {
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.nav-tabs li a{
+  color: #aaa;
+
+  &:hover{
+    background-color: #fafafa;
+  }
+}
+
+.pgtitle {
+  font-family: 'CiscoSans';
+  font-size: 18px;
+  line-height: 19.8px;
+}
+
+.pgtitle-small {
+  font-family: 'CiscoSans';
+  font-size: 14px;
+  line-height: 19.8px;
+}
+
+.help-block{
+  display: inline;
+  font-family: 'CiscoSansExtraLight';
+  color: #aaa;
+}
+
+.main-page-search input {
+  border: 1px solid #eee;
+  color: #888;
+  font-family: 'CiscoSansExtraLight';
+  outline: none;
+}
+
+.input{
+  padding-bottom:12px;
+}
+
+//UI - GRID override style
+
+$header-colour: #F6F6F6;
+$row-colour-dark: #FBFBFB;
+$row-colour-light: #FFFFFF;
+$row-select-colour: #EFF7FF;
+$grid-text-colour: #71818D;
+
+.ui-grid {
+  border:none;
+  color: $grid-text-colour;
+  border-bottom: 1px solid #efefef;
+  font-family: 'CiscoSans';
+  font-size: 10pt;
+  margin: 0 40px;
+}
+
 .ui-grid-header {
-  background-color: #fff;
-  border-bottom: 2px solid #0096d6;
-  box-sizing: content-box;
+  border:none;
+  border-bottom: 1px solid #efefef;
+}
+.ui-grid-top-panel {
+  border:none;
+  position: relative;
+  overflow: hidden;
+  font-weight: bold;
+  background: #ffffff;
+  //background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(1, #ffffff));
+  //background: -ms-linear-gradient(bottom, #eeeeee, #ffffff);
+  //background: -moz-linear-gradient(center bottom, #eeeeee 0%, #ffffff 100%);
+  //background: -o-linear-gradient(#ffffff, #eeeeee);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);
+  -webkit-border-top-right-radius: -1px;
+  -webkit-border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-top-left-radius: -1px;
+  -moz-border-radius-topright: -1px;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-topleft: -1px;
+  border-top-right-radius: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: -1px;
+  -moz-background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
 }
 
-//=============================================================
-// Sections
-//===================================================================================
-@import "asAnalysis/asAnalysis";
-@import "login/login";
-@import "peerAnalysis/peerAnalysis";
-@import "prefixAnalysis/prefixAnalysis";
-@import "whoIs/whoIs";
-@import "container/container";
-@import "globalView/globalView";
-@import "peerView/peerView";
-@import "bmpglyph";
-@import "linkState/linkState";
-@import "asView/asView";
-@import "orrView/orrView";
-
-icon.bmp-up {
-	color: #7ec35c;
+.ui-grid-header-cell {
+  border:none;
 }
 
-icon.bmp-down {
-	color: #f2732d;
+//colour the extra scroll space on header
+.ui-grid-header-canvas {
+  background-color: $header-colour;
 }
 
-//test pages
-@import "cardChanges/cardChanges";
+.ui-grid-header-cell-row {
+  background-color: $header-colour;
+}
 
-//=============================================================
-// Components
-//===================================================================================
+.ui-grid-row:nth-child(even) .ui-grid-cell {
+  background-color: $row-colour-dark;
+}
 
-//card imports
-@import "components/card/components/routerPeerIcon/routerPeerIcon";
+.ui-grid-row:nth-child(odd) .ui-grid-cell {
+  background-color: $row-colour-light;
+}
+.ui-grid-row:last-child .ui-grid-cell {
+  border:none;
+}
 
-@import "components/card/card";
-@import "components/card/templates/globalViewRouter/globalViewRouter";
-@import "components/card/templates/genericPeer/genericPeer";
-@import "components/card/templates/globalViewPeer/insert";
-@import "components/card/templates/peerViewPeer/insert";
-@import "components/card/templates/preUpdatesGraph/preUpdatesGraph";
-@import "components/card/templates/preWithdrawsGraph/preWithdrawsGraph";
-@import "components/card/templates/updatesGraph/updatesGraph";
-@import "components/card/templates/withdrawsGraph/withdrawsGraph";
+.ui-grid-cell {
+  border:none;
+}
 
-//map
-@import "components/map/map";
-@import "components/loading/loading";
+.ui-grid-row-header-cell {
+  border:none;
+}
+
+.ui-grid-footer-panel {
+  border:none;
+}
+
+.loading-section .ui-grid-grid-footer {
+  position: absolute;
+  text-align: right;
+  margin-top: -26px;
+}
+
+.ui-grid-menu-button {
+  border:none;
+}
+
+.ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
+  border:none;
+}
+
+.ui-grid-menu .ui-grid-menu-inner {
+  border:none;
+}
+
+.ui-grid-menu .ui-grid-menu-inner ul li:not(:last-child) {
+  border:none;
+}
+
+.ui-grid[dir=rtl] .ui-grid-cell:last-child,
+.ui-grid[dir=rtl] .ui-grid-header-cell:last-child {
+  border:none;
+}
+
+.ui-grid[dir=rtl] .ui-grid-menu-button {
+  border:none;
+}
+
+div.ui-grid-cell input.ng-invalid {
+  border:none;
+}
+div.ui-grid-cell input.ng-valid {
+  border:none;
+}
+
+.movingColumn {
+  border:none;
+}
+
+.ui-grid-pager-control .first-bar {
+  border:none;
+}
+.ui-grid-pager-control .first-triangle {
+  border:none;
+}
+
+.ui-grid-pager-control .last-triangle {
+  border:none;
+}
+.ui-grid-pager-control .last-bar {
+  border:none;
+}
+
+.ui-grid-pinned-container.ui-grid-pinned-container-left .ui-grid-header-cell:last-child {
+  border:none;
+}
+.ui-grid-pinned-container.ui-grid-pinned-container-left .ui-grid-cell:last-child {
+  border:none;
+}
+
+.ui-grid-pinned-container.ui-grid-pinned-container-right .ui-grid-header-cell:first-child {
+  border:none;
+}
+.ui-grid-pinned-container.ui-grid-pinned-container-right .ui-grid-cell:first-child {
+  border:none;
+}
+
+.ui-grid-header-cell:last-child .ui-grid-column-resizer.right {
+  border:none;
+}
+.ui-grid[dir=rtl] .ui-grid-header-cell:last-child .ui-grid-column-resizer.left {
+  border:none;
+}
+
+.ui-grid-cell-contents{
+  font-size: 9pt;
+  margin-top: 3px;
+  font-family: 'CiscoSansExtraLight';
+}
+
+.ui-grid-header-cell .ui-grid-cell-contents{
+  font-size: 10pt;
+  font-family: 'CiscoSans';
+}
+
+.ui-grid-viewport {
+  min-height: 30px;
+}
+
+.loading-section .ui-grid-row-selected > [ui-grid-row] > .ui-grid-cell {
+  background-color: $row-select-colour !important;
+}

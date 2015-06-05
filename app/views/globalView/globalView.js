@@ -20,9 +20,6 @@ angular.module('bmpUiApp')
             $rootScope.dualWindow['map-bottom'] = true;
             $scope.name = 'dual-global-view-map-b';
         }
-        else{
-            console.log($rootScope.dualWindow);
-        }
     }
     else{
     	$scope.name = 'global-view-map';

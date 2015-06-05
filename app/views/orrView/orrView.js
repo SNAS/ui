@@ -113,6 +113,7 @@ angular.module('bmpUiApp')
       gridFooterHeight: 15,
       showGridFooter: true,
       enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
 
       columnDefs: [
         {field: 'prefixWithLen', displayName: 'Prefix', width: '12%'},

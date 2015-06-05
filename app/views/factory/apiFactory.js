@@ -11,7 +11,7 @@ angular.module('bmpUiApp')
     .factory('apiFactory', function ($http, $q) {
 
     //http://demo.openbmp.org:8001/db_rest/v1/
-    var urlBase = 'http://odl-dev.openbmp.org:8001/db_rest/v1/';
+    var urlBase = 'http://bmp-dev.openbmp.org:8001/db_rest/v1/';
     var limit = 1000;
     var apiFactory = {};
 

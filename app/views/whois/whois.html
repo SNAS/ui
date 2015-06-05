@@ -1,24 +1,32 @@
-<div class="margin-small" ng-controller="WhoIsController">
+<div ng-controller="WhoIsController">
   <!------------------WHO IS---------------->
   <!--<h1 class="pgtitle">Whois</h1>-->
-  <div>
-    <label>AS Number or AS Name:</label>
-    <p>
-      <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Cisco"/>
-    </p>
-  </div>
-  <!--Angular Table added here-->
-  <div class="loading-section" ng-style="{'height':whoIsGridOptions.changeHeight}">
-    <div ng-show="whoIsLoad" bmp-loading loading-var="whoIsLoad"></div>
-    <div class="grid" ui-grid-selection ui-grid="whoIsGridOptions" ng-style="{'height':whoIsGridOptions.changeHeight}"></div>
+  <div class="main-page-search">
+    AS Number or AS Name:
+    <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Cisco"/>
+    <span class="help-block">Example: 109/Cisco</span>
   </div>
 
+  <!--Angular Table added here-->
+  <div class="main-area row">
+      <div class="col-lg-12">
+        <div class="table-container">
+          <h3>Whois Information</h3>
+          <div class="loading-section" ng-style="{'height':whoIsGridOptions.changeHeight}">
+            <div ng-show="whoIsLoad" bmp-loading loading-var="whoIsLoad"></div>
+            <div ui-grid-selection ui-grid="whoIsGridOptions" ng-style="{'height':whoIsGridOptions.changeHeight}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   <div>
     <!--<div style="padding:12px">-->
-    <h3 class="pgtitle">Details</h3>
-
-    <div class="detailspanel margin-small">
-      <pre class="preStyle" ng-bind-html="selectedItem"></pre>
+  <div class="main-area row">
+    <div class="col-lg-12">
+      <div class="table-container">
+        <h3>Details</h3>
+        <pre class="preStyle" ng-bind-html="selectedItem"></pre>
+      </div>
     </div>
   </div>
 </div>

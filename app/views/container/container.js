@@ -8,7 +8,7 @@
  * Simple user login
  */
 angular.module('bmpUiApp')
-  .controller('MainController', function ($rootScope, $scope, $cookies, $state, $location, $timeout) {
+  .controller('MainController', function ($rootScope, $scope, $cookies, $state, $location, $timeout, $window) {
       $scope.username = $cookies.username;
 
       $scope.logout = function (){
@@ -69,25 +69,54 @@ angular.module('bmpUiApp')
 
       $rootScope.dualWindow = {'active': false, 'a': undefined, 'b': undefined, 'map-top': false, 'map-bottom': false};
 
-      $scope.location = $location;
-      $scope.$watch('location.path()', function(newPath) {
-        if($state.current.name === "app.dualWindow.contents" && !$rootScope.dualWindow.active){
-          console.log('get us outta here');
-          $state.transitionTo('app.globalView');
-          $timeout(function(){
-            $state.reload();
-          }, 100);
-          return;
-        }
+      // $scope.location = $location;
+      // $scope.$watch('location.path()', function(newPath) {
+      //   if($state.current.name === "app.dualWindow.contents" && !$rootScope.dualWindow.active){
+      //     $state.transitionTo('app.globalView');
+      //     console.log('relaod');
+      //     $window.location.reload();
+      //     return;
+      //   }
 
-        var path = newPath.substr(1);
-        if(path.indexOf('/') > -1 && !$rootScope.dualWindow.active){
-          $state.transitionTo('app.globalView');
-          $timeout(function(){
-            $state.reload();
-          }, 100);
-        }
-      });
+      //   var path = newPath.substr(1);
+      //   if(path.indexOf('/') > -1 && !$rootScope.dualWindow.active){
+      //     $state.transitionTo('app.globalView');
+      //     $timeout(function(){
+      //       $state.reload();
+      //     }, 100);
+      //   }
+      // });
+
+    $scope.location = $location;
+    $scope.$watch('location.path()', function(newPath) {
+
+      switch($state.current.name){
+        case "app.globalView": 
+        case "app.peerView": 
+        case "app.asView": 
+        case "app.linkState": 
+        case "app.orrView": 
+        case "app.whoIs": 
+          $scope.category = "Dashboards";
+          break;
+        case "app.peerAnalysis":
+        case "app.asAnalysis":
+        case "app.prefixAnalysis":
+        case "app.aggregationAnalysis":
+        case "app.securityAnalysis":
+          $scope.category = "Analysis";
+          break;
+      }
+
+      if($state.current.name != "app.dualWindow.contents" && $rootScope.dualWindow.active){
+        $state.transitionTo('app.' + $rootScope.dualWindow.a);
+        $window.location.reload();
+        return;
+      }
+      else if($state.current.name === "app.dualWindow.contents" && !$rootScope.dualWindow.active){
+        $rootScope.dualWindow = {active: true, a: $state.params.a, b: $state.params.b, 'map-top': false, 'map-bottom': false};
+      }
+    });
   })
 .directive('activeItem', function ($location) {
   return {
@@ -100,7 +129,7 @@ angular.module('bmpUiApp')
 
       $scope.location = $location;
       $scope.$watch('location.path()', function(newPath) {
-        
+        //console.log('mug', newPath);
         $scope.page = newPath.substring(1);
         $scope.title = $scope.page.replace(/-/g, ' ');
 

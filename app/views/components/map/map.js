@@ -18,9 +18,9 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.error;
     $scope.info;
 
-    $scope.activeMarker;
-
+    $scope.showBottomPane = false;
     $scope.selectionMade = false;
+    $scope.mapWidth = "72%"
 
     $scope.locations = [];
     $scope.peers = [];
@@ -30,7 +30,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         Set and store map credentials
     *****************************************/
     var accessToken =   'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
-    var mapID =         'pickledbadger.lkfb3epb';
+    var mapID =         'pickledbadger.mbkpbek5';
     angular.extend($scope, {
         defaults: {
             tileLayer: 'https://{s}.tiles.mapbox.com/v4/' + mapID + '/{z}/{x}/{y}.png?access_token=' + accessToken,
@@ -71,7 +71,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.$watch('selectionMade', function(val){
         if($rootScope.dualWindow.active){
             $scope.mapHeight = '100%';
-            $scope.panelHeight = '80%';
             $timeout(function(){
                 $scope.map.invalidateSize();
             }, 1000);
@@ -83,7 +82,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         else{
             return;
         }
-        $scope.panelHeight = $scope.mapHeight - 120;
         $timeout(function(){
             $scope.map.invalidateSize();
         }, 1000);
@@ -106,10 +104,12 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }
         else if($scope.location === 'globalView'){
             $scope.panelTitle = "Router List";
+            $scope.showBottomPane = true;
             $scope.getRouters();
             loadBottomPane();
         }
         else if($scope.location === 'peerCard'){
+            $scope.mapWidth = "100%";
             $scope.selectionMade = true;
             if($scope.plotMarker != undefined){
                 if($scope.singlePoint != undefined){
@@ -129,6 +129,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 $scope.fitMap('single');
             }
         }
+
+        //Reset map view to avoid 'blank map' error
+        $timeout(function(){
+            $scope.map._resetView($scope.map.getCenter(), $scope.map.getZoom(), true);
+        }, 100);
     }
 
 
@@ -196,15 +201,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                         peers: [],
                         expandRouters: false,
                         expandPeers: false,
-                        type: 'Router',
-                        icon: L.divIcon({
-                            html: '<div><span>1</span><img src="http://a.tiles.mapbox.com/v3/marker/pin-m+758CAB.png"/></div>',
-                            className: 'marker',
-                            iconSize: [30, 70]
-                        })
+                        type: 'Router'
                     };
 
                     var marker = new L.Marker(latlng, options);
+                    setIcon(marker, 'default');
                     marker = setPopup(marker);
                     $scope.routerLayer.addLayer(marker);
                     $scope.locations.push(marker);
@@ -364,18 +365,16 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             var content =   '<span><p><strong>Location:</strong><br>' + marker.options.city +
                             ', ' + marker.options.stateprov +
                             ', ' + marker.options.country + '</p>' +
-                            '<p><strong>Routers at location: </strong>' + marker.options.routers.length +
-                            '</p></span>';
+                            '</span>';
         else{
             var content =   '<span><p><strong>Location:</strong><br>' + marker.options.city +
                             ', ' + marker.options.stateprov +
                             ', ' + marker.options.country + '</p>' +
-                            '<p><strong>Peers at location: </strong>' + marker.options.peers.length +
-                            '</p></span>';
+                            '</span>';
         }
         //compile the html into angular-ready HTML
         var linkFunction = $compile(angular.element(content));
-        marker.bindPopup(linkFunction($scope)[0], {offset: new L.Point(0, -26)});
+        marker.bindPopup(linkFunction($scope)[0], {offset: new L.Point(0, -10)});
 
         return marker;
     }
@@ -388,28 +387,28 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         if(marker.options.type === 'Peer')
             if(state === 'default')
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.peers.length + '</span><img src="../images/peer-default.png"/></div>',
+                    html: '<div><span>' + marker.options.peers.length + '</span><img src="../images/new-peer-default.png" width="40px"/></div>',
                     className: 'marker',
-                    iconSize: [30, 70]
+                    iconSize: [40, 40]
                 }));
             else
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.peers.length + '</span><img src="../images/peer-active.png"/></div>',
+                    html: '<div><span>' + marker.options.peers.length + '</span><img src="../images/new-peer-active.png" width="40px"/></div>',
                     className: 'marker',
-                    iconSize: [30, 70]
+                    iconSize: [40, 40]
                 }));
         else if(marker.options.type === 'Router')
             if(state === 'default')
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.routers.length + '</span><img src="../images/router-default.png"/></div>',
+                    html: '<div><span>' + marker.options.routers.length + '</span><img src="../images/new-router-default.png" width="40px"/></div>',
                     className: 'marker',
-                    iconSize: [30, 70]
+                    iconSize: [40, 40]
                 }));
             else
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.routers.length + '</span><img src="../images/router-active.png"/></div>',
+                    html: '<div><span>' + marker.options.routers.length + '</span><img src="../images/new-router-active.png" width="40px"/></div>',
                     className: 'marker',
-                    iconSize: [30, 70]
+                    iconSize: [40, 40]
                 }));
         //Reset popup content for offset calculation
         marker = setPopupContent(marker);
@@ -494,7 +493,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         Called when a location is selected
     *****************************************/
     $scope.selectMapLocation = function(location){
-        $scope.expandList = true;
         $scope.selectedRouter = undefined;
 
         for(var i = 0; i < $scope.locations.length; i++){
@@ -514,8 +512,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         Called when a peer is selected
     *****************************************/
     $scope.selectMapPeerLocation = function(location){
-        $scope.expandList = true;
-
         if($scope.selectedLocation != undefined){
             setIcon($scope.selectedLocation, 'default');
         }
@@ -537,6 +533,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *****************************************/
     $scope.selectPanelRouter = function(location, router){
         $scope.panelTitle = 'Peer List';
+        $scope.showBottomPane = false;
         var cardData = router;
         cardData.country = location.options.country;
         cardData.stateprov = location.options.stateprov;
@@ -544,8 +541,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         cardData.type = 'Router';
 
         $scope.selectionMade = true;
-        $scope.$broadcast('router-click');
-        $scope.height = 400;
         $scope.map.invalidateSize();
 
         $scope.cardApi.changeCard(router);
@@ -566,7 +561,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     *****************************************/
     $scope.deselectPanelRouter = function(){
         $scope.panelTitle = 'Router List';
-        $scope.$broadcast('clear-router');
+        $scope.showBottomPane = true;
         $scope.panelSearch = '';
         $scope.selectionMade = false;
         //force map resize
@@ -676,57 +671,48 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     //ATM this increase loading time could be made to load
     //this after page loads so when loading = false;
 
-    //TODO:still need to make this only show on certain pages
-
-    $scope.bottomPaneGraphSelect = function(){
-        $scope.expandList = true;
-        for (var i = 0; i < $scope.locations.length; i++) {
-            $scope.locations[i].expandRouters = true;
-        }
-    }
-
     $scope.bottomPaneState = true; //is closed
 
     var loadBottomPane = function(){
 
-      $scope.topChartOptions = {
-        chart: {
-          type: 'multiBarHorizontalChart',
-          height: 100,
-          width: 600,
-          margin : {
-            top: 0,
-            right: 10,
-            bottom: 20,
-            left: 120
-          },
-          color: function (d, i) {
-            return "#5e7309"
-          },
-          x: function(d){return d.label;},
-          y: function(d){return d.value;},
-          showControls: false,
-          showLegend: false,
-          showValues: true,
-          transitionDuration: 500
-        },
-        title: {
-          enable: true,
-          text: "Top 3 BMP Routers by Peers Monitored",
-          class: "h5",
-          css: {
-            width: "nullpx",
-            textAlign: "center"
-          }
-        }
-      };
+      // $scope.topChartOptions = {
+      //   chart: {
+      //     type: 'multiBarHorizontalChart',
+      //     height: 100,
+      //     width: 600,
+      //     margin : {
+      //       top: 0,
+      //       right: 10,
+      //       bottom: 20,
+      //       left: 120
+      //     },
+      //     color: function (d, i) {
+      //       return "#5e7309"
+      //     },
+      //     x: function(d){return d.label;},
+      //     y: function(d){return d.value;},
+      //     showControls: false,
+      //     showLegend: false,
+      //     showValues: true,
+      //     transitionDuration: 500
+      //   },
+      //   title: {
+      //     enable: true,
+      //     text: "Top 3 BMP Routers by Peers Monitored",
+      //     class: "h5",
+      //     css: {
+      //       width: "nullpx",
+      //       textAlign: "center"
+      //     }
+      //   }
+      // };
 
 
       $scope.peerIpChartOptions = {
         chart: {
           type: "pieChart",
-          height: 150,
-          width: 150,
+          height: 130,
+          width: 130,
           margin : {
             top: 0,
             right: 0,
@@ -734,55 +720,53 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             left: 0
           },
           donut: true,
-          donutRatio: 0.65,
+          donutRatio: 0.74,
           showLabels: false,
           showLegend: false,
           pie: {
-            startAngle: function(d) { return d.startAngle -Math.PI/2 },
-            endAngle: function(d) { return d.endAngle -Math.PI/2 }
+            startAngle: function(d) { return d.startAngle},
+            endAngle: function(d) { return d.endAngle}
           },
           color: function(d,i){
             return d.data.color
           },
           tooltipContent: function (key, y, e, graph) {
-            return '<h3 style="background-color: '
-              + e.color + '">' + e.point.key + '</h3>'
-              + '<p>' +  y + '</p>';
+            return '';
           },
           transitionDuration: 500
         }
       };
 
-      $scope.peerChartUpOptions = {
-        chart: {
-          type: "pieChart",
-          height: 250,
-          width: 250,
-          donut: true,
-          donutRatio: 0.8,
-          showLabels: false,
-          showLegend: false,
-          pie: {
-            startAngle: function(d) { return d.startAngle -Math.PI/2 },
-            endAngle: function(d) { return d.endAngle -Math.PI/2 }
-          },
-          color: function(d,i){
-            return d.data.color
-          },
-          tooltipContent: function (key, y, e, graph) {
-            return '<h3 style="background-color: '
-              + e.color + '">' + e.point.key + '</h3>'
-              + '<p>' +  y + '</p>';
-          },
-          transitionDuration: 500
-        }
-      };
+      // $scope.peerChartUpOptions = {
+      //   chart: {
+      //     type: "pieChart",
+      //     height: 250,
+      //     width: 250,
+      //     donut: true,
+      //     donutRatio: 0.8,
+      //     showLabels: false,
+      //     showLegend: false,
+      //     pie: {
+      //       startAngle: function(d) { return d.startAngle -Math.PI/2 },
+      //       endAngle: function(d) { return d.endAngle -Math.PI/2 }
+      //     },
+      //     color: function(d,i){
+      //       return d.data.color
+      //     },
+      //     tooltipContent: function (key, y, e, graph) {
+      //       return '<h3 style="background-color: '
+      //         + e.color + '">' + e.point.key + '</h3>'
+      //         + '<p>' +  y + '</p>';
+      //     },
+      //     transitionDuration: 500
+      //   }
+      // };
 
       $scope.routerChartOptions = {
         chart: {
           type: "pieChart",
-          height: 150,
-          width: 150,
+          height: 130,
+          width: 130,
           margin : {
             top: 0,
             right: 0,
@@ -790,27 +774,25 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             left: 0
           },
           donut: true,
-          donutRatio: 0.65,
+          donutRatio: 0.74,
           showLabels: false,
           showLegend: false,
           pie: {
-            startAngle: function(d) { return d.startAngle -Math.PI/2 },
-            endAngle: function(d) { return d.endAngle -Math.PI/2 }
+            startAngle: function(d) { return d.startAngle },
+            endAngle: function(d) { return d.endAngle }
           },
           color: function(d,i){
             return d.data.color
           },
           tooltipContent: function (key, y, e, graph) {
-            return '<h3 style="background-color: '
-              + e.color + '">' + e.point.key + '</h3>'
-              + '<p>' +  y + '</p>';
+            return '';
           },
           transitionDuration: 500
         }
       };
 
       $scope.showChartsConfig = {
-        visible: false // default: true
+        //visible: false // default: true
       };
 
       $scope.$watch('bottomPaneState', function() {
@@ -840,12 +822,12 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       $scope.routerChartData = [
         {
           key: "Up",
-          color: "#5da571",
+          color: "#7bad85",
           y: $scope.routerTotals[0]
         },
         {
           key: "Down",
-          color: "#a65151",
+          color: "#ad7b7b",
           y: $scope.routerTotals[1]
         }
       ];
@@ -877,14 +859,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           $scope.chartData.sort(function(a, b){return b.value - a.value});
           $scope.chartData = $scope.chartData.slice(0,3);
 
-          $scope.topChartData = [
-            {
-              key: "Routers",
-              color: "#5e7309",
-              values: $scope.chartData
-            }
-          ];
-
           return results
         });
 
@@ -900,8 +874,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         var peersData = result;
 
         //[ Up-ColDwn, Dwn-ColDwn, Up, Dwn, total ]
-        var ips = [[0,0,0,0,0], //ipv4
-                   [0,0,0,0,0]]; //ipv6
+        var ips = [[0,0,0,0,0],[0,0,0,0,0]];
 
         $scope.peerCount = peersData.v_peers.size;
 
@@ -937,60 +910,60 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           ips[whichIp][4]++;
         }
 
+        $scope.ips = ips;
 
         //build data for the Peers table
-        $scope.bgpPeers = []; //init
+        //$scope.bgpPeers = []; //init
 
         //ipv4,ipv6,total,type
-        var keys = ["Up-ColDwn", "Dwn-ColDwn", "Up", "Down", "Total"];
-        var colour = ["","","#5e7309","#a65e5e","#0266a0"];
-        var ipType = ["V4","V6"];
+        // var keys = ["Up-ColDwn", "Dwn-ColDwn", "Up", "Down", "Total"];
+        // var ipType = ["V4","V6"];
         //start at 2 ignore the coldwn for now
-        for(var i = 2; i < ips[0].length; i++){
-          var ipMap = {ipv4:0,ipv6:0,total:0,type:"None",colour:"#FFFFFF"};
-          ipMap.ipv4 = ips[0][i];
-          ipMap.ipv6 = ips[1][i];
-          ipMap.total = ips[0][i] + ips[1][i];
-          ipMap.type = keys[i];
-          ipMap.colour = colour[i];
-          $scope.bgpPeers.push(ipMap);
-        }
+        // for(var i = 2; i < ips[0].length; i++){
+        //   var ipMap = {ipv4:0,ipv6:0,total:0,type:"None",colour:"#FFFFFF"};
+        //   // ipMap.ipv4 = ips[0][i];
+        //   // ipMap.ipv6 = ips[1][i];
+        //   ipMap.total = ips[0][i] + ips[1][i];
+        //   ipMap.type = keys[i];
+        //   ipMap.colour = colour[i];
+        //   $scope.bgpPeers.push(ipMap);
+        // }
 
         $scope.peerIpChartData = [
           {
-            key: "ipv4 Up",
-            color: "#40744f",
-            y: ips[0][2]
-          },
-          {
-            key: "ipv4 Down",
-            color: "#843737",
-            y: ips[0][3]
-          },
-          {
-            key: "ipv6 Down",
-            color: "#a65151",
-            y: ips[1][3]
-          },
-          {
-            key: "ipv6 Up",
-            color: "#5da571",
-            y: ips[1][2]
-          }
-        ];
-
-        $scope.peerChartUpData = [
-          {
             key: "Up",
-            color: "#40744f",
+            color: "#7bad85",
             y: ips[0][2] + ips[1][2]
           },
           {
             key: "Down",
-            color: "#FF0000",
+            color: "#ad7b7b",
             y: ips[0][3] + ips[1][3]
-          }
+          }//,
+          // {
+          //   key: "ipv6 Down",
+          //   color: "#a65151",
+          //   y: ips[1][3]
+          // },
+          // {
+          //   key: "ipv6 Up",
+          //   color: "#5da571",
+          //   y: ips[1][2]
+          // }
         ];
+
+        // $scope.peerChartUpData = [
+        //   {
+        //     key: "Up",
+        //     color: "#40744f",
+        //     y: ips[0][2] + ips[1][2]
+        //   },
+        //   {
+        //     key: "Down",
+        //     color: "#FF0000",
+        //     y: ips[0][3] + ips[1][3]
+        //   }
+        // ];
 
       })
       .error(function(result){
@@ -1017,8 +990,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     return function (scope, element) {
         var w = angular.element($window);
         scope.forceResize = function() {
-            scope.mapHeight =  (w.height() - 50) + 'px';
-            scope.panelHeight =  (w.height() - 130) + 'px';
+            scope.mapHeight =  (w.height() - 87) + 'px';
             $timeout(function(){
                 scope.map.invalidateSize();
             }, 1000);
@@ -1029,12 +1001,10 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
             if($rootScope.dualWindow.active){
                 scope.mapHeight = '100%';
-                scope.panelHeight = '80%';
                 return;
             }
             if(!scope.selectionMade){
-                scope.mapHeight =  (newValue.h - 50) + 'px';
-                scope.panelHeight =  (newValue.h - 130) + 'px';
+                scope.mapHeight =  (newValue.h - 87) + 'px';
                 $timeout(function(){
                     scope.map.invalidateSize();
                 }, 1000);

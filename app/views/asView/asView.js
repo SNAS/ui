@@ -17,9 +17,9 @@ angular.module('bmpUiApp')
       var nodes = [], links = [], nodeSet = [];
       var id = 0;
 
-      $scope.prefixGridInitHeight = 350;
-      $scope.upstreamGridInitHeight = 350;
-      $scope.downstreamGridInitHeight = 350;
+      $scope.prefixGridInitHeight = 464;
+      $scope.upstreamGridInitHeight = 464;
+      $scope.downstreamGridInitHeight = 464;
 
       $scope.nodata = false;
       $scope.upstreamNodata = false;
@@ -27,11 +27,13 @@ angular.module('bmpUiApp')
 
       //prefix table options
       $scope.prefixGridOptions = {
-        rowHeight: 25,
+        rowHeight: 32,
         gridFooterHeight: 15,
         showGridFooter: true,
         height: $scope.prefixGridInitHeight,
+        changeHeight: $scope.prefixGridInitHeight,
         enableHorizontalScrollbar: 0,
+        enableVerticalScrollbar: 1,
         columnDefs: [
           {
             name: "prefixWithLen", displayName: 'Prefix', width: '*'
@@ -43,35 +45,63 @@ angular.module('bmpUiApp')
               direction: uiGridConstants.ASC
             }
           }
-        ]
+        ],
+        onRegisterApi: function (gridApi) {
+          $scope.prefixGridApi = gridApi;
+        }
       };
 
       //upstream table options
       $scope.upstreamGridOptions = {
         enableColumnResizing: true,
-        rowHeight: 25,
+        rowHeight: 32,
         gridFooterHeight: 15,
         showGridFooter: true,
         height: $scope.upstreamGridInitHeight,
+        changeHeight: $scope.upstreamGridInitHeight,
         enableHorizontalScrollbar: 0,
+        enableVerticalScrollbar: 1,
         columnDefs: [
           {name: "asn", displayName: 'ASN', width: '30%'},
           {name: "as_name", displayName: 'AS Name', width: '70%'}
-        ]
+        ],
+        onRegisterApi: function (gridApi) {
+          $scope.upstreamGridApi = gridApi;
+        }
       };
 
       //downstream table options
       $scope.downstreamGridOptions = {
         enableColumnResizing: true,
-        rowHeight: 25,
+        rowHeight: 32,
         gridFooterHeight: 15,
         showGridFooter: true,
         height: $scope.downstreamGridInitHeight,
+        changeHeight: $scope.downstreamGridInitHeight,
         enableHorizontalScrollbar: 0,
+        enableVerticalScrollbar: 1,
         columnDefs: [
           {name: "asn", displayName: 'ASN', width: '30%'},
           {name: "as_name", displayName: 'AS Name', width: '70%'}
-        ]
+        ],
+        onRegisterApi: function (gridApi) {
+          $scope.downstreamGridApi = gridApi;
+        }
+      };
+
+
+      $scope.calGridHeight = function(grid, gridapi){
+        gridapi.core.handleWindowResize();
+
+        var height;
+        var dataLength = 15;
+        if(grid.data.length > dataLength){
+          height = (dataLength * 30);
+        }else{
+          height = ((grid.data.length * grid.rowHeight) + 50);
+        }
+        grid.changeHeight = height;
+        gridapi.grid.gridHeight = grid.changeHeight;
       };
 
       //Waits a bit for user to contiune typing.
@@ -200,6 +230,9 @@ angular.module('bmpUiApp')
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
           if (key != "raw_output" && key != "remarks") {
+            if(key == "transit_v4_prefixes")
+                showValues += '<tr class="hoz-line"><td colspan="2"><hr></td></tr>';
+
             var value = data[key];
             showValues += (
             '<tr>' +
@@ -231,6 +264,7 @@ angular.module('bmpUiApp')
             }
             $scope.prefixGridOptions.data = data;
             $scope.prefixIsLoad = false; //stop loading
+            $scope.calGridHeight($scope.prefixGridOptions, $scope.prefixGridApi);
           }).
           error(function (error) {
             alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -251,6 +285,7 @@ angular.module('bmpUiApp')
           }
           else {
             $scope.upstreamGridOptions.data = upstreamData;
+            $scope.calGridHeight($scope.upstreamGridOptions, $scope.upstreamGridApi);
             $scope.upstreamIsLoad = false; //stop loading
             $scope.upstreamNodata = false;
           }
@@ -274,6 +309,7 @@ angular.module('bmpUiApp')
           }
           else {
             $scope.downstreamGridOptions.data = downstreamData;
+            $scope.calGridHeight($scope.downstreamGridOptions, $scope.downstreamGridApi);
             $scope.downstreamIsLoad = false; //stop loading
             $scope.downstreamNodata = false;
           }

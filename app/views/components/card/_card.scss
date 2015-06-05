@@ -1,14 +1,12 @@
 .cardArea {
   border-bottom-style: solid;
   border-bottom-width: 1px;
-  margin: 10px;
-  background-color: #f9f9f9;
-  border: 1px solid #eee;
+  margin: 15px 0 0 0;
+  background-color: #fff;
+  border: 1px solid #D5D5D5;
   padding: 10px;
-  box-shadow: rgba(0,0,0,0.05) 0 0 2px;
   height: 50px;
   overflow: hidden;
-  transition: height 0.25s;
   &.expanded{
     height: auto;
   }
@@ -36,7 +34,7 @@
       color: #888;
       margin-top: 2px;
       position: absolute;
-      right: 20px;
+      right: 12px;
       padding: 3px;
       cursor: pointer;
       border-radius: 20px;
@@ -46,10 +44,10 @@
       }
     }
     .red {
-      color: red;
+      color: #ad7b7b;
     }
     .green {
-      color: green;
+      color: #7bad85;
     }
 
     //card template styling
@@ -90,11 +88,35 @@
 .card-expand{
   margin: 0 18px !important;
   width: inherit !important;
+
+  .bmp-outline-router{
+    font-size: 26px;
+    color: #e9a445;
+    margin-left: 30px;
+  }
+
+  .up-time {
+    float: right;
+    text-align: right;
+  }
+
   h5{
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
     display: inline-block;
     margin-top: 7px;
+    color: #1C2B36;
+    font-size: 11pt;
   }
   h4{
-    margin-top: 5px;
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-top: 6px;
+    display: inline-block;
+    color: #1C2B36;
   }
 }

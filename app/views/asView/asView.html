@@ -1,55 +1,57 @@
-<div class="margin-small" ng-controller="ASViewController">
+<div ng-controller="ASViewController">
   <!--<h1 class="pgtitle"> AS View</h1>-->
-  <div>
-    <div>AS Number or AS Name:
-      <input id="suggestions" type="text" size="50" ng-keypress="keypress($event)" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
-      <span class="help-block">Example: 109/Cisco</span>
-    </div>
+
+  <div class="main-page-search">
+    AS Number or AS Name:
+    <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
+    <span class="help-block">Examples: 109, Cisco, etc.</span>
     <h3 ng-show="nodata">This AS doesn't exist</h3>
     <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
     <!--again! :)</h3>-->
   </div>
-  <br>
   <div ng-show="!nodata">
-    <div class="row">
+    <div class="main-area row">
       <div class="col-lg-6">
-        <p class="pgtitle-small">Whois Information for AS {{asn}}</p>
-        <div class="detailspanel">
-          <pre class="preStyle fixedHeight" ng-bind-html="details"></pre>
+        <div class="table-container">
+          <h3>Whois Information for AS {{asn}}</h3>
+          <div class="detailspanel">
+            <pre class="preStyle" ng-bind-html="details"></pre>
+          </div>
         </div>
       </div>
       <div class="col-lg-6">
-        <p class="pgtitle-small">Prefixes Originated by AS {{asn}}</p>
-        <div class="loading-section" ng-style="{'height':prefixGridInitHeight}">
-          <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
-          <div class="grid" ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+        <div class="table-container">
+          <h3>Prefixes Originated by AS {{asn}}</h3>
+          <div class="loading-section" ng-style="{'height':prefixGridOptions.changeHeight}">
+            <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
+            <div ui-grid="prefixGridOptions" ng-style="{'height': prefixGridOptions.changeHeight}"></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="row">
+    <div class="main-area row">
       <div class="col-lg-6">
-        <p class="pgtitle-small">Upstream ASes of AS {{asn}}</p>
-
-        <div class="loading-section" ng-style="{'height':upstreamGridInitHeight}">
-          <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
-          <div ng-show="!upstreamNodata" class="grid" ui-grid="upstreamGridOptions"
-               ui-grid-auto-resize></div>
-          <p ng-show="upstreamNodata">There is no upstream of this AS</p>
+        <div class="table-container">
+          <h3>Upstream ASes of AS {{asn}}</h3>
+          <div class="loading-section" ng-style="{'height':upstreamGridOptions.changeHeight}">
+            <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
+            <div ng-show="!upstreamNodata" class="grid" ui-grid="upstreamGridOptions"
+                 ng-style="{'height': upstreamGridOptions.changeHeight}"></div>
+            <p ng-show="upstreamNodata">There is no upstream of this AS</p>
+          </div>
         </div>
-
       </div>
       <div class="col-lg-6">
-        <p class="pgtitle-small">Downstream ASes of AS {{asn}}</p>
-
-        <div class="loading-section" ng-style="{'height':downstreamGridInitHeight}">
-          <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
-          <div ng-show="!downstreamNodata" class="grid" ui-grid="downstreamGridOptions"
-               ui-grid-auto-resize></div>
-          <p ng-show="downstreamNodata">There is no downstream of this AS</p>
+        <div class="table-container">
+          <h3>Downstream ASes of AS {{asn}}</h3>
+          <div class="loading-section" ng-style="{'height':downstreamGridOptions.changeHeight}">
+            <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
+            <div ng-show="!downstreamNodata" class="grid" ui-grid="downstreamGridOptions"
+                 ng-style="{'height': downstreamGridOptions.changeHeight}"></div>
+            <p ng-show="downstreamNodata">There is no downstream of this AS</p>
+          </div>
         </div>
-
-
       </div>
     </div>
 

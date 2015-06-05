@@ -16,9 +16,12 @@ angular.module('bmpUiApp')
 
     //Create the  prefix data grid
     $scope.AllPrefixOptions = {
+      showGridFooter: true,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
-      enableHorizontalScrollbar: 0
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      rowHeight: 25
     };
 
     //define the columns
@@ -127,7 +130,9 @@ angular.module('bmpUiApp')
       enableRowHeaderSelection: false,
       multiSelect: true,
       modifierKeysToMultiSelect: true,
-      enableHorizontalScrollbar: 0
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      rowHeight: 25
     };
 
     // here to get the intemValue , use this  to create table
