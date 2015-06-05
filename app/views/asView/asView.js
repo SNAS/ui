@@ -93,12 +93,12 @@ angular.module('bmpUiApp')
         var height;
         var dataLength = 14;
         if(grid.data.length > dataLength){
-          height = (dataLength * 32);
+          height = (dataLength * 30);
         }else{
-          height = ((grid.data.length * 32) + 50);
+          height = (grid.data.length * 32);
         }
         grid.changeHeight = height;
-        gridapi.grid.gridHeight = grid.changeHeight;
+        gridapi.grid.gridHeight = grid.changeHeight + 50;
       };
 
       //Waits a bit for user to contiune typing.

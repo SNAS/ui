@@ -24,7 +24,7 @@
           <h3>Prefixes Originated by AS {{asn}}</h3>
           <div class="loading-section" ng-style="{'height':prefixGridInitHeight}">
             <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
-            <div ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+            <div ui-grid="prefixGridOptions" ng-style="{'height': prefixGridOptions.changeHeight}"></div>
           </div>
         </div>
       </div>
@@ -37,7 +37,7 @@
           <div class="loading-section" ng-style="{'height':upstreamGridInitHeight}">
             <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
             <div ng-show="!upstreamNodata" class="grid" ui-grid="upstreamGridOptions"
-                 ui-grid-auto-resize></div>
+                 ng-style="{'height': upstreamGridOptions.changeHeight}"></div>
             <p ng-show="upstreamNodata">There is no upstream of this AS</p>
           </div>
         </div>
@@ -48,7 +48,7 @@
           <div class="loading-section" ng-style="{'height':downstreamGridInitHeight}">
             <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
             <div ng-show="!downstreamNodata" class="grid" ui-grid="downstreamGridOptions"
-                 ui-grid-auto-resize></div>
+                 ng-style="{'height': downstreamGridOptions.changeHeight}"></div>
             <p ng-show="downstreamNodata">There is no downstream of this AS</p>
           </div>
         </div>
