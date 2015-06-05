@@ -67,7 +67,7 @@ angular.module('bmp.components.card')
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0,
+      enableVerticalScrollbar: 1,
       showGridFooter: true,
       columnDefs:[
         {name: "asn", displayName: 'AS Number', width: '*'},

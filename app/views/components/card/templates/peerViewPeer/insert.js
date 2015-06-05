@@ -64,7 +64,7 @@ angular.module('bmp.components.card')
       showGridFooter: true,
       enableRowSelection: true,
       enableRowHeaderSelection: true,
-      enableVerticalScrollbar: 0,
+      enableVerticalScrollbar: 1,
       enableHorizontalScrollbar: 0
     };
 

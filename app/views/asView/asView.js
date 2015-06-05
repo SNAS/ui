@@ -17,9 +17,9 @@ angular.module('bmpUiApp')
       var nodes = [], links = [], nodeSet = [];
       var id = 0;
 
-      $scope.prefixGridInitHeight = 400;
-      $scope.upstreamGridInitHeight = 400;
-      $scope.downstreamGridInitHeight = 400;
+      $scope.prefixGridInitHeight = 464;
+      $scope.upstreamGridInitHeight = 464;
+      $scope.downstreamGridInitHeight = 464;
 
       $scope.nodata = false;
       $scope.upstreamNodata = false;
@@ -32,7 +32,7 @@ angular.module('bmpUiApp')
         showGridFooter: true,
         height: $scope.prefixGridInitHeight,
         enableHorizontalScrollbar: 0,
-        enableVerticalScrollbar: 0,
+        enableVerticalScrollbar: 1,
         columnDefs: [
           {
             name: "prefixWithLen", displayName: 'Prefix', width: '*'
@@ -58,7 +58,7 @@ angular.module('bmpUiApp')
         showGridFooter: true,
         height: $scope.upstreamGridInitHeight,
         enableHorizontalScrollbar: 0,
-        enableVerticalScrollbar: 0,
+        enableVerticalScrollbar: 1,
         columnDefs: [
           {name: "asn", displayName: 'ASN', width: '30%'},
           {name: "as_name", displayName: 'AS Name', width: '70%'}
@@ -76,7 +76,7 @@ angular.module('bmpUiApp')
         showGridFooter: true,
         height: $scope.downstreamGridInitHeight,
         enableHorizontalScrollbar: 0,
-        enableVerticalScrollbar: 0,
+        enableVerticalScrollbar: 1,
         columnDefs: [
           {name: "asn", displayName: 'ASN', width: '30%'},
           {name: "as_name", displayName: 'AS Name', width: '70%'}
