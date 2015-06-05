@@ -1,28 +1,24 @@
 <div class="margin-small" ng-controller="PeerAnalysisController">
   <!------------------------------------------------- PEER TABLE----------------------------------------------------->
-  <h1 class="pgtitle">BGP Peers</h1>
-
-  <div class="margin-small">
-
-    <div class="loading-section" ng-style="{'height':peerGridInitHeight}">
-      <div ng-show="peerTableIsLoad" bmp-loading loading-var="peerTableIsLoad"></div>
-      <div id="peerTable" ui-grid="peerTableOptions" ui-grid-selection ui-grid-auto-resize></div>
-    </div>
-
+  <h3 class="pgtitle">BGP Peers</h3>
+  <div class="loading-section" ng-style="{'height':peerGridInitHeight}">
+    <div ng-show="peerTableIsLoad" bmp-loading loading-var="peerTableIsLoad"></div>
+    <div id="peerTable" ui-grid="peerTableOptions" ui-grid-selection ui-grid-auto-resize></div>
   </div>
   <!------------------------------------------------- ./PEER TABLE -------------------------------------------------->
 
   <!------------------------------------------------- Prefix Trending per Peer--------------------------------------->
+  <!--<hr>-->
+
   <h3 class="pgtitle"> Peer Details
     <span ng-class="PeerStatus">{{RouterName}}  {{PeerName}}</span>
   </h3>
-
-  <div class="margin-small">
-    <div class="loading-section">
-      <pre ng-bind-html="detailsPanel"></pre>
-      <div bmp-loading loading-var="peerTableIsLoad"></div>
-    </div>
+  <div class="loading-section">
+    <pre ng-bind-html="detailsPanel"></pre>
+    <div bmp-loading loading-var="peerTableIsLoad"></div>
   </div>
+
+  <hr>
   <h3 class="pgtitle">Peer Prefix Trend
     <span ng-class="PeerStatus">{{RouterName}}  {{PeerName}}</span>
   </h3>

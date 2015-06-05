@@ -1,11 +1,12 @@
 <div class="margin-small" ng-controller="ASViewController">
   <!--<h1 class="pgtitle"> AS View</h1>-->
+
   <div class="main-page-search">
-    <div class="input">AS Number or AS Name:
+    <div>AS Number or AS Name:
       <input id="suggestions" type="text" size="50" ng-keypress="keypress($event)" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
       <span class="help-block">Example: 109/Cisco</span>
     </div>
-    <h4 ng-show="nodata">This AS doesn't exist</h4>
+    <h3 ng-show="nodata">This AS doesn't exist</h3>
     <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
     <!--again! :)</h3>-->
   </div>
@@ -55,6 +56,7 @@
       </div>
     </div>
 
+    <hr>
     <!--Topology area-->
     <div class="loading-section">
       <div id="AS_topology"></div>

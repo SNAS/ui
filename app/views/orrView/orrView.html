@@ -1,5 +1,5 @@
 <div class="margin-small" ng-controller="orrViewController">
-  <div class="input">
+  <div>
     Select Peer
     <select ng-model="selectedPeer"
             ng-options="(peer.PeerName != '' ? peer.PeerName : peer.PeerIP + ' (' + peer.protocol + ')' ) for peer in peerData"
@@ -7,14 +7,15 @@
     </select>
     Protocol: {{protocol}}
   </div>
+  <hr>
   <!--<nextTopology data="topologyData" options="topologyOptions" protocol="protocol" peer-hash-id="peerHashId" get-spf-table="getSPFtable" path="path"></nextTopology>-->
   <!--<topology></topology>-->
   <div class="loading-section">
     <div id="link_state_topology"></div>
     <div bmp-loading loading-var="topologyIsLoad"></div>
   </div>
-
-  <div class="margin-small">
+  <hr>
+  <div>
     <div ng-show="show===true" ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
   </div>
 </div>

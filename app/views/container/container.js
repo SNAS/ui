@@ -131,7 +131,6 @@ angular.module('bmpUiApp')
       $scope.$watch('location.path()', function(newPath) {
         //console.log('mug', newPath);
         $scope.page = newPath.substring(1);
-        $scope.title = $scope.page.replace(/-/g, ' ');
 
         if (path === newPath) {
           element.addClass('active');
