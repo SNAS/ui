@@ -10,6 +10,8 @@
 angular.module('bmpUiApp')
   .controller('ASAnalysisController',['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
 
+    var ipv4yDomain = 0, ipv6yDomain = 0;
+
     /* Chart options */
     $scope.ipv4Options = {
       chart: {
@@ -100,7 +102,12 @@ angular.module('bmpUiApp')
     function getData(){
       apiFactory.getTopTransitIpv4Data().success(
         function(results){
-          $scope.top_transit_ipv4_data = processData(results,"transit_v4_prefixes");
+          var processedData = processData(results,"transit_v4_prefixes");
+          if(processedData.maxPrefixes > ipv4yDomain){
+            ipv4yDomain = processedData.maxPrefixes;
+            $scope.ipv4Options.chart.yDomain = [0, ipv4yDomain];
+          }
+          $scope.top_transit_ipv4_data = processedData.chart_data;
           $scope.ipv4TransitGraphIsLoad = false; // stop loading
         }
       ).
@@ -110,7 +117,12 @@ angular.module('bmpUiApp')
 
       apiFactory.getTopTransitIpv6Data().success(
         function(results){
-          $scope.top_transit_ipv6_data = processData(results,"transit_v6_prefixes");
+          var processedData = processData(results,"transit_v6_prefixes");
+          if(processedData.maxPrefixes > ipv6yDomain){
+            ipv6yDomain = processedData.maxPrefixes;
+            $scope.ipv6Options.chart.yDomain = [0, ipv6yDomain];
+          }
+          $scope.top_transit_ipv6_data = processedData.chart_data;
           $scope.ipv6TransitGraphIsLoad = false; // stop loading
         }
       ).
@@ -120,7 +132,12 @@ angular.module('bmpUiApp')
 
       apiFactory.getTopOriginIpv4Data().success(
         function(results){
-          $scope.top_origin_ipv4_data = processData(results,"origin_v4_prefixes");
+          var processedData = processData(results,"origin_v4_prefixes");
+          if(processedData.maxPrefixes > ipv4yDomain){
+            ipv4yDomain = processedData.maxPrefixes;
+            $scope.ipv4Options.chart.yDomain = [0, ipv4yDomain];
+          }
+          $scope.top_origin_ipv4_data = processedData.chart_data;
           $scope.ipv4OriginGraphIsLoad = false; // stop loading
         }
       ).
@@ -130,7 +147,12 @@ angular.module('bmpUiApp')
 
       apiFactory.getTopOriginIpv6Data().success(
         function(results){
-          $scope.top_origin_ipv6_data = processData(results,"origin_v6_prefixes");
+          var processedData = processData(results,"origin_v6_prefixes");
+          if(processedData.maxPrefixes > ipv6yDomain){
+            ipv6yDomain = processedData.maxPrefixes;
+            $scope.ipv6Options.chart.yDomain = [0, ipv6yDomain];
+          }
+          $scope.top_origin_ipv6_data = processedData.chart_data;
           $scope.ipv6OriginGraphIsLoad = false; // stop loading
         }
       ).
@@ -145,6 +167,7 @@ angular.module('bmpUiApp')
       var ip = results.s.data;
       var values=[];
       var prefixes;
+      var maxPrefixes = 0;
 
       //create array with amount of prefixes
       for (var i = ip.length-1; i >=0; i--) {
@@ -165,6 +188,10 @@ angular.module('bmpUiApp')
             "value": prefixes
           });
         }
+
+        if(prefixes > maxPrefixes){
+          maxPrefixes = prefixes;
+        }
       }
 
       var chart_data=[{
@@ -172,7 +199,12 @@ angular.module('bmpUiApp')
         values: values
       }];
 
-      return chart_data;
+      var result = {
+        chart_data: chart_data,
+        maxPrefixes: maxPrefixes
+      };
+
+      return result;
     }
 
   }]);
