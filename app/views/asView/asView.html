@@ -22,7 +22,7 @@
       <div class="col-lg-6">
         <div class="table-container">
           <h3>Prefixes Originated by AS {{asn}}</h3>
-          <div class="loading-section" ng-style="{'height':prefixGridInitHeight}">
+          <div class="loading-section" ng-style="{'height':prefixGridOptions.changeHeight}">
             <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
             <div ui-grid="prefixGridOptions" ng-style="{'height': prefixGridOptions.changeHeight}"></div>
           </div>
@@ -34,7 +34,7 @@
       <div class="col-lg-6">
         <div class="table-container">
           <h3>Upstream ASes of AS {{asn}}</h3>
-          <div class="loading-section" ng-style="{'height':upstreamGridInitHeight}">
+          <div class="loading-section" ng-style="{'height':upstreamGridOptions.changeHeight}">
             <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
             <div ng-show="!upstreamNodata" class="grid" ui-grid="upstreamGridOptions"
                  ng-style="{'height': upstreamGridOptions.changeHeight}"></div>
@@ -45,7 +45,7 @@
       <div class="col-lg-6">
         <div class="table-container">
           <h3>Downstream ASes of AS {{asn}}</h3>
-          <div class="loading-section" ng-style="{'height':downstreamGridInitHeight}">
+          <div class="loading-section" ng-style="{'height':downstreamGridOptions.changeHeight}">
             <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
             <div ng-show="!downstreamNodata" class="grid" ui-grid="downstreamGridOptions"
                  ng-style="{'height': downstreamGridOptions.changeHeight}"></div>

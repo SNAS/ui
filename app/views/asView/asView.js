@@ -31,6 +31,7 @@ angular.module('bmpUiApp')
         gridFooterHeight: 15,
         showGridFooter: true,
         height: $scope.prefixGridInitHeight,
+        changeHeight: $scope.prefixGridInitHeight,
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 1,
         columnDefs: [
@@ -57,6 +58,7 @@ angular.module('bmpUiApp')
         gridFooterHeight: 15,
         showGridFooter: true,
         height: $scope.upstreamGridInitHeight,
+        changeHeight: $scope.upstreamGridInitHeight,
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 1,
         columnDefs: [
@@ -75,6 +77,7 @@ angular.module('bmpUiApp')
         gridFooterHeight: 15,
         showGridFooter: true,
         height: $scope.downstreamGridInitHeight,
+        changeHeight: $scope.downstreamGridInitHeight,
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 1,
         columnDefs: [
@@ -98,7 +101,7 @@ angular.module('bmpUiApp')
           height = (grid.data.length * 30);
         }
         grid.changeHeight = height;
-        gridapi.grid.gridHeight = grid.changeHeight + 50;
+        gridapi.grid.gridHeight = grid.changeHeight;
       };
 
       //Waits a bit for user to contiune typing.
