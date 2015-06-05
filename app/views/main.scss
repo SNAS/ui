@@ -222,6 +222,15 @@ icon.bmp-down {
 
 .help-block{
   display: inline;
+  font-family: 'CiscoSansExtraLight';
+  color: #aaa;
+}
+
+.main-page-search input {
+  border: 1px solid #eee;
+  color: #888;
+  font-family: 'CiscoSansExtraLight';
+  outline: none;
 }
 
 .input{
