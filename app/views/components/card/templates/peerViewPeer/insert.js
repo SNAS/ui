@@ -199,7 +199,7 @@ angular.module('bmp.components.card')
           var pcontent = "";
           for(var j = 0; j < popOutFields.length; j++){
             if(asname[i][popOutFields[j]] != null){
-              pcontent+= popOutFields[j] + " : " + asname[i][popOutFields[j]] + "<br>";
+              pcontent+= popOutFields[j] + " : <span class='thin'>" + asname[i][popOutFields[j]] + "</span><br>";
               pcontent = pcontent.replace(/ASN-|ASN/g,"");
             }
           }
@@ -269,7 +269,7 @@ angular.module('bmp.components.card')
           })
         }
       };
-      $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 20}});
+      //$('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 20}});
 
       //for the tooltip
       $scope.wordCheck = function(word){
