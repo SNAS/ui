@@ -61,6 +61,7 @@ angular.module('bmp.components.card')
 
     $scope.ribGridOptions = {
       height: $scope.ribGridInitHeight,
+      showGridFooter: true,
       enableRowSelection: true,
       enableRowHeaderSelection: true,
       enableVerticalScrollbar: 0,
@@ -115,26 +116,6 @@ angular.module('bmp.components.card')
             latitude: $scope.values.geo.latitude,
             longitude: $scope.values.geo.longitude
           };
-
-          $scope.rpiconData = {
-            RouterName: $scope.data.RouterName,
-            RouterIP: $scope.data.RouterIP,
-            RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
-            RouterASN: $scope.data.LocalASN,
-            PeerName: $scope.values.PeerName,
-            PeerIP: $scope.values.PeerAddress,
-            PeerASN: $scope.data.PeerASN
-          };
-
-          function getAsLength(theValue) {
-            console.log("Getting length of " + theValue);
-            var theString = theValue + "";
-            theString = theString.replace(":", "");
-            theString = theString.replace(".", "");
-            return theString.length;
-          };
-
-          console.log($scope.data.PeerASN); // printing out the first no.
 
           createASpath($scope.values.AS_Path);
         }).

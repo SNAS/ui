@@ -68,6 +68,7 @@ angular.module('bmp.components.card')
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 0,
+      showGridFooter: true,
       columnDefs:[
         {name: "asn", displayName: 'AS Number', width: '*'},
         {name: "as_name", displayName: 'AS Name', width: '*'},
@@ -132,30 +133,24 @@ angular.module('bmp.components.card')
       $scope.peerTime = timeFactory.calTimeFromNow($scope.data.LastDownTimestamp);
     }
 
-    $scope.peerFullIp = $scope.data.PeerIP;
-    if($scope.data.isPeerIPv4 == "1"){
-      //is ipv4 so add ' :<port>'
-      $scope.peerFullIp = $scope.data.PeerIP + ":" + $scope.data.PeerPort;
-    }else{
-      //is ipv6 so add ' <port>'
-      $scope.peerFullIp = $scope.data.PeerIP + " " + $scope.data.PeerPort;
-    }
+    $scope.fullIp = function(ip, port){
+      if(ip.indexOf("." != -1)){
+        //is ipv4 so add ' :<port>'
+        return ip +":" + port;
+      }else{
+        //is ipv6 so add ' <port>'
+        return ip + " " + port;
+      }
+    };
 
     $scope.rpIconData = {
       RouterName: $scope.data.RouterName,
-      RouterIP: $scope.data.RouterIP,
-      RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
+      RouterIP: $scope.fullIp ($scope.data.RouterIP, $scope.data.LocalPort),
+      //RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
       RouterASN: $scope.data.LocalASN,
       PeerName: $scope.data.PeerName,
-      PeerIP: $scope.peerFullIp,
+      PeerIP: $scope.fullIp ($scope.data.PeerIP, $scope.data.PeerPort),
       PeerASN: $scope.data.PeerASN
-    };
-
-    function getAsLength(theValue) {
-      var theString = theValue + "";
-      theString = theString.replace(":", "");
-      theString = theString.replace(".", "");
-      return theString.length;
     };
 
     $scope.locationInfo = cardFactory.createLocationTable({

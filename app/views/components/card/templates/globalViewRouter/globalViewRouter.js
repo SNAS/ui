@@ -4,27 +4,6 @@ angular.module('bmp.components.card')
 
   .controller('BmpCardGlobalRouterController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
 
-      if($scope.data.RouterName === " " || $scope.data.RouterName === ""){
-        $scope.data.RouterName = $scope.data.RouterIP;
-      }
-
-      $scope.data.RouterIPWithLength = $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP);
-
-      function getAsLength(theValue) {
-        var theString = theValue + "";
-        theString = theString.replace(":", "");
-        theString = theString.replace(".", "");
-        return theString.length;
-      };
-
-      $scope.wordCheck = function(word){
-        if(word.length > 13){
-          return word.slice(0,10) + " ...";
-        }else{
-          return word;
-        }
-      };
-
       //ROUTER DATA
       //{
       //  "RouterName":"csr1.openbmp.org",
@@ -39,6 +18,26 @@ angular.module('bmp.components.card')
       //  "LastModified":"2015-04-01 18:36:36"
       // }
 
+    if($scope.data.RouterName === " " || $scope.data.RouterName === ""){
+      $scope.data.RouterName = $scope.data.RouterIP;
+    }
+
+    //$scope.data.RouterIPWithLength = $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP);
+    //
+    //function getAsLength(theValue) {
+    //  var theString = theValue + "";
+    //  theString = theString.replace(":", "");
+    //  theString = theString.replace(".", "");
+    //  return theString.length;
+    //};
+
+    $scope.wordCheck = function(word){
+      if(word.length > 13){
+        return word.slice(0,10) + " ...";
+      }else{
+        return word;
+      }
+    };
 
       $scope.ipAmountData = [
         {

@@ -1,24 +1,4 @@
 <div ng-controller="BmpCardGlobalRouterController">
-  <!--
-  <div ng-hide="cardExpand" class="collapsed">
-
-    <icon class="bmp-outline_router" style="font-size:36px;color:#6197d1"></icon>
-    <div class="collapsedContent">
-      <ul class="collContentItems">
-        <li>BMP ROUTER</li>
-        <li>{{data.RouterName}}</li>
-        <li>{{data.RouterIP}}</li>
-        <li>
-          <icon
-            ng-class="{'bmp-down': data.isConnected!='1', 'bmp-up': data.isConnected=='1'}"
-            ng-style="data.isConnected != '1' && {'color': '#f2732d'} ||
-                      data.isConnected == '1' && {'color': '#7ec35c'}"
-            style="font-size:18px;">
-          </icon>
-        </li>
-      </ul>
-    </div>
-  </div> -->
 
   <!--EXPANDED view-->
   <div class="card-expand row">
@@ -62,7 +42,7 @@
               <div class="left-section">
                 <div class="centre">
                   <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
-                  <div class="router-name-text">{{ data.RouterIPWithLength }} </div>
+                  <div class="router-name-text">{{ data.RouterIP }} </div>
                 </div>
               </div>
 
