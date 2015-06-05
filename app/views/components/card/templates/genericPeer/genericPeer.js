@@ -92,9 +92,9 @@ angular.module('bmp.components.card')
 
       var height;
       if(grid.data.length > 10){
-        height = ((10 * 30) + 30);
+        height = ((10 * 30));
       }else{
-        height = ((grid.data.length * 30) + 50);
+        height = ((grid.data.length * 30) + 30);
       }
       grid.changeHeight = height;
       gridapi.grid.gridHeight = grid.changeHeight;

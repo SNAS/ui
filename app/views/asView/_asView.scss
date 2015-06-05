@@ -14,81 +14,52 @@
 }
 
 .whois-info {
-
   background-color: #FFFFFF;
-
   border: solid 1px;
-
   border-color: #D4D4D4;
-
   border-radius: 0px;
-
   padding: 30px;
 
-
-
   p {
-
     text-transform: uppercase;
-
     color: black;
-
     font-weight: normal;
-
   }
-
-  .preStyle {
-
-    line-height: 1.8;
-
-    text-transform: capitalize;
-
-    background-color: #FFFFFF;
-
-    border: none;
-
-    overflow: auto;
-
-    max-height: 800px;
-
-
-
-    //need to override pre font
-
-    font-family: inherit;
-
-    font-size: 13px;
-
-    padding: 30px auto;
-
-    margin: 0;
-
-    color: #576D7C;
-
-    font-weight: 200;
-
-    table{
-
-      .hoz-line {
-
-        border-bottom: solid 1px #D4D4D4
-
-      }
-
-      width: 70%;
-
-      td:nth-child(odd) {
-
-        font-weight: normal;
-
-        padding-right: 15px;
-
-        color: #3F5869;
-
-      }
-
-    }
-
-  }
-
 }
+
+.preStyle {
+  line-height: 2;
+  text-transform: capitalize;
+  background-color: #FFFFFF;
+  border: none;
+  overflow: auto;
+  max-height: 800px;
+  white-space: inherit;
+  word-break: normal;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 0 30px;
+  margin: 0;
+  color: #5c6e7c;
+  word-wrap: normal;
+
+  table{
+    width: 100%;
+
+    .hoz-line {
+      hr{
+        margin: 10px 0;
+        border-top: 2px solid #f6f6f6;
+      }
+    }
+    td:nth-child(odd) {
+      font-weight: normal;
+      padding-right: 50px;
+      color: #3F5869;
+    }
+    td:nth-child(even) {
+      font-family: 'CiscoSansExtraLight';
+    }
+  }
+}
+

@@ -12,17 +12,21 @@
   </div>
   <div ng-show="!nodata">
     <div class="row">
-      <div class="col-lg-6 whois-info">
-        <p class="pgtitle-small">Whois Information for AS {{asn}}</p>
-        <div class="detailspanel">
-          <pre class="preStyle" ng-bind-html="details"></pre>
+      <div class="col-lg-6">
+        <div class="table-container">
+          <h3>Whois Information for AS {{asn}}</h3>
+          <div class="detailspanel">
+            <pre class="preStyle" ng-bind-html="details"></pre>
+          </div>
         </div>
       </div>
       <div class="col-lg-6">
-        <h3 class="pgtitle-small">Prefixes Originated by AS {{asn}}</h3>
-        <div class="loading-section" ng-style="{'height':prefixGridInitHeight}">
-          <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
-          <div ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+        <div class="table-container">
+          <h3>Prefixes Originated by AS {{asn}}</h3>
+          <div class="loading-section" ng-style="{'height':prefixGridInitHeight}">
+            <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
+            <div ui-grid="prefixGridOptions" ui-grid-auto-resize></div>
+          </div>
         </div>
       </div>
     </div>
