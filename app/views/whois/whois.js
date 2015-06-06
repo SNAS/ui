@@ -109,7 +109,7 @@ angular.module('bmpUiApp')
             processData(result.w.data);
           }).
           error(function (error) {
-            alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+            
             console.log(error.message);
           });
       } else {
@@ -119,7 +119,7 @@ angular.module('bmpUiApp')
             processData(result.gen_whois_asn.data);
           }).
           error(function (error) {
-            alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+            
             console.log(error.message);
           });
       }
