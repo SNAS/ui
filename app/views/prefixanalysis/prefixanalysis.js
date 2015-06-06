@@ -522,9 +522,21 @@ angular.module('bmpUiApp')
         //console.log("in the top");
         //console.log("$scope.itemValue",$scope.itemValue);
         //console.log("in the top");
-        if (key == "Origin")
+        if(key == "Prefix")
         {
-          {
+          $scope.showItems += (
+          '<tr>' +
+          '<td>' +
+          'Prefix: ' +
+          '</td>' +
+
+          '<td>'  + $scope.itemValue.Prefix  + '/' + $scope.itemValue.PrefixLen +
+          '</td>' +
+          '</tr>'
+          );
+        }
+        else if (key == "Origin")
+        {
             if((typeof($scope.itemValueLast.Origin)!= "undefined")&&(!angular.equals($scope.itemValueLast.Origin, $scope.itemValue.Origin)))
             {
               $scope.showItems += (
@@ -550,8 +562,6 @@ angular.module('bmpUiApp')
               '</tr>'
               );
             }
-          }
-
         }
         else if (key == "AS_Path")
         {
@@ -784,7 +794,8 @@ angular.module('bmpUiApp')
             );
           }
         }
-        else if(key != "AS_Path_list_flag" && key != "AS_Path_list" && key != "Communities_list" && key != "Communities_list"
+        //wow this is super ugly , i will optimize it after cisco live
+        else if(key != "Prefix" && key!= "PrefixLen" && key != "AS_Path_list_flag" && key != "AS_Path_list" && key != "Communities_list" && key != "Communities_list"
           && key != "preData" && key != "AS_Path_list_flag_last" && key != "Communities_list_flag" && key != "Communities_list_flag_last") {
           $scope.showItems += (
           '<tr>' +
