@@ -8,7 +8,7 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', 'modal', '$stateParams','$rootScope', function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,modal, $stateParams,$rootScope) {
+  .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', 'modal', '$stateParams','$rootScope', 'uiGridConstants',function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,modal, $stateParams,$rootScope,uiGridConstants) {
     //DEBUG
 
     // resize the window
@@ -17,6 +17,7 @@ angular.module('bmpUiApp')
     //Create the  prefix data grid
     $scope.AllPrefixOptions = {
       showGridFooter: true,
+      enableFiltering: true,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
@@ -153,9 +154,11 @@ angular.module('bmpUiApp')
         $scope.createShowTable();
         $scope.$apply()
       });
-
+      // test for the sort change
+      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
     };
     //define the history gird columns
+
     $scope.HistoryPrefixOptions.columnDefs = [
       {name: "RouterName", displayName: 'RouterName', width: 110, cellClass:'background'},
       {name: "NH", displayName: 'NH', width: 100,cellClass:'background'},
@@ -163,7 +166,14 @@ angular.module('bmpUiApp')
       {name: "PeerASN", displayName: 'Peer_ASN', width: 130,cellClass:'background'},
       {name: "MED", displayName: 'MED', width: 60,cellClass:'background'},
       {name: "Communities", displayName: 'Communities',cellClass:'background',cellTemplate: '<div ng-class="{greenbarCommunities: !Communities_list.flag, whitebarCommunities: Communities_list.flag,}" ng-repeat="Communities_list in row.entity.Communities_list">{{Communities_list.path}}</div>'},
-      {name: "LastModified", displayName: 'Last_Modified', width: 180,cellClass:'background'}
+      {name: "LastModified", displayName: 'Last_Modified', width: 180,cellClass:'background',
+
+        sort: {
+          direction: uiGridConstants.DESC,
+          priority: 1
+        }
+
+      }
     ];
 
     // the only Function is creatinga history prefix gird , inject data should be $scope.HisData

@@ -20,12 +20,12 @@ angular.module('bmpUiApp')
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 0,
       columnDefs: [
-        {name: "prefixWithLen", displayName: 'Prefix', width: '*'},
-        {name: "org_name", displayName: 'Organization', width: '*'},
-        {name: "asn1", displayName: 'ASN Learned', width: '*'},
-        {name: "org_name1", displayName: 'AS Name Learned', width: '*'},
-        {name: "asn2", displayName: 'ASN Registered', width: '*'},
-        {name: "org_name2", displayName: 'AS Name Registered', width: '*'}
+        {name: "prefixWithLen", displayName: 'Prefix/Len', width: '*'},
+        //{name: "org_name", displayName: 'Organization', width: '*'},
+        {name: "asn1", displayName: 'Origin AS Received', width: '*'},
+        //{name: "org_name1", displayName: 'AS Name Learned', width: '*'},
+        {name: "asn2", displayName: 'Origin As Registered', width: '*'}
+        //{name: "org_name2", displayName: 'AS Name Registered', width: '*'}
       ]
     };
 
