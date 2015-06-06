@@ -158,6 +158,14 @@
   }
 }
 
+$btn-colour: #314a5d;
+
+.cust-btn {
+  border-radius: 0;
+  background-color: $btn-colour;
+  border-color: $btn-colour;
+}
+
 .singleWordGreen{
   width:150px;
   height:32px;

@@ -104,6 +104,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }
         else if($scope.location === 'globalView'){
             $scope.panelTitle = "Router List";
+            $scope.showBottomPane = true;
             $scope.getRouters();
             loadBottomPane();
         }

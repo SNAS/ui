@@ -14,6 +14,7 @@ angular.module('bmpUiApp')
     window.SCOPE = $scope;
 
     var whoIsGridInitHeight = 300;
+    $scope.nodata = false;
 
     $scope.whoIsGridOptions = {
       enableRowSelection: true,
@@ -96,21 +97,16 @@ angular.module('bmpUiApp')
 
     //Loop through data selecting and altering relevant data.
     var searchValue = function (value) {
-      $scope.whoIsLoad = true;
       if (value == "" || value == " ")
         return;
+      $scope.whoIsLoad = true;
       var numberRegex = /^\d+$/;
 
       if (numberRegex.exec(value) == null) {
         //  not a number do string search
         apiFactory.getWhoIsName(value).
           success(function (result) {
-            $scope.whoIsGridOptions.data = result.w.data;
-            initSelect();
-            setTimeout(function(){
-              $scope.calGridHeight($scope.whoIsGridOptions, $scope.whoIsGridApi);
-            },10);
-            $scope.whoIsLoad=false;
+            processData(result.w.data);
           }).
           error(function (error) {
             alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -120,10 +116,7 @@ angular.module('bmpUiApp')
         // do a asn search
         apiFactory.getWhoIsASN(value).
           success(function (result) {
-            $scope.whoIsGridOptions.data = result.gen_whois_asn.data;
-            initSelect();
-            $scope.calGridHeight($scope.whoIsGridOptions, $scope.whoIsGridApi);
-            $scope.whoIsLoad=false;
+            processData(result.gen_whois_asn.data);
           }).
           error(function (error) {
             alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
@@ -131,6 +124,21 @@ angular.module('bmpUiApp')
           });
       }
     };
+
+    function processData(data){
+      if(data.length != 0){
+        $scope.whoIsGridOptions.data = data;
+        initSelect();
+        setTimeout(function(){
+          $scope.calGridHeight($scope.whoIsGridOptions, $scope.whoIsGridApi);
+        },10);
+        $scope.whoIsLoad=false;
+        $scope.nodata = false;
+      }
+      else{
+        $scope.nodata = true;
+      }
+    }
 
     var initSelect = function () {
       $timeout(function () {
