@@ -808,7 +808,7 @@ angular.module('bmpUiApp')
     function link($scope,element,scope){
       var w = 600;
       var h = 20;
-      var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
       var colorPicker = function(number,x){
 
@@ -850,9 +850,14 @@ angular.module('bmpUiApp')
 
         var tip = d3.tip()
           .html(function(d,i) {
-            //console.log(i);
+            console.log(i);
 
-            var content = "<strong>Number:</strong>" + d;
+            var content = i + ":00~" + (parseInt(i)+1).toString() + ":00" + " " + "<strong>Number:</strong>" + d ;
+
+            //if(!$scope.$$phase) {
+            //  //$digest or $apply
+            //  $scope.$apply();
+            //}
             return content;
           });
 
@@ -873,11 +878,12 @@ angular.module('bmpUiApp')
             d3.select(this)
               .attr("style","fill:green");
 
+            //console.log("to mark the time",i);
+            //
+            ////just save it temp
+            //$scope.markTime = i;
             $scope.createPrefixHisGrid(i);
             $scope.showGrid = "true";
-
-            //$location.hash('bottom');
-            //$anchorScroll();
           })
           .on("mouseout",function(d,i){
             tip.destroy(d);
@@ -888,11 +894,9 @@ angular.module('bmpUiApp')
           .on("mouseenter",function(d,i){
             d3.select(this)
               .attr("style","fill:#F59AE9")
-            //d3.selectAll(".d3-tip")
-            //  .attr("style",null)
           })
-          .on('mouseover', function(d) {
-            tip.attr("class", "d3-tip").show(d)
+          .on('mouseover', function(d,i) {
+            tip.attr("class", "d3-tip").show(d,i)
           });
 
         if(!$scope.$$phase) {
