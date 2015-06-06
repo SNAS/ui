@@ -17,6 +17,7 @@ angular.module('bmpUiApp')
     //Create the  prefix data grid
     $scope.AllPrefixOptions = {
       showGridFooter: true,
+      enableFiltering: true,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,

@@ -16,6 +16,7 @@ angular.module('bmpUiApp')
       var upstreamPromise, downstreamPromise;
       var nodes = [], links = [], nodeSet = [];
       var id = 0;
+      var topo = {};
 
       $scope.prefixGridInitHeight = 464;
       $scope.upstreamGridInitHeight = 464;
@@ -30,6 +31,7 @@ angular.module('bmpUiApp')
         rowHeight: 32,
         gridFooterHeight: 15,
         showGridFooter: true,
+        enableFiltering: true,
         height: $scope.prefixGridInitHeight,
         changeHeight: $scope.prefixGridInitHeight,
         enableHorizontalScrollbar: 0,
@@ -329,9 +331,10 @@ angular.module('bmpUiApp')
               return new nx.dom.Element(document.getElementById('AS_topology'));
             },
             start: function () {
-              window.topo = new nx.graphic.Topology({
+              topo = new nx.graphic.Topology({
                 //padding: 10,
                 adaptive: true,
+                enableSmartLabel: true,
                 nodeConfig: {
                   label: 'model.asn',
                   iconType: 'model.iconType'
