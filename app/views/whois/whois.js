@@ -96,7 +96,6 @@ angular.module('bmpUiApp')
 
     //Loop through data selecting and altering relevant data.
     var searchValue = function (value) {
-      $scope.whoIsLoad = true;
       if (value == "" || value == " ")
         return;
       var numberRegex = /^\d+$/;
