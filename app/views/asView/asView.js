@@ -308,6 +308,7 @@ angular.module('bmpUiApp')
           downstreamData = result.downstreamASN.data.data;
           if (result.downstreamASN.data.size == 0) {
             $scope.downstreamNodata = true;
+            $scope.downstreamIsLoad = false; //stop loading
           }
           else {
             $scope.downstreamGridOptions.data = downstreamData;

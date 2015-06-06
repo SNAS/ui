@@ -1,3 +1,5 @@
+g.tick{opacity: 0 !important}
+
 .cardArea {
   border-bottom-style: solid;
   border-bottom-width: 1px;
@@ -42,12 +44,6 @@
       &:hover{
         background-color: rgb(228, 228, 228);
       }
-    }
-    .red {
-      color: #ad7b7b;
-    }
-    .green {
-      color: #7bad85;
     }
 
     //card template styling
