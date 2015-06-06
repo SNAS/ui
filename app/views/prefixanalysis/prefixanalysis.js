@@ -514,14 +514,10 @@ angular.module('bmpUiApp')
     // createShowTable function is to add a table in showDetails modal.
     $scope.createShowTable = function()
     {
-      $scope.showItems = '<table class="modalTable">';
+      $scope.showItems = '<table class="modal-table">';
       $scope.itemValueLast = $scope.itemValue.preData;
 
       angular.forEach($scope.itemValue, function (value,key) {
-
-        //console.log("in the top");
-        //console.log("$scope.itemValue",$scope.itemValue);
-        //console.log("in the top");
         if (key == "Origin")
         {
           {
@@ -533,7 +529,7 @@ angular.module('bmpUiApp')
               'Current_Origin: ' +
               '</td>' +
 
-              '<td>' + "<div class='singleWordGreen'>" + $scope.itemValue.Origin  + "</div>" +
+              '<td>' + "<span class='green'>" + $scope.itemValue.Origin  + "</span>" +
               '</td>' +
               '</tr>'
               );
@@ -544,8 +540,8 @@ angular.module('bmpUiApp')
               'Previous_Origin: ' +
               '</td>' +
 
-              '<td>' + "<div class='singleWordRed'>" +
-              $scope.itemValueLast.Origin + "</div>" +
+              '<td>' + "<span class='red'>" +
+              $scope.itemValueLast.Origin + "</span>" +
               '</td>' +
               '</tr>'
               );
@@ -556,30 +552,18 @@ angular.module('bmpUiApp')
         else if (key == "AS_Path")
         {
 
-          //$scope.itemValueTemp = $scope.itemValue;
-          //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
-          //console.log("$scope.itemValueLast", $scope.itemValueLast);
-          console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-          console.log("$scope.itemValue",$scope.itemValue);
-          console.log("##################################");
-          //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
-          //
-          //console.log(typeof(value),value);
-
           var valueAs = "";
           var valusAsLast = "";
 
           angular.forEach($scope.itemValue.AS_Path,function(value,key)
           {
-            if($scope.itemValue.AS_Path_list[key].flag)
-            {
-              valueAs = valueAs + "<div class='whitebar'>" + value +"</div>";
+            if($scope.itemValue.AS_Path_list[key].flag){
+              valueAs += value + " ";
             }
-            else
-            {
-              valueAs = valueAs + "<div class='greenbar'>" + value +"</div>";
+            else{
+              valueAs += "<span class='green'>" + value + " " + "</span>";
             }
-          })
+          });
 
           $scope.showItems += (
           '<tr>' +
@@ -594,7 +578,6 @@ angular.module('bmpUiApp')
           );
 
           // this part to insert last path as , the same .
-
           if(!angular.equals($scope.itemValueLast.AS_Path, $scope.itemValue.AS_Path))
           {
 
@@ -603,11 +586,11 @@ angular.module('bmpUiApp')
 
                 if($scope.itemValueLast.AS_Path_list[key].last_flag)
                 {
-                  valusAsLast = valusAsLast + "<div class='whitebar'>" + value +"</div>";
+                  valusAsLast += value + " ";
                 }
                 else
                 {
-                  valusAsLast = valusAsLast + "<div class='redbar'>" + value +"</div>";
+                  valusAsLast += "<span class='red'>" + value + " " +"</span>";
                 }
               })
 
@@ -635,8 +618,8 @@ angular.module('bmpUiApp')
               'Current_MED: ' +
               '</td>' +
 
-              '<td>' + "<div class='singleWordGreen'>" +
-              $scope.itemValue.MED + "</div>" +
+              '<td>' + "<span class='green'>" +
+              $scope.itemValue.MED + "</span>" +
               '</td>' +
               '</tr>'
               );
@@ -647,8 +630,8 @@ angular.module('bmpUiApp')
               'Previous_MED: ' +
               '</td>' +
 
-              '<td>' +  "<div class='singleWordRed'>" +
-              $scope.itemValueLast.MED + "</div>" +
+              '<td>' +  "<span class='red'>" +
+              $scope.itemValueLast.MED + "</span>" +
               '</td>' +
               '</tr>'
               );
@@ -665,8 +648,8 @@ angular.module('bmpUiApp')
             'Current_NH: ' +
             '</td>' +
 
-            '<td>' + "<div class='singleWordGreen'>" +
-            $scope.itemValue.NH + "</div>" +
+            '<td>' + "<span class='green'>" +
+            $scope.itemValue.NH + "</span>" +
             '</td>' +
             '</tr>'
             );
@@ -677,8 +660,8 @@ angular.module('bmpUiApp')
             'Previous_NH: ' +
             '</td>' +
 
-            '<td>' +  "<div class='singleWordRed'>" +
-            $scope.itemValueLast.NH + "</div>" +
+            '<td>' +  "<span class='red'>" +
+            $scope.itemValueLast.NH + "</span>" +
             '</td>' +
             '</tr>'
             );
@@ -694,8 +677,8 @@ angular.module('bmpUiApp')
             'Current_LocalPref: ' +
             '</td>' +
 
-            '<td>' +  "<div class='singleWordGreen'>" +
-            $scope.itemValue.LocalPref +  "</div>" +
+            '<td>' +  "<span class='green'>" +
+            $scope.itemValue.LocalPref +  "</span>" +
             '</td>' +
             '</tr>'
             );
@@ -706,8 +689,8 @@ angular.module('bmpUiApp')
             'Previous_LocalPref: ' +
             '</td>' +
 
-            '<td>' +  "<div class='singleWordRed'>" +
-            $scope.itemValueLast.LocalPref + "</div>" +
+            '<td>' +  "<span class='red'>" +
+            $scope.itemValueLast.LocalPref + "</span>" +
             '</td>' +
             '</tr>'
             );
@@ -715,16 +698,6 @@ angular.module('bmpUiApp')
         }
         else if (key == "Communities")
         {
-          //$scope.itemValueTemp = $scope.itemValue;
-          //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
-          //console.log("$scope.itemValueLast", $scope.itemValueLast);
-          console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-          console.log("$scope.itemValue",$scope.itemValue);
-          console.log("##################################");
-          //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
-
-          //console.log(typeof(value),value);
-
           var valueAs = "";
           var valusAsLast = "";
 
@@ -732,11 +705,11 @@ angular.module('bmpUiApp')
           {
             if($scope.itemValue.Communities_list[key].flag)
             {
-              valueAs = valueAs + "<div class='whitebarCommunities'>" + value +"</div>";
+              valueAs += value + " ";
             }
             else
             {
-              valueAs = valueAs + "<div class='greenbarCommunities'>" + value +"</div>";
+              valueAs = valueAs + "<span class='green'>" + value + " " +"</span>";
             }
           })
 
@@ -762,11 +735,11 @@ angular.module('bmpUiApp')
 
               if($scope.itemValueLast.Communities_list[key].last_flag)
               {
-                valusAsLast = valusAsLast + "<div class='whitebarCommunities'>" + value +"</div>";
+                valusAsLast += value + " ";
               }
               else
               {
-                valusAsLast = valusAsLast + "<div class='redbarCommunities'>" + value +"</div>";
+                valusAsLast += "<span class='red'>" + value + " " +"</span>";
               }
             })
 
@@ -804,6 +777,7 @@ angular.module('bmpUiApp')
       $scope.showItems += '</table>';
       $rootScope.showItems = $scope.showItems;
     }
+
   }])
   .directive('d3Directive',['$compile', function($compile){
     function link($scope,element,scope){
