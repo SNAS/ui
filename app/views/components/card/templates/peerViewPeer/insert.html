@@ -4,7 +4,7 @@
     <tab heading="Downstream ASes of Peer" select="downStreamTab()">
       <div class="loading-section" ng-style="{'height':summaryPeerOptions.changeHeight}">
         <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading></div>
-        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
+        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}" style="margin-top: 27px;"></div>
       </div>
     </tab>
     <tab heading="Routing Table" select="getRibData()">
