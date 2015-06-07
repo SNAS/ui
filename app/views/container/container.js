@@ -114,7 +114,7 @@ angular.module('bmpUiApp')
         return;
       }
       else if($state.current.name === "app.dualWindow.contents" && !$rootScope.dualWindow.active){
-        $rootScope.dualWindow = {active: true, a: $state.params.a, b: $state.params.b, 'map-top': false, 'map-bottom': false};
+        $rootScope.dualWindow = {'active': true, a: $state.params.a, b: $state.params.b, 'map-top': false, 'map-bottom': false};
       }
     });
   })
