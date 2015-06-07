@@ -71,6 +71,12 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.$watch('selectionMade', function(val){
         if($rootScope.dualWindow.active){
             $scope.mapHeight = '100%';
+            if(val === true){
+                $scope.panelHeight = 'calc(100% - 100px)'
+            }
+            else{
+                $scope.panelHeight = 'calc(100% - 58px)'
+            }
             $timeout(function(){
                 $scope.map.invalidateSize();
             }, 1000);
@@ -78,6 +84,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }
         if(val === true){
             $scope.mapHeight = 400;
+            $scope.panelHeight = 'calc(100% - 100px)'
         }
         else{
             return;
@@ -996,7 +1003,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     return function (scope, element) {
         var w = angular.element($window);
         scope.forceResize = function() {
-            scope.mapHeight =  (w.height() - 87) + 'px';
+            scope.mapHeight =  (w.height() - 87);
+            scope.panelHeight = scope.mapHeight - 55;
             $timeout(function(){
                 scope.map.invalidateSize();
             }, 1000);
@@ -1010,7 +1018,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                 return;
             }
             if(!scope.selectionMade){
-                scope.mapHeight =  (newValue.h - 87) + 'px';
+                scope.mapHeight =  (newValue.h - 87);
+                scope.panelHeight = scope.mapHeight - 55;
                 $timeout(function(){
                     scope.map.invalidateSize();
                 }, 1000);

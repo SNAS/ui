@@ -262,11 +262,15 @@
         .main {
             background-color: white;
             color: #555;
-            overflow-y: overlay;
             height: 100%;
             background-color: #f6f6f6;
             margin-top: -55px;
             font-family: 'CiscoSansExtraLight';
+            padding-bottom: 140px;
+
+            &.no-panel{
+              padding-bottom: 0;
+            }
 
             .routers, .peers{
                 padding: 0;
@@ -309,13 +313,12 @@
 
             .locations{
                 padding: 0;
-                margin: 55px 0 140px 0;
+                margin: 55px 0 0 0;
+                overflow-y: auto;
                 list-style-type: none;
+                height: 100%;
                 li{
                     position:relative;
-                }
-                &.no-panel{
-                  margin-bottom: 0;
                 }
             }
 
