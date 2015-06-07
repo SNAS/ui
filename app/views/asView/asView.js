@@ -142,7 +142,7 @@ angular.module('bmpUiApp')
                 getData(data);
               }).
               error(function (error) {
-                alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+                
                 console.log(error.message);
               });
           }
@@ -183,7 +183,7 @@ angular.module('bmpUiApp')
               getData(data);
             }).
             error(function (error) {
-              alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+              
               console.log(error.message);
             });
         }
@@ -194,7 +194,7 @@ angular.module('bmpUiApp')
               getData(data);
             }).
             error(function (error) {
-              alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+              
               console.log(error.message);
             });
         }
@@ -269,7 +269,7 @@ angular.module('bmpUiApp')
             $scope.calGridHeight($scope.prefixGridOptions, $scope.prefixGridApi);
           }).
           error(function (error) {
-            alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+            
             console.log(error.message);
           });
       }
@@ -293,7 +293,7 @@ angular.module('bmpUiApp')
           }
         }).
           error(function (error) {
-            alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+            
             console.log(error.message);
           });
       }
@@ -318,7 +318,7 @@ angular.module('bmpUiApp')
           }
         }).
           error(function (error) {
-            alert("Sorry, it seems that there is some problem with the server. :(\nWait a moment, then try again.");
+            
             console.log(error.message);
           });
       }

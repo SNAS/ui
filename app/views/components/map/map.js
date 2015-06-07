@@ -727,11 +727,14 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             startAngle: function(d) { return d.startAngle},
             endAngle: function(d) { return d.endAngle}
           },
+          valueFormat: function(d){
+            return d3.format('')(d);
+          },
           color: function(d,i){
             return d.data.color
           },
           tooltipContent: function (key, y, e, graph) {
-            return '';
+            return '<h4>' + y + ' <span class="count">' + e.point.key + '</span></h4>';
           },
           transitionDuration: 500
         }
@@ -781,11 +784,14 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             startAngle: function(d) { return d.startAngle },
             endAngle: function(d) { return d.endAngle }
           },
+          valueFormat: function(d){
+            return d3.format('')(d);
+          },
           color: function(d,i){
             return d.data.color
           },
           tooltipContent: function (key, y, e, graph) {
-            return '';
+            return '<h4>' + y + ' <span class="count">' + e.point.key + '</span></h4>';
           },
           transitionDuration: 500
         }
