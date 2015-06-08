@@ -60,7 +60,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }, 500);
     });
 
-    var plotMarker = 
+    var plotMarker =
         $scope.$watch('plotMarker', function(val) {
             if(val != undefined){
                 $scope.init();
@@ -101,6 +101,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             $scope.panelTitle = "Peer List";
             $scope.selectedRouter = true;
             $scope.getPeers();
+            loadBottomPane();
         }
         else if($scope.location === 'globalView'){
             $scope.panelTitle = "Router List";
