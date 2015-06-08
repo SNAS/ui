@@ -20,6 +20,7 @@
       <div class="table-container">
         <h3>All entries for prefix {{searchPrefix}} stored in DB</h3>
         <!--Angular Grid added here-->
+        <!--<button ng-click="toggleFiltering()">Search</button>-->
         <div class="loading-section">
           <div ng-show="allPreLoad" bmp-loading loading-var="allPreLoad"></div>
           <div ui-grid="AllPrefixOptions" ui-grid-resize-columns></div>
