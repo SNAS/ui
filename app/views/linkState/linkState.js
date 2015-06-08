@@ -127,6 +127,10 @@ angular.module('bmpUiApp')
       return false;
     });
 
+    topo.upon('dragNode', function (sender, node) {
+      return false;
+    });
+
     topo.on('clickNode', function (sender, node) {
       var selectedRouterId = node['_label'];
 
