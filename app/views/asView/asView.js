@@ -204,7 +204,6 @@ angular.module('bmpUiApp')
       function getData(data) {
         if (data.length != 0) {
           $scope.asn = data[0].asn;
-          topoClear();
           getDetails(data[0]);
           getPrefixes();
           getUpstream();
@@ -213,6 +212,7 @@ angular.module('bmpUiApp')
           $scope.topologyIsLoad = true; //start loading
           downstreamPromise.success(function () {
             upstreamPromise.success(function () {
+              topoClear();
               drawTopology(data[0]);
             });
           });
