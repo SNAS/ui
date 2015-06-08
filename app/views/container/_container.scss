@@ -5,6 +5,7 @@
   height: 50vh;
   overflow-y: scroll;
   border: 2px solid #1C2B36;
+  padding: 15px;
 }
 
 .dual-window-control{
@@ -231,7 +232,7 @@
     padding: 0;
     list-style: none;
     background-color: #1C2B36;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 
     li{
       background-color: #1C2B36 !important;
@@ -306,6 +307,43 @@
   }
 }
 
+#sidebar::-webkit-scrollbar-track
+{
+  -webkit-box-shadow: none;
+  border-radius: 10px;
+  background-color: transparent;
+}
+
+#sidebar::-webkit-scrollbar
+{
+  width: 8px;
+}
+
+#sidebar::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    background-color: #30495C;
+    margin: 2px;
+}
+
+.locations::-webkit-scrollbar-track
+{
+  -webkit-box-shadow: none;
+  border-radius: 10px;
+  background-color: transparent;
+}
+
+.locations::-webkit-scrollbar
+{
+  width: 8px;
+}
+
+.locations::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    background-color: #ddd;
+    margin: 2px;
+}
 
 @include keyframes(close-menu-top) {
   0% {

@@ -10,7 +10,7 @@
 angular.module('bmpUiApp')
 .controller('GlobalViewController', function ($scope, $rootScope) {
     window.VIEWSCOPE = $scope;
-    
+    console.log($rootScope.dualWindow.active);
     if($rootScope.dualWindow.active){
         if($rootScope.dualWindow.a === "globalView" && !$rootScope.dualWindow['map-top']){
             $rootScope.dualWindow['map-top'] = true;

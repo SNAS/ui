@@ -8,7 +8,7 @@
 
   <div class="map-container">
 
-    <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list expanded" ng-class="{'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}" ng-style="{ height: dualWindow == true ? '100%' : mapHeight }">
+    <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list expanded" ng-class="{'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}" ng-style="{ height: dualWindow == true ? mapHeight : mapHeight }">
       
       <h3 class="panel-header">
         {{panelTitle}}
@@ -26,8 +26,9 @@
         </div>
       </div>
 
-      <div class="main expanded" ng-class="{'peers-only': selectedRouter === true, tall: !selectionMade}" ng-style="{ height: dualWindow == true ? '100%' : '100%' }">
-        <ul class="locations" ng-class="{'no-panel': dualWindow}" ng-hide="selectedRouter">
+      <div class="main expanded" ng-class="{'peers-only': selectedRouter === true, tall: !selectionMade, 'no-panel': dualWindow}" ng-style="{ height: dualWindow == true ? panelHeight : panelHeight }">
+
+        <ul class="locations" ng-hide="selectedRouter">
           <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
             <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
               <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
@@ -49,7 +50,7 @@
           </li>
         </ul>
 
-        <ul class="locations" ng-class="{'no-panel': dualWindow}" ng-show="selectedRouter">
+        <ul class="locations" ng-show="selectedRouter">
           <li ng-repeat="(latlng, location) in peerDictionary | orderBy: 'location.options.city'" ng-show="filteredPeers.length">
             <p class="router-list-city" ng-class="{expanded: location.options.expandPeers}" ng-click="selectPanelPeerLocation(location)">
               <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
@@ -78,6 +79,7 @@
             ipv4 up: {{ips[0][2]}}<br>
             ipv6 up: {{ips[1][2]}}
           </p>
+          <div class="line"></div>
           <p class="peers-down">
             ipv4 down: {{ips[0][3]}}<br>
             ipv6 down: {{ips[1][3]}}

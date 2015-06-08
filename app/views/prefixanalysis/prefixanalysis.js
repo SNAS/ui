@@ -164,24 +164,13 @@ angular.module('bmpUiApp')
     //define the history gird columns
 
     $scope.HistoryPrefixOptions.columnDefs = [
-      {name: "RouterName", displayName: 'RouterName', width: 110, cellClass: 'background'},
-      {name: "NH", displayName: 'NH', width: 100, cellClass: 'background'},
-      {
-        name: "AS_Path_list",
-        displayName: 'AS_Path',
-        cellClass: 'background',
-        cellTemplate: '<div ng-class="{greenbar: !AS_Path_list.flag, whitebar: AS_Path_list.flag,}" ng-repeat="AS_Path_list in row.entity.AS_Path_list">{{AS_Path_list.path}}</div>'
-      },
-      {name: "PeerASN", displayName: 'Peer_ASN', width: 130, cellClass: 'background'},
-      {name: "MED", displayName: 'MED', width: 60, cellClass: 'background'},
-      {
-        name: "Communities",
-        displayName: 'Communities',
-        cellClass: 'background',
-        cellTemplate: '<div ng-class="{greenbarCommunities: !Communities_list.flag, whitebarCommunities: Communities_list.flag,}" ng-repeat="Communities_list in row.entity.Communities_list">{{Communities_list.path}}</div>'
-      },
-      {
-        name: "LastModified", displayName: 'Last_Modified', width: 180, cellClass: 'background',
+      {name: "RouterName", displayName: 'RouterName', width: 110, cellClass:'background'},
+      {name: "NH", displayName: 'NH', width: 100,cellClass:'background'},
+      {name: "AS_Path_list", displayName: 'AS_Path', cellClass:'background',cellTemplate: '<div ng-class="{ \'green greenbar\': !AS_Path_list.flag, whitebar: AS_Path_list.flag,}" ng-repeat="AS_Path_list in row.entity.AS_Path_list">{{AS_Path_list.path}}</div>'},
+      {name: "PeerASN", displayName: 'Peer_ASN', width: 130,cellClass:'background'},
+      {name: "MED", displayName: 'MED', width: 60,cellClass:'background'},
+      {name: "Communities", displayName: 'Communities',cellClass:'background',cellTemplate: '<div ng-class="{\'green greenbarCommunities\': !Communities_list.flag, whitebarCommunities: Communities_list.flag,}" ng-repeat="Communities_list in row.entity.Communities_list">{{Communities_list.path}}</div>'},
+      {name: "LastModified", displayName: 'Last_Modified', width: 180,cellClass:'background',
 
         sort: {
           direction: uiGridConstants.DESC,
@@ -793,6 +782,7 @@ angular.module('bmpUiApp')
       var w = 600;
       var h = 20;
       var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
       var colorPicker = function (number, x) {
 
@@ -841,10 +831,16 @@ angular.module('bmpUiApp')
           .attr("height", h);
 
         var tip = d3.tip()
-          .html(function (d, i) {
-            //console.log(i);
+          .html(function(d,i) {
+            console.log(i);
 
             var content = "<strong>Number:</strong>" + d;
+            var content = i + ":00~" + (parseInt(i)+1).toString() + ":00" + " " + "<strong>Number:</strong>" + d ;
+
+            //if(!$scope.$$phase) {
+            //  //$digest or $apply
+            //  $scope.$apply();
+            //}
             return content;
           });
 
@@ -867,11 +863,12 @@ angular.module('bmpUiApp')
             d3.select(this)
               .attr("style", "fill:green");
 
+            //console.log("to mark the time",i);
+            //
+            ////just save it temp
+            //$scope.markTime = i;
             $scope.createPrefixHisGrid(i);
             $scope.showGrid = "true";
-
-            //$location.hash('bottom');
-            //$anchorScroll();
           })
           .on("mouseout", function (d, i) {
             tip.destroy(d);
@@ -889,6 +886,10 @@ angular.module('bmpUiApp')
           })
           .on('mouseover', function (d) {
             tip.attr("class", "d3-tip").show(d)
+              .attr("style","fill:#F59AE9")
+          })
+          .on('mouseover', function(d,i) {
+            tip.attr("class", "d3-tip").show(d,i)
           });
 
         if (!$scope.$$phase) {

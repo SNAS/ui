@@ -180,8 +180,6 @@ angular.module('bmpUiApp')
           if ("" != prefixes_of_as_and_peer)
           {
             createChartOptions();
-
-            //$scope.efficiency = 1 - Math.round(($scope.prefix_amount - $scope.reduced_prefix_amount)/$scope.prefix_amount)*100 + "%"
             $scope.efficiency = Math.round(($scope.reduced_prefix_amount/$scope.prefix_amount)*10000)/100 + "%"
           }
           else

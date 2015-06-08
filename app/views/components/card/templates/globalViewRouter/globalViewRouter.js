@@ -87,7 +87,7 @@ angular.module('bmp.components.card')
             top: 20,
             right: 10,
             bottom: 40,
-            left: 10
+            left: 30
           },
           x: function(d){return d.label;},
           y: function(d){return d.value;},

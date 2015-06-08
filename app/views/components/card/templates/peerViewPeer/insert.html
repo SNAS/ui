@@ -4,7 +4,7 @@
     <tab heading="Downstream ASes of Peer" select="downStreamTab()">
       <div class="loading-section" ng-style="{'height':summaryPeerOptions.changeHeight}">
         <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading></div>
-        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"></div>
+        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}" style="margin-top: 27px;"></div>
       </div>
     </tab>
     <tab heading="Routing Table" select="getRibData()">
@@ -25,6 +25,39 @@
         <h3>Prefix Detail</h3>
 
         <section style="width: 100%;margin: auto;padding: 10px;">
+
+          <div class = "as-path">
+
+            <div ng-style="{'width':asPath.width}">
+
+              <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}" style="position: relative;float: left;">
+                <!--icon-->
+                <div style="display: table-cell;">
+
+                  <span ng-if="path.noTopText">
+                    <div style="text-align: center">&nbsp;</div>
+                  </span>
+
+                  <span ng-if="!path.noTopText">
+                    <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{ wordCheck(path.topVal) }}</div>
+                  </span>
+
+                  <!--This is the actual AS icon-->
+                  <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html="true" popover-placement="right" popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
+                  <div style="text-align: center">{{ path.botVal }}</div>
+                </div>
+                <!--line-->
+                <div style="display: table-cell;" ng-if="path.isEnd">
+                  <div style="width: 100px;height: 2px;background-color:#eaeaea;position: absolute;margin-top: 45px;"
+                       ng-style="{'width':asPath.lineWidth}"></div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
           <div class="left-container"
             style="float: left;width:49%;">
 
@@ -104,37 +137,6 @@
               <p><span class="bold">ISP name:</span> {{values.geo.isp_name}}</p>
               <p><span class="bold">Connection type:</span> {{values.geo.connection_type}}</p>
               <p><span class="bold">Org name:</span> {{values.geo.organization_name}}</p>
-            </div>
-
-          </div>
-
-          <div class = "as-path">
-
-            <div ng-style="{'width':asPath.width}">
-
-              <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}" style="position: relative;float: left;">
-                <!--icon-->
-                <div style="display: table-cell;">
-
-                  <span ng-if="path.noTopText">
-                    <div style="text-align: center">&nbsp;</div>
-                  </span>
-
-                  <span ng-if="!path.noTopText">
-                    <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{ wordCheck(path.topVal) }}</div>
-                  </span>
-
-                  <!--This is the actual AS icon-->
-                  <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html="true" popover-placement="right" popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
-                  <div style="text-align: center">{{ path.botVal }}</div>
-                </div>
-                <!--line-->
-                <div style="display: table-cell;" ng-if="path.isEnd">
-                  <div style="width: 100px;height: 2px;background-color:#eaeaea;position: absolute;margin-top: 45px;"
-                       ng-style="{'width':asPath.lineWidth}"></div>
-                </div>
-              </div>
-
             </div>
 
           </div>

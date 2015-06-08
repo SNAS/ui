@@ -7,6 +7,16 @@
   font-family: 'CiscoSansExtraLight';
 }
 
+.nvtooltip{
+  padding: 5px; 
+  border: 1px solid #eee;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  
+  h4{
+    margin: 0; font-size:10pt;
+  }
+}
+
 .leaflet-container .leaflet-control-zoomslider-body {
   -webkit-box-sizing: content-box !important;
   -moz-box-sizing: content-box !important;
@@ -252,11 +262,15 @@
         .main {
             background-color: white;
             color: #555;
-            overflow-y: overlay;
             height: 100%;
             background-color: #f6f6f6;
             margin-top: -55px;
             font-family: 'CiscoSansExtraLight';
+            padding-bottom: 140px;
+
+            &.no-panel{
+              padding-bottom: 0;
+            }
 
             .routers, .peers{
                 padding: 0;
@@ -299,13 +313,12 @@
 
             .locations{
                 padding: 0;
-                margin: 55px 0 140px 0;
+                margin: 55px 0 0 0;
+                overflow-y: auto;
                 list-style-type: none;
+                height: 100%;
                 li{
                     position:relative;
-                }
-                &.no-panel{
-                  margin-bottom: 0;
                 }
             }
 
@@ -471,14 +484,21 @@
   position: absolute;
   left: 40%;
   font-size: 8pt;
-  top: 25%;
+  top: 30%;
   font-family: 'CiscoSansExtraLight';
 
   .peers-up{
     color: rgb(123, 173, 133);
+    margin-bottom: 0;
   }
   .peers-down{
     color: rgb(173, 123, 123);
+    margin-bottom: 0;
+  }
+  .line{
+    width: 80px;
+    height: 2px;
+    background-color: #E4E4E4;
   }
 
 }

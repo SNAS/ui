@@ -17,6 +17,7 @@ svg.title {
   position: relative;
   width: 280px;
   margin: 50px auto 0;
+  font-family: 'CiscoSansExtraLight';
 }
 
 .peers-amount-img {
@@ -46,7 +47,7 @@ svg.title {
     text-transform: uppercase;
   }
   .table{
-    color: #677885;
+    color: #999;
     td:nth-of-type(even){
       font-family: 'CiscoSansExtraLight';
     }
@@ -65,4 +66,25 @@ svg.title {
     opacity: 1;
     transition-delay: 0;
   }
+}
+
+.graph{
+
+  text{
+    font-family: 'CiscoSansExtraLight';
+  }
+
+  .nvd3 .nv-axis path.domain {
+    stroke-opacity: 1;
+    stroke: #D5D5D5;
+  }
+
+  .nvd3 .nv-axis line {
+    stroke: #d5d5d5;
+  }
+
+  .nvd3 .nv-axis .nv-axisMaxMin text {
+    font-weight: normal;
+  }
+
 }
