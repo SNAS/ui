@@ -145,6 +145,10 @@ angular.module('bmpUiApp')
       return false;
     });
 
+    topo.upon('dragNode', function (sender, node) {
+      return false;
+    });
+    
     topo.on('clickStage', function (sender, event) {
       clear();
       $scope.SPFtableOptions.data = {};
