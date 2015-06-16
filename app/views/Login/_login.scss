@@ -1,0 +1,126 @@
+.background {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0066bb;
+  background: url('/images/loginBackGroundWeb.jpg') center center no-repeat;
+  background-size:cover;
+}
+
+.login-panel-container {
+//  #1c2b36
+  background-color: white;
+  width:418px;
+  margin-top: 125px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2em;
+}
+
+.login-panel-title {
+  color: #3491df;
+  margin-top: 10%;
+  font-size: 17pt;
+//  font-weight: 100;
+}
+
+.input-section {
+  input {
+    box-shadow: none;
+    border: none;
+    border-right: 0;
+  }
+  input:focus {
+    box-shadow: none;
+    border: none;
+    border-right: 0;
+  }
+  .form-group{
+    margin: 0;
+  }
+  input[type=submit]{
+    border-radius: 0;
+    margin-top: 5px;
+  }
+}
+
+$animation-dur:0.5s;
+$animation-delay:$animation-dur/4;
+
+.icon {
+  margin: auto;
+  padding-bottom: 20px;
+  width: 325px;
+  padding-top: 97px;
+  color: #0094C6;
+}
+
+.bar {
+  width: 14px;
+  background-color: #0000FF;
+  background: linear-gradient(#0094CE,#0094C6);
+  height: 40px;
+  position: absolute;
+  border-radius: 10px;
+  bottom:14px;
+  animation-name: pulse;
+  animation-duration: $animation-dur;
+}
+
+.bar1  {
+  height:29px;
+}
+
+.bar2  {
+  height:45px;
+  left: 40px;
+  animation-delay: $animation-delay;
+}
+.bar3  {
+  height:88px;
+  left: 80px;
+  bottom:0;
+  animation-delay: $animation-delay*2;
+}
+.bar4  {
+  height:45px;
+  left: 118px;
+  animation-delay: $animation-delay*3;
+}
+
+.bar5  {
+  height:29px;
+  left: 156px;
+  animation-delay: $animation-delay*4;
+}
+
+.bar6  {
+  height:45px;
+  left: 195px;
+  animation-delay: $animation-delay*5;
+}
+
+.bar7  {
+  height:88px;
+  left: 233px;
+  bottom:0;
+  animation-delay: $animation-delay*6;
+}
+
+.bar8  {
+  height:45px;
+  left: 271px;
+  animation-delay: $animation-delay*7;
+}
+
+.bar9  {
+  left: 309px;
+  height:29px;
+  animation-delay: $animation-delay*8;
+}
+
+@keyframes pulse {
+  50% {transform:translate(0,-7px) scale(1.25);}
+  100%   {transform: scale(1);}
+}
+

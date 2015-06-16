@@ -1,18 +1,36 @@
-<div style="background-color: #0066bb; background: url('/images/loginBackGroundWeb.jpg') center center no-repeat;background-size:cover;">
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3" style="opacity: 0.8;">
-      <div class="login-panel panel panel-default" style="padding: 15%;margin-top: 13%;">
+<div class="background">
+  <!--<div class="row">-->
+    <!--<div class="col-md-6 col-md-offset-3" style="opacity: 1;">-->
+      <div class="login-panel-container">
         <div>
-          <div><img src="/images/ciscoLogoBig.png"  style="display: block; margin-left: auto;  margin-right: auto;"></div>
-          <h3 class="panel-title" align="middle" style="color: #3491df; font-family: Helvetica; margin-top: 10%; font-size: 17pt; font-weight: 100">CISCO BMP ANALYTICS</h3>
+
+          <!--animated icon-->
+          <div class="icon">
+            <div class="logo" style="position: absolute;">
+              <div class="bar bar1"></div>
+              <div class="bar bar2"></div>
+              <div class="bar bar3"></div>
+              <div class="bar bar4"></div>
+              <div class="bar bar5"></div>
+              <div class="bar bar6"></div>
+              <div class="bar bar7"></div>
+              <div class="bar bar8"></div>
+              <div class="bar bar9"></div>
+            </div>
+          </div>
+
+          <div><img src="/images/ciscoText.png" style="display: block; margin-left: auto;  margin-right: auto; height: 70px;padding-left:15px"></div>
+          <!--<div><img src="/images/ciscoLogoBig.png" style="display: block; margin-left: auto;  margin-right: auto; width:325px"></div>-->
+          <h3 class="login-panel-title" align="middle">CISCO BMP ANALYTICS</h3>
         </div>
-        <div class="panel-body">
-          <p>Your username and password didn't match. Please try again.</p>
+        <div class="panel-body input-section">
+          <!--<p>Your username and password didn't match. Please try again.</p>-->
           <form role="form" style="width: 70%; margin-left: 15%" ng-submit="login()">
             <fieldset>
               <div class="form-group">
                 <input class="form-control" placeholder="Username" name="username" type="username" ng-model="username" autofocus>
               </div>
+              <hr style="margin: 0 10px">
               <div class="form-group">
                 <input class="form-control" placeholder="Password" name="password" type="password" value="" ng-model="password">
               </div>
@@ -21,6 +39,6 @@
           </form>
         </div>
       </div>
-    </div>
-  </div>
+    <!--</div>-->
+  <!--</div>-->
 </div>
