@@ -177,7 +177,9 @@ angular.module('bmp.components.card')
         enableVerticalScrollbar: 1,
         height: $scope.globalViewPeerGridInitHeight,
         columnDefs: [
-          {name: "PeerASN", displayName: 'AS Number', width: '*'},
+          {name: "PeerASN", displayName: 'AS Number', width: '*',
+            cellTemplate:'<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+          },
           {name: "as_name", displayName: 'AS Name', width: '*'},
           {name: "PeerName", displayName: 'Peer', width: '*'}
         ]

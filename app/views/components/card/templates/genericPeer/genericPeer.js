@@ -70,7 +70,9 @@ angular.module('bmp.components.card')
       enableVerticalScrollbar: 1,
       showGridFooter: true,
       columnDefs:[
-        {name: "asn", displayName: 'AS Number', width: '*'},
+        {name: "asn", displayName: 'AS Number', width: '*',
+          cellTemplate:'<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+        },
         {name: "as_name", displayName: 'AS Name', width: '*'},
         {name: "org_name", displayName:'Organization', width: '*'}
       ]

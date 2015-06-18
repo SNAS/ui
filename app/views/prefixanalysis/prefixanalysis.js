@@ -31,7 +31,9 @@ angular.module('bmpUiApp')
       {name: "PeerName", displayName: 'PeerName', width: 100},
       {name: "NH", displayName: 'NH', width: 100},
       {name: "AS_Path", displayName: 'AS_Path'},
-      {name: "PeerASN", displayName: 'Peer_ASN', width: 80},
+      {name: "PeerASN", displayName: 'Peer_ASN', width: 80,
+        cellTemplate:'<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+      },
       {name: "MED", displayName: 'MED', width: 60},
       {name: "Communities", displayName: 'Communities'},
       {name: "LastModified", displayName: 'Last_Modified', width: 150}

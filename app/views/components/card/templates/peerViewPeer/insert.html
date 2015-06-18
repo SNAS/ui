@@ -86,7 +86,7 @@
                   </tr>
                   <tr>
                     <td>Origin AS:</td>
-                    <td>{{values.Origin_AS}}</td>
+                    <td><div bmp-asn-model asn="{{values.Origin_AS}}"></div></td>
                   </tr>
                   <tr>
                     <td>MED:</td>
@@ -102,7 +102,12 @@
                   </tr>
                   <tr>
                     <td>AS Path:</td>
-                    <td>{{values.AS_Path}}</td>
+                    <td>
+                      <span ng-repeat="item in values.AS_Path.split(' ')">
+                        <span bmp-asn-model asn="{{ item }}"></span>
+                      </span>
+                      <!--{{values.AS_Path}}-->
+                    </td>
                   </tr>
                   <tr>
                     <td>AS Path Count:</td>
