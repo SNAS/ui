@@ -64,7 +64,8 @@ angular.module('bmpUiApp')
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 1,
         columnDefs: [
-          {name: "asn", displayName: 'ASN', width: '30%'},
+          {name: "asn", displayName: 'ASN', width: '30%',
+          cellTemplate:'<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'},
           {name: "as_name", displayName: 'AS Name', width: '70%'}
         ],
         onRegisterApi: function (gridApi) {
@@ -83,7 +84,12 @@ angular.module('bmpUiApp')
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 1,
         columnDefs: [
-          {name: "asn", displayName: 'ASN', width: '30%'},
+          {
+            name: "asn",
+            displayName: 'ASN',
+            width: '30%',
+            cellTemplate:'<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+          },
           {name: "as_name", displayName: 'AS Name', width: '70%'}
         ],
         onRegisterApi: function (gridApi) {
