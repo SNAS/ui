@@ -287,7 +287,7 @@ angular.module('bmpUiApp')
         $scope.upstreamGridOptions.data = [];
         upstreamPromise = apiFactory.getUpstream($scope.asn);
         upstreamPromise.success(function (result) {
-          upstreamData = result.upstreamASN.data.data;
+          upstreamData = result.upstreamASN.data;
           if (result.upstreamASN.data.size == 0) {
             $scope.upstreamNodata = true;
           }
@@ -311,7 +311,7 @@ angular.module('bmpUiApp')
         $scope.downstreamGridOptions.data = [];
         downstreamPromise = apiFactory.getDownstream($scope.asn);
         downstreamPromise.success(function (result) {
-          downstreamData = result.downstreamASN.data.data;
+          downstreamData = result.downstreamASN.data;
           if (result.downstreamASN.data.size == 0) {
             $scope.downstreamNodata = true;
             $scope.downstreamIsLoad = false; //stop loading
