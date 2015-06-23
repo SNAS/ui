@@ -17,12 +17,17 @@ angular.module('bmpUiApp')
     //Create the  prefix data grid
     $scope.AllPrefixOptions = {
       showGridFooter: true,
-      enableFiltering: true,
+      enableFiltering: false,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
-      rowHeight: 25
+      rowHeight: 25,
+      gridFooterHeight: 0,
+
+      onRegisterApi: function (gridApi) {
+        $scope.AllPrefixGridApi = gridApi;
+      }
     };
 
     //define the columns
@@ -38,6 +43,11 @@ angular.module('bmpUiApp')
       {name: "Communities", displayName: 'Communities'},
       {name: "LastModified", displayName: 'Last_Modified', width: 150}
     ];
+
+    $scope.toggleFiltering = function(){
+      $scope.AllPrefixOptions.enableFiltering = !$scope.AllPrefixOptions.enableFiltering;
+      $scope.AllPrefixGridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+    };
 
     //Waits a bit for user to continue typing.
     $scope.enterValue = function (value) {
@@ -153,18 +163,20 @@ angular.module('bmpUiApp')
 
     //deal with the data from History of prefix
     $scope.HistoryPrefixOptions = {
+      showGridFooter: true,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       multiSelect: true,
       modifierKeysToMultiSelect: true,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
-      rowHeight: 25
+      rowHeight: 25,
+      gridFooterHeight: 0
     };
 
     // here to get the intemValue , use this  to create table
     $scope.HistoryPrefixOptions.onRegisterApi = function( gridApi ) {
-      $scope.gridApi = gridApi;
+      $scope.HistoryPrefixGridApi = gridApi;
 
       gridApi.selection.on.rowSelectionChanged($scope,function(row){
         var msg = 'row selected ' + row.isSelected;
@@ -172,7 +184,7 @@ angular.module('bmpUiApp')
 
         $scope.itemValue = row.entity; //how can i get data from one row before
 
-        //$scope.gridApi.selection.selectRow(row);
+        //$scope.HistoryPrefixGridApi.selection.selectRow(row);
         //rowColSelectIndex(row);
         //console.log("$scope.itemValue",msg,$scope.itemValue );
         //console.log(rowMsg);
@@ -181,7 +193,7 @@ angular.module('bmpUiApp')
         $scope.$apply()
       });
       // test for the sort change
-      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
+      $scope.HistoryPrefixGridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
     };
     //define the history gird columns
 
@@ -209,13 +221,13 @@ angular.module('bmpUiApp')
         $scope.HistoryPrefixOptions.data = [];
         $scope.HistoryPrefixOptions.data = $scope.HisData[hour];
 
+        //$scope.prefixHisDataLoading = false;
         //console.log("$scope.HistoryPrefixOptions.data",$scope.HistoryPrefixOptions.data);
         $scope.$apply();
         //$location.hash('bottom');
         //$anchorScroll();
 
       }
-      ;
     };
 
     var getPrefixHisData = function (searchPrefix) {
@@ -466,7 +478,7 @@ angular.module('bmpUiApp')
           }
         }
         return true;
-      }
+      };
 
       // to caculate the data color
       for(i = 0; i < 24; i++)
@@ -511,7 +523,7 @@ angular.module('bmpUiApp')
         $scope.$apply();
       }
     }
-    }
+    };
 
     //should be put into init()
     var init = function()
@@ -521,7 +533,7 @@ angular.module('bmpUiApp')
       $scope.showTip = "false";
       $scope.value = "202.70.64.0/21";
       getPrefixDataGrid($scope.value);
-    }
+    };
 
     init();
 
@@ -538,7 +550,7 @@ angular.module('bmpUiApp')
         //$digest or $apply
         $scope.$apply();
       }
-    }
+    };
 
     var myModal = new modal();
 

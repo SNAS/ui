@@ -245,6 +245,12 @@ icon.bmp-down {
   padding-bottom:12px;
 }
 
+.filter-button{
+  float:right;
+  margin-right:40px;
+  background-color: #F6F6F6;
+}
+
 //UI - GRID override style
 
 $header-colour: #F6F6F6;
@@ -333,10 +339,10 @@ $grid-text-colour: #71818D;
 .loading-section .ui-grid-grid-footer {
   position: absolute;
   text-align: right;
-  margin-top: -44px;
+  margin-top: 9pt;
   text-transform: uppercase;
-  font-size: 11pt;
-  max-width: 250px;
+  font-size: 9pt;
+  //max-width: 200px;
   right: 0;
 }
 

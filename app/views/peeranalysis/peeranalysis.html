@@ -3,7 +3,9 @@
   <div class="main-area row">
     <div class="col-lg-12">
       <div class="table-container">
-        <h3 class="pgtitle">BGP Peers</h3>
+        <h3 class="pgtitle">BGP Peers
+        <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
+        </h3>
         <div class="loading-section" ng-style="{'height':peerGridInitHeight}">
           <div ng-show="peerTableIsLoad" bmp-loading loading-var="peerTableIsLoad"></div>
           <div id="peerTable" ui-grid="peerTableOptions" ui-grid-selection ui-grid-auto-resize></div>

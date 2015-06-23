@@ -23,7 +23,7 @@ angular.module('bmpUiApp')
       rowHeight: 25,
       height: whoIsGridInitHeight,
       width: 1200,
-      gridFooterHeight: 15,
+      gridFooterHeight: 0,
       showGridFooter: true,
       multiSelect: false,
       noUnselect: true,
@@ -109,7 +109,7 @@ angular.module('bmpUiApp')
             processData(result.w.data);
           }).
           error(function (error) {
-            
+
             console.log(error.message);
           });
       } else {
@@ -119,7 +119,7 @@ angular.module('bmpUiApp')
             processData(result.gen_whois_asn.data);
           }).
           error(function (error) {
-            
+
             console.log(error.message);
           });
       }

@@ -184,7 +184,7 @@ angular.module('bmpUiApp')
 
         if(prefixes != 0) {
           values.push({
-            "label": ip[i].as_name,
+            "label": ip[i].as_name == null? 'NULL' : ip[i].as_name,
             "value": prefixes
           });
         }
