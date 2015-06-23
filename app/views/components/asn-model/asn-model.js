@@ -4,38 +4,47 @@ angular.module('bmp.components.asnModel',[])
 
   .controller('ModalDemoCtrl', function ($scope, $modal, $log, apiFactory) {
 
-    //api call with asn
-    apiFactory.getWhoIsASN($scope.asn.trim()).
-      success(function (result){
+    //$scope.ASN = $scope.asn;
 
-        if(result.gen_whois_asn.data.length > 0){
+    $scope.open = function() { console.log('do nothing!') };
 
-          //build the modal
-          $scope.modelData = result.gen_whois_asn.data[0];
+    //64512 - 65534 		4200000000 - 4294967294
+    if(($scope.asn > 64512 && $scope.asn <= 65534) || ($scope.asn > 4200000000 && $scope.asn <= 4294967294)){
+      $scope.asn = "Private AS";
+    }else {
+      //api call with asn
+      apiFactory.getWhoIsASN($scope.asn.trim()).
+        success(function (result) {
 
-          $scope.open = function (size) {
+          if (result.gen_whois_asn.data.length > 0) {
 
-            var modalInstance = $modal.open({
-              animation: $scope.animationsEnabled,
-              templateUrl: 'myModalContent.html',
-              controller: 'ModalInstanceCtrl',
-              size: size,
-              resolve: {
-                items: function () {
-                  return $scope.modelData;
+            //build the modal
+            $scope.modelData = result.gen_whois_asn.data[0];
+            delete $scope.modelData.raw_output;
+
+            $scope.open = function (size) {
+
+              var modalInstance = $modal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'myModalContent.html',
+                controller: 'ModalInstanceCtrl',
+                size: size,
+                resolve: {
+                  items: function () {
+                    return $scope.modelData;
+                  }
                 }
-              }
-            });
-          };
+              });
+            };
 
-          $scope.noModal = false;
-        }
+            $scope.noModal = false;
+          }
 
-      }).
-      error(function (error){
-        console.log(error.message);
-      });
-
+        }).
+        error(function (error) {
+          console.log(error.message);
+        });
+    }
   })
 
 // Please note that $modalInstance represents a modal window (instance) dependency.
@@ -44,8 +53,6 @@ angular.module('bmp.components.asnModel',[])
 .controller('ModalInstanceCtrl', function ($scope, $modalInstance, items) {
 
   $scope.items = items;
-
-  console.dir($scope.items);
 
   $scope.ok = function () {
     $modalInstance.close($scope.selected.item);
@@ -56,13 +63,13 @@ angular.module('bmp.components.asnModel',[])
   };
 })
 
-
 .directive('bmpAsnModel', function () {
   return  {
     templateUrl: "views/components/asn-model/asn-model.html",
     restrict: 'AE',
     replace: false,
     transclude: true,
+    controller: 'ModalDemoCtrl',
     scope: {
       asn: "@"
     },
