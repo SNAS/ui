@@ -17,6 +17,7 @@ angular.module('bmpUiApp')
     //populate prefix data into ShowPrefixsOptions Grid
     $scope.ShowPrefixsOptions = {
       showGridFooter: true,
+      gridFooterHeight: 0,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,

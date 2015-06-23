@@ -8,7 +8,7 @@
  * Controller of the PeerAnalysis page
  */
 angular.module('bmpUiApp')
-  .controller('PeerAnalysisController', ['$scope', 'apiFactory', '$timeout', function ($scope, apiFactory, $timeout) {
+  .controller('PeerAnalysisController', ['$scope', 'apiFactory', '$timeout', 'uiGridConstants', function ($scope, apiFactory, $timeout, uiGridConstants) {
 
     var peers, peer_prefix;
     var peerPrefixPromise, peersPromise;
@@ -17,7 +17,7 @@ angular.module('bmpUiApp')
 
     // Table with peers
     $scope.peerTableOptions = {
-      enableFiltering: true,
+      enableFiltering: false,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableColumnResizing: true,
@@ -26,14 +26,14 @@ angular.module('bmpUiApp')
       height: $scope.peerGridInitHeight,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
-      gridFooterHeight: 15,
+      gridFooterHeight: 0,
       showGridFooter: true,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
 
       columnDefs: [
         {
-          field: 'Status', displayName: 'Status', width: '5%',
+          field: 'Status', displayName: 'Status', width: '6%',
           cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
 
             if ((row.entity.isUp === 1) && (row.entity.isBMPConnected === 1)) {
@@ -46,7 +46,7 @@ angular.module('bmpUiApp')
         },
         {field: 'RouterName', displayName: 'Router Name', width: '15%'},
         {field: 'PeerName', displayName: 'Peer Name', width: '22%'},
-        {field: 'PeerIP', displayName: 'Peer IP', width: '12%'},
+        {field: 'PeerIP', displayName: 'Peer IP', width: '18%'},
         {field: 'LocalASN', displayName: 'Local ASN', width: '8%',
           cellTemplate:'<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'},
         {field: 'PeerASN', displayName: 'Peer ASN', width: '8%',
@@ -62,6 +62,11 @@ angular.module('bmpUiApp')
           changeSelected(row.entity);
         });
       }
+    };
+
+    $scope.toggleFiltering = function(){
+      $scope.peerTableOptions.enableFiltering = !$scope.peerTableOptions.enableFiltering;
+      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
     };
 
     $scope.peerHistoryOptions = {

@@ -110,7 +110,7 @@ angular.module('bmpUiApp')
       multiSelect: false,
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
-      gridFooterHeight: 15,
+      gridFooterHeight: 0,
       showGridFooter: true,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
@@ -148,7 +148,7 @@ angular.module('bmpUiApp')
     topo.upon('dragNode', function (sender, node) {
       return false;
     });
-    
+
     topo.on('clickStage', function (sender, event) {
       clear();
       $scope.SPFtableOptions.data = {};

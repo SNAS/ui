@@ -16,7 +16,7 @@
     "angular-ui-router": "~0.2.13",
     "angular-google-maps": "~2.0.13",
     "angular-nvd3": "~0.1.1",
-    "angular-ui-grid": "3.0.0-rc.20",
+    "angular-ui-grid": "3.0.0-rc.22",
     "bg-splitter": "*",
     "angular-leaflet-directive": "~0.7.11",
     "angular-bootstrap": "~0.12.1",
@@ -31,6 +31,7 @@
   "appPath": "app",
   "resolutions": {
     "angular": "1.2.16",
-    "d3": "~3.3.13"
+    "d3": "~3.3.13",
+    "angular-ui-grid": "3.0.0-rc.22"
   }
 }
