@@ -338,7 +338,11 @@ angular.module('bmp.components.card')
         //Full ip with prefix or partial ip
         apiFactory.getPeerRibPrefix($scope.data.peer_hash_id, value).
           success(function (result) {
-            $scope.ribGridOptions.data = result.v_routes.data;
+            var resultData = result.v_routes.data;
+            for(var i = 0; i < resultData.length; i++) {
+              resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+            }
+            $scope.ribGridOptions.data = resultData;
             $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
           }).
           error(function (error) {
@@ -349,7 +353,11 @@ angular.module('bmp.components.card')
         //pass in peer hash and the matched regex value
         apiFactory.getPeerRibLookup($scope.data.peer_hash_id,value).
           success(function (result) {
-            $scope.ribGridOptions.data = result.v_routes.data;
+            var resultData = result.v_routes.data;
+            for(var i = 0; i < resultData.length; i++) {
+              resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+            }
+            $scope.ribGridOptions.data = resultData;
             $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
           }).
           error(function (error) {
