@@ -162,6 +162,10 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "rib/peer/" + peer_hash_id + "/prefix/" + ip);
     };
 
+    apiFactory.getPeerRibLookupIp = function (ip){
+      return $http.get(urlBase + "rib/lookup/" + ip);
+    };
+
 
     //For the Graphs in Card
     apiFactory.getUpdatesOverTime = function (peer_hash_id){
@@ -219,6 +223,7 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "rib/prefix/" + prefix);
     };
 
+    //deprecated
     apiFactory.getPrefixWLen = function (prefix,len) {
       return $http.get(urlBase + "rib/prefix/" + prefix + "/" +len);
     };
