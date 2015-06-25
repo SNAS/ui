@@ -14,7 +14,7 @@ angular.module('bmpUiApp')
 
     $scope.securityGridOptions = {
       rowHeight: 25,
-      gridFooterHeight: 15,
+      gridFooterHeight: 0,
       showGridFooter: true,
       height: $scope.securityGridInitHeight,
       enableHorizontalScrollbar: 0,
