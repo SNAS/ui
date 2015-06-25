@@ -17,6 +17,9 @@ angular.module('bmpUiApp')
       var nodes = [], links = [], nodeSet = [];
       var id = 0;
       var topo = {};
+      var width = 1150;
+      var topoHeight = 800;
+      var space = width;
 
       $scope.prefixGridInitHeight = 464;
       $scope.upstreamGridInitHeight = 464;
@@ -64,8 +67,10 @@ angular.module('bmpUiApp')
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 1,
         columnDefs: [
-          {name: "asn", displayName: 'ASN', width: '30%',
-          cellTemplate:'<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'},
+          {
+            name: "asn", displayName: 'ASN', width: '30%',
+            cellTemplate: '<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+          },
           {name: "as_name", displayName: 'AS Name', width: '70%'}
         ],
         onRegisterApi: function (gridApi) {
@@ -88,7 +93,7 @@ angular.module('bmpUiApp')
             name: "asn",
             displayName: 'ASN',
             width: '30%',
-            cellTemplate:'<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+            cellTemplate: '<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
           },
           {name: "as_name", displayName: 'AS Name', width: '70%'}
         ],
@@ -98,14 +103,14 @@ angular.module('bmpUiApp')
       };
 
 
-      $scope.calGridHeight = function(grid, gridapi){
+      $scope.calGridHeight = function (grid, gridapi) {
         gridapi.core.handleWindowResize();
 
         var height;
         var dataLength = 15;
-        if(grid.data.length > dataLength){
+        if (grid.data.length > dataLength) {
           height = (dataLength * 30);
-        }else{
+        } else {
           height = ((grid.data.length * grid.rowHeight) + 50);
         }
         grid.changeHeight = height;
@@ -128,7 +133,7 @@ angular.module('bmpUiApp')
         }, 500);
       };
 
-      $scope.keypress = function(keyEvent){
+      $scope.keypress = function (keyEvent) {
         if (keyEvent.which === 13)
           searchValue($scope.searchValue);
       };
@@ -238,8 +243,8 @@ angular.module('bmpUiApp')
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
           if (key != "raw_output" && key != "remarks") {
-            if(key == "transit_v4_prefixes")
-                showValues += '<tr class="hoz-line"><td colspan="2"><hr></td></tr>';
+            if (key == "transit_v4_prefixes")
+              showValues += '<tr class="hoz-line"><td colspan="2"><hr></td></tr>';
 
             var value = data[key];
             showValues += (
@@ -339,15 +344,21 @@ angular.module('bmpUiApp')
             },
             start: function () {
               topo = new nx.graphic.Topology({
-                //padding: 10,
-                adaptive: true,
+                width: width,
+                height: topoHeight,
+                padding: 10,
+                //adaptive: true,
                 enableSmartLabel: true,
                 nodeConfig: {
                   label: 'model.asn',
                   iconType: 'model.iconType'
                 },
                 nodeSetConfig: {
-                  label: 'model.name'
+                  label: function (model) {
+                    var label = model._data.name;
+                    return label.slice(0,2).toUpperCase();
+                  },
+                  iconType: 'model.iconType'
                 },
                 tooltipManagerConfig: {
                   nodeTooltipContentClass: 'MyNodeTooltip'
@@ -414,9 +425,8 @@ angular.module('bmpUiApp')
 
       //draw AS topology with current AS in the middle
       function drawTopology(data) {
-        var width = 1200;
-        var upstreamLayerHeight = width / 20;
-        var downstreamLayerHeight = width / 20;
+        var upstreamLayerHeight = width / 5;
+        var downstreamLayerHeight = width / 5;
 
         //current AS
         nodes.push({
@@ -433,42 +443,57 @@ angular.module('bmpUiApp')
           y: 0
         });
 
+        space = width/upstreamData.length;
+        pushNodes(upstreamData, "upstream", width, -upstreamLayerHeight);
+        pushNodes(downstreamData, "downstream", width, downstreamLayerHeight);
+
         //Upstream ASes
-        pushNodes(upstreamData, "upstream", width, -2 * upstreamLayerHeight);
         if (upstreamData.length > 100) {
-          groupNode(upstreamData, "", "upstream", "country", 0, width, -upstreamLayerHeight);
+          groupNode(upstreamData, -1, width/2, "upstream", "country", -upstreamLayerHeight);
           var countrySetCount = nodeSet.length;
           for (var i = 0; i < countrySetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "state_prov", width, -2 * upstreamLayerHeight);
+            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "upstream", "state_prov", -2 * upstreamLayerHeight);
           }
           var stateSetCount = nodeSet.length - countrySetCount;
           for (var i = countrySetCount; i < countrySetCount + stateSetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "city", width, -3 * upstreamLayerHeight);
+            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "upstream", "city", -3 * upstreamLayerHeight);
           }
           var citySetCount = nodeSet.length - countrySetCount - stateSetCount;
           for (var i = countrySetCount + stateSetCount; i < countrySetCount + stateSetCount + citySetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, "upstream", "", width, -4 * upstreamLayerHeight);
+            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "upstream", "", -4 * upstreamLayerHeight);
+          }
+        }
+        else {
+          for (var i = 1; i <= upstreamData.length; i++) {
+            links.push({
+              source: i,
+              target: 0
+            });
           }
         }
 
         //Downstream ASes
-        pushNodes(downstreamData, "downstream", width, 2 * downstreamLayerHeight);
         if (downstreamData.length > 100) {
-          groupNode(downstreamData, "", "downstream", "country", width, downstreamLayerHeight);
+          groupNode(downstreamData, -1, width / 2, "downstream", "country", downstreamLayerHeight);
           var countrySetCount = nodeSet.length;
           for (var i = 0; i < countrySetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "state_prov", width, 2 * downstreamLayerHeight);
-            //i * width / countrySetCount, width / countrySetCount, 2 * downstreamLayerHeight);
+            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "downstream", "state_prov", 2 * downstreamLayerHeight);
           }
           var stateSetCount = nodeSet.length - countrySetCount;
           for (var i = countrySetCount; i < countrySetCount + stateSetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "city", width, 3 * downstreamLayerHeight);
-            //(i - countrySetCount) * width / stateSetCount, width / stateSetCount, 3 * downstreamLayerHeight);
+            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "downstream", "city", 3 * downstreamLayerHeight);
           }
           var citySetCount = nodeSet.length - countrySetCount - stateSetCount;
           for (var i = countrySetCount + stateSetCount; i < countrySetCount + stateSetCount + citySetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, "downstream", "", width, 4 * downstreamLayerHeight);
-            //(i - countrySetCount - stateSetCount) * width / citySetCount, width / citySetCount, 4 * downstreamLayerHeight);
+            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "downstream", "", 4 * downstreamLayerHeight);
+          }
+        }
+        else {
+          for (var i = upstreamData.length + 1; i < id; i++) {
+            links.push({
+              source: i,
+              target: 0
+            });
           }
         }
 
@@ -484,13 +509,13 @@ angular.module('bmpUiApp')
       }
 
       //Group nodes by the initial of  AS name
-      function groupNode(data, parentNodeSetId, type, key, width, height) {
+      function groupNode(data, parentNodeSetId, parentNodeSetX, type, key, height) {
         //function groupNode(data, parentNodeSetId, type, key, positionStart, width, height) {
         var nodeSet1 = {}, nodeSet2 = {};
         var singleNodes = [];
         var groupedNodesId = [];
 
-        var nodeSetId = getNodeSetId(parentNodeSetId);
+        var parentNodeSetIndex = getNodeSetId(parentNodeSetId);
 
         //Group the nodes by key
         if (key != "") {
@@ -534,7 +559,10 @@ angular.module('bmpUiApp')
         }
 
         var nodesCount = singleNodes.length + nodeSet2Keys.length;
-        var space = (nodesCount == 1) ? 0 : width / (nodesCount - 1);
+        //var width2 = (parentNodeSetX < width - parentNodeSetX) ? parentNodeSetX * 2 : (width - parentNodeSetX) * 2;
+        //var space = (nodesCount == 1) ? 0 : width2 / (nodesCount - 1) ;
+        var startPosition = parentNodeSetX - space * (nodesCount - 1) / 2;
+        //var startPosition = (parentNodeSetX < width - parentNodeSetX) ? 0 : width - width2;
 
         //push all the single nodes
         for (var i = 0; i < singleNodes.length; i++) {
@@ -544,10 +572,15 @@ angular.module('bmpUiApp')
               nodes[nodeId].x = width / 2;
             }
             else {
-              nodes[nodeId].x = i < singleNodes.length / 2 ? i * space : (nodeSet2Keys.length + i) * space;
+              nodes[nodeId].x = startPosition + (i < singleNodes.length / 2 ? i * space : (nodeSet2Keys.length + i) * space);
             }
             nodes[nodeId].y = height;
             groupedNodesId.push(nodes[nodeId].id);
+
+            links.push({
+              source: nodes[nodeId].id,
+              target: parentNodeSetId + 1
+            });
           }
         }
 
@@ -558,18 +591,32 @@ angular.module('bmpUiApp')
             type: 'nodeSet',
             nodes: [],
             level: key,
+            iconType: type == "upstream" ? 'groupL' : 'groupM',
             name: nodeSet2Keys[i],
             parentNodeSetId: parentNodeSetId,
             allNodes: nodeSet2[nodeSet2Keys[i]],
-            x: nodesCount == 1 ? width / 2 : (singleNodes.length / 2 + i) * space,
+            x: nodesCount == 1 ? parentNodeSetX : startPosition + (Math.ceil(singleNodes.length / 2) + i) * space,
+            y: height
+          });
+          nodes.push({
+            id: id++,
+            asn: nodeSet2Keys[i],
+            iconType: type == "upstream" ? 'groupL' : 'groupM',
+            x: nodesCount == 1 ? parentNodeSetX : startPosition + (Math.ceil(singleNodes.length / 2) + i) * space,
             y: height
           });
           groupedNodesId.push(id - 1);
+          groupedNodesId.push(id - 2);
+
+          links.push({
+            source: id - 1,
+            target: parentNodeSetId + 1
+          });
         }
 
         //push nodes to parent nodeSet
-        if (nodeSetId >= 0) {
-          nodeSet[nodeSetId].nodes = groupedNodesId;
+        if (parentNodeSetIndex >= 0) {
+          nodeSet[parentNodeSetIndex].nodes = groupedNodesId;
         }
       }
 
@@ -586,13 +633,14 @@ angular.module('bmpUiApp')
             country: data[i].country,
             type: type,
             iconType: type == "upstream" ? 'groupL' : 'groupM',
-            x: (data.length == 1) ? width / 2 : i * width / (data.length - 1),
+            x: width/2 + (i- (data.length-1) / 2) * space,
+            //x: (data.length == 1) ? width / 2 : i * width / (data.length - 1),
             y: height
           });
-          links.push({
-            source: id - 1,
-            target: 0
-          })
+          //links.push({
+          //  source: id - 1,
+          //  target: 0
+          //})
         }
       }
 
@@ -724,13 +772,18 @@ angular.module('bmpUiApp')
           node: {
             set: function (value) {
               var modelData = value.model().getData();
-              var showData = {
-                "AS Name": modelData.as_name,
-                "Organization": modelData.org_name,
-                "City": modelData.city,
-                "State": modelData.state_prov,
-                "Country": modelData.country
-              };
+              if (isNaN(modelData.asn)) {
+                var showData = {};
+              }
+              else {
+                var showData = {
+                  "AS Name": modelData.as_name,
+                  "Organization": modelData.org_name,
+                  "City": modelData.city,
+                  "State": modelData.state_prov,
+                  "Country": modelData.country
+                };
+              }
               this.view('list').set('items', new nx.data.Dictionary(showData));
               this.title(value.label());
             }
