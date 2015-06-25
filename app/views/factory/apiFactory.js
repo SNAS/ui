@@ -219,6 +219,10 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "rib/prefix/" + prefix);
     };
 
+    apiFactory.getPrefixWLen = function (prefix,len) {
+      return $http.get(urlBase + "rib/prefix/" + prefix + "/" +len);
+    };
+
     apiFactory.getHistoryPrefix = function (prefix) {
       return $http.get(urlBase + "rib/history/" + prefix);
     };
