@@ -446,22 +446,24 @@ angular.module('bmpUiApp')
         space = width/upstreamData.length;
         pushNodes(upstreamData, "upstream", width, -upstreamLayerHeight);
         pushNodes(downstreamData, "downstream", width, downstreamLayerHeight);
+        var upstreamNodeSetCount = 0;
 
         //Upstream ASes
         if (upstreamData.length > 100) {
           groupNode(upstreamData, -1, width/2, "upstream", "country", -upstreamLayerHeight);
-          var countrySetCount = nodeSet.length;
-          for (var i = 0; i < countrySetCount; i++) {
+          var upCountrySetCount = nodeSet.length;
+          for (var i = 0; i < upCountrySetCount; i++) {
             groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "upstream", "state_prov", -2 * upstreamLayerHeight);
           }
-          var stateSetCount = nodeSet.length - countrySetCount;
-          for (var i = countrySetCount; i < countrySetCount + stateSetCount; i++) {
+          var upStateSetCount = nodeSet.length - upCountrySetCount;
+          for (var i = upCountrySetCount; i < upCountrySetCount + upStateSetCount; i++) {
             groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "upstream", "city", -3 * upstreamLayerHeight);
           }
-          var citySetCount = nodeSet.length - countrySetCount - stateSetCount;
-          for (var i = countrySetCount + stateSetCount; i < countrySetCount + stateSetCount + citySetCount; i++) {
+          var upCitySetCount = nodeSet.length - upCountrySetCount - upStateSetCount;
+          for (var i = upCountrySetCount + upStateSetCount; i < upCountrySetCount + upStateSetCount + upCitySetCount; i++) {
             groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "upstream", "", -4 * upstreamLayerHeight);
           }
+          upstreamNodeSetCount = nodeSet.length;
         }
         else {
           for (var i = 1; i <= upstreamData.length; i++) {
@@ -475,21 +477,25 @@ angular.module('bmpUiApp')
         //Downstream ASes
         if (downstreamData.length > 100) {
           groupNode(downstreamData, -1, width / 2, "downstream", "country", downstreamLayerHeight);
-          var countrySetCount = nodeSet.length;
-          for (var i = 0; i < countrySetCount; i++) {
+          var downCountrySetCount = nodeSet.length - upstreamNodeSetCount;
+          for (var i = upstreamNodeSetCount; i < upstreamNodeSetCount + downCountrySetCount; i++) {
             groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "downstream", "state_prov", 2 * downstreamLayerHeight);
           }
-          var stateSetCount = nodeSet.length - countrySetCount;
-          for (var i = countrySetCount; i < countrySetCount + stateSetCount; i++) {
+          var downStateSetCount = nodeSet.length - upstreamNodeSetCount - downCountrySetCount;
+          for (var i = upstreamNodeSetCount + downCountrySetCount; i < upstreamNodeSetCount + downCountrySetCount + downStateSetCount; i++) {
             groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "downstream", "city", 3 * downstreamLayerHeight);
           }
-          var citySetCount = nodeSet.length - countrySetCount - stateSetCount;
-          for (var i = countrySetCount + stateSetCount; i < countrySetCount + stateSetCount + citySetCount; i++) {
+          var downCitySetCount = nodeSet.length - upstreamNodeSetCount - downCountrySetCount - downStateSetCount;
+          for (var i = upstreamNodeSetCount + downCountrySetCount + downStateSetCount;
+               i < upstreamNodeSetCount + downCountrySetCount + downStateSetCount + downCitySetCount; i++) {
+            if(!nodeSet[i]){
+             console.log(i);
+            }
             groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "downstream", "", 4 * downstreamLayerHeight);
           }
         }
         else {
-          for (var i = upstreamData.length + 1; i < id; i++) {
+          for (var i = upstreamData.length + 1; i < upstreamData.length + downstreamData.length + 1; i++) {
             links.push({
               source: i,
               target: 0
@@ -515,7 +521,7 @@ angular.module('bmpUiApp')
         var singleNodes = [];
         var groupedNodesId = [];
 
-        var parentNodeSetIndex = getNodeSetId(parentNodeSetId);
+        var parentNodeSetIndex = getNodeSetIndex(parentNodeSetId);
 
         //Group the nodes by key
         if (key != "") {
@@ -588,7 +594,8 @@ angular.module('bmpUiApp')
         for (var i = 0; i < nodeSet2Keys.length; i++) {
           nodeSet.push({
             id: id++,
-            type: 'nodeSet',
+            type: type,
+            //type: 'nodeSet',
             nodes: [],
             level: key,
             iconType: type == "upstream" ? 'groupL' : 'groupM',
@@ -601,6 +608,7 @@ angular.module('bmpUiApp')
           nodes.push({
             id: id++,
             asn: nodeSet2Keys[i],
+            //type: 'nodeSetNode',
             iconType: type == "upstream" ? 'groupL' : 'groupM',
             x: nodesCount == 1 ? parentNodeSetX : startPosition + (Math.ceil(singleNodes.length / 2) + i) * space,
             y: height
@@ -647,16 +655,16 @@ angular.module('bmpUiApp')
       //Get node index by asn and type (upstream or downstream)
       function getNodeId(asn, type) {
         for (var i = 0; i < nodes.length; i++) {
-          if (nodes[i].asn == asn && nodes[i].type == type)
+          if (nodes[i].asn === asn && nodes[i].type === type)
             return i;
         }
         return -1;
       }
 
       //Get nodeSet index by id
-      function getNodeSetId(id) {
+      function getNodeSetIndex(nodeSetId) {
         for (var i = 0; i < nodeSet.length; i++) {
-          if (nodeSet[i].id == id)
+          if (nodeSet[i].id == nodeSetId)
             return i;
         }
         return -1;
