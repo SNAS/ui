@@ -981,7 +981,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
       })
       .error(function(result){
-        console.log("api routers up bottom pannel error")
+        console.log("api routers up bottom panel error")
       });
     };
 }])

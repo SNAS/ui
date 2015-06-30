@@ -1,0 +1,129 @@
+<div ng-controller="lookingGlassController">
+  <!--tabset-->
+    <div>
+      <form class="well form-search" ng-init="keywords=''">
+        <!--input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." /-->
+        <input type="text" ng-model="keywords" class="input-medium search-query" placeholder="Search ..." />
+        <button type="submit" class="btn" ng-click="search(keywords)">Search</button>
+      </form>
+
+      <!--Angular Table added here-->
+      <div class="loading-section" ng-style="{'height':glassGridOptions.changeHeight}">
+        <div ng-show="glassGridIsLoad" bmp-loading loading-var="glassGridIsLoad" font-width="80"></div>
+        <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.changeHeight}"></div>
+      </div>
+
+        <div ng-if="values !== undefined">
+        <!--{{ values }}-->
+        <br>
+        <h3>Prefix Detail</h3>
+
+        <section style="width: 100%;margin: auto;padding: 10px;">
+
+          <div class = "as-path">
+
+            <div ng-style="{'width':asPath.width}">
+
+              <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}" style="position: relative;float: left;">
+                <!--icon-->
+                <div style="display: table-cell;">
+
+                  <span ng-if="path.noTopText">
+                    <div style="text-align: center">&nbsp;</div>
+                  </span>
+
+                  <span ng-if="!path.noTopText">
+                    <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{ wordCheck(path.topVal) }}</div>
+                  </span>
+
+                  <!--This is the actual AS icon-->
+                  <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html="true" popover-placement="right" popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
+                  <div style="text-align: center">{{ path.botVal }}</div>
+                </div>
+                <!--line-->
+                <div style="display: table-cell;" ng-if="path.isEnd">
+                  <div style="width: 100px;height: 2px;background-color:#eaeaea;position: absolute;margin-top: 45px;"
+                       ng-style="{'width':asPath.lineWidth}"></div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="left-container"
+            style="float: left;width:49%;">
+
+            <div class="detailspanel">
+              <pre class="preStyle">
+                <table>
+                  <tr>
+                    <td>RouterName:</td>
+                    <td>{{values.RouterName}}</td>
+                  </tr>
+                  <tr>
+                    <td>PeerName:</td>
+                    <td>{{values.PeerName}}</td>
+                  </tr>
+                  <tr>
+                    <td>Prefix:</td>
+                    <td>{{values.Prefix}}</td>
+                  </tr>
+                  <tr>
+                    <td>Prefix Length:</td>
+                    <td>{{values.PrefixLen}}</td>
+                  </tr>
+                  <tr>
+                    <td>Origin:</td>
+                    <td>{{values.Origin}}</td>
+                  </tr>
+                  <tr>
+                    <td>Origin AS:</td>
+                    <td><div bmp-asn-model asn="{{values.Origin_AS}}"></div></td>
+                  </tr>
+                  <tr>
+                    <td>MED:</td>
+                    <td>{{values.MED}}</td>
+                  </tr>
+                  <tr>
+                    <td>Local Pref:</td>
+                    <td>{{values.LocalPref}}</td>
+                  </tr>
+                  <tr>
+                    <td>NH:</td>
+                    <td>{{values.NH}}</td>
+                  </tr>
+                  <tr>
+                    <td>AS Path:</td>
+                    <td>
+                      <span ng-repeat="item in values.AS_Path.split(' ')">
+                        <span bmp-asn-model asn="{{ item }}"></span>
+                      </span>
+                      <!--{{values.AS_Path}}-->
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>AS Path Count:</td>
+                    <td>{{values.ASPath_Count}}</td>
+                  </tr>
+                  <tr>
+                    <td>Communities:</td>
+                    <td>{{values.Communities}}</td>
+                  </tr>
+                </table>
+              </pre>
+            </div>
+
+          </div>
+
+          </div>
+
+        </section>
+
+      </div>
+
+
+
+  <!--/tabset-->
+</div>

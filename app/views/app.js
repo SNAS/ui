@@ -108,6 +108,10 @@ angular
         url: '/whois?:as?',
         templateUrl: 'views/whois/whois.html'
       })
+      .state('app.lookingGlass', {
+        url: '/looking-glass',
+        templateUrl: 'views/lookingGlass/lookingGlass.html'
+      })
       .state('app.aggregationAnalysis', {
         url: '/aggregation-analysis?:as?',
         templateUrl: 'views/aggregationanalysis/aggregationanalysis.html'

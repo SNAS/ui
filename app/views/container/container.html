@@ -29,6 +29,9 @@
             <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iiwi" class="instant-input"/></form>
             <dual-control d="dualWindow" l="whoIs"></dual-control>
           </li>
+          <li active-item><a ui-sref="app.lookingGlass" ui-sref-opts="{reload: true}">Looking Glass</a>
+            <dual-control d="dualWindow" l="lookingGlass"></dual-control>
+          </li>
         </ul>
       </div>
       <div class="nav-section last">
