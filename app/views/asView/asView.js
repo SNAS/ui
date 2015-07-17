@@ -16,7 +16,7 @@ angular.module('bmpUiApp')
       var upstreamPromise, downstreamPromise;
       var nodes = [], links = [], nodeSet = [];
       var id = 0;
-      var topo = {};
+      window.topo = {};
       var width = 1150;
       var topoHeight = 800;
       var space = width;
@@ -348,15 +348,23 @@ angular.module('bmpUiApp')
                 height: topoHeight,
                 padding: 10,
                 //adaptive: true,
-                enableSmartLabel: true,
+                enableSmartLabel: false,
                 nodeConfig: {
                   label: 'model.asn',
+                  //labelAngle: function (model) {
+                  //  var type = model._data.type;
+                  //  console.log(type);
+                  //  if (type == 'upstream')
+                  //    return 270;
+                  //  else
+                  //    return 90;
+                  //},
                   iconType: 'model.iconType'
                 },
                 nodeSetConfig: {
                   label: function (model) {
                     var label = model._data.name;
-                    return label.slice(0,2).toUpperCase();
+                    return label.slice(0, 2).toUpperCase();
                   },
                   iconType: 'model.iconType'
                 },
@@ -374,29 +382,12 @@ angular.module('bmpUiApp')
               topo.registerScene('nodeset', 'NodeSetScene');
               topo.activateScene('nodeset');
 
-              //topo.upon('clickNodeSet', function (sender, nodeset) {
+              //topo.on('clickNodeSet', function (sender, nodeset) {
               //  var id = nodeset._model._data.id;
-              //  var level = nodeset._model._data.level;
-              //  var nodeSetLayer = topo.getLayer('nodeSet');
-              //  var nodeSets = nodeSetLayer.nodeSets();
-              //  for (var i = 0; i < nodeSets.length; i++) {
-              //    if (id == nodeSets[i]._model._data.id) {
-              //      nodeSets[i].collapsed(false);
-              //    }
-              //    else if (level == nodeSets[i]._model._data.level && nodeSets[i].collapsed() == false) {
-              //      var ns = nodeSets[i];
-              //      setTimeout(function () {
-              //        (function (ns) {
-              //          ns.collapsed(true);
-              //        })(ns);
-              //      }, 0);
-              //      console.log(nodeSets[i]);
-              //    }
-              //  }
-              //  //nodeSetLayer.nodeSetDictionary().getItem(id).collapsed(false);
-              //  //console.log(nodeSetLayer.nodeSetDictionary().getItem(id));
-              //
-              //  //return true;
+              //  var index = getNodeSetIndex(id);
+              //  var nodesId = nodeSet[index].nodes;
+              //  nodesId.push(id);
+              //  topo.zoomByNodes(nodesId);
               //  return false;
               //});
             }
@@ -443,14 +434,14 @@ angular.module('bmpUiApp')
           y: 0
         });
 
-        space = width/upstreamData.length;
+        space = width / upstreamData.length;
         pushNodes(upstreamData, "upstream", width, -upstreamLayerHeight);
         pushNodes(downstreamData, "downstream", width, downstreamLayerHeight);
         var upstreamNodeSetCount = 0;
 
         //Upstream ASes
         if (upstreamData.length > 100) {
-          groupNode(upstreamData, -1, width/2, "upstream", "country", -upstreamLayerHeight);
+          groupNode(upstreamData, -1, width / 2, "upstream", "country", -upstreamLayerHeight);
           var upCountrySetCount = nodeSet.length;
           for (var i = 0; i < upCountrySetCount; i++) {
             groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "upstream", "state_prov", -2 * upstreamLayerHeight);
@@ -488,8 +479,8 @@ angular.module('bmpUiApp')
           var downCitySetCount = nodeSet.length - upstreamNodeSetCount - downCountrySetCount - downStateSetCount;
           for (var i = upstreamNodeSetCount + downCountrySetCount + downStateSetCount;
                i < upstreamNodeSetCount + downCountrySetCount + downStateSetCount + downCitySetCount; i++) {
-            if(!nodeSet[i]){
-             console.log(i);
+            if (!nodeSet[i]) {
+              console.log(i);
             }
             groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "downstream", "", 4 * downstreamLayerHeight);
           }
@@ -608,7 +599,7 @@ angular.module('bmpUiApp')
           nodes.push({
             id: id++,
             asn: nodeSet2Keys[i],
-            //type: 'nodeSetNode',
+            type: type,
             iconType: type == "upstream" ? 'groupL' : 'groupM',
             x: nodesCount == 1 ? parentNodeSetX : startPosition + (Math.ceil(singleNodes.length / 2) + i) * space,
             y: height
@@ -641,7 +632,7 @@ angular.module('bmpUiApp')
             country: data[i].country,
             type: type,
             iconType: type == "upstream" ? 'groupL' : 'groupM',
-            x: width/2 + (i- (data.length-1) / 2) * space,
+            x: width / 2 + (i - (data.length - 1) / 2) * space,
             //x: (data.length == 1) ? width / 2 : i * width / (data.length - 1),
             y: height
           });
