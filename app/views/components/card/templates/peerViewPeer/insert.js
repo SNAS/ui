@@ -73,7 +73,7 @@ angular.module('bmp.components.card')
       {name: "NH", displayName: 'NH', width: "15%"},
       {name: "AS_Path", displayName: 'AS Path'},
       {name: "MED", displayName: 'MED', width: "10%"},
-      {name: "LocalPref", displayName: 'Local Pref', width: "10%"}
+      {name: "LocalPref", displayName: 'Local Pref', width: "15%"}
     ];
 
     $scope.ribGridOptions.multiSelect = false;

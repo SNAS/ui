@@ -31,10 +31,10 @@ angular.module('bmpUiApp')
       {name: "RouterName", displayName: 'Router', width: "15%"},
       {name: "PeerName", displayName: 'Peer', width: "15%"},
       {name: "wholePrefix", enableFiltering: false, displayName: 'Prefix', width: "20%"},
-      {name: "NH", enableFiltering: false, displayName: 'NH', width: "15%"},
+      {name: "NH", enableFiltering: false, displayName: 'NH', width: "10%"},
       {name: "AS_Path",enableFiltering: false, displayName: 'AS Path'},
       {name: "MED",enableFiltering: false, displayName: 'MED', width: "10%"},
-      {name: "LocalPref", enableFiltering: false, displayName: 'Local Pref', width: "10%"}
+      {name: "LocalPref", enableFiltering: false, displayName: 'Local Pref', width: "15%"}
     ];
 
     $scope.glassGridOptions.multiSelect = false;

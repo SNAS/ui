@@ -41,12 +41,15 @@ angular.module('bmpUiApp')
       },
 
     columnDefs : [
-      {name: "asn", displayName: 'ASN', width: '*'},
+      {
+        name: "asn", displayName: 'ASN', width: '7%',
+        cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+      },
       {name: "as_name", displayName: 'AS Name', width: '18%'},
       {name: "org_name", displayName: 'Organization Name', width: '35%'},
       {name: "country", displayName: 'Country', width: '8%'},
       {
-        name: "transit_v4_prefixes", displayName: 'Transit IPv4', width: '8%',
+        name: "transit_v4_prefixes", displayName: 'Transit IPv4', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'highlight';
@@ -54,7 +57,7 @@ angular.module('bmpUiApp')
         }
       },
       {
-        name: "transit_v6_prefixes", displayName: 'Transit IPv6', width: '8%',
+        name: "transit_v6_prefixes", displayName: 'Transit IPv6', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'highlight';
@@ -62,7 +65,7 @@ angular.module('bmpUiApp')
         }
       },
       {
-        name: "origin_v4_prefixes", displayName: 'Origin IPv4', width: '8%',
+        name: "origin_v4_prefixes", displayName: 'Origin IPv4', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'highlight';
@@ -70,7 +73,7 @@ angular.module('bmpUiApp')
         }
       },
       {
-        name: "origin_v6_prefixes", displayName: 'Origin IPv6', width: '8%',
+        name: "origin_v6_prefixes", displayName: 'Origin IPv6', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'highlight';
