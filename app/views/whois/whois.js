@@ -73,7 +73,7 @@ angular.module('bmpUiApp')
         }
       },
       {
-        name: "origin_v6_prefixes", displayName: 'Origin JKv6', width: '*',
+        name: "origin_v6_prefixes", displayName: 'Origin v6', width: '*',
         cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row, col) > 0) {
             return 'highlight';

@@ -168,6 +168,3 @@ angular.module('bmpUiApp')
     templateUrl: 'views/container/dualControl.html'
   }
 });
-
-//Hover Instant Input
-$("#popover").popover({ trigger:"hover" });
