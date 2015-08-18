@@ -3,7 +3,7 @@
 angular.module('bmp.components.card')
 
   .controller('BmpCardPreWithdrawsGraphController', ["$scope", "apiFactory", function ($scope, apiFactory) {
-
+      $scope.loading = true;
       $scope.preWithdrawsGraph = {
         chart: {
           type: 'discreteBarChart',
@@ -55,7 +55,7 @@ angular.module('bmp.components.card')
     $scope.preWithdrawsData = [
       {
         key: "Updates",
-        values:[]
+        values:[[]]
       }
     ];
 
@@ -72,6 +72,7 @@ angular.module('bmp.components.card')
           });
         }
         $scope.preWithdrawsData[0].values = gData;
+        $scope.loading = false;
       })
       .error(function (error){
         console.log(error.message);

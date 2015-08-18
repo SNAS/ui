@@ -2,11 +2,14 @@
   <div>
 
     <h4>Number of updates over time</h4>
-
-    <nvd3
-      options="preUpdatesGraph"
-      data="preUpdatesData"
-      config="preUpdatesConfig">
-    </nvd3>
+	<div class="loading-section" ng-style="{'height': 450}">
+		<div ng-show="loading" bmp-loading loading-var="loading" font-width="80"></div>
+		<nvd3
+	      options="preUpdatesGraph"
+	      data="preUpdatesData"
+	      config="preUpdatesConfig">
+	    </nvd3>
+	</div>
+    
   </div>
 </div>
