@@ -29,8 +29,6 @@ angular.module('bmp.components.card')
 
     console.log($scope.data.peer_hash_id);
 
-    $scope.summaryGridIsLoad = true;
-
     //peer stuff here
     var peerPrefix;
     $scope.ribData = [
@@ -71,7 +69,7 @@ angular.module('bmp.components.card')
       showGridFooter: true,
       columnDefs:[
         {name: "asn", displayName: 'AS Number', width: '*',
-          cellTemplate:'<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+          cellTemplate:'<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
         },
         {name: "as_name", displayName: 'AS Name', width: '*'},
         {name: "org_name", displayName:'Organization', width: '*'}
@@ -96,7 +94,8 @@ angular.module('bmp.components.card')
       if(grid.data.length > 10){
         height = ((10 * 30));
       }else{
-        height = ((grid.data.length * 30) + 30);
+        // add additional 60 for header and footer
+        height = ((grid.data.length * 30) + 50);
       }
       grid.changeHeight = height;
       gridapi.grid.gridHeight = grid.changeHeight;
@@ -116,6 +115,7 @@ angular.module('bmp.components.card')
       success(function (result){
         if(result.downstreamASN.size == 0){
           $scope.summaryPeerOptions.data = summaryPeerOptionsDefaultData;
+          $scope.summaryPeerOptions.showGridFooter = false;
         }else {
           $scope.summaryPeerOptions.data = result.downstreamASN.data;
         }

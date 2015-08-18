@@ -223,7 +223,7 @@ angular.module('bmpUiApp')
 
           for (var i = 0; i < peer_history.length; i++) {
             var format = d3.time.format("%Y-%m-%d %H:%M:%S");
-            var date = +format.parse(peer_history[i].TS);
+            var date = +format.parse(peer_history[i].TS.split(".")[0]);
 
             pre_rib_values.push({
               x: date,

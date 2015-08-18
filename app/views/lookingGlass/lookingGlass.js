@@ -51,13 +51,14 @@ angular.module('bmpUiApp')
       if(grid.data.length > 10){
         height = ((10 * 30));
       }else{
-        height = ((grid.data.length * 30) + 30);
+        height = ((grid.data.length * 30) + 60);
       }
       grid.changeHeight = height;
       gridapi.grid.gridHeight = grid.changeHeight;
     };
 
 
+      var glassGridOptionsDefaultData = [{"RouterName": "-", "PeerName": "-", "wholePrefix": '-', 'NH': '-', 'AS_Path': '-', 'MED': '-', "LocalPref": '-'}];
  //   $scope.glassGridApi.core.handleWindowResize();
       apiFactory.getPeerRib('b46e123f0a0fb0e006bd78e01ab6e516').
         success(function (result) {
@@ -65,7 +66,13 @@ angular.module('bmpUiApp')
           for(var i = 0; i < resultData.length; i++) {
             resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
           }
-          $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
+          if (resultData.length == 0) {
+            $scope.glassGridOptions.data = glassGridOptionsDefaultData;
+            $scope.glassGridOptions.showGridFooter = false;
+          } else{
+            $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
+          };
+          
 
           $scope.glassGridIsLoad = false; //stop loading
 

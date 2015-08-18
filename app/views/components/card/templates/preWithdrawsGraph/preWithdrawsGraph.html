@@ -2,12 +2,15 @@
   <div>
 
     <h4>Top prefixes by number of updates in past two hours</h4>
-
-    <nvd3
-      options="preWithdrawsGraph"
-      data="preWithdrawsData"
-      config="preUpdatesConfig">
-    </nvd3>
+	<div class="loading-section" ng-style="{'height': 450}">
+		<div ng-show="loading" bmp-loading loading-var="loading" font-width="80"></div>
+		<nvd3
+	      options="preWithdrawsGraph"
+	      data="preWithdrawsData"
+	      config="preUpdatesConfig">
+	    </nvd3>
+	</div>
+    
 
     Prefix: {{ hover }}
   </div>

@@ -3,7 +3,7 @@
 angular.module('bmp.components.card')
 
   .controller('BmpCardPreUpdatesGraphController', ["$scope", "apiFactory", function ($scope, apiFactory) {
-
+    $scope.loading = true;
     $scope.preUpdatesGraph = {
         chart: {
           type: "stackedAreaChart",
@@ -53,7 +53,7 @@ angular.module('bmp.components.card')
     $scope.preUpdatesData = [
       {
         key: "Updates",
-        values:[]
+        values:[[]]
       }
     ];
 
@@ -64,13 +64,18 @@ angular.module('bmp.components.card')
         var gData = [];
         for(var i = len -1; i > 0 ; i--){
 
-          var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
+          // var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
+          // Modified by Jason. Date.parse returns nothing
+          var timestmpArray = data[i].IntervalTime.split(/-| |:|\./); //"2015-03-22 22:23:06"
+          var date = new Date(timestmpArray[0], timestmpArray[1], timestmpArray[2], timestmpArray[3], timestmpArray[4], timestmpArray[5]);
+          var timestmp = date.getTime();
 
           gData.push([
-            timestmp, data[i].Count
+            timestmp, parseInt(data[i].Count)
           ]);
         }
         $scope.preUpdatesData[0].values = gData;
+        $scope.loading = false;
       })
       .error(function (error){
         console.log(error.message);

@@ -84,6 +84,7 @@ angular.module('bmp.components.card')
       $scope.ribGridApi= gridApi;
     };
 
+    var ribGridOptionsDefaultData = [{"Prefix":"-","NH":"-","AS_Path":"-", "MED": "-", "LocalPref": "-"}];
     //when select Routing tab
     $scope.getRibData = function() {
       $scope.showRib = true;
@@ -95,8 +96,13 @@ angular.module('bmp.components.card')
           for(var i = 0; i < resultData.length; i++) {
             resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
           }
-          $scope.ribGridOptions.data = $scope.initalRibdata = resultData;
-
+          if (resultData.length == 0) {
+            $scope.ribGridOptions.data = ribGridOptionsDefaultData;
+            $scope.ribGridOptions.showGridFooter = false;
+          } else {
+            $scope.ribGridOptions.data = $scope.initalRibdata = resultData;
+          }
+          
           $scope.ribGridIsLoad = false; //stop loading
 
           $scope.calGridHeight($scope.ribGridOptions,$scope.ribGridApi);

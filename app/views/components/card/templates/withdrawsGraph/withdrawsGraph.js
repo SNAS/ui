@@ -5,7 +5,7 @@ angular.module('bmp.components.card')
   .controller('BmpCardWithdrawsGraphController', ["$scope", "apiFactory", function ($scope, apiFactory) {
 
       window.GRAPHSC = $scope;
-
+      $scope.loading = true;
       $scope.withdrawsGraph = {
         chart: {
           type: 'discreteBarChart',
@@ -57,7 +57,7 @@ angular.module('bmp.components.card')
     $scope.withdrawsData = [
       {
         key: "Withdrawals",
-        values:[]
+        values:[[]]
       }
     ];
 
@@ -73,6 +73,7 @@ angular.module('bmp.components.card')
           });
         }
         $scope.withdrawsData[0].values = gData;
+        $scope.loading = false;
       })
       .error(function (error){
         console.log(error.message);
