@@ -395,26 +395,26 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         if(marker.options.type === 'Peer')
             if(state === 'default')
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.peers.length + '</span><img src="../images/new-peer-default.png" width="40px"/></div>',
+                    html: '<div><span>' + marker.options.peers.length + '</span><img src="images/new-peer-default.png" width="40px"/></div>',
                     className: 'marker',
                     iconSize: [40, 40]
                 }));
             else
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.peers.length + '</span><img src="../images/new-peer-active.png" width="40px"/></div>',
+                    html: '<div><span>' + marker.options.peers.length + '</span><img src="images/new-peer-active.png" width="40px"/></div>',
                     className: 'marker',
                     iconSize: [40, 40]
                 }));
         else if(marker.options.type === 'Router')
             if(state === 'default')
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.routers.length + '</span><img src="../images/new-router-default.png" width="40px"/></div>',
+                    html: '<div><span>' + marker.options.routers.length + '</span><img src="images/new-router-default.png" width="40px"/></div>',
                     className: 'marker',
                     iconSize: [40, 40]
                 }));
             else
                 marker.setIcon(new L.divIcon({
-                    html: '<div><span>' + marker.options.routers.length + '</span><img src="../images/new-router-active.png" width="40px"/></div>',
+                    html: '<div><span>' + marker.options.routers.length + '</span><img src="images/new-router-active.png" width="40px"/></div>',
                     className: 'marker',
                     iconSize: [40, 40]
                 }));
