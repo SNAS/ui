@@ -42,7 +42,7 @@ angular.module('bmpUiApp')
 
     columnDefs : [
       {
-        name: "asn", displayName: 'ASN', width: '30%',
+        name: "asn", displayName: 'ASN', width: '7%',
         cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
       },
       {name: "as_name", displayName: 'AS Name', width: '18%'},
