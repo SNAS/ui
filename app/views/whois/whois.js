@@ -30,8 +30,7 @@ angular.module('bmpUiApp')
       modifierKeysToMultiSelect: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
-      rowTemplate:
-        '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
       onRegisterApi: function (gridApi) {
         $scope.whoIsGridApi = gridApi;
         $scope.whoIsGridApi.selection.on.rowSelectionChanged($scope,function(row) {

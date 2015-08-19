@@ -24,7 +24,8 @@ angular.module('bmpUiApp')
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
-      rowHeight: 32
+      rowHeight: 32,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
 
     $scope.ShowPrefixsOptions.columnDefs = [
@@ -202,7 +203,8 @@ angular.module('bmpUiApp')
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
-      rowHeight: 25
+      rowHeight: 25,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
     $scope.ShowRedundantOptions.columnDefs = [
       {name: "Prefix", displayName: 'Prefix', width: '30%'},

@@ -24,7 +24,7 @@ angular.module('bmpUiApp')
       enableVerticalScrollbar: 1,
       rowHeight: 25,
       gridFooterHeight: 0,
-
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
       onRegisterApi: function (gridApi) {
         $scope.AllPrefixGridApi = gridApi;
       }
@@ -173,7 +173,8 @@ angular.module('bmpUiApp')
       enableVerticalScrollbar: 1,
       rowHeight: 25,
       height:300,
-      gridFooterHeight: 0
+      gridFooterHeight: 0,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
 
     // here to get the intemValue , use this  to create table

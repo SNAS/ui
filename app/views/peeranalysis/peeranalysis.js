@@ -30,9 +30,7 @@ angular.module('bmpUiApp')
       showGridFooter: true,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
-
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
-
       columnDefs: [
         {
           field: 'Status', displayName: 'Status', width: '6%',
