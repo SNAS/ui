@@ -77,10 +77,11 @@ angular.module('bmpUiApp')
 
     // get the prefix grid and table data ,call createPrefixGridTable() to create a table
     var getPrefixDataGrid = function (value) {
-      apiFactory.getPrefix(value)
+      var prefix = value.split("/")[0];
+      apiFactory.getPrefix(prefix)
         .success(function (data) {
           // execute the function and get data successfully.
-          console.log("here is the link for table.  http://bmp-dev.openbmp.org:8001/db_rest/v1/rib/prefix/" + value);
+          console.log("here is the link for table.  http://bmp-dev.openbmp.org:8001/db_rest/v1/rib/prefix/" + prefix);
           $scope.AllPrefixOptions.data = $scope.PrefixData = data.v_routes.data;
           //$scope.PrefixData = data.v_routes.data;
           //console.log($scope.PrefixData);
@@ -171,6 +172,7 @@ angular.module('bmpUiApp')
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
       rowHeight: 25,
+      height:300,
       gridFooterHeight: 0
     };
 
@@ -531,7 +533,7 @@ angular.module('bmpUiApp')
       //$scope.showGrid = 'true';
       $scope.showGrid = "false";
       $scope.showTip = "false";
-      $scope.value = "202.70.64.0/21";
+      $scope.value = "195.128.159.0/24";
       getPrefixDataGrid($scope.value);
     };
 
