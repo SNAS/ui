@@ -13,6 +13,8 @@ angular.module('bmpUiApp')
     window.SCOPE = $scope;
 
     $scope.showGraphTable = false;
+    $scope.showGrid = false;
+
 
     //populate prefix data into ShowPrefixsOptions Grid
     $scope.ShowPrefixsOptions = {
@@ -94,9 +96,9 @@ angular.module('bmpUiApp')
       if($scope.peerData.selectPeer != null){
         $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
         showaggregatePrefixes();
-        $scope.showGraphTable = true;
       }else{
         $scope.showGraphTable = false;
+        $scope.showGrid = false;
       }
     }
 
@@ -187,6 +189,8 @@ angular.module('bmpUiApp')
           {
             $scope.efficiency = "No data avalible"
           }
+          $scope.showGraphTable = true;
+          $scope.showGrid = true;
         });
     }
 

@@ -34,17 +34,17 @@
           </select>
         </div>
 
-        <div ng-show="showGraphTable">
+        <div ng-if="showGraphTable">
           Efficiency of aggregation:
           <span ng-bind="efficiency"></span>
         </div>
 
-        <div ng-show="showGraphTable">
+        <div ng-if="showGraphTable">
           <!--show the efficiency chart-->
           <nvd3 options="chartOptions" data="data"></nvd3>
 
           <!--show redundant options-->
-          <div ui-grid-selection ui-grid="ShowRedundantOptions" ui-grid-resize-columns></div>
+          <div ui-grid-selection ui-grid="ShowRedundantOptions" ui-grid-resize-columns ng-if="showGrid"></div>
         </div>
       </div>
     </div>
