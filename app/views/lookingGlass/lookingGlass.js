@@ -8,14 +8,12 @@
  * Controller of the Whois page
  */
 angular.module('bmpUiApp')
-  .controller('lookingGlassController', ['$scope', 'apiFactory', function ($scope, apiFactory) {
+  .controller('lookingGlassController', ['$scope', 'apiFactory', 'uiGridConstants', function ($scope, apiFactory, uiGridConstants) {
 
     //DEBUG
     window.SCOPE = $scope;
 
-  $scope.glassGridIsLoad = true;
-
- $scope.glassGridInitHeight = 300;
+    $scope.glassGridInitHeight = 300;
 
     $scope.glassGridOptions = {
       height: $scope.glassGridInitHeight,
@@ -26,15 +24,16 @@ angular.module('bmpUiApp')
       enableVerticalScrollbar: 1,
       enableHorizontalScrollbar: 0
     };
+    $scope.glassGridOptions.glassGridIsLoad = true;
 
     $scope.glassGridOptions.columnDefs = [
       {name: "RouterName", displayName: 'Router', width: "15%"},
       {name: "PeerName", displayName: 'Peer', width: "15%"},
-      {name: "wholePrefix", enableFiltering: false, displayName: 'Prefix', width: "20%"},
-      {name: "NH", enableFiltering: false, displayName: 'NH', width: "10%"},
-      {name: "AS_Path",enableFiltering: false, displayName: 'AS Path'},
-      {name: "MED",enableFiltering: false, displayName: 'MED', width: "10%"},
-      {name: "LocalPref", enableFiltering: false, displayName: 'Local Pref', width: "15%"}
+      {name: "wholePrefix", displayName: 'Prefix', width: "20%"},
+      {name: "NH", displayName: 'NH', width: "10%"},
+      {name: "AS_Path", displayName: 'AS Path'},
+      {name: "MED", displayName: 'MED', width: "10%"},
+      {name: "LocalPref", displayName: 'Local Pref', width: "15%"}
     ];
 
     $scope.glassGridOptions.multiSelect = false;
@@ -44,43 +43,47 @@ angular.module('bmpUiApp')
     $scope.glassGridOptions.onRegisterApi = function (gridApi) {
       $scope.glassGridApi= gridApi;
     };
-    
+    $scope.glassGridOptions.enableFiltering = false;
+    $scope.toggleFiltering = function(){
+      $scope.glassGridOptions.enableFiltering = !$scope.glassGridOptions.enableFiltering;
+      $scope.glassGridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+    };
+
     $scope.calGridHeight = function(grid, gridapi){
       gridapi.core.handleWindowResize();
       var height;
       if(grid.data.length > 10){
         height = ((10 * 30));
       }else{
-        height = ((grid.data.length * 30) + 60);
+        height = ((grid.data.length * 30) + 90);
       }
       grid.changeHeight = height;
       gridapi.grid.gridHeight = grid.changeHeight;
     };
 
 
-      var glassGridOptionsDefaultData = [{"RouterName": "-", "PeerName": "-", "wholePrefix": '-', 'NH': '-', 'AS_Path': '-', 'MED': '-', "LocalPref": '-'}];
- //   $scope.glassGridApi.core.handleWindowResize();
-      apiFactory.getPeerRib('b46e123f0a0fb0e006bd78e01ab6e516').
-        success(function (result) {
-          var resultData = result.v_routes.data;
-          for(var i = 0; i < resultData.length; i++) {
-            resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
-          }
-          if (resultData.length == 0) {
-            $scope.glassGridOptions.data = glassGridOptionsDefaultData;
-            $scope.glassGridOptions.showGridFooter = false;
-          } else{
-            $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
-          };
-          
+    var glassGridOptionsDefaultData = [{"RouterName": "-", "PeerName": "-", "wholePrefix": '-', 'NH': '-', 'AS_Path': '-', 'MED': '-', "LocalPref": '-'}];
+  //   $scope.glassGridApi.core.handleWindowResize();
+    apiFactory.getPeerRib('ba48c4052370a9274db38c7180334e86').
+      success(function (result) {
+        var resultData = result.v_routes.data;
+        for(var i = 0; i < resultData.length; i++) {
+          resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+        }
+        if (resultData.length == 0) {
+          $scope.glassGridOptions.data = glassGridOptionsDefaultData;
+          $scope.glassGridOptions.showGridFooter = false;
+        } else{
+          $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
+        }
 
-          $scope.glassGridIsLoad = false; //stop loading
+        $scope.glassGridOptions.glassGridIsLoad = false; //stop loading
 
-          $scope.calGridHeight($scope.glassGridOptions,$scope.glassGridApi);
-        }).
-        error(function (error) {
-          console.log(error.message);
-        });     
+        $scope.calGridHeight($scope.glassGridOptions,$scope.glassGridApi);
+      }).
+      error(function (error) {
+        console.log(error.message);
+      });
 
     $scope.glassGridSelection = function(){
       $scope.values = $scope.glassGridApi.selection.getSelectedRows()[0];
