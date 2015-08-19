@@ -4,3 +4,4 @@ dist_war
 .tmp
 .sass-cache
 bower_components
+.idea
