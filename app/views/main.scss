@@ -453,3 +453,13 @@ div.ui-grid-cell input.ng-valid {
     }
   }
 }
+
+.watermark {
+  position: absolute;
+  top : 60px;
+  opacity: 0.25;
+  font-size: 3em;
+  width: 100%;
+  text-align: center;
+  z-index: 1000;
+}

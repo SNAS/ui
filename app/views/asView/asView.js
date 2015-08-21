@@ -293,8 +293,13 @@ angular.module('bmpUiApp')
         upstreamPromise = apiFactory.getUpstream($scope.asn);
         upstreamPromise.success(function (result) {
           upstreamData = result.upstreamASN.data;
-          if (result.upstreamASN.data.size == 0) {
+          if (result.upstreamASN.data.length == 0) {
             $scope.upstreamNodata = true;
+            $scope.upstreamIsLoad = false; //stop loading
+            $scope.upstreamGridOptions.data = [];
+            $scope.upstreamGridOptions.changeHeight = 150;
+            $scope.upstreamGridApi.grid.gridHeight = 150;
+            $scope.upstreamGridOptions.showGridFooter = false;
           }
           else {
             $scope.upstreamGridOptions.data = upstreamData;
@@ -317,9 +322,13 @@ angular.module('bmpUiApp')
         downstreamPromise = apiFactory.getDownstream($scope.asn);
         downstreamPromise.success(function (result) {
           downstreamData = result.downstreamASN.data;
-          if (result.downstreamASN.data.size == 0) {
+          if (result.downstreamASN.data.length == 0) {
             $scope.downstreamNodata = true;
             $scope.downstreamIsLoad = false; //stop loading
+            $scope.downstreamGridOptions.data = [];
+            $scope.downstreamGridOptions.changeHeight = 150;
+            $scope.downstreamGridApi.grid.gridHeight = 150;
+            $scope.downstreamGridOptions.showGridFooter = false;
           }
           else {
             $scope.downstreamGridOptions.data = downstreamData;

@@ -7,6 +7,7 @@
           <!--input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." /-->
           <input type="text" ng-model="keywords" class="input-medium search-query" placeholder="Search ..." />
           <button type="submit" class="btn btn-sm btn-info" ng-click="search(keywords)">Search</button>
+          <span class="help-block">Example: 190.0.103.0</span>
         </form>
       </div>
 
@@ -20,7 +21,9 @@
             <!--Angular Table added here-->
             <div class="loading-section" ng-style="{'height':glassGridOptions.changeHeight}">
               <div ng-show="glassGridOptions.glassGridIsLoad" bmp-loading loading-var="glassGridOptions.glassGridIsLoad" font-width="80"></div>
-              <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.changeHeight}"></div>
+              <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.changeHeight}">
+                <div class="watermark" ng-if="!glassGridOptions.data.length">No data available</div>
+              </div>
             </div>
           </div>
         </div>

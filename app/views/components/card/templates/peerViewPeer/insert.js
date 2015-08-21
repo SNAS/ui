@@ -85,7 +85,7 @@ angular.module('bmp.components.card')
       $scope.ribGridApi= gridApi;
     };
 
-    var ribGridOptionsDefaultData = [{"Prefix":"-","NH":"-","AS_Path":"-", "MED": "-", "LocalPref": "-"}];
+    // var ribGridOptionsDefaultData = [{"Prefix":"-","NH":"-","AS_Path":"-", "MED": "-", "LocalPref": "-"}];
     //when select Routing tab
     $scope.getRibData = function() {
       $scope.showRib = true;
@@ -93,20 +93,21 @@ angular.module('bmp.components.card')
       $scope.ribGridApi.core.handleWindowResize();
       apiFactory.getPeerRib($scope.data.peer_hash_id).
         success(function (result) {
-          var resultData = result.v_routes.data;
-          for(var i = 0; i < resultData.length; i++) {
-            resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
-          }
-          if (resultData.length == 0) {
-            $scope.ribGridOptions.data = ribGridOptionsDefaultData;
-            $scope.ribGridOptions.showGridFooter = false;
-          } else {
+          if (!$.isEmptyObject(result) && result.v_routes.data.length != 0) {
+            var resultData = result.v_routes.data;
+            for(var i = 0; i < resultData.length; i++) {
+              resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+            }
             $scope.ribGridOptions.data = $scope.initalRibdata = resultData;
+            $scope.calGridHeight($scope.ribGridOptions,$scope.ribGridApi);
+          } else {
+            $scope.ribGridOptions.data = [];
+            $scope.ribGridOptions.showGridFooter = false;
+            $scope.ribGridOptions.changeHeight = 150;
+            $scope.ribGridApi.grid.gridHeight = 150;
           }
-          
           $scope.ribGridIsLoad = false; //stop loading
 
-          $scope.calGridHeight($scope.ribGridOptions,$scope.ribGridApi);
         }).
         error(function (error) {
           console.log(error.message);
@@ -345,12 +346,20 @@ angular.module('bmp.components.card')
         //Full ip with prefix or partial ip
         apiFactory.getPeerRibPrefix($scope.data.peer_hash_id, value).
           success(function (result) {
-            var resultData = result.v_routes.data;
-            for(var i = 0; i < resultData.length; i++) {
-              resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+            if (!$.isEmptyObject(result) && result.v_routes.data.length != 0) {
+              var resultData = result.v_routes.data;
+              for(var i = 0; i < resultData.length; i++) {
+                resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+              }
+              $scope.ribGridOptions.data = resultData;
+              $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+            } else {
+              $scope.ribGridOptions.data = [];
+              $scope.ribGridOptions.showGridFooter = false;
+              $scope.ribGridOptions.changeHeight = 150;
+              $scope.ribGridApi.grid.gridHeight = 150;
             }
-            $scope.ribGridOptions.data = resultData;
-            $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+            
           }).
           error(function (error) {
             console.log(error.message);
@@ -360,12 +369,20 @@ angular.module('bmp.components.card')
         //pass in peer hash and the matched regex value
         apiFactory.getPeerRibLookup($scope.data.peer_hash_id,value).
           success(function (result) {
-            var resultData = result.v_routes.data;
-            for(var i = 0; i < resultData.length; i++) {
-              resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+            if (!$.isEmptyObject(result) && result.v_routes.data.length != 0) {
+              var resultData = result.v_routes.data;
+              for(var i = 0; i < resultData.length; i++) {
+                resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+              }
+              $scope.ribGridOptions.data = resultData;
+              $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+            } else {
+              $scope.ribGridOptions.data = [];
+              $scope.ribGridOptions.showGridFooter = false;
+              $scope.ribGridOptions.changeHeight = 150;
+              $scope.ribGridApi.grid.gridHeight = 150;
             }
-            $scope.ribGridOptions.data = resultData;
-            $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+            
           }).
           error(function (error) {
             console.log(error.message);

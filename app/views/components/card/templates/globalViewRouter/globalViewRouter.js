@@ -194,11 +194,13 @@ angular.module('bmp.components.card')
       // $scope.peerSummaryTable = [];
       apiFactory.getPeersByIp($scope.data.RouterIP).
         success(function (result){
-          $scope.peersAmount = result.v_peers.size;
-
-           // peersData = result.v_peers.data;
-          $scope.globalViewPeerOptions.data = result.v_peers.data;
-
+          if (!$.isEmptyObject(result)) {
+            $scope.peersAmount = result.v_peers.size;
+             // peersData = result.v_peers.data;
+            $scope.globalViewPeerOptions.data = result.v_peers.data;
+          } else {
+            $scope.globalViewPeerOptions.data = [];
+          }
           $scope.globalViewGridIsLoad = false; //stop loading
           $scope.peerIconIsLoad = false; //stop loading
 
