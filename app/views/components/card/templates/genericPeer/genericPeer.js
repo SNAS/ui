@@ -115,13 +115,16 @@ angular.module('bmp.components.card')
     apiFactory.getPeerDownStream($scope.data.peer_hash_id).
       success(function (result){
         if(result.downstreamASN.size == 0){
-          $scope.summaryPeerOptions.data = summaryPeerOptionsDefaultData;
+          $scope.summaryPeerOptions.data = [];
           $scope.summaryPeerOptions.showGridFooter = false;
+          $scope.summaryPeerOptions.changeHeight = 150;
+          $scope.summaryPeerOptionsApi.grid.gridHeight = 150;
         }else {
           $scope.summaryPeerOptions.data = result.downstreamASN.data;
+          $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
         }
         $scope.summaryPeerOptions.summaryGridIsLoad = false; //stop loading
-        $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
+        
       }).
       error(function (error){
         console.log(error.message);

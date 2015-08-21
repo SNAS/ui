@@ -41,13 +41,19 @@ angular.module('bmpUiApp')
         $scope.prefix_amount= data.table.data[0].PrefixCount;
           apiFactory.getAsnInfo(109,$scope.prefix_amount)
             .success(function(result) {
-              $scope.ShowPrefixsOptions.data = $scope.PrefixData = result.v_routes.data;
-              $scope.PrefixTableIsLoad = false; //stop loading
+              if (!$.isEmptyObject(result) && result.v_routes.data.length != 0 ) {
+                $scope.ShowPrefixsOptions.data = $scope.PrefixData = result.v_routes.data;
+                $scope.PrefixTableIsLoad = false; //stop loading
 
-              var peerDataOriginal = result.v_routes.data;
-              $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
-              createShowPrefixsOptions();
-              $scope.allPrefixLoad=false;
+                var peerDataOriginal = result.v_routes.data;
+                $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
+                createShowPrefixsOptions();
+                $scope.allPrefixLoad=false;
+              } else {
+                $scope.ShowPrefixsOptions.data = [];
+                $scope.PrefixTableIsLoad = false; //stop loading
+                $scope.ShowPrefixsOptions.showGridFooter = false;
+              }
             });
       });
     };

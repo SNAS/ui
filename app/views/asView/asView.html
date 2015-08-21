@@ -36,9 +36,9 @@
           <h3>Upstream ASes of AS {{asn}}</h3>
           <div class="loading-section" ng-style="{'height':upstreamGridOptions.changeHeight}">
             <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
-            <div ng-show="!upstreamNodata" class="grid" ui-grid="upstreamGridOptions"
-                 ng-style="{'height': upstreamGridOptions.changeHeight}"></div>
-            <p ng-show="upstreamNodata">There is no upstream of this AS</p>
+            <div class="grid" ui-grid="upstreamGridOptions" ng-style="{'height': upstreamGridOptions.changeHeight}">
+              <div class="watermark" ng-if="!upstreamGridOptions.data.length">No data available</div>
+            </div>
           </div>
         </div>
       </div>
@@ -47,9 +47,9 @@
           <h3>Downstream ASes of AS {{asn}}</h3>
           <div class="loading-section" ng-style="{'height':downstreamGridOptions.changeHeight}">
             <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
-            <div ng-show="!downstreamNodata" class="grid" ui-grid="downstreamGridOptions"
-                 ng-style="{'height': downstreamGridOptions.changeHeight}"></div>
-            <p ng-show="downstreamNodata">There is no downstream of this AS</p>
+            <div ui-grid="downstreamGridOptions" ng-style="{'height': downstreamGridOptions.changeHeight}">
+                 <div class="watermark" ng-if="!downstreamGridOptions.data.length">No data available</div>
+            </div>
           </div>
         </div>
       </div>

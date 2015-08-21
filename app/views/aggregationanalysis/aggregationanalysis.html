@@ -12,7 +12,9 @@
         <h3>Prefix Information</h3>
         <div class="loading-section" ng-style="{'height':peerGridInitHeight}">
           <div ng-show="PrefixTableIsLoad" bmp-loading loading-var="PrefixTableIsLoad"></div>
-          <div ui-grid-selection ui-grid="ShowPrefixsOptions"></div>
+          <div ui-grid-selection ui-grid="ShowPrefixsOptions">
+            <div class="watermark" ng-if="!ShowPrefixsOptions.data.length">No data available</div>
+          </div>
         </div>
       </div>
     </div>

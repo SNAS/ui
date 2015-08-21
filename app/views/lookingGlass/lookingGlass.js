@@ -63,19 +63,27 @@ angular.module('bmpUiApp')
     };
 
 
-    var glassGridOptionsDefaultData = [{"RouterName": "-", "PeerName": "-", "wholePrefix": '-', 'NH': '-', 'AS_Path': '-', 'MED': '-', "LocalPref": '-'}];
+    // var glassGridOptionsDefaultData = [{"RouterName": "-", "PeerName": "-", "wholePrefix": '-', 'NH': '-', 'AS_Path': '-', 'MED': '-', "LocalPref": '-'}];
   //   $scope.glassGridApi.core.handleWindowResize();
-    apiFactory.getPeerRib('ba48c4052370a9274db38c7180334e86').
+    // apiFactory.getPeerRib('195.128.159.0').
+    // use another API to look for a default value, which is displayed on the page
+    apiFactory.getPeerRibLookupIp('190.0.103.0').
       success(function (result) {
-        var resultData = result.v_routes.data;
-        for(var i = 0; i < resultData.length; i++) {
-          resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
-        }
-        if (resultData.length == 0) {
-          $scope.glassGridOptions.data = glassGridOptionsDefaultData;
-          $scope.glassGridOptions.showGridFooter = false;
-        } else{
-          $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
+        // got response 
+        if (!$.isEmptyObject(result)) {
+          var resultData = result.v_routes.data;
+          for(var i = 0; i < resultData.length; i++) {
+            resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+          }
+          if (resultData.length == 0) { // no data
+            $scope.glassGridOptions.data = [];
+            $scope.glassGridOptions.showGridFooter = false;
+          } else{
+            $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
+          }
+        } else { // empty response
+          $scope.glassGridOptions.data = [];
+            $scope.glassGridOptions.showGridFooter = false;
         }
 
         $scope.glassGridOptions.glassGridIsLoad = false; //stop loading
@@ -257,6 +265,8 @@ angular.module('bmpUiApp')
       }else{
         //Entered Alphanumerics
         console.log('invalid search');
+        $scope.glassGridOptions.data = [];
+        $scope.glassGridOptions.showGridFooter = false;
         return;
       }
 
@@ -306,8 +316,23 @@ angular.module('bmpUiApp')
         //Full ip with prefix or partial ip
         apiFactory.getPrefix(value).
           success(function (result) {
-            $scope.glassGridOptions.data = result.v_routes.data;
-            $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
+            if (!$.isEmptyObject(result)) {
+              var resultData = result.v_routes.data;
+              for(var i = 0; i < resultData.length; i++) {
+                resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+              }
+              if (resultData.length == 0) { // no data
+                $scope.glassGridOptions.data = [];
+                $scope.glassGridOptions.showGridFooter = false;
+              } else{
+                $scope.glassGridOptions.data = resultData;
+                $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
+              }
+              
+            } else{
+              $scope.glassGridOptions.data = [];
+              $scope.glassGridOptions.showGridFooter = false;
+            }
           }).
           error(function (error) {
             console.log(error.message);
@@ -317,8 +342,23 @@ angular.module('bmpUiApp')
         //pass in peer hash and the matched regex value
         apiFactory.getPeerRibLookupIp(value).
           success(function (result) {
-            $scope.glassGridOptions.data = result.v_routes.data;
-            $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
+            if (!$.isEmptyObject(result)) {
+              var resultData = result.v_routes.data;
+              for(var i = 0; i < resultData.length; i++) {
+                resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+              }
+              if (resultData.length == 0) { // no data
+                $scope.glassGridOptions.data = [];
+                $scope.glassGridOptions.showGridFooter = false;
+              } else{
+                $scope.glassGridOptions.data = resultData;
+                $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
+              }
+              
+            } else {
+              $scope.glassGridOptions.data = [];
+              $scope.glassGridOptions.showGridFooter = false;
+            } 
           }).
           error(function (error) {
             console.log(error.message);

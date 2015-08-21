@@ -149,6 +149,7 @@
               ui-grid="globalViewPeerOptions"
               ui-grid-selection
               ng-style="{'height':globalViewPeerOptions.changeHeight}">
+              <div class="watermark" ng-if="!globalViewPeerOptions.data.length">No data available</div>
             </div>
 
           </div>

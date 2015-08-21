@@ -14,6 +14,7 @@
       ui-grid="summaryPeerOptions"
       ui-grid-selection
       ng-style="{'height':summaryPeerOptions.changeHeight}">
+      <div class="watermark" ng-if="!summaryPeerOptions.data.length">No data available</div>
     </div>
 
   </div>

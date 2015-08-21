@@ -4,7 +4,9 @@
     <tab heading="Downstream ASes of Peer" select="downStreamTab()">
       <div class="loading-section" ng-style="{'height':summaryPeerOptions.changeHeight}">
         <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>
-        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}" style="margin-top: 27px;"></div>
+        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}" style="margin-top: 27px;">
+          <div class="watermark" ng-if="!summaryPeerOptions.data.length">No data available</div>
+        </div>
       </div>
     </tab>
     <tab heading="Routing Table" select="getRibData()">
@@ -14,7 +16,9 @@
       <!--Angular Table added here-->
       <div class="loading-section" ng-style="{'height':ribGridOptions.changeHeight}">
         <div ng-show="ribGridIsLoad" bmp-loading loading-var="ribGridIsLoad" font-width="80"></div>
-        <div ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}"></div>
+        <div ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}">
+          <div class="watermark" ng-if="!ribGridOptions.data.length">No data available</div>
+        </div>
       </div>
 
 
