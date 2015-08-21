@@ -13,6 +13,8 @@ angular.module('bmpUiApp')
     window.SCOPE = $scope;
 
     $scope.showGraphTable = false;
+    $scope.showGrid = false;
+
 
     //populate prefix data into ShowPrefixsOptions Grid
     $scope.ShowPrefixsOptions = {
@@ -22,7 +24,8 @@ angular.module('bmpUiApp')
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
-      rowHeight: 32
+      rowHeight: 32,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
 
     $scope.ShowPrefixsOptions.columnDefs = [
@@ -94,9 +97,9 @@ angular.module('bmpUiApp')
       if($scope.peerData.selectPeer != null){
         $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
         showaggregatePrefixes();
-        $scope.showGraphTable = true;
       }else{
         $scope.showGraphTable = false;
+        $scope.showGrid = false;
       }
     }
 
@@ -187,6 +190,8 @@ angular.module('bmpUiApp')
           {
             $scope.efficiency = "No data avalible"
           }
+          $scope.showGraphTable = true;
+          $scope.showGrid = true;
         });
     }
 
@@ -198,7 +203,8 @@ angular.module('bmpUiApp')
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
-      rowHeight: 25
+      rowHeight: 25,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
     $scope.ShowRedundantOptions.columnDefs = [
       {name: "Prefix", displayName: 'Prefix', width: '30%'},

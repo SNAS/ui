@@ -8,10 +8,45 @@ angular.module('bmp.components.asnModel',[])
 
     $scope.open = function() { console.log('do nothing!') };
 
-    //64512 - 65534 		4200000000 - 4294967294
-    if(($scope.asn > 64512 && $scope.asn <= 65534) || ($scope.asn > 4200000000 && $scope.asn <= 4294967294)){
+    //0
+    if($scope.asn == 0){
+      $scope.asn = "Invalid";
+      $scope.open = function (size) {
+              var modalInstance = $modal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'myModalContent.html',
+                controller: 'ModalInstanceCtrl',
+                size: size,
+                resolve: {
+                  items: function () {
+                    return {"UNAVAILABLE" : "0 is not a valid AS number!"};
+                  }
+                }
+              });
+            };
+
+      $scope.noModal = false;
+
+    //64512 - 65534     4200000000 - 4294967294
+    }else if(($scope.asn > 64512 && $scope.asn <= 65534) || ($scope.asn > 4200000000 && $scope.asn <= 4294967294)){
       $scope.asn = "Private AS";
-    }else {
+      $scope.open = function (size) {
+              var modalInstance = $modal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'myModalContent.html',
+                controller: 'ModalInstanceCtrl',
+                size: size,
+                resolve: {
+                  items: function () {
+                    return {"UNAVAILABLE" : "This is a private AS"};
+                  }
+                }
+              });
+            };
+
+      $scope.noModal = false;
+
+    }else{
       //api call with asn
       apiFactory.getWhoIsASN($scope.asn.trim()).
         success(function (result) {

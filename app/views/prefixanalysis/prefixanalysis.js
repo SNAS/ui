@@ -24,7 +24,7 @@ angular.module('bmpUiApp')
       enableVerticalScrollbar: 1,
       rowHeight: 25,
       gridFooterHeight: 0,
-
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
       onRegisterApi: function (gridApi) {
         $scope.AllPrefixGridApi = gridApi;
       }
@@ -77,10 +77,11 @@ angular.module('bmpUiApp')
 
     // get the prefix grid and table data ,call createPrefixGridTable() to create a table
     var getPrefixDataGrid = function (value) {
-      apiFactory.getPrefix(value)
+      var prefix = value.split("/")[0];
+      apiFactory.getPrefix(prefix)
         .success(function (data) {
           // execute the function and get data successfully.
-          console.log("here is the link for table.  http://bmp-dev.openbmp.org:8001/db_rest/v1/rib/prefix/" + value);
+          console.log("here is the link for table.  http://bmp-dev.openbmp.org:8001/db_rest/v1/rib/prefix/" + prefix);
           $scope.AllPrefixOptions.data = $scope.PrefixData = data.v_routes.data;
           //$scope.PrefixData = data.v_routes.data;
           //console.log($scope.PrefixData);
@@ -171,7 +172,9 @@ angular.module('bmpUiApp')
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
       rowHeight: 25,
-      gridFooterHeight: 0
+      height:300,
+      gridFooterHeight: 0,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
 
     // here to get the intemValue , use this  to create table
@@ -531,7 +534,7 @@ angular.module('bmpUiApp')
       //$scope.showGrid = 'true';
       $scope.showGrid = "false";
       $scope.showTip = "false";
-      $scope.value = "202.70.64.0/21";
+      $scope.value = "195.128.159.0/24";
       getPrefixDataGrid($scope.value);
     };
 

@@ -22,7 +22,8 @@ angular.module('bmpUiApp')
       enableRowSelection: true,
       enableRowHeaderSelection: true,
       enableVerticalScrollbar: 1,
-      enableHorizontalScrollbar: 0
+      enableHorizontalScrollbar: 0,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
     $scope.glassGridOptions.glassGridIsLoad = true;
 

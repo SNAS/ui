@@ -434,18 +434,22 @@ div.ui-grid-cell input.ng-valid {
   min-height: 30px;
 }
 
-.loading-section .ui-grid-row-selected > [ui-grid-row] > .ui-grid-cell {
+.loading-section .ui-grid-row-selected > [ui-grid-row] .ui-grid-cell {
   background-color: $row-select-colour !important;
 }
 
 .asn-clickable{
+  cursor: pointer;
   &:hover{
-    color: #0386d2;
-    cursor: pointer;
+    color: #43f0a2;
   }
 }
 
-.asn-unclickable{
-  color: grey;
+.hover-row-highlight{
+  cursor: pointer;
+  &:hover{
+    .ui-grid-cell{
+      background-color: #d9d9d9 !important;
+    }
+  }
 }
-

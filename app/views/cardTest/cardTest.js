@@ -17,7 +17,8 @@ angular.module('bmpUiApp')
 
     $scope.whoIsGridOptions = {
       enableRowSelection: true,
-      enableRowHeaderSelection: false
+      enableRowHeaderSelection: false,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
 
     $scope.whoIsGridOptions.columnDefs = [
