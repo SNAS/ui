@@ -144,8 +144,8 @@ angular.module('bmpUiApp')
         $("#suggestions").autocomplete({
           source: suggestions,
           autoFocus: true,
-          minLength: 2,
-          delay: 1000,
+          // minLength: 2,
+          delay: 1200,
           select: function (event, ui) {
             apiFactory.getWhoIsASName(ui.item.value).
               success(function (result) {
@@ -175,12 +175,13 @@ angular.module('bmpUiApp')
         apiFactory.getWhoIsASNameLike($scope.searchValue, 10).success(function (result) {
           if (result.w.size != 0) {
             var data = result.w.data;
+            suggestions.length = 0;
             for (var i = 0; i < result.w.size; i++) {
               suggestions.push(data[i].as_name);
             }
           }
         })
-          .error(function () {
+          .error(function (error) {
             console.log(error.message);
           });
       }
