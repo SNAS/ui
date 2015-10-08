@@ -59,7 +59,8 @@
 
           <div class="loading-section">
             <!--<div ng-show="prefixHisDataLoading" bmp-loading loading-var="prefixHisDataLoading"></div>-->
-            <div ng-if="showGrid" ui-grid="HistoryPrefixOptions" ui-grid-selection ui-grid-resize-columns ng-style="{height:HistoryPrefixOptions.height}"></div>
+            <!--removed ng-if="showGrid"-->
+            <div ui-grid="HistoryPrefixOptions" ui-grid-selection ui-grid-resize-columns ng-style="{height:HistoryPrefixOptions.height}"></div>
           </div>
           <!--ng-show="showGrid"-->
           <br><br>

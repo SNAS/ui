@@ -1,28 +1,28 @@
 'use strict';
 
- angular.module('bmp.components.card').filter('unsafe', ['$sce', function ($sce){
-    return function (val){
-      return $sce.trustAsHtml(val);
-    };
-  }]);
+angular.module('bmp.components.card').filter('unsafe', ['$sce', function ($sce) {
+  return function (val) {
+    return $sce.trustAsHtml(val);
+  };
+}]);
 
 angular.module("template/popover/popover.html", []).run(["$templateCache", function ($templateCache) {
-    $templateCache.put("template/popover/popover.html",
-      "<div class=\"popover {{placement}}\" ng-class=\"{ in: isOpen(), fade: animation() }\">\n" +
-      "  <div class=\"arrow\"></div>\n" +
-      "\n" +
-      "  <div class=\"popover-inner\">\n" +
-      "      <h3 class=\"popover-title\" ng-bind-html=\"title | unsafe\" ng-show=\"title\"></h3>\n" +
-      "      <div class=\"popover-content\"ng-bind-html=\"content | unsafe\"></div>\n" +
-      "  </div>\n" +
-      "</div>\n" +
-      "");
+  $templateCache.put("template/popover/popover.html",
+    "<div class=\"popover {{placement}}\" ng-class=\"{ in: isOpen(), fade: animation() }\">\n" +
+    "  <div class=\"arrow\"></div>\n" +
+    "\n" +
+    "  <div class=\"popover-inner\">\n" +
+    "      <h3 class=\"popover-title\" ng-bind-html=\"title | unsafe\" ng-show=\"title\"></h3>\n" +
+    "      <div class=\"popover-content\"ng-bind-html=\"content | unsafe\"></div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
 }]);
 
 
 angular.module('bmp.components.card')
 
-.controller('BmpCardPeerPeerInsertController', ["$scope", "apiFactory", "$timeout", "$element", "$document", function ($scope, apiFactory, $timeout, $element, $document) {
+  .controller('BmpCardPeerPeerInsertController', ["$scope", "apiFactory", "$timeout", "$element", "$document", function ($scope, apiFactory, $timeout, $element, $document) {
     window.SCOPEZ = $scope;
 
     //  "RouterName": "csr1.openbmp.org",
@@ -52,8 +52,8 @@ angular.module('bmp.components.card')
 
     //this is for the graph cards.
     $scope.graphVisibility = false;
-    $scope.showGraphs = function(){
-      $scope.graphs = ["preUpdatesGraph","preWithdrawsGraph","updatesGraph","withdrawsGraph"];
+    $scope.showGraphs = function () {
+      $scope.graphs = ["preUpdatesGraph", "preWithdrawsGraph", "updatesGraph", "withdrawsGraph"];
       $scope.graphVisibility = true;
     };
 
@@ -61,11 +61,18 @@ angular.module('bmp.components.card')
 
     $scope.ribGridOptions = {
       height: $scope.ribGridInitHeight,
-      showGridFooter: true,
+      enableFiltering: false,
       enableRowSelection: true,
-      enableRowHeaderSelection: true,
-      enableVerticalScrollbar: 1,
+      enableRowHeaderSelection: false,
+      enableColumnResizing: true,
+      multiSelect: false,
+      noUnselect: true,
+      selectionRowHeaderWidth: 35,
+      rowHeight: 25,
+      gridFooterHeight: 0,
+      showGridFooter: true,
       enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
 
@@ -77,17 +84,30 @@ angular.module('bmp.components.card')
       {name: "LocalPref", displayName: 'Local Pref', width: "15%"}
     ];
 
-    $scope.ribGridOptions.multiSelect = false;
-    $scope.ribGridOptions.noUnselect = true;
-    $scope.ribGridOptions.modifierKeysToMultiSelect = false;
-    $scope.ribGridOptions.rowTemplate = '<div ng-click="grid.appScope.ribGridSelection();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
     $scope.ribGridOptions.onRegisterApi = function (gridApi) {
-      $scope.ribGridApi= gridApi;
+      $scope.ribGridApi = gridApi;
+      gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+        $scope.values = row.entity;
+
+        apiFactory.getPeerGeo($scope.values.Prefix).
+          success(function (result) {
+            $scope.values.geo = result.v_geo_ip.data[0];
+            $scope.latLong = {
+              latitude: $scope.values.geo.latitude,
+              longitude: $scope.values.geo.longitude
+            };
+
+            createASpath($scope.values.AS_Path);
+          }).
+          error(function (error) {
+            console.log(error.message);
+          });
+      });
     };
 
     // var ribGridOptionsDefaultData = [{"Prefix":"-","NH":"-","AS_Path":"-", "MED": "-", "LocalPref": "-"}];
     //when select Routing tab
-    $scope.getRibData = function() {
+    $scope.getRibData = function () {
       $scope.showRib = true;
 
       $scope.ribGridApi.core.handleWindowResize();
@@ -95,11 +115,11 @@ angular.module('bmp.components.card')
         success(function (result) {
           if (!$.isEmptyObject(result) && result.v_routes.data.length != 0) {
             var resultData = result.v_routes.data;
-            for(var i = 0; i < resultData.length; i++) {
+            for (var i = 0; i < resultData.length; i++) {
               resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
             }
             $scope.ribGridOptions.data = $scope.initalRibdata = resultData;
-            $scope.calGridHeight($scope.ribGridOptions,$scope.ribGridApi);
+            $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
           } else {
             $scope.ribGridOptions.data = [];
             $scope.ribGridOptions.showGridFooter = false;
@@ -114,145 +134,127 @@ angular.module('bmp.components.card')
         });
     };
 
-    $scope.ribGridSelection = function(){
-      $scope.values = $scope.ribGridApi.selection.getSelectedRows()[0];
+    var createASpath = function (path) {
+      //e.g. " 64543 1221 4637 852 852 29810 29810 29810 29810 29810"
+      $scope.asPath = {};
+      var iconWidth = 50;
+      var lineWidth = 100;
+      var nodeWidth = iconWidth + lineWidth;
 
-      apiFactory.getPeerGeo($scope.values.Prefix).
-        success(function (result) {
-          $scope.values.geo = result.v_geo_ip.data[0];
-          $scope.latLong = {
-            latitude: $scope.values.geo.latitude,
-            longitude: $scope.values.geo.longitude
-          };
+      $scope.asPath.width = "100%";
+      $scope.asPath.lineWidth = lineWidth + "px";
+      $scope.asPath.iconWidth = iconWidth + "px";
 
-          createASpath($scope.values.AS_Path);
-        }).
-        error(function (error) {
-          console.log(error.message);
-        });
-    };
+      //this is example later on will be revieved from the table in peerviewpeer
+      var path = path.split(" ");
+      path.shift();
 
-  var createASpath = function(path){
-    //e.g. " 64543 1221 4637 852 852 29810 29810 29810 29810 29810"
-    $scope.asPath={};
-    var iconWidth = 50;
-    var lineWidth = 100;
-    var nodeWidth = iconWidth + lineWidth;
-
-    $scope.asPath.width = "100%";
-    $scope.asPath.lineWidth = lineWidth+"px";
-    $scope.asPath.iconWidth = iconWidth+"px";
-
-    //this is example later on will be revieved from the table in peerviewpeer
-    var path = path.split(" ");
-    path.shift();
-
-    $scope.norepeat = [];
-    for(var i = 0; i < path.length; i++){
-      if($scope.norepeat.indexOf(path[i]) == -1){
-        $scope.norepeat.push(path[i]);
+      $scope.norepeat = [];
+      for (var i = 0; i < path.length; i++) {
+        if ($scope.norepeat.indexOf(path[i]) == -1) {
+          $scope.norepeat.push(path[i]);
+        }
       }
-    }
 
-    //Router node
-    var as_path=[];
+      //Router node
+      var as_path = [];
 
-    for(var i = 0; i < $scope.norepeat.length; i++){
-      //AS nodes "bmp-as_router10-17"
-      as_path.push({
-        icon : "bmp-as_router10-17",
-        topVal:$scope.norepeat[i],
-        colour:"#9467b0",
-        botVal:$scope.norepeat[i],
-        isEnd:true,
-        addWidth: nodeWidth
-      });
-    }
-
-    //make last as not have connecting line
-    as_path[as_path.length-1].isEnd = false;
-
-    var asname;
-    $scope.as_path = [];
-    apiFactory.getWhoIsASNameList($scope.norepeat).
-      success(function (result) {
-
-        $scope.as_path = as_path;
-
-        var asname = result.w.data;
-        for(var i=0; i < asname.length; i++){
-          var index = $scope.norepeat.indexOf((asname[i].asn).toString());
-
-          //all fields/ info for popover.
-          var popOutFields = ["asn","as_name","org_id","org_name","city","state_prov","postal_code","country"]; //etc
-          var pcontent = "";
-          for(var j = 0; j < popOutFields.length; j++){
-            if(asname[i][popOutFields[j]] != null){
-              pcontent+= popOutFields[j] + " : <span class='thin'>" + asname[i][popOutFields[j]] + "</span><br>";
-              pcontent = pcontent.replace(/ASN-|ASN/g,"");
-            }
-          }
-          asname[i].as_name = asname[i].as_name.replace(/ASN-|ASN/g,"");
-
-          //changed the name of the as to name from results.
-          $scope.as_path[index].topVal = asname[i].as_name;//+1 cause starting router node
-          $scope.as_path[index].noTopText = false;
-          $scope.as_path[index].popOut = pcontent;//+1 cause starting router node
-        }
-
-        if($scope.data.PeerASN == $scope.norepeat[0]){
-          //EBGP
-          $scope.as_path[0].icon = "bmp-ebgp_router10-17";
-          $scope.as_path[0].colour = "#EAA546";
-          $scope.as_path[0].noTopText = true;
-          $scope.as_path[0].addWidth = nodeWidth + 28; //width of label from icon
-        }else if($scope.data.PeerASN != $scope.norepeat[0]){
-          //IBGP
-          $scope.as_path = [{
-            icon: "bmp-ibgp_router10-17",
-            topVal: "",
-            noTopText: true,
-            colour: "#7bad85",
-            botVal: $scope.data.PeerASN,
-            isEnd: true,
-            addWidth: nodeWidth + 28 //width of label from icon
-          }].concat($scope.as_path);
-        }
-
-        $scope.as_path = [{
-          icon: "bmp-bmp_router10-17",
-          topVal: "",
-          noTopText: true,
-          colour: "#4b84ca",
-          botVal: $scope.data.LocalASN,
+      for (var i = 0; i < $scope.norepeat.length; i++) {
+        //AS nodes "bmp-as_router10-17"
+        as_path.push({
+          icon: "bmp-as_router10-17",
+          topVal: $scope.norepeat[i],
+          colour: "#9467b0",
+          botVal: $scope.norepeat[i],
           isEnd: true,
           addWidth: nodeWidth
-        }].concat($scope.as_path);
+        });
+      }
 
-        //set width of whole container depending on result size.
-        //len + 1 for router     + 80 stop wrapping and padding
-        $scope.asPath.width = nodeWidth * $scope.as_path.length + 80 + "px";
-      }).
-      error(function (error) {
-        console.log(error);
-      });
+      //make last as not have connecting line
+      as_path[as_path.length - 1].isEnd = false;
+
+      var asname;
+      $scope.as_path = [];
+      apiFactory.getWhoIsASNameList($scope.norepeat).
+        success(function (result) {
+
+          $scope.as_path = as_path;
+
+          var asname = result.w.data;
+          for (var i = 0; i < asname.length; i++) {
+            var index = $scope.norepeat.indexOf((asname[i].asn).toString());
+
+            //all fields/ info for popover.
+            var popOutFields = ["asn", "as_name", "org_id", "org_name", "city", "state_prov", "postal_code", "country"]; //etc
+            var pcontent = "";
+            for (var j = 0; j < popOutFields.length; j++) {
+              if (asname[i][popOutFields[j]] != null) {
+                pcontent += popOutFields[j] + " : <span class='thin'>" + asname[i][popOutFields[j]] + "</span><br>";
+                pcontent = pcontent.replace(/ASN-|ASN/g, "");
+              }
+            }
+            asname[i].as_name = asname[i].as_name.replace(/ASN-|ASN/g, "");
+
+            //changed the name of the as to name from results.
+            $scope.as_path[index].topVal = asname[i].as_name;//+1 cause starting router node
+            $scope.as_path[index].noTopText = false;
+            $scope.as_path[index].popOut = pcontent;//+1 cause starting router node
+          }
+
+          if ($scope.data.PeerASN == $scope.norepeat[0]) {
+            //EBGP
+            $scope.as_path[0].icon = "bmp-ebgp_router10-17";
+            $scope.as_path[0].colour = "#EAA546";
+            $scope.as_path[0].noTopText = true;
+            $scope.as_path[0].addWidth = nodeWidth + 28; //width of label from icon
+          } else if ($scope.data.PeerASN != $scope.norepeat[0]) {
+            //IBGP
+            $scope.as_path = [{
+              icon: "bmp-ibgp_router10-17",
+              topVal: "",
+              noTopText: true,
+              colour: "#7bad85",
+              botVal: $scope.data.PeerASN,
+              isEnd: true,
+              addWidth: nodeWidth + 28 //width of label from icon
+            }].concat($scope.as_path);
+          }
+
+          $scope.as_path = [{
+            icon: "bmp-bmp_router10-17",
+            topVal: "",
+            noTopText: true,
+            colour: "#4b84ca",
+            botVal: $scope.data.LocalASN,
+            isEnd: true,
+            addWidth: nodeWidth
+          }].concat($scope.as_path);
+
+          //set width of whole container depending on result size.
+          //len + 1 for router     + 80 stop wrapping and padding
+          $scope.asPath.width = nodeWidth * $scope.as_path.length + 80 + "px";
+        }).
+        error(function (error) {
+          console.log(error);
+        });
 
       var originalLeave = $.fn.popover.Constructor.prototype.leave;
-      $.fn.popover.Constructor.prototype.leave = function(obj){
+      $.fn.popover.Constructor.prototype.leave = function (obj) {
         var self = obj instanceof this.constructor ?
           obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
         var container, timeout;
 
         originalLeave.call(this, obj);
 
-        if(obj.currentTarget) {
+        if (obj.currentTarget) {
           container = $(obj.currentTarget).siblings('.popover')
           timeout = self.timeout;
-          container.one('mouseenter', function(){
+          container.one('mouseenter', function () {
             //We entered the actual popover – call off the dogs
             clearTimeout(timeout);
             //Let's monitor popover content instead
-            container.one('mouseleave', function(){
+            container.one('mouseleave', function () {
               $.fn.popover.Constructor.prototype.leave.call(self, self);
             });
           })
@@ -261,10 +263,10 @@ angular.module('bmp.components.card')
       //$('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 20}});
 
       //for the tooltip
-      $scope.wordCheck = function(word){
-        if(word.length > 6){
-          return word.slice(0,4) + " ...";
-        }else{
+      $scope.wordCheck = function (word) {
+        if (word.length > 6) {
+          return word.slice(0, 4) + " ...";
+        } else {
           return word;
         }
       };
@@ -290,11 +292,11 @@ angular.module('bmp.components.card')
       var ipv4Regex = /\d{1,3}\./;
       var ipv6Regex = /([0-9a-fA-F]{4}\:)|(\:\:([0-9a-fA-F]{1,4})?)/;
 
-      if(ipv4Regex.exec(value) != null){
+      if (ipv4Regex.exec(value) != null) {
         whichIp = 0;
-      }else if(ipv6Regex.exec(value) != null){
+      } else if (ipv6Regex.exec(value) != null) {
         whichIp = 1;
-      }else{
+      } else {
         //Entered Alphanumerics
         console.log('invalid search');
         return;
@@ -308,9 +310,9 @@ angular.module('bmp.components.card')
       //regex[2] for matching part done ip's        190.0.
 
       var regexs = [
-        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/(?:\d|[1-9]\d|1[0-1]\d|12[0-8])$/ , /^([0-9a-fA-F]{4}\:){7}[0-9a-fA-F]{4}\/[0-128]$/],
-        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/ , /^([0-9a-fA-F]{4}\:){7}[0-9a-fA-F]{4}$/],
-        [/^(\d{1,3}\.){0,2}\d{1,3}\.?$/ , /^([0-9a-fA-F]{4}\:){0,7}[0-9a-fA-F]{4}\:?$/]
+        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/(?:\d|[1-9]\d|1[0-1]\d|12[0-8])$/, /^([0-9a-fA-F]{4}\:){7}[0-9a-fA-F]{4}\/[0-128]$/],
+        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/, /^([0-9a-fA-F]{4}\:){7}[0-9a-fA-F]{4}$/],
+        [/^(\d{1,3}\.){0,2}\d{1,3}\.?$/, /^([0-9a-fA-F]{4}\:){0,7}[0-9a-fA-F]{4}\:?$/]
       ];
 
       var fullIpWithPreLenReg = regexs[0][whichIp];
@@ -330,12 +332,12 @@ angular.module('bmp.components.card')
 
           var len = 0;
           var check = [];
-          for(var i = 0; i < ipv6Arr.length; i++){
+          for (var i = 0; i < ipv6Arr.length; i++) {
             len += (ipv6Arr[i].match(ipv6PartLenRegex) || []).length;
             check.push(ipv6PartCheckRegex.exec(ipv6Arr[i]) != null);
           }
 
-          if(len < 8 && check.indexOf(0) == -1){
+          if (len < 8 && check.indexOf(0) == -1) {
             //valid ipv6 with ::
             value = ipv6ShortHand(value);
           }
@@ -348,7 +350,7 @@ angular.module('bmp.components.card')
           success(function (result) {
             if (!$.isEmptyObject(result) && result.v_routes.data.length != 0) {
               var resultData = result.v_routes.data;
-              for(var i = 0; i < resultData.length; i++) {
+              for (var i = 0; i < resultData.length; i++) {
                 resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
               }
               $scope.ribGridOptions.data = resultData;
@@ -359,19 +361,19 @@ angular.module('bmp.components.card')
               $scope.ribGridOptions.changeHeight = 150;
               $scope.ribGridApi.grid.gridHeight = 150;
             }
-            
+
           }).
           error(function (error) {
             console.log(error.message);
           });
-      }else if(fullIpRegex.exec(value) != null){
+      } else if (fullIpRegex.exec(value) != null) {
         //full ip
         //pass in peer hash and the matched regex value
-        apiFactory.getPeerRibLookup($scope.data.peer_hash_id,value).
+        apiFactory.getPeerRibLookup($scope.data.peer_hash_id, value).
           success(function (result) {
             if (!$.isEmptyObject(result) && result.v_routes.data.length != 0) {
               var resultData = result.v_routes.data;
-              for(var i = 0; i < resultData.length; i++) {
+              for (var i = 0; i < resultData.length; i++) {
                 resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
               }
               $scope.ribGridOptions.data = resultData;
@@ -382,18 +384,18 @@ angular.module('bmp.components.card')
               $scope.ribGridOptions.changeHeight = 150;
               $scope.ribGridApi.grid.gridHeight = 150;
             }
-            
+
           }).
           error(function (error) {
             console.log(error.message);
           });
-      }else{
+      } else {
         //Entered Alphanumerics
       }
     };
 
     //This take XXXX::XXXX:XXXX and turns into XXXX:0000:0000:0000:0000:0000:XXXX:XXXX
-    var ipv6ShortHand = function(value) {
+    var ipv6ShortHand = function (value) {
       var searchStr = value;
       var doblColIndex = value.indexOf("::");
       var zeroToAdd = 8 - ((value.match(/[0-9a-fA-F]{4}/g)) || []).length;
@@ -438,4 +440,4 @@ angular.module('bmp.components.card')
 
     //-------------------------------------END SEARCH--------------------------------------------//
 
-}]);
+  }]);

@@ -532,7 +532,7 @@ angular.module('bmpUiApp')
     var init = function()
     {
       //$scope.showGrid = 'true';
-      $scope.showGrid = "false";
+      //$scope.showGrid = "false";
       $scope.showTip = "false";
       $scope.value = "195.128.159.0/24";
       getPrefixDataGrid($scope.value);
@@ -542,7 +542,7 @@ angular.module('bmpUiApp')
 
     $scope.selectChange = function(){
       //getPrefixHisGrid($scope.currentValue);
-      $scope.showGrid = "false";
+      //$scope.showGrid = "false";
 
       console.log("selectChange has been executed")
       console.log("show the currentValue",$scope.currentValue);
@@ -926,7 +926,7 @@ angular.module('bmpUiApp')
             ////just save it temp
             //$scope.markTime = i;
             $scope.createPrefixHisGrid(i);
-            $scope.showGrid = "true";
+            //$scope.showGrid = "true";
           })
           .on("mouseout",function(d,i){
             tip.destroy(d);
