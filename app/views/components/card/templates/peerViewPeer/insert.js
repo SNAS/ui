@@ -89,6 +89,8 @@ angular.module('bmp.components.card')
       gridApi.selection.on.rowSelectionChanged($scope, function (row) {
         $scope.values = row.entity;
 
+        $scope.hint = " - " + $scope.values.wholePrefix;
+
         apiFactory.getPeerGeo($scope.values.Prefix).
           success(function (result) {
             $scope.values.geo = result.v_geo_ip.data[0];

@@ -3,15 +3,17 @@
   <tabset>
     <tab heading="Downstream ASes of Peer" select="downStreamTab()">
       <div class="loading-section" ng-style="{'height':summaryPeerOptions.changeHeight}">
-        <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>
-        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}" style="margin-top: 27px;">
+        <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading
+             loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>
+        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"
+             style="margin-top: 27px;">
           <div class="watermark" ng-if="!summaryPeerOptions.data.length">No data available</div>
         </div>
       </div>
     </tab>
     <tab heading="Routing Table" select="getRibData()">
 
-      <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." />
+      <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
 
       <!--Angular Table added here-->
       <div class="loading-section" ng-style="{'height':ribGridOptions.changeHeight}">
@@ -26,15 +28,17 @@
       <div ng-if="values !== undefined">
         <!--{{ values }}-->
         <br>
-        <h3>Prefix Detail</h3>
+
+        <h3>Prefix Detail{{hint}}</h3>
 
         <section style="width: 100%;margin: auto;padding: 10px;">
 
-          <div class = "as-path">
+          <div class="as-path">
 
             <div ng-style="{'width':asPath.width}">
 
-              <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}" style="position: relative;float: left;">
+              <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}"
+                   style="position: relative;float: left;">
                 <!--icon-->
                 <div style="display: table-cell;">
 
@@ -43,11 +47,15 @@
                   </span>
 
                   <span ng-if="!path.noTopText">
-                    <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{ wordCheck(path.topVal) }}</div>
+                    <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{
+                      wordCheck(path.topVal) }}
+                    </div>
                   </span>
 
                   <!--This is the actual AS icon-->
-                  <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html="true" popover-placement="right" popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
+                  <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}"
+                       data-content="{{path.popOut}}" data-html="true" popover-placement="right"
+                       popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
                   <div style="text-align: center">{{ path.botVal }}</div>
                 </div>
                 <!--line-->
@@ -63,7 +71,7 @@
 
 
           <div class="left-container"
-            style="float: left;width:49%;">
+               style="float: left;width:49%;">
 
             <div class="detailspanel">
               <pre class="preStyle">
@@ -90,7 +98,9 @@
                   </tr>
                   <tr>
                     <td>Origin AS:</td>
-                    <td><div bmp-asn-model asn="{{values.Origin_AS}}"></div></td>
+                    <td>
+                      <div bmp-asn-model asn="{{values.Origin_AS}}"></div>
+                    </td>
                   </tr>
                   <tr>
                     <td>MED:</td>
@@ -130,21 +140,30 @@
           <div class="right-container"
                style="margin-left: 49%;">
             <div ng-if="latLong != undefined">
-              <map name="peer-view-peer-card" location="'peerCard'" plot-marker="latLong" style="top:0; bottom:0; width:100%; height: 300px" />
+              <map name="peer-view-peer-card" location="'peerCard'" plot-marker="latLong"
+                   style="top:0; bottom:0; width:100%; height: 300px"/>
             </div>
             <div style="width:49%;display: inline-block;">
               <p><span class="bold">Country:</span> {{values.geo.country}}</p>
+
               <p><span class="bold">State:</span> {{values.geo.stateprov}}</p>
+
               <p><span class="bold">City:</span> {{values.geo.city}}</p>
+
               <p><span class="bold">Lat:</span> {{values.geo.latitude}}</p>
+
               <p><span class="bold">Long:</span> {{values.geo.longitude}}</p>
             </div>
 
             <div style="width:49%;display: inline-block;">
               <p><span class="bold">Timezone:</span> {{values.geo.timezone_offset}}</p>
+
               <p><span class="bold">Time name:</span> {{values.geo.timzone_name}}</p>
+
               <p><span class="bold">ISP name:</span> {{values.geo.isp_name}}</p>
+
               <p><span class="bold">Connection type:</span> {{values.geo.connection_type}}</p>
+
               <p><span class="bold">Org name:</span> {{values.geo.organization_name}}</p>
             </div>
 
@@ -157,10 +176,10 @@
     </tab>
     <tab heading="Graphs" select="showGraphs()">
       <div bmp-card ng-repeat="graph in graphs"
-        data="{ 'peer_hash_id': data.peer_hash_id, 'visible': graphVisibility }"
-        noremove="false"
-        template="graph"
-        expand="true">
+           data="{ 'peer_hash_id': data.peer_hash_id, 'visible': graphVisibility }"
+           noremove="false"
+           template="graph"
+           expand="true">
       </div>
     </tab>
   </tabset>
