@@ -1,8 +1,7 @@
 <div ng-controller="BmpCardPrefixTrendGraphController">
   <div>
     <h3>Peer Prefix Trend
-      <!-- Could not show RouterName and PeerName here-->
-      <!--<span ng-class="PeerStatus">&nbsp;&nbsp; {{data.RouterName}}&nbsp;&nbsp;&nbsp; {{data.PeerName}}</span>-->
+      <span ng-class="PeerStatus">&nbsp;&nbsp; {{data.peer.RouterName}}&nbsp;&nbsp;&nbsp; {{data.peer.PeerName}}</span>
     </h3>
     <div class="loading-section" ng-style="{'height': 450}">
       <div ng-show="loading" bmp-loading loading-var="loading" font-width="80"></div>

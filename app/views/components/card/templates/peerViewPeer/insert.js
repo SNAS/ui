@@ -53,8 +53,12 @@ angular.module('bmp.components.card')
     //this is for the graph cards.
     $scope.graphVisibility = false;
     $scope.showGraphs = function () {
-      $scope.graphs = ["prefixTrendGraph","preUpdatesGraph", "preWithdrawsGraph", "updatesGraph", "withdrawsGraph"];
+      $scope.graphs = ["prefixTrendGraph", "preUpdatesGraph", "preWithdrawsGraph", "updatesGraph", "withdrawsGraph"];
       $scope.graphVisibility = true;
+    };
+
+    $scope.showDownStream = function() {
+      $scope.downStreamVisibility = true;
     };
 
     $scope.ribGridInitHeight = 300;
@@ -442,4 +446,31 @@ angular.module('bmp.components.card')
 
     //-------------------------------------END SEARCH--------------------------------------------//
 
+    //-------------------------------------GET PEER DETAILS--------------------------------------------//
+    var detailsPanel = '<table class="tableStyle"><thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>';
+    var noShow = ["$$hashKey", "Status", "IPv"];
+
+    $scope.RouterName = $scope.data.RouterName;
+    $scope.PeerName = $scope.data.PeerName;
+    $scope.PeerStatus = (($scope.data.isUp === 1) && ($scope.data.isBMPConnected === 1)) ? "uptext" : "downtext";
+
+    angular.forEach($scope.data, function (value, key) {
+      if (noShow.indexOf(key) == -1) { //doesn't show certain fields
+        detailsPanel += (
+          '<tr>' +
+          '<td>' +
+          key +
+          '</td>' +
+
+          '<td>' +
+          value +
+          '</td>' +
+          '</tr>'
+        );
+      }
+    });
+    detailsPanel += '</table>';
+
+    $scope.detailsPanel = detailsPanel;
+    //-------------------------------------END PEER DETAILS--------------------------------------------//
   }]);
