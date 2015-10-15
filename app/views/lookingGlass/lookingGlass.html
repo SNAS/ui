@@ -14,14 +14,14 @@
       <div class="main-area row">
         <div class="col-lg-12">
           <div class="table-container">
-
-            <h3>Looking Glass Information
+            <h3>Looking Glass Information<br><br>
+          Your Search is : {{ number }}
               <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
             </h3>
             <!--Angular Table added here-->
             <div class="loading-section" ng-style="{'height':glassGridOptions.changeHeight}">
               <div ng-show="glassGridOptions.glassGridIsLoad" bmp-loading loading-var="glassGridOptions.glassGridIsLoad" font-width="80"></div>
-              <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.changeHeight}">
+              <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.changeHeight}" ui-grid-resize-columns>
                 <div class="watermark" ng-if="!glassGridOptions.data.length">No data available</div>
               </div>
             </div>
@@ -115,10 +115,10 @@
                           <tr>
                             <td>AS Path:</td>
                             <td>
-                              <span ng-repeat="item in values.AS_Path.split(' ')">
+                              <!--span ng-repeat="item in values.AS_Path.split(' ')">
                                 <span bmp-asn-model asn="{{ item }}"></span>
-                              </span>
-                              <!--{{values.AS_Path}}-->
+                              </span-->
+                              {{values.AS_Path}}
                             </td>
                           </tr>
                           <tr>

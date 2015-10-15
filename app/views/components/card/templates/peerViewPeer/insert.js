@@ -64,6 +64,7 @@ angular.module('bmp.components.card')
       enableFiltering: false,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
+<<<<<<< HEAD
       enableColumnResizing: true,
       multiSelect: false,
       noUnselect: true,
@@ -71,6 +72,9 @@ angular.module('bmp.components.card')
       rowHeight: 25,
       gridFooterHeight: 0,
       showGridFooter: true,
+=======
+      enableVerticalScrollbar: 1,
+>>>>>>> temiitopee
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
