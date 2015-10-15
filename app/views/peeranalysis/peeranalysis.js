@@ -177,10 +177,10 @@ angular.module('bmpUiApp')
     // Click on row in Peers table
     function changeSelected(row) {
       getDetails(row);
-
-      var amount_of_entries = 1000;
-      var peer_hash_id = row.peer_hash_id;
-      getPeerHistory(peer_hash_id, amount_of_entries);
+      //
+      //var amount_of_entries = 1000;
+      //var peer_hash_id = row.peer_hash_id;
+      //getPeerHistory(peer_hash_id, amount_of_entries);
     }
 
     function getDetails(row) {

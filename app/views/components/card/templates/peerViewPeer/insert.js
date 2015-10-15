@@ -53,7 +53,7 @@ angular.module('bmp.components.card')
     //this is for the graph cards.
     $scope.graphVisibility = false;
     $scope.showGraphs = function () {
-      $scope.graphs = ["preUpdatesGraph", "preWithdrawsGraph", "updatesGraph", "withdrawsGraph"];
+      $scope.graphs = ["prefixTrendGraph","preUpdatesGraph", "preWithdrawsGraph", "updatesGraph", "withdrawsGraph"];
       $scope.graphVisibility = true;
     };
 
