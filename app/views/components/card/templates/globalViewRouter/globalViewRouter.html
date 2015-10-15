@@ -136,19 +136,19 @@
           <!--R/Peers info table-->
           <div
             class="loading-section"
-            ng-style="{'height':globalViewPeerGridInitHeight}">
+            ng-style="{'height':globalViewPeerGridInitHeight}" ui-grid-resize-columns>
 
             <div
               ng-show="globalViewGridIsLoad"
               bmp-loading
-              loading-var="globalViewGridIsLoad">
+              loading-var="globalViewGridIsLoad" ui-grid-resize-columns>
             </div>
 
             <div
               class="gridStyle"
               ui-grid="globalViewPeerOptions"
               ui-grid-selection
-              ng-style="{'height':globalViewPeerOptions.changeHeight}">
+              ng-style="{'height':globalViewPeerOptions.changeHeight}" ui-grid-resize-columns>
               <div class="watermark" ng-if="!globalViewPeerOptions.data.length">No data available</div>
             </div>
 

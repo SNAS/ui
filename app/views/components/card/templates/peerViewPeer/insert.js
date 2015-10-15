@@ -63,7 +63,7 @@ angular.module('bmp.components.card')
       height: $scope.ribGridInitHeight,
       showGridFooter: true,
       enableRowSelection: true,
-      enableRowHeaderSelection: true,
+      enableRowHeaderSelection: false,
       enableVerticalScrollbar: 1,
       enableHorizontalScrollbar: 0,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'

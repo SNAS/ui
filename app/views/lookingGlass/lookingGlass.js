@@ -20,7 +20,7 @@ angular.module('bmpUiApp')
       showGridFooter: true,
       enableFiltering: true,
       enableRowSelection: true,
-      enableRowHeaderSelection: true,
+      enableRowHeaderSelection: false,
       enableVerticalScrollbar: 1,
       enableHorizontalScrollbar: 0,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
@@ -28,13 +28,11 @@ angular.module('bmpUiApp')
     $scope.glassGridOptions.glassGridIsLoad = true;
 
     $scope.glassGridOptions.columnDefs = [
+     // {name: "wholePrefix", displayName: 'Prefix', width: "10%"},
       {name: "RouterName", displayName: 'Router', width: "15%"},
-      {name: "PeerName", displayName: 'Peer', width: "15%"},
-      {name: "wholePrefix", displayName: 'Prefix', width: "20%"},
-      {name: "NH", displayName: 'NH', width: "10%"},
-      {name: "AS_Path", displayName: 'AS Path'},
-      {name: "MED", displayName: 'MED', width: "10%"},
-      {name: "LocalPref", displayName: 'Local Pref', width: "15%"}
+      {name: "PeerName", displayName: 'Peer', width: "20%"},
+      {name: "AS_Path", displayName: 'AS Path', width: "20%"},
+      {name: "Communities", displayName: 'Communities'}
     ];
 
     $scope.glassGridOptions.multiSelect = false;
@@ -242,6 +240,7 @@ angular.module('bmpUiApp')
     //--------------------------------------- SEARCH --------------------------------------------//
 
     //TODO - ATM IPV6 with XXXX:0:  not accepted need to add place to fill zero's
+    // IPV6 REGEX - (\d+\:\d+|\d+\s\:\s\d+|\d+\s\:\d+|\d+\:\s\d+)
     //TODO - also XXXX::XXXX: is accepted for some reason
 
     //Loop through data selecting and altering relevant data.
@@ -260,6 +259,8 @@ angular.module('bmpUiApp')
 
       if(ipv4Regex.exec(value) != null){
         whichIp = 0;
+        $scope.number = angular.copy(value);
+        //console.log(value);
       }else if(ipv6Regex.exec(value) != null){
         whichIp = 1;
       }else{
@@ -367,5 +368,4 @@ angular.module('bmpUiApp')
         //Entered Alphanumerics
       }
     };
-
   }]);
