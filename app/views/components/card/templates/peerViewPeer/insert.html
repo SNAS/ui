@@ -7,8 +7,8 @@
       </h3>
 
       <div class="loading-section">
-        <pre class="preStyle" ng-bind-html="detailsPanel"></pre>
-        <div bmp-loading loading-var="peerTableIsLoad"></div>
+        <div class="preStyle" ng-bind-html="detailsPanel"></div>
+        <!--<div bmp-loading loading-var="peerTableIsLoad"></div>-->
       </div>
     </tab>
     <tab heading="Graphs" select="showGraphs()">
@@ -19,7 +19,7 @@
            expand="true">
       </div>
     </tab>
-    <tab heading="Downstream ASes of Peer" select="showDownStream()">
+    <tab heading="Downstream ASes of Peer">
       <div class="loading-section" ng-style="{'height':summaryPeerOptions.changeHeight}">
         <!--<div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading-->
         <!--loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>-->
@@ -28,7 +28,7 @@
         <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading
              loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>
         <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"
-             style="margin-top: 27px;" ui-grid-resize-columns ng-show="downStreamVisibility">
+             style="margin-top: 27px;" ui-grid-resize-columns>
           <div class="watermark" ng-if="!summaryPeerOptions.data.length">No data available</div>
         </div>
       </div>
