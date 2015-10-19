@@ -7,7 +7,7 @@
  * # DashboardController
  * Controller of the Dashboard page
  */
-angular.module('bmp.components.map', ['ui.bootstrap'])
+angular.module('bmp.components.map', ['ui.bootstrap', 'ui.grid.grouping'])
 .controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", function ($scope, $rootScope, $timeout, apiFactory, leafletData, $compile, $window, $q) {
 
     window.SCOPEMAP = $scope;
@@ -668,7 +668,128 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             for(var i = 0; i < $scope.locations.length; i++){
                 $scope.locations[i].expandRouters = true;
             }
-    }
+    };
+
+    /*************************************
+     * Used for table view
+     ************************************/
+    $scope.routerTableOptions = {
+      enableFiltering: false,
+      enableRowSelection: true,
+      enableRowHeaderSelection: false,
+      enableColumnResizing: true,
+      treeRowHeaderAlwaysVisible: false,
+      enableGroupHeaderSelection: true,
+      multiSelect: false,
+      noUnselect: true,
+      height: $scope.routerGridInitHeight,
+      selectionRowHeaderWidth: 35,
+      rowHeight: 25,
+      gridFooterHeight: 0,
+      showGridFooter: true,
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
+      columnDefs: [
+        {
+          field: 'Status', displayName: 'Status', width: '6%',
+          cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+
+            if ((row.entity.isUp === 1) && (row.entity.isBMPConnected === 1)) {
+              return 'up-icon bmp-up';
+            }
+            else if ((row.entity.isUp === 0) || (row.entity.isBMPConnected === 0)) {
+              return 'down-icon bmp-down';
+            }
+          }
+        },
+        {field: 'RouterName', displayName: 'Router Name'},
+        {field: 'RouterIP', displayName: 'Router IP', grouping: { groupPriority: 1 }, sort: {priority:1, direction:"asc"}},
+        {field: 'PeerName', displayName: 'Peer Name'},
+        {field: 'PeerIP', displayName: 'Peer IP'}
+      ],
+
+      onRegisterApi: function (gridApi) {
+        $scope.gridApi = gridApi;
+        gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+          //if (row.hasOwnProperty("groupHeader")) {
+          //  apiFactory.getRoutersAndLocations().
+          //    success(function (result) {
+          //      var data;
+          //      try {
+          //        data = result.routers.data;
+          //      } catch (e) {
+          //        console.log(e);
+          //        $scope.error = typeof e !== undefined ? e : 'Generic Server Error';
+          //        return false;
+          //      }
+          //
+          //      if (data.length < 1) {
+          //        $scope.error = "Error: no results from server";
+          //        return false;
+          //      }
+          //      var i = 0;
+          //      for (; i < data.length; i++) {
+          //        if (data[i]['RouterIP'] == row.treeNode.aggregations[0].groupVal) {
+          //          var latlng = [data[i].latitude, data[i].longitude];
+          //          //current router data
+          //          var currData = {
+          //            RouterName: data[i].RouterName,
+          //            RouterIP: data[i].RouterIP,
+          //            LastModified: data[i].LastModified,
+          //            isConnected: data[i].isConnected,
+          //            type: 'Router'
+          //          };
+          //
+          //          var options =
+          //          {
+          //            country: data[i].country,
+          //            stateprov: data[i].stateprov,
+          //            city: data[i].city,
+          //            routers: [currData],
+          //            peers: [],
+          //            expandRouters: false,
+          //            expandPeers: false,
+          //            type: 'Router'
+          //          };
+          //
+          //          var marker = new L.Marker(latlng, options);
+          //          break;
+          //        }
+          //      } // end for loop
+          //      $scope.selectPanelRouter(marker, data[i]);
+          //    }); // success           //
+          //} else {
+            apiFactory.getPeersAndLocationsByIp(row.entity['RouterIP']).
+              success(function (result) {
+                var data = result.v_peers.data;
+                var i =0, len = data.length;
+                for (; i < len; i++) {
+                  var curr = data[i];
+                  if (data[i]['PeerIP'] == row.entity['PeerIP']) {
+                    var latlng = [curr.latitude, curr.longitude];
+                    var options = {
+                      country: curr.country,
+                      stateprov: curr.stateprov,
+                      city: curr.city,
+                      routers: [],
+                      peers: [curr],
+                      expandRouters: false,
+                      expandPeers: false,
+                      type: 'Peer'
+                    };
+                    var marker = new L.Marker(latlng, options);
+                    break;
+                  }
+                }  // end for loop
+                $scope.selectPanelPeer(marker, data[i]);
+              });  // end
+            //} //end else
+        });
+      }
+    };
+
+
 
 
 
@@ -886,6 +1007,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       .success(function (result){
 
         var peersData = result;
+        $scope.routerTableOptions.data = peersData.v_peers.data;
 
         //[ Up-ColDwn, Dwn-ColDwn, Up, Dwn, total ]
         var ips = [[0,0,0,0,0],[0,0,0,0,0]];
@@ -1031,4 +1153,24 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             scope.$apply();
         });
     }
-}]);
+}])
+  .directive('t', function(){
+    return {
+      templateUrl: "views/components/table/table.html",
+      restrict: 'AE',
+      controller: 'MapController',
+      scope: {
+        location: '=',
+        ip: '=?',
+        cardApi: '=',
+        id: '=name'
+      }
+    }
+  })
+  .directive('pt', function(){
+    return {
+      templateUrl: "views/peerView/peerTableView.html",
+      restrict: 'AE',
+      controller: 'PeerAnalysisController'
+    }
+  });

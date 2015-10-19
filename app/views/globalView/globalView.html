@@ -1,14 +1,27 @@
 <div class="relative" ng-controller="GlobalViewController">
-    <div ng-if="cardApi != undefined" style="height: 100%;">
-    	<map name="name" type="routers" card-api="cardApi" location="location"/>
-    </div>
+    <tabset>
+      <tab heading="Map View">
+        <div ng-if="cardApi != undefined" style="height: 100%;">
+          <map name="name" type="routers" card-api="cardApi" location="location"/>
+        </div>
+      </tab>
 
-    <!--This is card Controller-->
-    <!--Cards are drawn in here-->
-    <div bmp-card-list
-         length="[4,1]"
-         priority="['Peer','Router']"
-         api="cardApi"
-         page-location="location">
-    </div>
+      <tab heading="Table View">
+        <div>
+          <t name="name" type="routers" card-api="cardApi" location="location"/>
+        </div>
+
+      </tab>
+    </tabset>
+
+  <!--This is card Controller-->
+  <!--Cards are drawn in here-->
+  <div bmp-card-list
+       length="[4,1]"
+       priority="['Peer','Router']"
+       api="cardApi"
+       page-location="location">
+  </div>
+
+
 </div>
