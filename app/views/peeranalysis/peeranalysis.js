@@ -47,10 +47,14 @@ angular.module('bmpUiApp')
         {field: 'RouterName', displayName: 'Router Name', width: '15%'},
         {field: 'PeerName', displayName: 'Peer Name', width: '22%'},
         {field: 'PeerIP', displayName: 'Peer IP', width: '18%'},
-        {field: 'LocalASN', displayName: 'Local ASN', width: '9%',
-          cellTemplate:'<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'},
-        {field: 'PeerASN', displayName: 'Peer ASN', width: '8%',
-          cellTemplate:'<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'},
+        {
+          field: 'LocalASN', displayName: 'Local ASN', width: '9%',
+          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+        },
+        {
+          field: 'PeerASN', displayName: 'Peer ASN', width: '8%',
+          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+        },
         {field: 'IPv', displayName: 'IPv', width: '5%'},
         {field: 'Pre_RIB', displayName: 'Pre RIB', width: '10%'},
         {field: 'Post_RIB', displayName: 'Post RIB', width: '10%'}
@@ -64,10 +68,12 @@ angular.module('bmpUiApp')
       }
     };
 
-    $scope.toggleFiltering = function(){
+    $scope.toggleFiltering = function () {
       $scope.peerTableOptions.enableFiltering = !$scope.peerTableOptions.enableFiltering;
-      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+      $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
     };
+
+    d3.rebind('clipVoronoi');
 
     $scope.peerHistoryOptions = {
       chart: {
@@ -83,6 +89,7 @@ angular.module('bmpUiApp')
         //color: ['#9ec654' ,'#f7a031'],
         focusShowAxisY: true,
         interactive: false,
+        clipVoronoi: false,
 
         xAxis: {
           axisLabel: 'Time',
@@ -195,15 +202,15 @@ angular.module('bmpUiApp')
       angular.forEach(row, function (value, key) {
         if (noShow.indexOf(key) == -1) { //doesn't show certain fields
           detailsPanel += (
-          '<tr>' +
-          '<td>' +
-          key +
-          '</td>' +
+            '<tr>' +
+            '<td>' +
+            key +
+            '</td>' +
 
-          '<td>' +
-          value +
-          '</td>' +
-          '</tr>'
+            '<td>' +
+            value +
+            '</td>' +
+            '</tr>'
           );
         }
       });

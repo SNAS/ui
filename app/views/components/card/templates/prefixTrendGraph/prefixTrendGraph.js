@@ -11,6 +11,8 @@ angular.module('bmp.components.card')
       visible: $scope.data.visible // default: true
     };
 
+    d3.rebind('clipVoronoi');
+
     $scope.peerHistoryOptions = {
       chart: {
         type: 'linePlusBarWithFocusChart',
@@ -25,6 +27,7 @@ angular.module('bmp.components.card')
         //color: ['#9ec654' ,'#f7a031'],
         focusShowAxisY: true,
         interactive: false,
+        clipVoronoi: false,
 
         xAxis: {
           axisLabel: 'Time',
