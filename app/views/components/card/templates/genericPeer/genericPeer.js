@@ -27,8 +27,6 @@ angular.module('bmp.components.card')
 
     window.GPEERSCO = $scope;
 
-    console.log($scope.data.peer_hash_id);
-
     //peer stuff here
     var peerPrefix;
     $scope.ribData = [
@@ -113,6 +111,7 @@ angular.module('bmp.components.card')
 
     //DownstreamAS, as_name, and org_name (working)
     $scope.loadDownStream = function () {
+      $scope.summaryPeerOptions.summaryGridIsLoad = true;
       $scope.peerDownData = [];
       apiFactory.getPeerDownStream($scope.data.peer_hash_id).
         success(function (result) {
@@ -131,7 +130,8 @@ angular.module('bmp.components.card')
         error(function (error) {
           console.log(error.message);
         });
-    }
+    };
+    $scope.loadDownStream();
 
     if ($scope.data.isUp) {
       $scope.peerTimeText = "Peer Up Time";

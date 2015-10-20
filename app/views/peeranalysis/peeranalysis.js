@@ -56,8 +56,8 @@ angular.module('bmpUiApp')
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
         },
         {field: 'IPv', displayName: 'IPv', width: '5%'},
-        {field: 'Pre_RIB', displayName: 'Pre RIB', width: '10%'},
-        {field: 'Post_RIB', displayName: 'Post RIB', width: '10%'}
+        {field: 'Pre_RIB', displayName: 'Pre RIB', width: '10%', type: 'number'},
+        {field: 'Post_RIB', displayName: 'Post RIB', width: '10%', type: 'number'}
       ],
 
       onRegisterApi: function (gridApi) {

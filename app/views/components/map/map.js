@@ -705,8 +705,7 @@ angular.module('bmp.components.map', ['ui.bootstrap', 'ui.grid.grouping'])
         },
         {field: 'RouterName', displayName: 'Router Name'},
         {field: 'RouterIP', displayName: 'Router IP', grouping: { groupPriority: 1 }, sort: {priority:1, direction:"asc"}},
-        {field: 'PeerName', displayName: 'Peer Name'},
-        {field: 'PeerIP', displayName: 'Peer IP'}
+        {field: 'PeerName', displayName: 'Peer Name'}
       ],
 
       onRegisterApi: function (gridApi) {
