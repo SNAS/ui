@@ -8,7 +8,7 @@
  * Controller of the Whois page
  */
 angular.module('bmpUiApp')
-  .controller('lookingGlassController', ['$scope', 'apiFactory', 'uiGridConstants', function ($scope, apiFactory, uiGridConstants) {
+  .controller('lookingGlassController', ['$scope', '$http', 'apiFactory', 'uiGridConstants', function ($scope, $http, apiFactory, uiGridConstants) {
 
     //DEBUG
     window.SCOPE = $scope;
@@ -312,6 +312,34 @@ angular.module('bmpUiApp')
           }
         }
       }
+
+   /*   $http.get('http://bmp-dev.openbmp.org:8001/db_rest/v1/rib?where=communities%20like%20%22%251221:610%25%22')
+        .success(function (data){
+          $scope.glassGridOptions = {
+            enableRowSelection : false,
+            expandableRowTemplate : 'expandableRowTemplate.html',
+            expandableRowHeight : 150
+          }
+          $scope.glassGridOptions.columnDefs = [
+            {name:'Prefix'}
+          ];
+
+          for (i = 0; i < data.length; i++){
+            data[i].subGridOptions = {
+              columnDefs:[{name:'Router', field:'RouterName', pinnedleft:true, width:'15%'}, 
+                          {name:'Peer', field:'PeerName', pinnedleft:true, width:'15%'},
+                          {name:'Communities', field:'Communities', pinnedleft:true, width:'35%'},
+                          {name:'AS Path', field:'AS_Path'},
+                          {name:'MED', field:'MED'},
+                          {name:'NH', field:'NH'},
+                         // {name:'Origin', field:'Origin'},
+                          {name:'LocalPref', field:'LocalPref'}],
+
+            }
+
+          }
+        })
+*/
 
       if (fullIpWithPreLenReg.exec(value) != null || partCompIpRegex.exec(value) != null) {
         //Full ip with prefix or partial ip
