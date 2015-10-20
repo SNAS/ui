@@ -624,6 +624,7 @@ angular.module('bmp.components.map', ['ui.bootstrap', 'ui.grid.grouping'])
         $scope.cardApi.changeCard(cardData);
         setInfo('Peer added to card list');
     };
+    $rootScope.peerPanel = $scope.selectPanelPeer;
 
 
     /****************************************
@@ -679,7 +680,7 @@ angular.module('bmp.components.map', ['ui.bootstrap', 'ui.grid.grouping'])
       enableRowHeaderSelection: false,
       enableColumnResizing: true,
       treeRowHeaderAlwaysVisible: false,
-      enableGroupHeaderSelection: true,
+      //enableGroupHeaderSelection: true,
       multiSelect: false,
       noUnselect: true,
       height: $scope.routerGridInitHeight,
@@ -1105,7 +1106,7 @@ angular.module('bmp.components.map', ['ui.bootstrap', 'ui.grid.grouping'])
         console.log("api routers up bottom panel error")
       });
     };
-}])
+  }])
 
 .directive('map', function () {
     return {
@@ -1170,6 +1171,6 @@ angular.module('bmp.components.map', ['ui.bootstrap', 'ui.grid.grouping'])
     return {
       templateUrl: "views/peerView/peerTableView.html",
       restrict: 'AE',
-      controller: 'PeerAnalysisController'
+      controller: 'PeerViewController'
     }
   });
