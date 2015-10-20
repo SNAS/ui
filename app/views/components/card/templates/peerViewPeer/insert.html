@@ -1,14 +1,34 @@
 <div ng-controller="BmpCardPeerPeerInsertController">
   <h4>Further Peer Information</h4>
   <tabset>
-    <tab heading="Downstream ASes of Peer" select="downStreamTab()">
+    <tab heading="Peer Details" select="showDetailTab()">
+      <h3>Peer Details of
+        <span ng-class="PeerStatus">&nbsp;&nbsp; {{data.RouterName}}&nbsp;&nbsp;&nbsp; {{data.PeerName}}</span>
+      </h3>
+
+      <div class="loading-section">
+        <div class="preStyle" ng-bind-html="detailsPanel"></div>
+        <!--<div bmp-loading loading-var="peerTableIsLoad"></div>-->
+      </div>
+    </tab>
+    <tab heading="Graphs" select="showGraphs()">
+      <div bmp-card ng-repeat="graph in graphs"
+           data="{ 'peer_hash_id' : data.peer_hash_id, 'RouterName' : data.RouterName, 'PeerName' : data.PeerName, 'visible' : graphVisibility }"
+           noremove="false"
+           template="graph"
+           expand="true">
+      </div>
+    </tab>
+    <tab heading="Downstream ASes of Peer" select="loadDownStream()">
       <div class="loading-section" ng-style="{'height':summaryPeerOptions.changeHeight}">
+        <!--<div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading-->
+        <!--loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>-->
+        <!--<div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"-->
+        <!--style="margin-top: 27px;">-->
         <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading
              loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>
         <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"
-             style="margin-top: 27px;">
-        <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>
-        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}" style="margin-top: 27px;" ui-grid-resize-columns>
+             style="margin-top: 27px;" ui-grid-resize-columns>
           <div class="watermark" ng-if="!summaryPeerOptions.data.length">No data available</div>
         </div>
       </div>
@@ -20,7 +40,8 @@
       <!--Angular Table added here-->
       <div class="loading-section" ng-style="{'height':ribGridOptions.changeHeight}">
         <div ng-show="ribGridIsLoad" bmp-loading loading-var="ribGridIsLoad" font-width="80"></div>
-        <div ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}" ui-grid-resize-columns>
+        <div ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}"
+             ui-grid-resize-columns>
           <div class="watermark" ng-if="!ribGridOptions.data.length">No data available</div>
         </div>
       </div>
@@ -175,14 +196,6 @@
 
       </div>
 
-    </tab>
-    <tab heading="Graphs" select="showGraphs()">
-      <div bmp-card ng-repeat="graph in graphs"
-           data="{ 'peer_hash_id': data.peer_hash_id, 'visible': graphVisibility }"
-           noremove="false"
-           template="graph"
-           expand="true">
-      </div>
     </tab>
   </tabset>
 </div>

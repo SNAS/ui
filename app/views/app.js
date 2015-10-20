@@ -30,7 +30,8 @@ angular
     'bgDirectives',
     'leaflet-directive',
     'bmp.components.map',
-    'angular-loading-bar'
+    'angular-loading-bar',
+    'bmp.components.table'
   ])
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise("/login");

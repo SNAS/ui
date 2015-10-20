@@ -1,0 +1,9 @@
+<div class="table-container">
+  <h3 class="pgtitle">{{ panelTitle }}
+    <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
+  </h3>
+  <div class="loading-section" ng-style="{'height':routerGridInitHeight}">
+    <div ng-show="routerTableIsLoad" bmp-loading loading-var="routerTaleIsLoad"></div>
+    <div id="routerTable" ui-grid="routerTableOptions" ui-grid-grouping ui-grid-selection ui-grid-auto-resize></div>
+  </div>
+</div>

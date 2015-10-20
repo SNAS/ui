@@ -67,8 +67,8 @@ angular.module('bmp.components.card')
         for(var i = len -1; i > 0; i--){
 
           // var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
-          // Modified by Jason. 
-          // Issue: Date.parse returns nothing 
+          // Modified by Jason.
+          // Issue: Date.parse returns nothing
           var timestmpArray = data[i].IntervalTime.split(/-| |:|\./); //"2015-03-22 22:23:06"
           var date = new Date(timestmpArray[0], timestmpArray[1], timestmpArray[2], timestmpArray[3], timestmpArray[4], timestmpArray[5]);
           var timestmp = date.getTime();

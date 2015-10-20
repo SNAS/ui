@@ -53,7 +53,7 @@ angular.module('bmp.components.card')
     //this is for the graph cards.
     $scope.graphVisibility = false;
     $scope.showGraphs = function () {
-      $scope.graphs = ["preUpdatesGraph", "preWithdrawsGraph", "updatesGraph", "withdrawsGraph"];
+      $scope.graphs = ["prefixTrendGraph", "preUpdatesGraph", "preWithdrawsGraph", "updatesGraph", "withdrawsGraph"];
       $scope.graphVisibility = true;
     };
 
@@ -71,7 +71,6 @@ angular.module('bmp.components.card')
       rowHeight: 25,
       gridFooterHeight: 0,
       showGridFooter: true,
-      enableVerticalScrollbar: 1,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
@@ -442,5 +441,45 @@ angular.module('bmp.components.card')
     };
 
     //-------------------------------------END SEARCH--------------------------------------------//
+    //-------------------------------------GET PEER DETAILS--------------------------------------------//
+
+    apiFactory.getPeerByHashId($scope.data.peer_hash_id).success(function (temp) {
+      apiFactory.getPeerPrefixByHashId($scope.data.peer_hash_id).success(
+        function (result) {
+          var peer = temp.v_peers.data[0];
+          var prefix = result.v_peer_prefix_report_last.data[0];
+          peer.Pre_RIB = (prefix == null ) ? 0 : prefix.Pre_RIB;
+          peer.Post_RIB = (prefix == null ) ? 0 : prefix.Post_RIB;
+
+          var detailsPanel = '<table class="tableStyle"><thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>';
+          var noShow = ["$$hashKey", "Status", "IPv"];
+
+          $scope.PeerStatus = ((peer.isUp === 1) && (peer.isBMPConnected === 1)) ? "uptext" : "downtext";
+
+          angular.forEach(peer, function (value, key) {
+            if (noShow.indexOf(key) == -1) { //doesn't show certain fields
+              detailsPanel += (
+                '<tr>' +
+                '<td>' +
+                key +
+                '</td>' +
+
+                '<td>' +
+                value +
+                '</td>' +
+                '</tr>'
+              );
+            }
+          });
+          detailsPanel += '</table>';
+
+          $scope.detailsPanel = detailsPanel;
+        }).
+        error(function (error) {
+          console.log(error.message);
+        });
+    });
+    //-------------------------------------END PEER DETAILS--------------------------------------------//
+
 
   }]);

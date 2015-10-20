@@ -1,0 +1,11 @@
+<div ng-controller="BmpCardPrefixTrendGraphController">
+  <div>
+    <h3>Peer Prefix Trend
+      <span ng-class="PeerStatus">&nbsp;&nbsp; {{data.RouterName}}&nbsp;&nbsp;&nbsp; {{data.PeerName}}</span>
+    </h3>
+    <div class="loading-section" ng-style="{'height': 450}">
+      <div ng-show="loading" bmp-loading loading-var="loading" font-width="80"></div>
+      <nvd3 options="peerHistoryOptions" data="peerHistoryData" config="prefixTrendGraphConfig"></nvd3>
+    </div>
+  </div>
+</div>

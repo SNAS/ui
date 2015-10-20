@@ -1,7 +1,22 @@
 <div class="relative" ng-controller="PeerViewController">
-	<div ng-if="cardApi != undefined" style="height: 100%;">
-  		<map name="name" type="peers" card-api="cardApi" location="location"/>
-  	</div>
+	<!--<div ng-if="cardApi != undefined" style="height: 100%;">-->
+  		<!--<map name="name" type="peers" card-api="cardApi" location="location"/>-->
+  	<!--</div>-->
+
+  <tabset>
+    <tab heading="Map View">
+      <div ng-if="cardApi != undefined" style="height: 100%;">
+        <map name="name" type="peers" card-api="cardApi" location="location"/>
+      </div>
+    </tab>
+
+    <tab heading="Table View">
+      <div>
+        <pt />
+      </div>
+
+    </tab>
+  </tabset>
 
 	<!--This is card Controller-->
 	<!--Cards are drawn in here-->

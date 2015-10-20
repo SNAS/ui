@@ -27,8 +27,6 @@ angular.module('bmp.components.card')
 
     window.GPEERSCO = $scope;
 
-    console.log($scope.data.peer_hash_id);
-
     //peer stuff here
     var peerPrefix;
     $scope.ribData = [
@@ -38,29 +36,29 @@ angular.module('bmp.components.card')
     $scope.filterRate = 0.00;
 
     apiFactory.getPeerPrefixByHashId($scope.data.peer_hash_id).
-      success(function (result){
+      success(function (result) {
         peerPrefix = result.v_peer_prefix_report_last.data;
         //atm this grabs first data item (may not be correct)
-        try{
+        try {
           $scope.ribData[0][1] = peerPrefix[0].Pre_RIB;
           $scope.ribData[1][1] = peerPrefix[0].Post_RIB;
 
-          if(peerPrefix[0].Post_RIB == peerPrefix[0].Pre_RIB)
+          if (peerPrefix[0].Post_RIB == peerPrefix[0].Pre_RIB)
             $scope.filerRate = 0.00;
           else
-            $scope.filterRate = Math.floor(((1 - (peerPrefix[0].Post_RIB/ peerPrefix[0].Pre_RIB) ) * 100) * 100) / 100;
-        }catch(err){
+            $scope.filterRate = Math.floor(((1 - (peerPrefix[0].Post_RIB / peerPrefix[0].Pre_RIB) ) * 100) * 100) / 100;
+        } catch (err) {
           //catch if RIB is undefined
         }
       }).
-      error(function (error){
+      error(function (error) {
         console.log(error.message);
       });
 
     $scope.summaryGridInitHeight = 300;
 
     $scope.summaryPeerOptions = {
-      summaryGridIsLoad : true,
+      summaryGridIsLoad: true,
       height: $scope.summaryGridInitHeight,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
@@ -68,33 +66,34 @@ angular.module('bmp.components.card')
       enableVerticalScrollbar: 1,
       showGridFooter: true,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
-      columnDefs:[
-        {name: "asn", displayName: 'AS Number', width: '*',
-          cellTemplate:'<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+      columnDefs: [
+        {
+          name: "asn", displayName: 'AS Number', width: '*',
+          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
         },
         {name: "as_name", displayName: 'AS Name', width: '*'},
-        {name: "org_name", displayName:'Organization', width: '*'}
+        {name: "org_name", displayName: 'Organization', width: '*'}
       ]
     };
-    var summaryPeerOptionsDefaultData = [{"as_name":"-","asn":"-","org_name":"-"}];
+    var summaryPeerOptionsDefaultData = [{"as_name": "-", "asn": "-", "org_name": "-"}];
 
     $scope.summaryPeerOptions.multiSelect = false;
     $scope.summaryPeerOptions.modifierKeysToMultiSelect = false;
     $scope.summaryPeerOptions.noUnselect = false;
 
     $scope.summaryPeerOptions.onRegisterApi = function (gridApi) {
-      $scope.summaryPeerOptionsApi= gridApi;
+      $scope.summaryPeerOptionsApi = gridApi;
     };
 
     $scope.summaryPeerOptions.gridIsLoading = true;
 
-    $scope.calGridHeight = function(grid, gridapi){
+    $scope.calGridHeight = function (grid, gridapi) {
       gridapi.core.handleWindowResize();
 
       var height;
-      if(grid.data.length > 10){
+      if (grid.data.length > 10) {
         height = ((10 * 30));
-      }else{
+      } else {
         // add additional 60 for header and footer
         height = ((grid.data.length * 30) + 50);
       }
@@ -111,39 +110,42 @@ angular.module('bmp.components.card')
     //});
 
     //DownstreamAS, as_name, and org_name (working)
-    $scope.peerDownData = [];
-    apiFactory.getPeerDownStream($scope.data.peer_hash_id).
-      success(function (result){
-        if(result.downstreamASN.size == 0){
-          $scope.summaryPeerOptions.data = [];
-          $scope.summaryPeerOptions.showGridFooter = false;
-          $scope.summaryPeerOptions.changeHeight = 150;
-          $scope.summaryPeerOptionsApi.grid.gridHeight = 150;
-        }else {
-          $scope.summaryPeerOptions.data = result.downstreamASN.data;
-          $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
-        }
-        $scope.summaryPeerOptions.summaryGridIsLoad = false; //stop loading
-        
-      }).
-      error(function (error){
-        console.log(error.message);
-      });
+    $scope.loadDownStream = function () {
+      $scope.summaryPeerOptions.summaryGridIsLoad = true;
+      $scope.peerDownData = [];
+      apiFactory.getPeerDownStream($scope.data.peer_hash_id).
+        success(function (result) {
+          if (result.downstreamASN.size == 0) {
+            $scope.summaryPeerOptions.data = [];
+            $scope.summaryPeerOptions.showGridFooter = false;
+            $scope.summaryPeerOptions.changeHeight = 150;
+            $scope.summaryPeerOptionsApi.grid.gridHeight = 150;
+          } else {
+            $scope.summaryPeerOptions.data = result.downstreamASN.data;
+            $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
+          }
+          $scope.summaryPeerOptions.summaryGridIsLoad = false; //stop loading
 
+        }).
+        error(function (error) {
+          console.log(error.message);
+        });
+    };
+    $scope.loadDownStream();
 
-    if($scope.data.isUp){
+    if ($scope.data.isUp) {
       $scope.peerTimeText = "Peer Up Time";
       $scope.peerTime = timeFactory.calTimeFromNow($scope.data.LastModified);
-    }else{
+    } else {
       $scope.peerTimeText = "Peer Down Time";
       $scope.peerTime = timeFactory.calTimeFromNow($scope.data.LastDownTimestamp);
     }
 
-    $scope.fullIp = function(ip, port){
-      if(ip.indexOf("." != -1)){
+    $scope.fullIp = function (ip, port) {
+      if (ip.indexOf("." != -1)) {
         //is ipv4 so add ' :<port>'
-        return ip +":" + port;
-      }else{
+        return ip + ":" + port;
+      } else {
         //is ipv6 so add ' <port>'
         return ip + " " + port;
       }
@@ -151,19 +153,19 @@ angular.module('bmp.components.card')
 
     $scope.rpIconData = {
       RouterName: $scope.data.RouterName,
-      RouterIP: $scope.fullIp ($scope.data.RouterIP, $scope.data.LocalPort),
+      RouterIP: $scope.fullIp($scope.data.RouterIP, $scope.data.LocalPort),
       //RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
       RouterASN: $scope.data.LocalASN,
       PeerName: $scope.data.PeerName,
-      PeerIP: $scope.fullIp ($scope.data.PeerIP, $scope.data.PeerPort),
+      PeerIP: $scope.fullIp($scope.data.PeerIP, $scope.data.PeerPort),
       PeerASN: $scope.data.PeerASN
     };
 
     $scope.locationInfo = cardFactory.createLocationTable({
-        stateprov: $scope.data.stateprov,
-        city: $scope.data.city,
-        country: $scope.data.country,
-        type: $scope.data.type
+      stateprov: $scope.data.stateprov,
+      city: $scope.data.city,
+      country: $scope.data.country,
+      type: $scope.data.type
     });
 
   }]);
