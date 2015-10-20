@@ -58,7 +58,7 @@ angular.module('bmp.components.card')
     $scope.summaryGridInitHeight = 300;
 
     $scope.summaryPeerOptions = {
-      summaryGridIsLoad: true,
+      //summaryGridIsLoad: true,
       height: $scope.summaryGridInitHeight,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
