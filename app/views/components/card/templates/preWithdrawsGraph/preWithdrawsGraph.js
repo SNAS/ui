@@ -2,76 +2,82 @@
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardPreWithdrawsGraphController', ["$scope", "apiFactory", function ($scope, apiFactory) {
+  .controller('BmpCardUpdatesGraphController', ["$scope", "apiFactory", function ($scope, apiFactory) {
       $scope.loading = true;
-      $scope.preWithdrawsGraph = {
+      $scope.updatesGraph = {
         chart: {
-          type: 'discreteBarChart',
-          height: 500,
-          margin : {
+          type: "stackedAreaChart",
+          height: 450,
+          margin: {
             top: 20,
             right: 20,
-            bottom: 80,
-            left: 70
+            bottom: 100,
+            left: 80
           },
           color: function (d, i) {
-            return d.color
+            return "#4b84ca"
           },
-          x: function(d){return d.label;},
-          y: function(d){return d.value;},
-          showValues: true,
-          valueFormat: function(d){
-            return d3.format('')(d);
-          },
+          x: function(d){return d[0];},
+          y: function(d){return d[1];},
+          useVoronoi: true,
+          clipEdge: true,
           transitionDuration: 500,
-          tooltipContent: function (key, x, y, e, graph) {
-            //hover = y;
-            hoverValue(x);
-            return '<h3>' + key + '</h3>' +
-              '<p>' +  y + ' on ' + x + '</p>';
-          },
+          useInteractiveGuideline: true,
+          showLegend: false,
+          showControls: false,
           xAxis: {
-            rotateLabels: -25,
-            rotateYLabel: true
+            showMaxMin: false,
+            rotateLabels: -20,
+            rotateYLabel: true,
+            tickFormat: function(d) {
+              var date = new Date(d);
+              return date.getDay() + "/" +
+                date.getMonth() + "/" +
+                date.getFullYear() + ", " +
+                date.getHours() + ":" +
+                date.getMinutes() + ":" +
+                date.getSeconds() + " UTC";
+            }
           },
           yAxis: {
-            axisLabel: 'Number of Updates',
-            axisLabelDistance: 30,
-            tickFormat:d3.format('d')
+            tickFormat:d3.format('d'),
+            axisLabel: 'Withdrawals'
           }
         }
       };
 
-    var hoverValue = function(y){
-      $scope.hover = y;
-      $scope.$apply();
-    };
-
-    $scope.preWithdrawsConfig = {
+    $scope.updatesDataConfig = {
       visible: $scope.data.visible // default: true
     };
 
 
-    $scope.preWithdrawsData = [
+    $scope.updatesData = [
       {
-        key: "Updates",
-        values:[[]]
+        key: "Withdrawals",
+        values:[[]],
+        area: true
       }
     ];
 
-    apiFactory.getTopPrefixUpdates($scope.data.peer_hash_id)
+    apiFactory.getWithdrawsOverTime($scope.data.peer_hash_id)
       .success(function (result){
-
-        var data = result.u.data;
+        var data = result.table.data;
         var len = data.length;
         var gData = [];
-        for(var i = 0; i < len; i++){
-          gData.push({
-            color: "#EAA546",
-            label:data[i].Prefix + "/" + data[i].PrefixLen, value:parseInt(data[i].Count)
-          });
+        for(var i = len -1; i > 0; i--){
+
+          // var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
+          // Modified by Jason.
+          // Issue: Date.parse returns nothing
+          var timestmpArray = data[i].IntervalTime.split(/-| |:|\./); //"2015-03-22 22:23:06"
+          var date = new Date(timestmpArray[0], timestmpArray[1], timestmpArray[2], timestmpArray[3], timestmpArray[4], timestmpArray[5]);
+          var timestmp = date.getTime();
+
+          gData.push([
+            timestmp, parseInt(data[i].Count)
+          ]);
         }
-        $scope.preWithdrawsData[0].values = gData;
+        $scope.updatesData[0].values = gData;
         $scope.loading = false;
       })
       .error(function (error){

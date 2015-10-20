@@ -1,18 +1,15 @@
-<div ng-controller="BmpCardPreWithdrawsGraphController">
+<div ng-controller="BmpCardUpdatesGraphController">
   <div>
-
-    <h4>Top prefixes by number of updates in past two hours</h4>
+    <h4>Count of Withdrawns</h4>
 	<div class="loading-section" ng-style="{'height': 450}">
 		<div ng-show="loading" bmp-loading loading-var="loading" font-width="80"></div>
 		<nvd3
-	      options="preWithdrawsGraph"
-	      data="preWithdrawsData"
-	      config="preUpdatesConfig">
+	      options="updatesGraph"
+	      data="updatesData"
+	      config="updatesDataConfig">
 	    </nvd3>
 	</div>
-    <br />
-    <br />
+    
 
-    Prefix: {{ hover }}
   </div>
 </div>

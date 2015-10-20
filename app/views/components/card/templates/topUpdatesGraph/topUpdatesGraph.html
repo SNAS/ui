@@ -1,0 +1,36 @@
+<div ng-controller="BmpCardPreWithdrawsGraphController">
+  <div>
+
+    <h4>Top prefixes by number of updates in past two hours</h4>
+	<div class="loading-section" ng-style="{'height': 450}">
+		<div ng-show="loading" bmp-loading loading-var="loading" font-width="80"></div>
+		<nvd3
+	      options="preWithdrawsGraph"
+	      data="preWithdrawsData"
+	      config="preUpdatesConfig">
+	    </nvd3>
+	</div>
+
+    <div class="modal fade" id="myModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Attention</h4>
+          </div>
+          <div class="modal-body">
+            <p>You are about to jump to Prefix Analysis.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" ng-click="go()" data-dismiss="modal">Go</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <br />
+    <br />
+
+    Prefix: {{ hover }}
+  </div>
+</div>

@@ -68,8 +68,9 @@
 @import "components/card/templates/peerViewPeer/insert";
 @import "components/card/templates/preUpdatesGraph/preUpdatesGraph";
 @import "components/card/templates/preWithdrawsGraph/preWithdrawsGraph";
-@import "components/card/templates/updatesGraph/updatesGraph";
-@import "components/card/templates/withdrawsGraph/withdrawsGraph";
+@import "components/card/templates/topUpdatesGraph/topUpdatesGraph";
+@import "components/card/templates/topWithdrawsGraph/topWithdrawsGraph";
+
 
 //map
 @import "components/map/map";

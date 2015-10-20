@@ -6,6 +6,9 @@
     <span class="help-block">Example: 195.128.159.0/24</span>
   </div>
 
+  <h3 ng-show="nodata">No Prefix matches this search</h3>
+
+  <div ng-show="!nodata">
   <div class="main-area row">
     <div class="col-lg-12">
       <div class="table-container">
@@ -76,6 +79,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </div>
 

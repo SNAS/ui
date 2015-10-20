@@ -10,7 +10,7 @@
 angular.module('bmpUiApp')
   .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll','$compile', 'modal', '$stateParams','$rootScope', 'uiGridConstants',function ($scope, apiFactory, $http, $timeout, $interval, $location,$window, $anchorScroll,$compile,modal, $stateParams,$rootScope,uiGridConstants) {
     //DEBUG
-
+    $scope.nodata = false;
     // resize the window
     window.SCOPE = $scope;
 
@@ -81,10 +81,9 @@ angular.module('bmpUiApp')
       apiFactory.getPrefix(prefix)
         .success(function (data) {
           // execute the function and get data successfully.
-          console.log("here is the link for table.  http://bmp-dev.openbmp.org:8001/db_rest/v1/rib/prefix/" + prefix);
-          $scope.AllPrefixOptions.data = $scope.PrefixData = data.v_routes.data;
+          $scope.PrefixData = data.v_routes.data;
+          $scope.AllPrefixOptions.data = data.v_routes.data;
           //$scope.PrefixData = data.v_routes.data;
-          //console.log($scope.PrefixData);
           var peerDataOriginal = data.v_routes.data;
           $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
           createPrefixGridTable();
@@ -95,71 +94,72 @@ angular.module('bmpUiApp')
         });
     };
 
-    if($stateParams.prefix){
-      $scope.value = $stateParams.prefix;
-      getPrefixDataGrid($stateParams.prefix);
-    }
-
     // define the Prefix Data create function
     var createPrefixGridTable = function () {
       $scope.AllPrefixOptions.data = $scope.PrefixData;
       //$scope.$apply();
+      console.log($scope.PrefixData);
+      console.log($scope.PrefixData.length );
+      if ($scope.PrefixData.length > 0) {
+        var Origin_AS = $scope.PrefixData[0].Origin_AS;
 
-      var Origin_AS = $scope.PrefixData[0].Origin_AS;
+        console.log("$scope.PrefixData[0].Origin_AS", $scope.PrefixData[0].Origin_AS);
+        // create the table
+        var url = apiFactory.getWhoIsWhereASNSync(Origin_AS);
 
-      console.log("$scope.PrefixData[0].Origin_AS",$scope.PrefixData[0].Origin_AS);
-      // create the table
-      var url = apiFactory.getWhoIsWhereASNSync(Origin_AS);
+        console.log(url);
 
-      console.log(url);
+        var flag = true;
+        for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
+          if (angular.equals($scope.PrefixData[i].Origin_AS, $scope.PrefixData[i + 1].Origin_AS)) {
+          }
+          else {
+            flag = false;
+            break;
+          }
+        }
 
-      var flag = true;
-      for(var i = 0; i < $scope.PrefixData.length-1; i++)
-      {
-        if (angular.equals($scope.PrefixData[i].Origin_AS,$scope.PrefixData[i+1].Origin_AS)){}
-        else{flag = false; break;}
-      }
+        console.log("flag", flag);
+        if (flag) {
 
-      console.log("flag",flag);
-      if(flag)
-      {
-
-        //notice : synchronization
-        var request = $http({
-          method: "get",
-          url: url
-        });
-        request.success(function (result) {
-          $scope.showValues = '<table>';
-          //console.log(result);
-          $scope.values = result.w.data[0];
-          angular.forEach($scope.values, function (value, key) {
-
-            if (key != "raw_output") {
-              $scope.showValues += (
-              '<tr>' +
-              '<td>' +
-              key + ': ' +
-              '</td>' +
-
-              '<td>' +
-              value +
-              '</td>' +
-              '</tr>'
-              );
-            }
-
+          //notice : synchronization
+          var request = $http({
+            method: "get",
+            url: url
           });
-          $scope.showValues += '</table>';
-        });
+          request.success(function (result) {
+            $scope.showValues = '<table>';
+            //console.log(result);
+            $scope.values = result.w.data[0];
+            angular.forEach($scope.values, function (value, key) {
+
+              if (key != "raw_output") {
+                $scope.showValues += (
+                  '<tr>' +
+                  '<td>' +
+                  key + ': ' +
+                  '</td>' +
+
+                  '<td>' +
+                  value +
+                  '</td>' +
+                  '</tr>'
+                );
+              }
+
+            });
+            $scope.showValues += '</table>';
+          });
+        }
+        else {
+          console.log("create there are not enough information table")
+          $scope.showValues = '</table>there are not enough information</table>';
+          console.log("inside $scope.showValues", $scope.showValues);
+        }
+        console.log("$scope.showValues", $scope.showValues);
+      } else {
+        $scope.nodata = true;  // nodata
       }
-      else
-      {
-        console.log("create there are not enough information table")
-        $scope.showValues = '</table>there are not enough information</table>';
-        console.log("inside $scope.showValues",$scope.showValues);
-      }
-      console.log("$scope.showValues",$scope.showValues);
     };
 
     //deal with the data from History of prefix
@@ -538,7 +538,13 @@ angular.module('bmpUiApp')
       getPrefixDataGrid($scope.value);
     };
 
-    init();
+    if($stateParams.prefix){
+      $stateParams.prefix = $stateParams.prefix.replace('%2F', '/');
+      $scope.value = $stateParams.prefix;
+      getPrefixDataGrid($stateParams.prefix);
+    } else {
+      init();
+    }
 
     $scope.selectChange = function(){
       //getPrefixHisGrid($scope.currentValue);
