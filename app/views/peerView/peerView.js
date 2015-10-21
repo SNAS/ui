@@ -162,4 +162,11 @@ angular.module('bmpUiApp')
       return null;
     }
 
-    }]);
+    }])
+  .directive('pt', function(){
+    return {
+      templateUrl: "views/peerView/peerTableView.html",
+      restrict: 'AE',
+      controller: 'PeerViewController'
+    }
+  });
