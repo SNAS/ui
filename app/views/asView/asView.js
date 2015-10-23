@@ -117,48 +117,27 @@ angular.module('bmpUiApp')
         gridapi.grid.gridHeight = grid.changeHeight;
       };
 
-      //Waits a bit for user to contiune typing.
-      $scope.enterValue = function (value) {
-        $timeout(function () {
-          if (value) {
-            if (value == $scope.searchValue) {
-              if (isNaN($scope.searchValue)) {
-                predictiveSearch();
-              }
-              else {
-                searchValue();
-              }
-            }
-          }
-        }, 500);
-      };
-
       $scope.keypress = function (keyEvent) {
         if (keyEvent.which === 13)
-          searchValue($scope.searchValue);
+          searchValueFn($scope.searchValue);
+      };
+
+      //used for getting suggestions
+      $scope.getSuggestions = function(val) {
+        return apiFactory.getWhoIsASNameLike(val, 10).then(function(response){
+          return response.data.w.data.map(function(item) {
+            return item.as_name; //+" (ASN: "+item.asn+")";
+          });
+        });
+      };
+
+      $scope.onSelect = function($item, $model, $label){
+        $scope.searchValue = $label;
+        searchValueFn();
       };
 
       //Main function
       $(function () {
-        //predictive search
-        $("#suggestions").autocomplete({
-          source: suggestions,
-          autoFocus: true,
-          // minLength: 2,
-          delay: 1200,
-          select: function (event, ui) {
-            apiFactory.getWhoIsASName(ui.item.value).
-              success(function (result) {
-                var data = result.w.data;
-                getData(data);
-              }).
-              error(function (error) {
-
-                console.log(error.message);
-              });
-          }
-        });
-
         //initial search
         if ($stateParams.as) {
           $scope.searchValue = $stateParams.as;
@@ -167,27 +146,11 @@ angular.module('bmpUiApp')
           $scope.searchValue = 109;
         }
         topoInit();
-        searchValue();
+        searchValueFn();
       });
 
-      //complete the search field automatically while searching AS name
-      function predictiveSearch() {
-        apiFactory.getWhoIsASNameLike($scope.searchValue, 10).success(function (result) {
-          if (result.w.size != 0) {
-            var data = result.w.data;
-            suggestions.length = 0;
-            for (var i = 0; i < result.w.size; i++) {
-              suggestions.push(data[i].as_name);
-            }
-          }
-        })
-          .error(function (error) {
-            console.log(error.message);
-          });
-      }
-
       //get all the information of this AS
-      function searchValue() {
+      function searchValueFn() {
         if (isNaN($scope.searchValue)) {
           apiFactory.getWhoIsASName($scope.searchValue).
             success(function (result) {
