@@ -207,6 +207,7 @@ angular.module('bmpUiApp')
       if (typeof $scope.HisData != "undefined") {
         $scope.HistoryPrefixOptions.data = [];
         $scope.HistoryPrefixOptions.data = $scope.HisData[hour];
+        $scope.showGrid = true;
         $scope.$apply();
       }
     };
@@ -484,24 +485,25 @@ angular.module('bmpUiApp')
         }
       }
 
-      $scope.asPathChange = new Array();
-      $scope.asPathChange[0] = $scope.asPathChangeMED ;
-      $scope.asPathChange[1] = $scope.asPathChangeAS_PATH;
-      $scope.asPathChange[2] = $scope.asPathChangeHP;
-      $scope.asPathChange[3] = $scope.asPathChangeCommunites;
+        $scope.asPathChange = new Array();
+        $scope.asPathChange[0] = $scope.asPathChangeMED ;
+        $scope.asPathChange[1] = $scope.asPathChangeAS_PATH;
+        $scope.asPathChange[2] = $scope.asPathChangeHP;
+        $scope.asPathChange[3] = $scope.asPathChangeCommunites;
 
-      if(!$scope.$$phase) {
-        //$digest or $apply
-        $scope.$apply();
+        if(!$scope.$$phase) {
+          //$digest or $apply
+          $scope.$apply();
+        }
       }
-    }
+      $scope.loading = false;
     };
 
     //should be put into init()
     var init = function()
     {
       $scope.showTip = "false";
-      $scope.value = "195.128.159.0/24";
+      $scope.value = "209.212.8.0/24";
       getPrefixDataGrid($scope.value);
     };
 
@@ -528,6 +530,8 @@ angular.module('bmpUiApp')
     };
 
     $scope.selectUpdates = function() {
+      $scope.loading = true;
+      $scope.showGrid = false;
       $scope.isUpdatesSelected = true;
       $scope.selectChange();
     };
@@ -934,7 +938,6 @@ angular.module('bmpUiApp')
             ////just save it temp
             //$scope.markTime = i;
             $scope.createPrefixHisGrid(i);
-            $scope.showGrid = true;
           })
           .on("mouseout",function(d,i){
             tip.destroy(d);

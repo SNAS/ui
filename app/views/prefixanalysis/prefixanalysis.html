@@ -3,7 +3,7 @@
   <div class="main-page-search">
     Prefix Number:
     <input type="text" ng-change="enterValue(value)" ng-model="value" placeholder="Search ..."/>
-    <span class="help-block">Example: 195.128.159.0/24</span>
+    <span class="help-block">Example: 209.212.8.0/24</span>
   </div>
 
   <h3 ng-show="nodata">No Prefix matches this search</h3>
@@ -44,45 +44,31 @@
           <div class="table-container">
             <h3>History of prefix {{searchPrefix}} </h3>
 
-            <!--Selects BGP Peer please:-->
-            <!--| orderBy : 'PeerName'-->
-            <div style="padding: 0 25px 25px">
-              <div class="input">
-                <!--<select ng-model="peerData.selectPeer"-->
-                        <!--ng-options="peer.PeerName for peer in peerData | orderBy : 'PeerName'"-->
-                        <!--ng-change="selectChange()">-->
-                  <!--<option value="">All peers</option>-->
-                  <option value="">Selects BGP Peer please</option>
-                </select>
-              </div>
-              <br>
-
-              <div>
-                <div ng-show="showTip">
-                  Nothing changed in this time!
-                </div>
-                <d3-directive ng-model="data"></d3-directive>
-              </div>
-              <br><br>
-
-              <div class="loading-section">
-                <!--<div ng-show="prefixHisDataLoading" bmp-loading loading-var="prefixHisDataLoading">-->
-                  <!--removed ng-if="showGrid"-->
-                  <div ui-grid="HistoryPrefixOptions" ui-grid-selection ui-grid-resize-columns
-                       ng-style="{height:HistoryPrefixOptions.height}" ng-if="HistoryPrefixOptions.data.length">
-                    <div class="watermark" ng-if="!HistoryPrefixOptions.data.length">Please select BGP Peer</div>
+            <div class="loading-section">
+              <div ng-show="loading" bmp-loading loading-var="loading" font-width="80"></div>
+              <!--Selects BGP Peer please:-->
+              <!--| orderBy : 'PeerName'-->
+              <div style="padding: 0 25px 25px">
+                <div>
+                  <div ng-show="showTip">
+                    Nothing changed in this time!
                   </div>
-                <!--</div>-->
-              </div>
-              <!--ng-show="showGrid"-->
-              <br><br>
+                  <d3-directive ng-model="data"></d3-directive>
+                </div>
+                <br><br>
 
-              <div>
-                <button id="showButton" ng-click="showModal()" class="btn btn-info">Show details</button>
-              </div>
 
-              <div id="bottom"></div>
-            </div>
+                <div ui-grid="HistoryPrefixOptions" ui-grid-selection ui-grid-resize-columns
+                     ng-style="{height:HistoryPrefixOptions.height}" ng-if="HistoryPrefixOptions.data.length && showGrid">
+                  <div class="watermark" ng-if="!HistoryPrefixOptions.data.length">Please select BGP Peer</div>
+                </div>
+                <br><br>
+
+                <div ng-if="HistoryPrefixOptions.data.length && showGrid">
+                  <button id="showButton" ng-click="showModal()" class="btn btn-info">Show details</button>
+                </div>
+              </div>
+            </div><!-- end of loading-section -->
           </div>
         </div>
       </div>
