@@ -2,9 +2,9 @@
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardUpdatesGraphController', ["$scope", "apiFactory", function ($scope, apiFactory) {
+  .controller('BmpCardPreWithdrawsGraphController', ["$scope", "apiFactory", function ($scope, apiFactory) {
       $scope.loading = true;
-      $scope.updatesGraph = {
+      $scope.preWithdrawsGraph = {
         chart: {
           type: "stackedAreaChart",
           height: 450,
@@ -41,19 +41,19 @@ angular.module('bmp.components.card')
           },
           yAxis: {
             tickFormat:d3.format('d'),
-            axisLabel: 'Withdrawals'
+            axisLabel: 'Withdraws'
           }
         }
       };
 
-    $scope.updatesDataConfig = {
+    $scope.preWithdrawsConfig = {
       visible: $scope.data.visible // default: true
     };
 
 
-    $scope.updatesData = [
+    $scope.preWithdrawsData = [
       {
-        key: "Withdrawals",
+        key: "Withdraws",
         values:[[]],
         area: true
       }
@@ -77,7 +77,7 @@ angular.module('bmp.components.card')
             timestmp, parseInt(data[i].Count)
           ]);
         }
-        $scope.updatesData[0].values = gData;
+        $scope.preWithdrawsData[0].values = gData;
         $scope.loading = false;
       })
       .error(function (error){

@@ -1,15 +1,15 @@
-<div ng-controller="BmpCardUpdatesGraphController">
+<div ng-controller="BmpCardPreWithdrawsGraphController">
   <div>
     <h4>Count of Withdrawns</h4>
 	<div class="loading-section" ng-style="{'height': 450}">
 		<div ng-show="loading" bmp-loading loading-var="loading" font-width="80"></div>
 		<nvd3
-	      options="updatesGraph"
-	      data="updatesData"
-	      config="updatesDataConfig">
+	      options="preWithdrawsGraph"
+	      data="preWithdrawsData"
+	      config="preWithdrawsConfig">
 	    </nvd3>
 	</div>
-    
+
 
   </div>
 </div>

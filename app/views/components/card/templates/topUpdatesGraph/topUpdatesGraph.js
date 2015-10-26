@@ -2,9 +2,9 @@
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardPreWithdrawsGraphController', ["$scope", "apiFactory", '$timeout', '$state', '$stateParams', function ($scope, apiFactory, $timeout, $state, $stateParams) {
+  .controller('BmpCardTopUpdatesGraphController', ["$scope", "apiFactory", '$timeout', '$state', '$stateParams', function ($scope, apiFactory, $timeout, $state, $stateParams) {
       $scope.loading = true;
-      $scope.preWithdrawsGraph = {
+      $scope.topUpdatesGraph = {
         chart: {
           type: 'discreteBarChart',
           height: 500,
@@ -15,7 +15,8 @@ angular.module('bmp.components.card')
             left: 70
           },
           color: function (d, i) {
-            return d.color
+            //return d.color
+            return "#EAA546";
           },
           x: function(d){return d.label;},
           y: function(d){return d.value;},
@@ -47,12 +48,12 @@ angular.module('bmp.components.card')
       $scope.$apply();
     };
 
-    $scope.preWithdrawsConfig = {
+    $scope.topUpdatesConfig = {
       visible: $scope.data.visible // default: true
     };
 
 
-    $scope.preWithdrawsData = [
+    $scope.topUpdatesData = [
       {
         key: "Updates",
         values:[[]]
@@ -67,16 +68,16 @@ angular.module('bmp.components.card')
         var gData = [];
         for(var i = 0; i < len; i++){
           gData.push({
-            color: "#EAA546",
+            //color: "#EAA546",
             label:data[i].Prefix + "/" + data[i].PrefixLen, value:parseInt(data[i].Count)
           });
         }
-        $scope.preWithdrawsData[0].values = gData;
+        $scope.topUpdatesData[0].values = gData;
         $scope.loading = false;
         // ------------------ used for GRAPHS ---------- binding click function-----------------------------//
         $timeout(function(){
-          d3.selectAll(".nv-bar").on('click', function(){
-            $('#myModal').modal('show');
+          d3.selectAll("#topUpdates .nv-bar").on('click', function(){
+            $('#topUpdatesModal').modal('show');
           });
         }, 3000);
 
@@ -85,12 +86,13 @@ angular.module('bmp.components.card')
         console.log(error.message);
       });
 
-    $scope.go= function(){
-      $('#myModal').modal('hide');
+    $scope.goUpdates= function(){
+      $('#topUpdatesModal').modal('hide');
       $('body').removeClass('modal-open');
       $('.modal-backdrop').remove();
       $state.go('app.prefixAnalysis', {
-        prefix: $scope.hover
+        prefix: $scope.hover,
+        type: 'updates'
       });
     }
 

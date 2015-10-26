@@ -2,11 +2,11 @@
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardWithdrawsGraphController', ["$scope", "apiFactory", function ($scope, apiFactory) {
+  .controller('BmpCardTopWithdrawsGraphController', ["$scope", "apiFactory", "$state", "$timeout", function ($scope, apiFactory, $state, $timeout) {
 
-      window.GRAPHSC = $scope;
+      //window.GRAPHSC = $scope;
       $scope.loading = true;
-      $scope.withdrawsGraph = {
+      $scope.topWithdrawsGraph = {
         chart: {
           type: 'discreteBarChart',
           height: 500,
@@ -36,7 +36,7 @@ angular.module('bmp.components.card')
             rotateYLabel: true
           },
           yAxis: {
-            axisLabel: 'Withdrawals',
+            axisLabel: 'Number of Withdraws',
             axisLabelDistance: 30,
             tickFormat:d3.format('d')
           }
@@ -48,15 +48,15 @@ angular.module('bmp.components.card')
       $scope.$apply();
     };
 
-    $scope.withdrawsConfig = {
+    $scope.topWithdrawsConfig = {
       visible: $scope.data.visible // default: true
     };
 
 
 
-    $scope.withdrawsData = [
+    $scope.topWithdrawsData = [
       {
-        key: "Withdrawals",
+        key: "Withdraws",
         values:[[]]
       }
     ];
@@ -72,11 +72,27 @@ angular.module('bmp.components.card')
             label:data[i].Prefix + "/" + data[i].PrefixLen, value:parseInt(data[i].Count)
           });
         }
-        $scope.withdrawsData[0].values = gData;
+        $scope.topWithdrawsData[0].values = gData;
         $scope.loading = false;
+        //  binding click action
+        $timeout(function(){
+          d3.selectAll("#topWithdraws .nv-bar").on('click', function(){
+            $('#topWithdrawsModal').modal('show');
+          });
+        }, 5000);
       })
       .error(function (error){
         console.log(error.message);
       });
+
+    $scope.goWithdraws = function() {
+      $('#topWithdrawsModal').modal('hide');
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+      $state.go("app.prefixAnalysis", {
+        prefix: $scope.hover,
+        type: 'withdraws'
+      })
+    }
 
   }]);

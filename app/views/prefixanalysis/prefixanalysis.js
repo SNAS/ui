@@ -22,11 +22,16 @@ angular.module('bmpUiApp')
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
+      multiSelect: false,
       rowHeight: 25,
       gridFooterHeight: 0,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
       onRegisterApi: function (gridApi) {
         $scope.AllPrefixGridApi = gridApi;
+        gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+          $scope.oneRowSelected = true; // set the bool value to show buttons
+          $scope.peerData.selectPeer = row.entity;
+        });
       }
     };
 
@@ -52,7 +57,6 @@ angular.module('bmpUiApp')
     //Waits a bit for user to continue typing.
     $scope.enterValue = function (value) {
       $scope.currentValue = value;
-      console.log(value);
       $timeout(function () {
         if (value == $scope.currentValue) {
           getPrefixDataGrid(value);
@@ -83,7 +87,6 @@ angular.module('bmpUiApp')
           // execute the function and get data successfully.
           $scope.PrefixData = data.v_routes.data;
           $scope.AllPrefixOptions.data = data.v_routes.data;
-          //$scope.PrefixData = data.v_routes.data;
           var peerDataOriginal = data.v_routes.data;
           $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
           createPrefixGridTable();
@@ -96,18 +99,12 @@ angular.module('bmpUiApp')
 
     // define the Prefix Data create function
     var createPrefixGridTable = function () {
-      $scope.AllPrefixOptions.data = $scope.PrefixData;
-      //$scope.$apply();
-      console.log($scope.PrefixData);
-      console.log($scope.PrefixData.length );
+      //$scope.AllPrefixOptions.data = $scope.PrefixData;
       if ($scope.PrefixData.length > 0) {
         var Origin_AS = $scope.PrefixData[0].Origin_AS;
 
-        console.log("$scope.PrefixData[0].Origin_AS", $scope.PrefixData[0].Origin_AS);
         // create the table
         var url = apiFactory.getWhoIsWhereASNSync(Origin_AS);
-
-        console.log(url);
 
         var flag = true;
         for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
@@ -119,7 +116,6 @@ angular.module('bmpUiApp')
           }
         }
 
-        console.log("flag", flag);
         if (flag) {
 
           //notice : synchronization
@@ -129,7 +125,6 @@ angular.module('bmpUiApp')
           });
           request.success(function (result) {
             $scope.showValues = '<table>';
-            //console.log(result);
             $scope.values = result.w.data[0];
             angular.forEach($scope.values, function (value, key) {
 
@@ -152,11 +147,8 @@ angular.module('bmpUiApp')
           });
         }
         else {
-          console.log("create there are not enough information table")
           $scope.showValues = '</table>there are not enough information</table>';
-          console.log("inside $scope.showValues", $scope.showValues);
         }
-        console.log("$scope.showValues", $scope.showValues);
       } else {
         $scope.nodata = true;  // nodata
       }
@@ -184,14 +176,7 @@ angular.module('bmpUiApp')
       gridApi.selection.on.rowSelectionChanged($scope,function(row){
         var msg = 'row selected ' + row.isSelected;
         var rowMsg = row.entity.PeerASN;
-
         $scope.itemValue = row.entity; //how can i get data from one row before
-
-        //$scope.HistoryPrefixGridApi.selection.selectRow(row);
-        //rowColSelectIndex(row);
-        //console.log("$scope.itemValue",msg,$scope.itemValue );
-        //console.log(rowMsg);
-        //console.log("now it 's time to exectute create show table function")
         $scope.createShowTable();
         $scope.$apply()
       });
@@ -217,19 +202,12 @@ angular.module('bmpUiApp')
       }
     ];
 
-    // the only Function is creatinga history prefix gird , inject data should be $scope.HisData
+    // the only Function is creating a history prefix gird , inject data should be $scope.HisData
      $scope.createPrefixHisGrid = function (hour) {
-      console.log($scope.HisData);
       if (typeof $scope.HisData != "undefined") {
         $scope.HistoryPrefixOptions.data = [];
         $scope.HistoryPrefixOptions.data = $scope.HisData[hour];
-
-        //$scope.prefixHisDataLoading = false;
-        //console.log("$scope.HistoryPrefixOptions.data",$scope.HistoryPrefixOptions.data);
         $scope.$apply();
-        //$location.hash('bottom');
-        //$anchorScroll();
-
       }
     };
 
@@ -237,9 +215,8 @@ angular.module('bmpUiApp')
       if ("All peers" == searchPrefix) {
         apiFactory.getHistoryPrefix(searchPrefix)
           .success(function (data) {
-            console.log("here is for all peers");
 
-            // still dont know why we need $scope.HistoryPrefixOptions.data here
+            // still don't know why we need $scope.HistoryPrefixOptions.data here
             $scope.HistoryPrefixOptions.data =  $scope.originHisData = data.v_routes_history.data;
 
             if($scope.HistoryPrefixOptions.data.length == 0)
@@ -253,14 +230,9 @@ angular.module('bmpUiApp')
       }
       else {
         $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
-        console.log(searchPrefix+" "+$scope.peerHashId);
         apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId)
           .success(function (data) {
-            console.log("getPrefixHisData has been executed:" + searchPrefix + ' ' + $scope.peerHashId);
-            console.log("http://odl-dev.openbmp.org:8001/db_rest/v1/" + "rib/peer/" + $scope.peerHashId +"/history/"+ searchPrefix);
             $scope.originHisData = data.v_routes_history.data;
-
-            //console.log("$scope.originHisData:" + $scope.originHisData);
 
             if($scope.originHisData.length == 0)
             {
@@ -337,7 +309,6 @@ angular.module('bmpUiApp')
         }
 
         var hour = parseInt(allHisData[i].LastModified.substring(11, 13));
-        //$scope.dataDate = allHisData[i].LastModified.substring(8, 10);
 
 
         // ********* the following code is to create two field to record the As Path changing
@@ -370,13 +341,12 @@ angular.module('bmpUiApp')
         for (j = 0; j < allHisData[i].AS_Path.length; j++)
         {
           //console.log("Hi i am here");
-          if (0 == i){ allHisData[i].AS_Path_list_flag[j] = true;console.log("hi , it's true");continue; }
+          if (0 == i){ allHisData[i].AS_Path_list_flag[j] = true;continue; }
 
           allHisData[i].AS_Path_list_flag[j] = allHisData[i-1].AS_Path.contains(allHisData[i].AS_Path[j]);
 
           if(allHisData.length-1 == i)
           {
-            console.log("has this been executed ?!!!!!");
             allHisData[i].AS_Path_list_flag_last[j] = true;
           }
           else
@@ -431,13 +401,12 @@ angular.module('bmpUiApp')
         for (j = 0; j < allHisData[i].Communities.length; j++)
         {
           //console.log("Hi i am here");
-          if (0 == i){ allHisData[i].Communities_list_flag[j] = true;console.log("hi , it's true");continue; }
+          if (0 == i){ allHisData[i].Communities_list_flag[j] = true;continue; }
 
           allHisData[i].Communities_list_flag[j] = allHisData[i-1].Communities.contains(allHisData[i].Communities[j]);
 
           if(allHisData.length-1 == i)
           {
-            console.log("has this been executed ?!!!!!");
             allHisData[i].Communities_list_flag_last[j] = true;
           }
           else
@@ -531,8 +500,6 @@ angular.module('bmpUiApp')
     //should be put into init()
     var init = function()
     {
-      //$scope.showGrid = 'true';
-      //$scope.showGrid = "false";
       $scope.showTip = "false";
       $scope.value = "195.128.159.0/24";
       getPrefixDataGrid($scope.value);
@@ -548,11 +515,10 @@ angular.module('bmpUiApp')
 
     $scope.selectChange = function(){
       //getPrefixHisGrid($scope.currentValue);
-      //$scope.showGrid = "false";
 
-      console.log("selectChange has been executed")
-      console.log("show the currentValue",$scope.currentValue);
-      if(typeof($scope.currentValue) == "undefined"){$scope.currentValue = $scope.value;console.log("show the Value",$scope.value);}
+      if(typeof($scope.currentValue) == "undefined"){
+        $scope.currentValue = $scope.value;
+      }
       getPrefixHisData($scope.currentValue);
 
       if(!$scope.$$phase) {
@@ -560,6 +526,43 @@ angular.module('bmpUiApp')
         $scope.$apply();
       }
     };
+
+    $scope.selectUpdates = function() {
+      $scope.isUpdatesSelected = true;
+      $scope.selectChange();
+    };
+
+    $scope.selectWithdraws = function() {
+      $scope.isWithdrawsSelected = true;
+      console.log($scope.peerData.selectPeer);
+      apiFactory.getWithdrawnPrefixOverTime($scope.peerData.selectPeer['peer_hash_id'])
+        .success(function(data) {
+          var records = data.log.data;
+          $scope.WithdrawsOptions.data = records;
+        });
+    };
+
+    /************** For withdrawn table ***********/
+    $scope.WithdrawsOptions = {
+      showGridFooter: true,
+      enableRowSelection: true,
+      enableRowHeaderSelection: false,
+      multiSelect: true,
+      modifierKeysToMultiSelect: true,
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      rowHeight: 25,
+      height: 300,
+      gridFooterHeight: 0,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
+    };
+
+    $scope.WithdrawsOptions.columnDefs = [
+      {name: "PeerAddr", displayName: 'Peer Address', cellClass:'background'},
+      {name: "Prefix", displayName: 'NH', cellClass:'background'},
+      {name: "RouterName", displayName: 'Router Name', cellClass:'background'},
+      {name: "Count", displayName: 'Count', cellClass:'background'}
+    ];
 
     var myModal = new modal();
 
@@ -923,16 +926,15 @@ angular.module('bmpUiApp')
           //.attr("title","hello world")
           .attr("style",function(d, i){ return colorPicker(number,d);})
           .call(tip)
-          .on("click",function(d,i){
+          .on("click",function(d,i) {
             d3.select(this)
               .attr("style","fill:green");
 
-            //console.log("to mark the time",i);
             //
             ////just save it temp
             //$scope.markTime = i;
             $scope.createPrefixHisGrid(i);
-            //$scope.showGrid = "true";
+            $scope.showGrid = true;
           })
           .on("mouseout",function(d,i){
             tip.destroy(d);
@@ -965,7 +967,7 @@ angular.module('bmpUiApp')
       {
         d3.selectAll("svg").remove();
         d3.selectAll("text").remove();
-      }
+      };
 
       $scope.$watch('asPathChange',function(newVal,oldVal) {
         //$scope.asPathChangeMED[0] = $scope.asPathChangeMED;
@@ -973,9 +975,7 @@ angular.module('bmpUiApp')
         //$scope.asPathChange[2] = $scope.asPathChangeHP;
         //$scope.asPathChange[3] = $scope.asPathChangeCommunites;
 
-        console.log(newVal,oldVal);
-        //if(typeof(newVal)!="undefined")
-        //{
+        if(typeof(newVal)!="undefined") {
           data = newVal[0];
           removeSvg();
           drawRect(0);
@@ -989,10 +989,11 @@ angular.module('bmpUiApp')
           data = newVal[2];
           drawRect(2);
 
-          if(!$scope.$$phase) {
+          if (!$scope.$$phase) {
             //$digest or $apply
             $scope.$apply();
           }
+        }
       },true)
     }
     return {
