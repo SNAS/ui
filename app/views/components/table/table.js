@@ -26,7 +26,7 @@ angular.module('bmp.components.table', ['ui.bootstrap', 'ui.grid.grouping'])
       selectionRowHeaderWidth: 35,
       rowHeight: 25,
       gridFooterHeight: 0,
-      showGridFooter: true,
+      //showGridFooter: true,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',

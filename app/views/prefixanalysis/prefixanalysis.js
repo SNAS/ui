@@ -243,7 +243,6 @@ angular.module('bmpUiApp')
             {
               $scope.showTip = "false";
             }
-
             getPrefixHisDataHour();
           });
         if(!$scope.$$phase) {
@@ -260,32 +259,18 @@ angular.module('bmpUiApp')
       var allHisData = $scope.originHisData.reverse();
       $scope.asPathList = new Array();
 
-      //console.log(allHisData);
       $scope.asPathChangeNumber = new Array(24);
       $scope.asPathChangeRate = new Array(24);
       $scope.HisData = new Array(24);
 
-      $scope.asPathChangeAS_PATH = new Array(24);//this is for AS_PATH
-      $scope.asPathChangeHP = new Array(24);//this is for HP
-      $scope.asPathChangeCommunites = new Array(24);//this is for Communites
-      $scope.asPathChangeMED = new Array(24);
+      $scope.asPathChangeAS_PATH = new Array(24).fill(0);//this is for AS_PATH
+      $scope.asPathChangeNH = new Array(24).fill(0);//this is for next hop
+      $scope.asPathChangeCommunites = new Array(24).fill(0);//this is for Communites
+      $scope.asPathChangeMED = new Array(24).fill(0);
 
-      for(var i = 0; i < 24; i++)
-      {
-        $scope.asPathChangeAS_PATH[i] = 0;
-        $scope.asPathChangeHP[i] = 0;
-        $scope.asPathChangeCommunites[i] = 0;
-        $scope.asPathChangeMED[i] = 0;
-      }
-
-      //console.log($scope.asPathChangeHP);
-
-
-      for(var i = 0; i < 24; i++)
-      {
+      for(var i = 0; i < 24; i++) {
         $scope.HisData[i] = new Array();
       }
-
 
       //contain method:Determine whether an array contains a value
       Array.prototype.contains = function(obj) {
@@ -296,68 +281,57 @@ angular.module('bmpUiApp')
           }
         }
         return false;
-      }
+      };
 
       for (i = 0; i < allHisData.length; i++) {
 
-        if(0 == i)
-        {
+        if(0 == i) {
           allHisData[i].preData = "";
-        }
-        else
-        {
+        } else {
           allHisData[i].preData = allHisData[i-1];
         }
 
         var hour = parseInt(allHisData[i].LastModified.substring(11, 13));
 
-
         // ********* the following code is to create two field to record the As Path changing
-        if(typeof(allHisData[i].AS_Path) == "string")
-        {
+        if(typeof(allHisData[i].AS_Path) == "string") {
           allHisData[i].AS_Path = allHisData[i].AS_Path.split(" ");
-          allHisData[i].AS_Path =  allHisData[i].AS_Path.slice(1);
+          allHisData[i].AS_Path =  allHisData[i].AS_Path.slice(1); // remove the first blank
         }
 
         //split two rows into list
-        if(i < allHisData.length-1)
-        {
+        // split AS_Path into list
+        if(i < allHisData.length-1) {
           if(typeof(allHisData[i+1].AS_Path) == "string")
           {
             allHisData[i+1].AS_Path = allHisData[i+1].AS_Path.split(" ");
-            allHisData[i+1].AS_Path =  allHisData[i+1].AS_Path.slice(1);
+            allHisData[i+1].AS_Path =  allHisData[i+1].AS_Path.slice(1); // remove the first blank
           }
         }
 
 
         //to record all the last flag and the last line
-
-        allHisData[i].AS_Path_list = new Array();
-
+        allHisData[i].AS_Path_list = [];
         allHisData[i].AS_Path_list_flag = [];
-
         allHisData[i].AS_Path_list_flag_last = [];
 
         //initialize all the information
-        for (j = 0; j < allHisData[i].AS_Path.length; j++)
-        {
-          //console.log("Hi i am here");
-          if (0 == i){ allHisData[i].AS_Path_list_flag[j] = true;continue; }
+        for (j = 0; j < allHisData[i].AS_Path.length; j++) {
+          if (0 == i) {
+            allHisData[i].AS_Path_list_flag[j] = true;
+            continue;
+          }
 
           allHisData[i].AS_Path_list_flag[j] = allHisData[i-1].AS_Path.contains(allHisData[i].AS_Path[j]);
 
-          if(allHisData.length-1 == i)
-          {
+          if(allHisData.length-1 == i) {
             allHisData[i].AS_Path_list_flag_last[j] = true;
-          }
-          else
-          {
+          } else {
             allHisData[i].AS_Path_list_flag_last[j] = allHisData[i+1].AS_Path.contains(allHisData[i].AS_Path[j]);
           }
         }
 
-        for (j = 0; j < allHisData[i].AS_Path.length; j++)
-        {
+        for (j = 0; j < allHisData[i].AS_Path.length; j++) {
           allHisData[i].AS_Path_list[j] = new Array();
           allHisData[i].AS_Path_list[j]["path"] = allHisData[i].AS_Path[j];
           allHisData[i].AS_Path_list[j]["flag"] = allHisData[i].AS_Path_list_flag[j];
@@ -368,64 +342,45 @@ angular.module('bmpUiApp')
 
 
 // ********* the following code is to create two field to record the Communities changing
-//        console.log("#################################");
-//        console.log("allHisData[i]",allHisData[i]);
-//        console.log("allHisData[i].Communities",allHisData[i].Communities);
-//        console.log("#################################");
 
-        if(typeof(allHisData[i].Communities) == "string")
-        {
+        // split community string into list
+        if(typeof(allHisData[i].Communities) == "string") {
           allHisData[i].Communities = allHisData[i].Communities.split(" ");
-          allHisData[i].Communities =  allHisData[i].Communities.slice(1);
+          //allHisData[i].Communities =  allHisData[i].Communities.slice(1);
         }
-
-//split two rows into list
-        if(i < allHisData.length-1)
-        {
-          if(typeof(allHisData[i+1].Communities) == "string")
-          {
+        if(i < allHisData.length-1) {
+          if(typeof(allHisData[i+1].Communities) == "string") {
             allHisData[i+1].Communities = allHisData[i+1].Communities.split(" ");
             allHisData[i+1].Communities =  allHisData[i+1].Communities.slice(1);
           }
         }
 
-
-//to record all the last flag and the last line
-
+        //to record all the last flag and the last line
         allHisData[i].Communities_list = new Array();
-
         allHisData[i].Communities_list_flag = [];
-
         allHisData[i].Communities_list_flag_last = [];
 
-//initialize all the information
-        for (j = 0; j < allHisData[i].Communities.length; j++)
-        {
-          //console.log("Hi i am here");
-          if (0 == i){ allHisData[i].Communities_list_flag[j] = true;continue; }
-
-          allHisData[i].Communities_list_flag[j] = allHisData[i-1].Communities.contains(allHisData[i].Communities[j]);
-
-          if(allHisData.length-1 == i)
-          {
-            allHisData[i].Communities_list_flag_last[j] = true;
+        //initialize all the information
+        for (j = 0; j < allHisData[i].Communities.length; j++) {
+          if (0 == i){
+            allHisData[i].Communities_list_flag[j] = true;
+            continue;
           }
-          else
-          {
+          allHisData[i].Communities_list_flag[j] = allHisData[i-1].Communities.contains(allHisData[i].Communities[j]);
+          if(allHisData.length-1 == i) {
+            allHisData[i].Communities_list_flag_last[j] = true;
+          } else {
             allHisData[i].Communities_list_flag_last[j] = allHisData[i+1].Communities.contains(allHisData[i].Communities[j]);
           }
         }
 
-        for (j = 0; j < allHisData[i].Communities.length; j++)
-        {
+        for (j = 0; j < allHisData[i].Communities.length; j++) {
           allHisData[i].Communities_list[j] = new Array();
           allHisData[i].Communities_list[j]["path"] = allHisData[i].Communities[j];
           allHisData[i].Communities_list[j]["flag"] = allHisData[i].Communities_list_flag[j];
           allHisData[i].Communities_list[j]["last_flag"] = allHisData[i].Communities_list_flag_last[j];
         }
 // ********* the  above code is to create two field to record the Communities changing
-
-
         $scope.HisData[hour].push(allHisData[i]);
       }
 
@@ -453,42 +408,30 @@ angular.module('bmpUiApp')
         return true;
       };
 
-      // to caculate the data color
-      for(i = 0; i < 24; i++)
-      {
+      // to calculate the data color
+      for(i = 0; i < 24; i++) {
         $scope.asPathChangeNumber[i] = $scope.HisData[i].length;
 
-        //$scope.asPathChangeRate[i] = $scope.asPathChangeNumber[i]/$scope.originHisData.length;
-
-        for(var j = 1;j < $scope.HisData[i].length;j++)
-        {
-          //console.log(i,j);
-
+        for(var j = 1;j < $scope.HisData[i].length; j++) {
           if(!$scope.HisData[i][j-1].AS_Path.compare($scope.HisData[i][j].AS_Path)){
-            //console.log($scope.asPathChangeAS_PATH[i]);
-            //console.log($scope.HisData[i][j-1].AS_Path,$scope.HisData[i][j].AS_Path)
-            //console.log($scope.HisData[i][j-1].AS_Path == $scope.HisData[i][j].AS_Path)
-
             $scope.asPathChangeAS_PATH[i] = $scope.asPathChangeAS_PATH[i] + 1;
           }
           if(!($scope.HisData[i][j-1].NH === $scope.HisData[i][j].NH)){
-            $scope.asPathChangeHP[i] = $scope.asPathChangeHP[i] + 1;
+            $scope.asPathChangeNH[i] = $scope.asPathChangeNH[i] + 1;
           }
-
           if(!(angular.equals($scope.HisData[i][j-1].Communities,$scope.HisData[i][j].Communities))){
           //if(!($scope.HisData[i][j-1].Communities === $scope.HisData[i][j].Communities)){
             $scope.asPathChangeCommunites[i] = $scope.asPathChangeCommunites[i] + 1;
           }
-
           if(!($scope.HisData[i][j-1].MED === $scope.HisData[i][j].MED)){
             $scope.asPathChangeMED[i] = $scope.asPathChangeMED[i] + 1;
+          }
         }
-      }
 
-        $scope.asPathChange = new Array();
+        $scope.asPathChange = [];
         $scope.asPathChange[0] = $scope.asPathChangeMED ;
         $scope.asPathChange[1] = $scope.asPathChangeAS_PATH;
-        $scope.asPathChange[2] = $scope.asPathChangeHP;
+        $scope.asPathChange[2] = $scope.asPathChangeNH;
         $scope.asPathChange[3] = $scope.asPathChangeCommunites;
 
         if(!$scope.$$phase) {
@@ -500,8 +443,7 @@ angular.module('bmpUiApp')
     };
 
     //should be put into init()
-    var init = function()
-    {
+    var init = function() {
       $scope.showTip = "false";
       $scope.value = "209.212.8.0/24";
       getPrefixDataGrid($scope.value);
@@ -558,7 +500,7 @@ angular.module('bmpUiApp')
       rowHeight: 25,
       height: 300,
       gridFooterHeight: 0,
-      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
+      //rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
 
     $scope.WithdrawsOptions.columnDefs = [
@@ -866,27 +808,22 @@ angular.module('bmpUiApp')
       var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
       var colorPicker = function(number,x){
-
-        //var color = d3.scale.linear().domain([0,100]).range(['#848AA8','#855EF9']);
         var color = new Array();
         color[0] = d3.scale.linear().domain([0,50]).range(['#e9ebf1','#848ba9']);
         color[1] = d3.scale.linear().domain([0,50]).range(['#e9f8ff','#5ec7fd']);
         color[2] = d3.scale.linear().domain([0,50]).range(['#e7e2ef','#a691c6']);
         color[3] = d3.scale.linear().domain([0,50]).range(['#f2e2f4','#c65ed8']);
-
         return "fill:" + color[number](x);
-      }
+      };
+
       var textchoser = function(number){
         if (0 == number){return "MED"}
         else if(1 == number){return "As Path"}
         else if(2 == number){return "Next Hop"}
         else if(3 == number){return "Communites"}
-      }
+      };
 
-
-
-      var drawRect = function(index)
-      {
+      var drawRect = function(index) {
 
         var number = index;
 
@@ -905,15 +842,7 @@ angular.module('bmpUiApp')
 
         var tip = d3.tip()
           .html(function(d,i) {
-            console.log(i);
-
             var content = i + ":00~" + (parseInt(i)+1).toString() + ":00" + " " + "<strong>Number:</strong>" + d ;
-            //var content = $scope.dataDate + i + ":00~" + (parseInt(i)+1).toString() + ":00" + " " + "<strong>Number:</strong>" + d ;
-
-            //if(!$scope.$$phase) {
-            //  //$digest or $apply
-            //  $scope.$apply();
-            //}
             return content;
           });
 
@@ -933,17 +862,12 @@ angular.module('bmpUiApp')
           .on("click",function(d,i) {
             d3.select(this)
               .attr("style","fill:green");
-
-            //
-            ////just save it temp
-            //$scope.markTime = i;
             $scope.createPrefixHisGrid(i);
           })
           .on("mouseout",function(d,i){
             tip.destroy(d);
             d3.select(this)
               .attr("style",function(){ return colorPicker(number,d);})
-
           })
           .on("mouseenter",function(d,i){
             d3.select(this)
@@ -957,30 +881,25 @@ angular.module('bmpUiApp')
           //$digest or $apply
           $scope.$apply();
         }
-      }
+      };
 
-      drawRect(0);
-      drawRect(1);
-      drawRect(2);
-      drawRect(3);
+      // draw four lines of rectangles
+      drawRect(0);  // MED
+      drawRect(1);  // AS Path
+      drawRect(2);  // Communities
+      drawRect(3);  // NH
 
-      //$compile(element)(scope);
-
-      var removeSvg = function()
-      {
+      var removeSvg = function() {
         d3.selectAll("svg").remove();
         d3.selectAll("text").remove();
       };
 
-      $scope.$watch('asPathChange',function(newVal,oldVal) {
-        //$scope.asPathChangeMED[0] = $scope.asPathChangeMED;
-        //$scope.asPathChange[1] = $scope.asPathChangeAS_PATH;
-        //$scope.asPathChange[2] = $scope.asPathChangeHP;
-        //$scope.asPathChange[3] = $scope.asPathChangeCommunites;
+      $scope.$watch('asPathChange',function(newVal, oldVal) {
 
         if(typeof(newVal)!="undefined") {
-          data = newVal[0];
           removeSvg();
+
+          data = newVal[0];
           drawRect(0);
 
           data = newVal[1];
