@@ -31,7 +31,7 @@ angular.module('bmpUiApp')
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableVerticalScrollbar: 1,
-      enableHorizontalScrollbar: 0,
+      enableHorizontalScrollbar: 0
     };
     $scope.glassGridOptions.glassGridIsLoad = true;
 
