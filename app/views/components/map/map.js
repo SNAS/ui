@@ -860,6 +860,7 @@ angular.module('bmp.components.map', ['ui.bootstrap', 'ui.grid.grouping'])
       .success(function (result){
         var routers = result.routers.data;
         $scope.routerCount = result.routers.data.length;
+        $rootScope.routerCount = $scope.routerCount;
         //Loop through routers selecting and altering relevant data.
 
         loadPeersFromRouters(routers).then(function(results){
@@ -892,6 +893,7 @@ angular.module('bmp.components.map', ['ui.bootstrap', 'ui.grid.grouping'])
         var ips = [[0,0,0,0,0],[0,0,0,0,0]];
 
         $scope.peerCount = peersData.v_peers.size;
+        $rootScope.peerCount = $scope.peerCount;
 
         for(var i =0;i<peersData.v_peers.size;i++){
 
@@ -926,6 +928,7 @@ angular.module('bmp.components.map', ['ui.bootstrap', 'ui.grid.grouping'])
         }
 
         $scope.ips = ips;
+        $rootScope.ips = ips;
 
         //build data for the Peers table
         //$scope.bgpPeers = []; //init

@@ -82,6 +82,7 @@ angular.module('bmp.components.table', ['ui.bootstrap', 'ui.grid.grouping'])
 
     $rootScope.routerTableOptions = $scope.routerTableOptions;
 
+
   }])
 
 .directive('t', function(){
