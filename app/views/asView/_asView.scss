@@ -1,16 +1,16 @@
-.ui-autocomplete{
+.ui-autocomplete {
   //ul.ui-autocomplete.ui-menu li{
   font-size: 11px;
   font-weight: lighter;
   border-style: solid;
 }
 
-.ui-autocomplete-input{
+.ui-autocomplete-input {
   font-weight: lighter;
 }
 
-.fixedHeight{
-   height: 297px;
+.fixedHeight {
+  height: 297px;
 }
 
 .preStyle {
@@ -29,11 +29,11 @@
   color: #5c6e7c;
   word-wrap: normal;
 
-  table{
+  table {
     width: 100%;
 
     .hoz-line {
-      hr{
+      hr {
         margin: 10px 0;
         border-top: 2px solid #f6f6f6;
       }
@@ -48,29 +48,94 @@
   }
 }
 
-#AS_topology, #link_state_topology{
+#AS_topology, #link_state_topology {
   border: 1px solid #D4D4D4;
 }
 
-.main-page-search{
+.main-page-search {
   margin-bottom: 30px;
   background-color: #fff;
   border: 1px solid #d4d4d4;
   padding: 20px;
 
-  .input{
+  .input {
     padding-bottom: 0;
   }
 }
 
-.AS-view .table-container{
+.AS-view .table-container {
   height: 560px;
 }
 
-.n-topology.n-topology-blue .link-set-circle{
-  visibility: hidden;
+.d3-container {
+  background-color: #FFFFFF;
+  border: solid 1px;
+  border-color: #D4D4D4;
+  border-radius: 0px;
 }
 
-.n-topology.n-topology-blue .link-set-text{
-  visibility: hidden;
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  &:hover {
+    cursor: pointer;
+    color: purple;
+  }
+}
+
+.node {
+  font: 10px sans-serif;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.link {
+  fill: none;
+  stroke: #dadada;
+  stroke-width: 1.5px;
+  &:hover {
+    stroke: lightblue;
+  }
+}
+
+.d3-tip {
+  line-height: 1.2;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+.scrollingContainer {
+  border: 1px solid #ccc;
+  overflow: scroll;
+  position: relative;
+  height: 400px;
+  width:500px;
 }

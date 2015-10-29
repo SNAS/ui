@@ -1,76 +1,82 @@
 <div ng-controller="ASViewController">
-  <!--<h1 class="pgtitle"> AS View</h1>-->
 
-  <div class="main-page-search">
-    AS Number or AS Name:
-    <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-model="searchValue"
-           placeholder="Search ..."
-           typeahead="as_name for as_name in getSuggestions($viewValue)"
-           typeahead-loading="loadingLocations"
-           typeahead-no-results="noResults"
-           typeahead-wait-ms="300"
-           typeahead-on-select="onSelect($item, $model, $label)"/>
-    <span class="help-block">Examples: 109, Cisco, etc.</span>
-    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
-    <div ng-show="noResults">
-      <i class="glyphicon glyphicon-remove"></i> No Results Found
-    </div>
-    <!--<h3 ng-show="nodata">This AS doesn't exist</h3>-->
-    <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
-    <!--again! :)</h3>-->
-  </div>
-  <div ng-show="!nodata">
-    <div class="main-area row">
-      <div class="col-lg-6">
-        <div class="table-container">
-          <h3>Whois Information for AS {{asn}}</h3>
-          <div class="detailspanel">
-            <pre class="preStyle" ng-bind-html="details"></pre>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="table-container">
-          <h3>Prefixes Originated by AS {{asn}}</h3>
-          <div class="loading-section" ng-style="{'height':prefixGridOptions.changeHeight}">
-            <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
-            <div ui-grid="prefixGridOptions" ng-style="{'height': prefixGridOptions.changeHeight}"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!--<h1 class="pgtitle"> AS View</h1>-->
 
-    <div class="main-area row">
-      <div class="col-lg-6">
-        <div class="table-container">
-          <h3>Upstream ASes of AS {{asn}}</h3>
-          <div class="loading-section" ng-style="{'height':upstreamGridOptions.changeHeight}">
-            <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
-            <div class="grid" ui-grid="upstreamGridOptions" ng-style="{'height': upstreamGridOptions.changeHeight}">
-              <div class="watermark" ng-if="!upstreamGridOptions.data.length">No data available</div>
+    <div class="main-page-search">
+        AS Number or AS Name:
+        <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-model="searchValue"
+               placeholder="Search ..."
+               typeahead="as_name for as_name in getSuggestions($viewValue)"
+               typeahead-loading="loadingLocations"
+               typeahead-no-results="noResults"
+               typeahead-wait-ms="300"
+               typeahead-on-select="onSelect($item, $model, $label)"/>
+        <span class="help-block">Examples: 109, Cisco, etc.</span>
+        <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+
+        <div ng-show="noResults">
+            <i class="glyphicon glyphicon-remove"></i> No Results Found
+        </div>
+        <!--<h3 ng-show="nodata">This AS doesn't exist</h3>-->
+        <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
+        <!--again! :)</h3>-->
+    </div>
+    <div ng-show="!nodata">
+        <div class="main-area row">
+            <div class="col-lg-6">
+                <div class="table-container">
+                    <h3>Whois Information for AS {{asn}}</h3>
+
+                    <div class="detailspanel">
+                        <pre class="preStyle" ng-bind-html="details"></pre>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="table-container">
-          <h3>Downstream ASes of AS {{asn}}</h3>
-          <div class="loading-section" ng-style="{'height':downstreamGridOptions.changeHeight}">
-            <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
-            <div ui-grid="downstreamGridOptions" ng-style="{'height': downstreamGridOptions.changeHeight}">
-                 <div class="watermark" ng-if="!downstreamGridOptions.data.length">No data available</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            <div class="col-lg-6">
+                <div class="table-container">
+                    <h3>Prefixes Originated by AS {{asn}}</h3>
 
-    <!--Topology area-->
-    <div class="loading-section">
-      <div id="AS_topology"></div>
-      <div bmp-loading loading-var="topologyIsLoad"></div>
+                    <div class="loading-section" ng-style="{'height':prefixGridOptions.changeHeight}">
+                        <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
+                        <div ui-grid="prefixGridOptions" ng-style="{'height': prefixGridOptions.changeHeight}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-area row">
+            <div class="col-lg-6">
+                <div class="table-container">
+                    <h3>Upstream ASes of AS {{asn}}</h3>
+
+                    <div class="loading-section" ng-style="{'height':upstreamGridOptions.changeHeight}">
+                        <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
+                        <div class="grid" ui-grid="upstreamGridOptions"
+                             ng-style="{'height': upstreamGridOptions.changeHeight}">
+                            <div class="watermark" ng-if="!upstreamGridOptions.data.length">No data available</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="table-container">
+                    <h3>Downstream ASes of AS {{asn}}</h3>
+
+                    <div class="loading-section" ng-style="{'height':downstreamGridOptions.changeHeight}">
+                        <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
+                        <div ui-grid="downstreamGridOptions" ng-style="{'height': downstreamGridOptions.changeHeight}">
+                            <div class="watermark" ng-if="!downstreamGridOptions.data.length">No data available</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Topology area-->
+        <div class="d3-container">
+            <d3 id="AS_topology"></d3>
+        </div>
     </div>
-  </div>
 </div>
 
 
