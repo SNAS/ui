@@ -4,10 +4,17 @@
 
       <div class="main-page-search">
         <form ng-init="keywords=''">
-          <!--input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..." /-->
-          <input type="text" ng-model="keywords" class="input-medium search-query" placeholder="Search ..." />
+          <input type="text" ng-model="keywords" class="input-medium search-query" placeholder="190.0.103.0" />
           <button type="submit" class="btn btn-sm btn-info" ng-click="search(keywords)">Search</button>
-          <span class="help-block">Example: 190.0.103.0</span>
+          <label class="btn btn-primary btn-xs" style="margin-left: 20px">Longest Match
+            <input type="checkbox" ng-model="isLongestMatch"/>
+          </label>
+          <label class="btn btn-primary btn-xs">Aggregates
+            <input type="checkbox" ng-model="isAggregate"/>
+          </label>
+          <label class="btn btn-primary btn-xs">Distinct
+            <input type="checkbox" ng-model="isDistinct" ng-click="turnOnDistinct()"/>
+          </label>
         </form>
       </div>
 
@@ -16,8 +23,9 @@
         <div class="col-lg-12">
           <div class="table-container">
             <h3>Looking Glass Information<br><br>
-          <!--Prefix Found : {{ number }}-->
-              Prefix Found: {{values.Prefix}}/{{values.PrefixLen}}
+              <span ng-if="displayPrefix.length == 1"> Found {{displayPrefix.length}} Prefix: </span>
+              <span ng-if="displayPrefix.length > 1"> Found {{displayPrefix.length}} Prefixes: </span>
+              <span ng-repeat="p in displayPrefix">{{p}} </span>
               <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
             </h3>
 
