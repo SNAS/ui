@@ -373,6 +373,7 @@ angular.module('bmpUiApp')
                         e.city = e.city;
                     else
                         e.city = "[UNKNOWN]";
+                    e.org_name = e.org_name ? e.org_name : "[UNKNOWN]";
                     e.type = "UPSTREAM";
                     e.dataType = "AS";
                 });
@@ -400,6 +401,7 @@ angular.module('bmpUiApp')
                         e.city = e.city;
                     else
                         e.city = "[UNKNOWN]";
+                    e.org_name = e.org_name ? e.org_name : "[UNKNOWN]";
                     e.type = "DOWNSTREAM";
                     e.dataType = "AS";
                 });
@@ -778,7 +780,7 @@ angular.module('bmpUiApp')
 
                     //SORT
                     continents.forEach(function (continent) {
-                        countries.forEach(function (country) {
+                        continent.children.forEach(function (country) {
                             country.children.forEach(function (state) {
                                 state.children.forEach(function (city) {
                                     city.children.sort(sort_by('name', false, null));
@@ -786,7 +788,7 @@ angular.module('bmpUiApp')
                                 state.children.sort(sort_by('name', false, null));
                             });
                             country.children.sort(sort_by('name', false, null));
-                        })
+                        });
                         continent.children.sort(sort_by('name', false, null));
                     });
 
