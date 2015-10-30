@@ -31,8 +31,7 @@ angular.module('bmpUiApp')
       enableRowSelection: true,
       enableRowHeaderSelection: false,
       enableVerticalScrollbar: 1,
-      enableHorizontalScrollbar: 0,
-      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
+      enableHorizontalScrollbar: 0
     };
     $scope.glassGridOptions.glassGridIsLoad = true;
 
@@ -47,7 +46,7 @@ angular.module('bmpUiApp')
     $scope.glassGridOptions.multiSelect = false;
     $scope.glassGridOptions.noUnselect = true;
     $scope.glassGridOptions.modifierKeysToMultiSelect = false;
-    $scope.glassGridOptions.rowTemplate = '<div ng-click="grid.appScope.glassGridSelection();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
+    $scope.glassGridOptions.rowTemplate = '<div class="hover-row-highlight"><div ng-click="grid.appScope.glassGridSelection();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>';
     $scope.glassGridOptions.onRegisterApi = function (gridApi) {
       $scope.glassGridApi= gridApi;
     };

@@ -8,814 +8,800 @@
  * Controller of the AS View page
  */
 angular.module('bmpUiApp')
-  .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', '$stateParams', 'uiGridConstants',
-    function ($scope, apiFactory, $timeout, $stateParams, uiGridConstants) {
+    .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', '$stateParams', 'uiGridConstants',
+        function ($scope, apiFactory, $timeout, $stateParams, uiGridConstants) {
 
-      var suggestions = [];
-      var upstreamData, downstreamData;
-      var upstreamPromise, downstreamPromise;
-      var nodes = [], links = [], nodeSet = [];
-      var id = 0;
-      window.topo = {};
-      var width = 1150;
-      var topoHeight = 800;
-      var space = width;
+            //var suggestions = [];
+            var upstreamData, downstreamData;
+            var upstreamPromise, downstreamPromise;
+            //var nodes = [], links = [], nodeSet = [];
+            var id = 0;
+            window.topo = {};
+            var width = 1150;
+            //var topoHeight = 800;
+            //var space = width;
 
-      $scope.prefixGridInitHeight = 464;
-      $scope.upstreamGridInitHeight = 464;
-      $scope.downstreamGridInitHeight = 464;
+            $scope.prefixGridInitHeight = 464;
+            $scope.upstreamGridInitHeight = 464;
+            $scope.downstreamGridInitHeight = 464;
 
-      $scope.nodata = false;
-      $scope.upstreamNodata = false;
-      $scope.downstreamNodata = false;
-
-      //prefix table options
-      $scope.prefixGridOptions = {
-        rowHeight: 32,
-        gridFooterHeight: 0,
-        showGridFooter: true,
-        enableFiltering: true,
-        height: $scope.prefixGridInitHeight,
-        changeHeight: $scope.prefixGridInitHeight,
-        enableHorizontalScrollbar: 0,
-        enableVerticalScrollbar: 1,
-        columnDefs: [
-          {
-            name: "prefixWithLen", displayName: 'Prefix', width: '*'
-            //sortingAlgorithm: addressSort
-          },
-          {
-            name: "IPv", displayName: 'IPv', width: '*', visible: false,
-            sort: {
-              direction: uiGridConstants.ASC
-            }
-          }
-        ],
-        onRegisterApi: function (gridApi) {
-          $scope.prefixGridApi = gridApi;
-        }
-      };
-
-      //upstream table options
-      $scope.upstreamGridOptions = {
-        enableColumnResizing: true,
-        rowHeight: 32,
-        gridFooterHeight: 0,
-        showGridFooter: true,
-        height: $scope.upstreamGridInitHeight,
-        changeHeight: $scope.upstreamGridInitHeight,
-        enableHorizontalScrollbar: 0,
-        enableVerticalScrollbar: 1,
-        columnDefs: [
-          {
-            name: "asn", displayName: 'ASN', width: '30%',
-            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
-          },
-          {name: "as_name", displayName: 'AS Name', width: '70%'}
-        ],
-        onRegisterApi: function (gridApi) {
-          $scope.upstreamGridApi = gridApi;
-        }
-      };
-
-      //downstream table options
-      $scope.downstreamGridOptions = {
-        enableColumnResizing: true,
-        rowHeight: 32,
-        gridFooterHeight: 0,
-        showGridFooter: true,
-        height: $scope.downstreamGridInitHeight,
-        changeHeight: $scope.downstreamGridInitHeight,
-        enableHorizontalScrollbar: 0,
-        enableVerticalScrollbar: 1,
-        columnDefs: [
-          {
-            name: "asn",
-            displayName: 'ASN',
-            width: '30%',
-            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
-          },
-          {name: "as_name", displayName: 'AS Name', width: '70%'}
-        ],
-        onRegisterApi: function (gridApi) {
-          $scope.downstreamGridApi = gridApi;
-        }
-      };
-
-
-      $scope.calGridHeight = function (grid, gridapi) {
-        gridapi.core.handleWindowResize();
-
-        var height;
-        var dataLength = 15;
-        if (grid.data.length > dataLength) {
-          height = (dataLength * 30);
-        } else {
-          height = ((grid.data.length * grid.rowHeight) + 50);
-        }
-        grid.changeHeight = height;
-        gridapi.grid.gridHeight = grid.changeHeight;
-      };
-
-      $scope.keypress = function (keyEvent) {
-        if (keyEvent.which === 13)
-          searchValueFn($scope.searchValue);
-      };
-
-      //used for getting suggestions
-      $scope.getSuggestions = function(val) {
-        return apiFactory.getWhoIsASNameLike(val, 10).then(function(response){
-          return response.data.w.data.map(function(item) {
-            return item.as_name; //+" (ASN: "+item.asn+")";
-          });
-        });
-      };
-
-      $scope.onSelect = function($item, $model, $label){
-        $scope.searchValue = $label;
-        searchValueFn();
-      };
-
-      //Main function
-      $(function () {
-        //initial search
-        if ($stateParams.as) {
-          $scope.searchValue = $stateParams.as;
-        }
-        else {
-          $scope.searchValue = 109;
-        }
-        topoInit();
-        searchValueFn();
-      });
-
-      //get all the information of this AS
-      function searchValueFn() {
-        if (isNaN($scope.searchValue)) {
-          apiFactory.getWhoIsASName($scope.searchValue).
-            success(function (result) {
-              var data = result.w.data;
-              getData(data);
-            }).
-            error(function (error) {
-
-              console.log(error.message);
-            });
-        }
-        else {
-          apiFactory.getWhoIsASN($scope.searchValue).
-            success(function (result) {
-              var data = result.gen_whois_asn.data;
-              getData(data);
-            }).
-            error(function (error) {
-
-              console.log(error.message);
-            });
-        }
-      }
-
-      //get data about details, prefixes, upstream and downstream
-      function getData(data) {
-        if (data.length != 0) {
-          $scope.asn = data[0].asn;
-          getDetails(data[0]);
-          getPrefixes();
-          getUpstream();
-          getDownstream();
-
-          $scope.topologyIsLoad = true; //start loading
-          downstreamPromise.success(function () {
-            upstreamPromise.success(function () {
-              topoClear();
-              drawTopology(data[0]);
-            });
-          });
-
-          $scope.nodata = false;
-        }
-        else {
-          $scope.nodata = true;
-        }
-      }
-
-      //Get detailed information of this AS
-      function getDetails(data) {
-        var keys = Object.keys(data);
-        var showValues = '<table class="tableStyle"><tbody>';
-
-        for (var i = 0; i < keys.length; i++) {
-          var key = keys[i];
-          if (key != "raw_output" && key != "remarks") {
-            if (key == "transit_v4_prefixes")
-              showValues += '<tr class="hoz-line"><td colspan="2"><hr></td></tr>';
-
-            var value = data[key];
-            showValues += (
-            '<tr>' +
-            '<td>' +
-            key + ' ' +
-            '</td>' +
-
-            '<td>' +
-            value +
-            '</td>' +
-            '</tr>'
-            );
-          }
-        }
-        showValues += '</tbody></table>';
-        $scope.details = showValues;
-      }
-
-      //Get prefixes information of this AS
-      function getPrefixes() {
-        $scope.prefixGridOptions.data = [];
-        $scope.prefixIsLoad = true; //begin loading
-        apiFactory.getRIBbyASN($scope.asn).
-          success(function (result) {
-            var data = result.v_routes.data;
-            for (var i = 0; i < result.v_routes.size; i++) {
-              data[i].prefixWithLen = data[i].Prefix + "/" + data[i].PrefixLen;
-              data[i].IPv = (data[i].isIPv4 === 1) ? '4' : '6';
-            }
-            $scope.prefixGridOptions.data = data;
-            $scope.prefixIsLoad = false; //stop loading
-            $scope.calGridHeight($scope.prefixGridOptions, $scope.prefixGridApi);
-          }).
-          error(function (error) {
-
-            console.log(error.message);
-          });
-      }
-
-      //Get upstream data
-      function getUpstream() {
-        upstreamData = [];
-        $scope.upstreamIsLoad = true; //begin loading
-        $scope.upstreamGridOptions.data = [];
-        upstreamPromise = apiFactory.getUpstream($scope.asn);
-        upstreamPromise.success(function (result) {
-          upstreamData = result.upstreamASN.data;
-          if (result.upstreamASN.data.length == 0) {
-            $scope.upstreamNodata = true;
-            $scope.upstreamIsLoad = false; //stop loading
-            $scope.upstreamGridOptions.data = [];
-            $scope.upstreamGridOptions.changeHeight = 150;
-            $scope.upstreamGridApi.grid.gridHeight = 150;
-            $scope.upstreamGridOptions.showGridFooter = false;
-          }
-          else {
-            $scope.upstreamGridOptions.data = upstreamData;
-            $scope.calGridHeight($scope.upstreamGridOptions, $scope.upstreamGridApi);
-            $scope.upstreamIsLoad = false; //stop loading
+            $scope.nodata = false;
             $scope.upstreamNodata = false;
-          }
-        }).
-          error(function (error) {
-
-            console.log(error.message);
-          });
-      }
-
-      //Get downstream data
-      function getDownstream() {
-        downstreamData = [];
-        $scope.downstreamIsLoad = true; //begin loading
-        $scope.downstreamGridOptions.data = [];
-        downstreamPromise = apiFactory.getDownstream($scope.asn);
-        downstreamPromise.success(function (result) {
-          downstreamData = result.downstreamASN.data;
-          if (result.downstreamASN.data.length == 0) {
-            $scope.downstreamNodata = true;
-            $scope.downstreamIsLoad = false; //stop loading
-            $scope.downstreamGridOptions.data = [];
-            $scope.downstreamGridOptions.changeHeight = 150;
-            $scope.downstreamGridApi.grid.gridHeight = 150;
-            $scope.downstreamGridOptions.showGridFooter = false;
-          }
-          else {
-            $scope.downstreamGridOptions.data = downstreamData;
-            $scope.calGridHeight($scope.downstreamGridOptions, $scope.downstreamGridApi);
-            $scope.downstreamIsLoad = false; //stop loading
             $scope.downstreamNodata = false;
-          }
-        }).
-          error(function (error) {
 
-            console.log(error.message);
-          });
-      }
-
-
-      //topology initialization
-      function topoInit() {
-        var App = nx.define(nx.ui.Application, {
-          methods: {
-            getContainer: function (comp) {
-              return new nx.dom.Element(document.getElementById('AS_topology'));
-            },
-            start: function () {
-              topo = new nx.graphic.Topology({
-                width: width,
-                height: topoHeight,
-                padding: 10,
-                //adaptive: true,
-                enableSmartLabel: false,
-                nodeConfig: {
-                  label: 'model.asn',
-                  //labelAngle: function (model) {
-                  //  var type = model._data.type;
-                  //  console.log(type);
-                  //  if (type == 'upstream')
-                  //    return 270;
-                  //  else
-                  //    return 90;
-                  //},
-                  iconType: 'model.iconType'
-                },
-                nodeSetConfig: {
-                  label: function (model) {
-                    var label = model._data.name;
-                    return label.slice(0, 2).toUpperCase();
-                  },
-                  iconType: 'model.iconType'
-                },
-                tooltipManagerConfig: {
-                  nodeTooltipContentClass: 'MyNodeTooltip'
-                },
-                identityKey: 'id',
-                showIcon: true
-              });
-              topo.view('stage').upon('mousewheel', function (sender, event) {
-                return false;
-              });
-              topo.attach(this);
-
-              topo.registerScene('nodeset', 'NodeSetScene');
-              topo.activateScene('nodeset');
-
-              //topo.on('clickNodeSet', function (sender, nodeset) {
-              //  var id = nodeset._model._data.id;
-              //  var index = getNodeSetIndex(id);
-              //  var nodesId = nodeSet[index].nodes;
-              //  nodesId.push(id);
-              //  topo.zoomByNodes(nodesId);
-              //  return false;
-              //});
-            }
-          }
-        });
-        var app = new App();
-        app.start();
-      }
-
-      function topoClear() {
-        nodes = [];
-        links = [];
-        nodeSet = [];
-        id = 0;
-
-        var topologyData = {
-          nodes: nodes,
-          links: links,
-          nodeSet: nodeSet
-        };
-
-        if (topo) {
-          topo.data(topologyData);
-        }
-      }
-
-      //draw AS topology with current AS in the middle
-      function drawTopology(data) {
-        var upstreamLayerHeight = width / 5;
-        var downstreamLayerHeight = width / 5;
-
-        //current AS
-        nodes.push({
-          id: id++,
-          asn: data.asn,
-          as_name: data.as_name,
-          org_name: data.org_name,
-          city: data.city,
-          state_prov: data.state_prov,
-          country: data.country,
-          type: "local",
-          iconType: 'groupS',
-          x: width / 2,
-          y: 0
-        });
-
-        space = width / upstreamData.length;
-        pushNodes(upstreamData, "upstream", width, -upstreamLayerHeight);
-        pushNodes(downstreamData, "downstream", width, downstreamLayerHeight);
-        var upstreamNodeSetCount = 0;
-
-        //Upstream ASes
-        if (upstreamData.length > 100) {
-          groupNode(upstreamData, -1, width / 2, "upstream", "country", -upstreamLayerHeight);
-          var upCountrySetCount = nodeSet.length;
-          for (var i = 0; i < upCountrySetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "upstream", "state_prov", -2 * upstreamLayerHeight);
-          }
-          var upStateSetCount = nodeSet.length - upCountrySetCount;
-          for (var i = upCountrySetCount; i < upCountrySetCount + upStateSetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "upstream", "city", -3 * upstreamLayerHeight);
-          }
-          var upCitySetCount = nodeSet.length - upCountrySetCount - upStateSetCount;
-          for (var i = upCountrySetCount + upStateSetCount; i < upCountrySetCount + upStateSetCount + upCitySetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "upstream", "", -4 * upstreamLayerHeight);
-          }
-          upstreamNodeSetCount = nodeSet.length;
-        }
-        else {
-          for (var i = 1; i <= upstreamData.length; i++) {
-            links.push({
-              source: i,
-              target: 0
-            });
-          }
-        }
-
-        //Downstream ASes
-        if (downstreamData.length > 100) {
-          groupNode(downstreamData, -1, width / 2, "downstream", "country", downstreamLayerHeight);
-          var downCountrySetCount = nodeSet.length - upstreamNodeSetCount;
-          for (var i = upstreamNodeSetCount; i < upstreamNodeSetCount + downCountrySetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "downstream", "state_prov", 2 * downstreamLayerHeight);
-          }
-          var downStateSetCount = nodeSet.length - upstreamNodeSetCount - downCountrySetCount;
-          for (var i = upstreamNodeSetCount + downCountrySetCount; i < upstreamNodeSetCount + downCountrySetCount + downStateSetCount; i++) {
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "downstream", "city", 3 * downstreamLayerHeight);
-          }
-          var downCitySetCount = nodeSet.length - upstreamNodeSetCount - downCountrySetCount - downStateSetCount;
-          for (var i = upstreamNodeSetCount + downCountrySetCount + downStateSetCount;
-               i < upstreamNodeSetCount + downCountrySetCount + downStateSetCount + downCitySetCount; i++) {
-            if (!nodeSet[i]) {
-              console.log(i);
-            }
-            groupNode(nodeSet[i].allNodes, nodeSet[i].id, nodeSet[i].x, "downstream", "", 4 * downstreamLayerHeight);
-          }
-        }
-        else {
-          for (var i = upstreamData.length + 1; i < upstreamData.length + downstreamData.length + 1; i++) {
-            links.push({
-              source: i,
-              target: 0
-            });
-          }
-        }
-
-        var topologyData = {
-          nodes: nodes,
-          links: links,
-          nodeSet: nodeSet
-        };
-
-        topo.data(topologyData);
-
-        $scope.topologyIsLoad = false; //stop loading
-      }
-
-      //Group nodes by the initial of  AS name
-      function groupNode(data, parentNodeSetId, parentNodeSetX, type, key, height) {
-        //function groupNode(data, parentNodeSetId, type, key, positionStart, width, height) {
-        var nodeSet1 = {}, nodeSet2 = {};
-        var singleNodes = [];
-        var groupedNodesId = [];
-
-        var parentNodeSetIndex = getNodeSetIndex(parentNodeSetId);
-
-        //Group the nodes by key
-        if (key != "") {
-          //if (key != "" || (nodeSetId != -1 &&nodeSet[nodeSetId].name != null)) {
-          for (var i = 0; i < data.length; i++) {
-            if (key == "country") {
-              if (!nodeSet1[data[i].country]) {
-                nodeSet1[data[i].country] = [];
-              }
-              nodeSet1[data[i].country].push(data[i]);
-            }
-            else if (key == "state_prov") {
-              if (!nodeSet1[data[i].state_prov]) {
-                nodeSet1[data[i].state_prov] = [];
-              }
-              nodeSet1[data[i].state_prov].push(data[i]);
-            }
-            else if (key == "city") {
-              if (!nodeSet1[data[i].city]) {
-                nodeSet1[data[i].city] = [];
-              }
-              nodeSet1[data[i].city].push(data[i]);
-            }
-          }
-          var nodeSet1Keys = Object.keys(nodeSet1).sort();
-
-          //If a group only have one node, push it into single nodes. If not, take it as a nodeSet.
-          for (var i = 0; i < nodeSet1Keys.length; i++) {
-            if (nodeSet1[nodeSet1Keys[i]].length > 1) {
-              nodeSet2[nodeSet1Keys[i]] = nodeSet1[nodeSet1Keys[i]];
-            }
-            else {
-              singleNodes.push(nodeSet1[nodeSet1Keys[i]][0]);
-            }
-          }
-          var nodeSet2Keys = Object.keys(nodeSet2);
-        }
-        else {
-          var nodeSet2Keys = [];
-          singleNodes = data;
-        }
-
-        var nodesCount = singleNodes.length + nodeSet2Keys.length;
-        //var width2 = (parentNodeSetX < width - parentNodeSetX) ? parentNodeSetX * 2 : (width - parentNodeSetX) * 2;
-        //var space = (nodesCount == 1) ? 0 : width2 / (nodesCount - 1) ;
-        var startPosition = parentNodeSetX - space * (nodesCount - 1) / 2;
-        //var startPosition = (parentNodeSetX < width - parentNodeSetX) ? 0 : width - width2;
-
-        //push all the single nodes
-        for (var i = 0; i < singleNodes.length; i++) {
-          var nodeId = getNodeId(singleNodes[i].asn, type);
-          if (nodeId >= 0) {
-            if (nodesCount == 1) {
-              nodes[nodeId].x = width / 2;
-            }
-            else {
-              nodes[nodeId].x = startPosition + (i < singleNodes.length / 2 ? i * space : (nodeSet2Keys.length + i) * space);
-            }
-            nodes[nodeId].y = height;
-            groupedNodesId.push(nodes[nodeId].id);
-
-            links.push({
-              source: nodes[nodeId].id,
-              target: parentNodeSetId + 1
-            });
-          }
-        }
-
-        //push nodeSet
-        for (var i = 0; i < nodeSet2Keys.length; i++) {
-          nodeSet.push({
-            id: id++,
-            type: type,
-            //type: 'nodeSet',
-            nodes: [],
-            level: key,
-            iconType: type == "upstream" ? 'groupL' : 'groupM',
-            name: nodeSet2Keys[i],
-            parentNodeSetId: parentNodeSetId,
-            allNodes: nodeSet2[nodeSet2Keys[i]],
-            x: nodesCount == 1 ? parentNodeSetX : startPosition + (Math.ceil(singleNodes.length / 2) + i) * space,
-            y: height
-          });
-          nodes.push({
-            id: id++,
-            asn: nodeSet2Keys[i],
-            type: type,
-            iconType: type == "upstream" ? 'groupL' : 'groupM',
-            x: nodesCount == 1 ? parentNodeSetX : startPosition + (Math.ceil(singleNodes.length / 2) + i) * space,
-            y: height
-          });
-          groupedNodesId.push(id - 1);
-          groupedNodesId.push(id - 2);
-
-          links.push({
-            source: id - 1,
-            target: parentNodeSetId + 1
-          });
-        }
-
-        //push nodes to parent nodeSet
-        if (parentNodeSetIndex >= 0) {
-          nodeSet[parentNodeSetIndex].nodes = groupedNodesId;
-        }
-      }
-
-      //Push nodes and links
-      function pushNodes(data, type, width, height) {
-        for (var i = 0; i < data.length; i++) {
-          nodes.push({
-            id: id++,
-            asn: data[i].asn,
-            as_name: data[i].as_name,
-            org_name: data[i].org_name,
-            city: data[i].city,
-            state_prov: data[i].state_prov,
-            country: data[i].country,
-            type: type,
-            iconType: type == "upstream" ? 'groupL' : 'groupM',
-            x: width / 2 + (i - (data.length - 1) / 2) * space,
-            //x: (data.length == 1) ? width / 2 : i * width / (data.length - 1),
-            y: height
-          });
-          //links.push({
-          //  source: id - 1,
-          //  target: 0
-          //})
-        }
-      }
-
-      //Get node index by asn and type (upstream or downstream)
-      function getNodeId(asn, type) {
-        for (var i = 0; i < nodes.length; i++) {
-          if (nodes[i].asn === asn && nodes[i].type === type)
-            return i;
-        }
-        return -1;
-      }
-
-      //Get nodeSet index by id
-      function getNodeSetIndex(nodeSetId) {
-        for (var i = 0; i < nodeSet.length; i++) {
-          if (nodeSet[i].id == nodeSetId)
-            return i;
-        }
-        return -1;
-      }
-
-      nx.define("NodeSetScene", nx.graphic.Topology.DefaultScene, {
-        methods: {
-          beforeExpandNodeSet: function (sender, nodeSet) {
-            var id = nodeSet._model._data.id;
-            var level = nodeSet._model._data.level;
-            var nodeSetLayer = topo.getLayer('nodeSet');
-            var nodeSets = nodeSetLayer.nodeSets();
-
-            for (var i = 0; i < nodeSets.length; i++) {
-              if (nodeSets[i]._model && level == nodeSets[i]._model._data.level &&
-                id != nodeSets[i]._model._data.id && nodeSets[i].collapsed() == false) {
-                nodeSets[i].collapse(false);
-                //console.log(nodeSets[i]);
-              }
-            }
-
-            this.inherited(sender, nodeSet);
-          }
-        }
-      });
-
-      function addressSort(a, b) {
-        var lastSlashA = a.lastIndexOf("/");
-        var lastSlashB = b.lastIndexOf("/");
-        var stringA = a;
-        if (lastSlashA !== -1) {
-          stringA = a.substr(0, lastSlashA);
-        }
-        var colonsA = stringA.indexOf(":");
-        var periodsA = stringA.indexOf(".");
-
-        var stringB = b;
-        if (lastSlashB !== -1) {
-          stringB = b.substr(0, lastSlashB);
-        }
-        var colonsB = stringB.indexOf(":");
-        var periodsB = stringB.indexOf(".");
-
-        if (colonsA == -1) {
-          if (colonsB == -1) {
-            //compare as ipv4
-
-            //gets an array of all the values to be compared
-            var aVals = stringA.split(".");
-            var bVals = stringB.split(".");
-            //Should be the same length, but want to prevent index oob error
-            for (var i = 0; i < Math.min(aVals.length, bVals.length); i++) {
-              var currA = parseInt(aVals[i]);
-              var currB = parseInt(bVals[i]);
-              if (currA > currB) {
-                return 1;
-              } else if (currA < currB) {
-                return -1;
-              }
-            }
-
-            //If the numbers are the same up until the min prefix length, compare
-            //the lengths of the numbers and give priority to the longer one
-            if (aVals.length > bVals.length) {
-              return 1;
-            } else if (aVals.length < bVals.length) {
-              return -1;
-            } else {
-              return 0;
-            }
-
-          } else {
-            //The a value is ipv4 while the b value is ipv6, so we automatically
-            //deem the b node to be greater
-            return -1;
-          }
-        } else {
-          if (periodsB == -1) {
-            //compare as ipv6
-
-            //gets an array of all the values to be compared
-            var aVals = stringA.split(":");
-            var bVals = stringB.split(":");
-            for (var i = 0; i < Math.min(aVals.length, bVals.length); i++) {
-              //Parse as a hex string b/c of ipv6 convention
-              var currA = parseInt(aVals[i], 16);
-              var currB = parseInt(bVals[i], 16);
-              if (currA > currB) {
-                return 1;
-              } else if (currA < currB) {
-                return -1;
-              }
-            }
-
-            if (aVals.length > bVals.length) {
-              return 1;
-            } else if (aVals.length < bVals.length) {
-              return -1;
-            } else {
-              return 0;
-            }
-          } else {
-            //The a value is ipv6 while the b value is ipv4, so we automatically
-            //deem the a node to be greater
-            return 1;
-          }
-        }
-      }
-
-
-      nx.define('MyNodeTooltip', nx.ui.Component, {
-        properties: {
-          node: {
-            set: function (value) {
-              var modelData = value.model().getData();
-              if (isNaN(modelData.asn)) {
-                var showData = {};
-              }
-              else {
-                var showData = {
-                  "AS Name": modelData.as_name,
-                  "Organization": modelData.org_name,
-                  "City": modelData.city,
-                  "State": modelData.state_prov,
-                  "Country": modelData.country
-                };
-              }
-              this.view('list').set('items', new nx.data.Dictionary(showData));
-              this.title(value.label());
-            }
-          },
-          topology: {},
-          title: {}
-        },
-        view: {
-          content: [
-            {
-              name: 'header',
-              props: {
-                'class': 'n-topology-tooltip-header'
-              },
-              content: [
-                {
-                  tag: 'span',
-                  props: {
-                    'class': 'n-topology-tooltip-header-text'
-                  },
-                  name: 'title',
-                  content: '{#title}'
-                }
-              ]
-            },
-            {
-              name: 'content',
-              props: {
-                'class': 'n-topology-tooltip-content n-list'
-              },
-              content: [
-                {
-                  name: 'list',
-                  tag: 'ul',
-                  props: {
-                    'class': 'n-list-wrap',
-                    template: {
-                      tag: 'li',
-                      props: {
-                        'class': 'n-list-item-i',
-                        role: 'listitem'
-                      },
-                      content: [
-                        {
-                          tag: 'label',
-                          content: '{key}: '
-                        },
-                        {
-                          tag: 'span',
-                          content: '{value}'
+            //prefix table options
+            $scope.prefixGridOptions = {
+                rowHeight: 32,
+                gridFooterHeight: 0,
+                showGridFooter: true,
+                enableFiltering: true,
+                height: $scope.prefixGridInitHeight,
+                changeHeight: $scope.prefixGridInitHeight,
+                enableHorizontalScrollbar: 0,
+                enableVerticalScrollbar: 1,
+                columnDefs: [
+                    {
+                        name: "prefixWithLen", displayName: 'Prefix', width: '*'
+                        //sortingAlgorithm: addressSort
+                    },
+                    {
+                        name: "IPv", displayName: 'IPv', width: '*', visible: false,
+                        sort: {
+                            direction: uiGridConstants.ASC
                         }
-                      ]
-
                     }
-                  }
+                ],
+                onRegisterApi: function (gridApi) {
+                    $scope.prefixGridApi = gridApi;
                 }
-              ]
+            };
+
+            //upstream table options
+            $scope.upstreamGridOptions = {
+                enableColumnResizing: true,
+                rowHeight: 32,
+                gridFooterHeight: 0,
+                showGridFooter: true,
+                height: $scope.upstreamGridInitHeight,
+                changeHeight: $scope.upstreamGridInitHeight,
+                enableHorizontalScrollbar: 0,
+                enableVerticalScrollbar: 1,
+                columnDefs: [
+                    {
+                        name: "asn", displayName: 'ASN', width: '30%',
+                        cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+                    },
+                    {name: "as_name", displayName: 'AS Name', width: '70%'}
+                ],
+                onRegisterApi: function (gridApi) {
+                    $scope.upstreamGridApi = gridApi;
+                }
+            };
+
+            //downstream table options
+            $scope.downstreamGridOptions = {
+                enableColumnResizing: true,
+                rowHeight: 32,
+                gridFooterHeight: 0,
+                showGridFooter: true,
+                height: $scope.downstreamGridInitHeight,
+                changeHeight: $scope.downstreamGridInitHeight,
+                enableHorizontalScrollbar: 0,
+                enableVerticalScrollbar: 1,
+                columnDefs: [
+                    {
+                        name: "asn",
+                        displayName: 'ASN',
+                        width: '30%',
+                        cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+                    },
+                    {name: "as_name", displayName: 'AS Name', width: '70%'}
+                ],
+                onRegisterApi: function (gridApi) {
+                    $scope.downstreamGridApi = gridApi;
+                }
+            };
+
+
+            $scope.calGridHeight = function (grid, gridapi) {
+                gridapi.core.handleWindowResize();
+
+                var height;
+                var dataLength = 15;
+                if (grid.data.length > dataLength) {
+                    height = (dataLength * 30);
+                } else {
+                    height = ((grid.data.length * grid.rowHeight) + 50);
+                }
+                grid.changeHeight = height;
+                gridapi.grid.gridHeight = grid.changeHeight;
+            };
+
+            $scope.keypress = function (keyEvent) {
+                if (keyEvent.which === 13)
+                    searchValueFn($scope.searchValue);
+            };
+
+            //used for getting suggestions
+            $scope.getSuggestions = function (val) {
+                return apiFactory.getWhoIsASNameLike(val, 10).then(function (response) {
+                    return response.data.w.data.map(function (item) {
+                        return item.as_name; //+" (ASN: "+item.asn+")";
+                    });
+                });
+            };
+
+            $scope.onSelect = function ($item, $model, $label) {
+                $scope.searchValue = $label;
+                searchValueFn();
+            };
+
+            //Main function
+            $(function () {
+                //initial search
+                if ($stateParams.as) {
+                    $scope.searchValue = $stateParams.as;
+                }
+                else {
+                    $scope.searchValue = 109;
+                }
+                //topoInit();
+                searchValueFn();
+            });
+
+            //get all the information of this AS
+            function searchValueFn() {
+                if (isNaN($scope.searchValue)) {
+                    apiFactory.getWhoIsASName($scope.searchValue).
+                        success(function (result) {
+                            var data = result.w.data;
+                            getData(data);
+                        }).
+                        error(function (error) {
+
+                            console.log(error.message);
+                        });
+                }
+                else {
+                    apiFactory.getWhoIsASN($scope.searchValue).
+                        success(function (result) {
+                            var data = result.gen_whois_asn.data;
+                            getData(data);
+                        }).
+                        error(function (error) {
+
+                            console.log(error.message);
+                        });
+                }
             }
-          ]
+
+            var tempData;
+
+            //get data about details, prefixes, upstream and downstream
+            function getData(data) {
+                if (data.length != 0) {
+                    $scope.asn = data[0].asn;
+                    getDetails(data[0]);
+                    getPrefixes();
+                    getUpstream();
+                    getDownstream();
+
+                    //$scope.topologyIsLoad = true; //start loading
+                    downstreamPromise.success(function () {
+                        upstreamPromise.success(function () {
+                            topoClear();
+                            drawD3(data[0]);
+                        });
+                    });
+
+                    //$scope.topoReload = function () {
+                    //    topoClear();
+                    //    drawTopology(data[0]);
+                    //};
+
+                    $scope.nodata = false;
+                }
+                else {
+                    $scope.nodata = true;
+                }
+            }
+
+
+            //Get detailed information of this AS
+            function getDetails(data) {
+                var keys = Object.keys(data);
+                var showValues = '<table class="tableStyle"><tbody>';
+
+                for (var i = 0; i < keys.length; i++) {
+                    var key = keys[i];
+                    if (key != "raw_output" && key != "remarks") {
+                        if (key == "transit_v4_prefixes")
+                            showValues += '<tr class="hoz-line"><td colspan="2"><hr></td></tr>';
+
+                        var value = data[key];
+                        showValues += (
+                            '<tr>' +
+                            '<td>' +
+                            key + ' ' +
+                            '</td>' +
+
+                            '<td>' +
+                            value +
+                            '</td>' +
+                            '</tr>'
+                        );
+                    }
+                }
+                showValues += '</tbody></table>';
+                $scope.details = showValues;
+            }
+
+            //Get prefixes information of this AS
+            function getPrefixes() {
+                $scope.prefixGridOptions.data = [];
+                $scope.prefixIsLoad = true; //begin loading
+                apiFactory.getRIBbyASN($scope.asn).
+                    success(function (result) {
+                        var data = result.v_routes.data;
+                        for (var i = 0; i < result.v_routes.size; i++) {
+                            data[i].prefixWithLen = data[i].Prefix + "/" + data[i].PrefixLen;
+                            data[i].IPv = (data[i].isIPv4 === 1) ? '4' : '6';
+                        }
+                        $scope.prefixGridOptions.data = data;
+                        $scope.prefixIsLoad = false; //stop loading
+                        $scope.calGridHeight($scope.prefixGridOptions, $scope.prefixGridApi);
+                    }).
+                    error(function (error) {
+
+                        console.log(error.message);
+                    });
+            }
+
+            //Get upstream data
+            function getUpstream() {
+                upstreamData = [];
+                $scope.upstreamIsLoad = true; //begin loading
+                $scope.upstreamGridOptions.data = [];
+                upstreamPromise = apiFactory.getUpstream($scope.asn);
+                upstreamPromise.success(function (result) {
+                    upstreamData = result.upstreamASN.data;
+                    if (result.upstreamASN.data.length == 0) {
+                        $scope.upstreamNodata = true;
+                        $scope.upstreamIsLoad = false; //stop loading
+                        $scope.upstreamGridOptions.data = [];
+                        $scope.upstreamGridOptions.changeHeight = 150;
+                        $scope.upstreamGridApi.grid.gridHeight = 150;
+                        $scope.upstreamGridOptions.showGridFooter = false;
+                    }
+                    else {
+                        $scope.upstreamGridOptions.data = upstreamData;
+                        $scope.calGridHeight($scope.upstreamGridOptions, $scope.upstreamGridApi);
+                        $scope.upstreamIsLoad = false; //stop loading
+                        $scope.upstreamNodata = false;
+                    }
+                }).
+                    error(function (error) {
+
+                        console.log(error.message);
+                    });
+            }
+
+            //Get downstream data
+            function getDownstream() {
+                downstreamData = [];
+                $scope.downstreamIsLoad = true; //begin loading
+                $scope.downstreamGridOptions.data = [];
+                downstreamPromise = apiFactory.getDownstream($scope.asn);
+                downstreamPromise.success(function (result) {
+                    downstreamData = result.downstreamASN.data;
+                    if (result.downstreamASN.data.length == 0) {
+                        $scope.downstreamNodata = true;
+                        $scope.downstreamIsLoad = false; //stop loading
+                        $scope.downstreamGridOptions.data = [];
+                        $scope.downstreamGridOptions.changeHeight = 150;
+                        $scope.downstreamGridApi.grid.gridHeight = 150;
+                        $scope.downstreamGridOptions.showGridFooter = false;
+                    }
+                    else {
+                        $scope.downstreamGridOptions.data = downstreamData;
+                        $scope.calGridHeight($scope.downstreamGridOptions, $scope.downstreamGridApi);
+                        $scope.downstreamIsLoad = false; //stop loading
+                        $scope.downstreamNodata = false;
+                    }
+                }).
+                    error(function (error) {
+
+                        console.log(error.message);
+                    });
+            }
+
+            function topoClear() {
+                d3.select("svg").remove();
+            }
+
+            //draw AS topology with current AS in the middle
+            function drawD3(data) {
+
+                var sort_by = function (field, reverse, primer) {
+
+                    var key = primer ?
+                        function (x) {
+                            return primer(x[field])
+                        } :
+                        function (x) {
+                            return x[field]
+                        };
+
+                    reverse = !reverse ? 1 : -1;
+
+                    return function (a, b) {
+                        return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+                    }
+                };
+
+                //current AS
+                var root = {
+                    name: data.as_name === null ? data.asn : data.as_name,
+                    asn: data.asn,
+                    as_name: data.as_name,
+                    org_name: data.org_name,
+                    city: data.city,
+                    state_prov: data.state_prov,
+                    country: data.country,
+                    type: "root"
+                    //iconType: 'groupS',
+                };
+
+                upstreamData.forEach(function (e) {
+                    e.name = e.as_name === null ? e.asn : e.as_name;
+                    if (e.country != null) {
+                        e.countryCode = getCode(e.country.toUpperCase());
+                        e.country = getName(e.countryCode.toUpperCase());
+                    }
+                    else {
+                        e.countryCode = "[UNKNOWN]";
+                        e.country = "[UNKNOWN]";
+                    }
+                    if (e.countryCode != "[UNKNOWN]") {
+                        e.continent = getContinent(e.countryCode);
+                    }
+                    if (e.state_prov != null)
+                        e.state_prov = e.state_prov;
+                    else
+                        e.state_prov = "[UNKNOWN]";
+                    if (e.city != null)
+                        e.city = e.city;
+                    else
+                        e.city = "[UNKNOWN]";
+                    e.org_name = e.org_name ? e.org_name : "[UNKNOWN]";
+                    e.type = "UPSTREAM";
+                    e.dataType = "AS";
+                });
+                downstreamData.forEach(function (e) {
+                    e.name = e.as_name === null ? e.asn : e.as_name;
+                    if (e.country != null) {
+                        e.countryCode = getCode(e.country);
+                        e.country = getName(e.countryCode);
+                    }
+                    else {
+                        e.countryCode = "[UNKNOWN]";
+                        e.country = "[UNKNOWN]";
+                    }
+                    if (e.countryCode != "[UNKNOWN]") {
+                        e.continent = getContinent(e.countryCode);
+                    }
+                    else {
+                        e.continent = "[UNKNOWN]";
+                    }
+                    if (e.state_prov != null)
+                        e.state_prov = e.state_prov;
+                    else
+                        e.state_prov = "[UNKNOWN]";
+                    if (e.city != null)
+                        e.city = e.city;
+                    else
+                        e.city = "[UNKNOWN]";
+                    e.org_name = e.org_name ? e.org_name : "[UNKNOWN]";
+                    e.type = "DOWNSTREAM";
+                    e.dataType = "AS";
+                });
+
+
+                var height;
+                if (upstreamData.length + downstreamData.length > 2000)
+                    height = (upstreamData.length > downstreamData.length ? upstreamData.length : downstreamData.length) * 0.4;
+                else
+                    height = 1200;
+
+                $('.d3-container').css('height', (height + 100));
+
+                var containerWidth = $(".d3-container").width();
+
+
+                var upAndDown = {};
+                upAndDown.upstreamData = upstreamData;
+                upAndDown.downstreamData = downstreamData;
+
+                if (upstreamData.length > 150) {
+                    groupNode(upAndDown, "UPSTREAM");
+                }
+                else {
+                    upAndDown.upstreamData.sort(sort_by('name', false, function (a) {
+                        return a.toUpperCase()
+                    }));
+                }
+                //Downstream ASes
+                if (downstreamData.length > 150) {
+                    groupNode(upAndDown, "DOWNSTREAM");
+                }
+                else {
+                    upAndDown.downstreamData.sort(sort_by('name', false, function (a) {
+                        return a.toUpperCase()
+                    }));
+                }
+
+                root.children = [];
+                if (upstreamData.length > 0)
+                    root.children.push({
+                        name: "UPSTREAM ASES",
+                        children: upAndDown.upstreamData,
+                        type: "UPSTREAM"
+                    });
+                if (downstreamData.length > 0)
+                    root.children.push({
+                        name: "DOWNSTREAM ASES",
+                        children: upAndDown.downstreamData,
+                        type: "DOWNSTREAM"
+                    });
+
+                var m = [0, 120, 0, 120],
+                    w = containerWidth - m[1] - m[3],
+                    h = height - m[0] - m[2],
+                    i = 0;
+
+                var tree = d3.layout.tree()
+                    .size([h, w]);
+
+                var diagonal = d3.svg.diagonal()
+                    .projection(function (d) {
+                        return [d.y, d.x];
+                    });
+
+                var vis = d3.select("d3").append("svg:svg")
+                    .attr("width", w + m[1] + m[3])
+                    .attr("height", h + m[0] + m[2])
+                    .append("svg:g")
+                    .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+                var tipcolor, tipas;
+
+                var upColor = "#FF4448";
+                var downColor = "#5CC5EF";
+
+                var tip = d3.tip()
+                    .attr('class', 'd3-tip')
+                    .offset([-10, 0])
+                    .html(function () {
+                        switch (tipas.dataType) {
+                            case "CONTINENT":
+                            {
+                                return "<span style='color:" + tipcolor + "'>" + tipas.name + "</span>";
+                            }
+                            case "COUNTRY":
+                            {
+                                return "<span style='color:" + tipcolor + "'>" + tipas.country + "</span>";
+                            }
+                            case "STATE":
+                            {
+                                return "<span style='color:" + tipcolor + "'>" + tipas.name + "</span>";
+                            }
+                            case "CITY":
+                            {
+                                return "<span style='color:" + tipcolor + "'>" + tipas.name + "</span>";
+                            }
+                            case "AS":
+                            {
+                                return "<strong>Name:</strong> <span style='color:" + tipcolor + "'>" + tipas.as_name + "</span>" + "<br>"
+                                    + "<strong>AS Number:</strong> <span style='color:" + tipcolor + "'>" + tipas.asn + "</span>" + "<br>"
+                                    + "<strong>Org Name:</strong> <span style='color:" + tipcolor + "'>" + tipas.org_name + "</span>" + "<br>"
+                                    + "<strong>Continent:</strong> <span style='color:" + tipcolor + "'>" + tipas.continent + "</span>" + "<br>"
+                                    + "<strong>Country:</strong> <span style='color:" + tipcolor + "'>" + tipas.country + "</span>" + "<br>"
+                                    + "<strong>State/Prov:</strong> <span style='color:" + tipcolor + "'>" + tipas.state_prov + "</span>" + "<br>"
+                                    + "<strong>City:</strong> <span style='color:" + tipcolor + "'>" + tipas.city + "</span>" + "<br>";
+                            }
+                            default:
+                            {
+                                return "<span style='color:white'>" + tipas.name + "</span>";
+                            }
+                        }
+                    });
+
+                vis.call(tip);
+
+                root.x0 = h / 2;
+                root.y0 = 0;
+
+                function toggleAll(d) {
+                    if (d.children) {
+                        d.children.forEach(toggleAll);
+                        toggle(d);
+                    }
+                }
+
+                // Initialize the display to show a few nodes.
+                root.children.forEach(toggleAll);
+                root.children.forEach(function (children) {
+                    toggle(children)
+                });
+
+                update(root);
+
+                function update(source) {
+                    var duration = d3.event && d3.event.altKey ? 5000 : 500;
+
+                    // Compute the new tree layout.
+                    var nodes = tree.nodes(root).reverse();
+
+                    // Normalize for fixed-depth.
+                    nodes.forEach(function (d) {
+                        d.y = d.depth * containerWidth/8;
+                    });
+
+                    // Update the nodes…
+                    var node = vis.selectAll("g.node")
+                        .data(nodes, function (d) {
+                            return d.id || (d.id = ++i);
+                        });
+
+                    // Enter any new nodes at the parent's previous position.
+                    var nodeEnter = node.enter().append("svg:g")
+                        .attr("class", "node")
+                        .attr("transform", function (d) {
+                            return "translate(" + source.y0 + "," + source.x0 + ")";
+                        })
+                        .on("click", function (d) {
+                            toggle(d);
+                            update(d);
+                        })
+                        .on("mouseover", function (d) {
+                            tipas = d;
+                            if (d.type === "UPSTREAM")
+                                tipcolor = upColor;
+                            else if (d.type === "DOWNSTREAM")
+                                tipcolor = downColor;
+                            tip.show();
+                        })
+                        .on("mouseout", tip.hide);
+
+                    nodeEnter.append("svg:circle")
+                        .attr("r", 1e-6)
+                        .style("fill", function (d) {
+                            return d._children ? "gray" : "#fff";
+                        })
+                        .style("stroke", function (d) {
+                            if (d.type === "UPSTREAM")
+                                return upColor;
+                            else if (d.type === "DOWNSTREAM")
+                                return downColor;
+                        });
+
+                    nodeEnter.append("svg:text")
+                        .attr("x", function (d) {
+                            return d.children || d._children ? -6 : 7;
+                        })
+                        .attr("dy", ".35em")
+                        .attr("text-anchor", function (d) {
+                            return d.children || d._children ? "end" : "start";
+                        })
+                        .text(function (d) {
+                            return d.name.length > 15 ? d.name.substring(0, 14) + "..." : d.name;
+                        })
+                        .style("font-weight", function (d) {
+                            return d.children || d._children ? "regular" : "bold";
+                        })
+                        .style("fill-opacity", 1e-6);
+
+                    // Transition nodes to their new position.
+                    var nodeUpdate = node.transition()
+                        .duration(duration)
+                        .attr("transform", function (d) {
+                            return "translate(" + d.y + "," + d.x + ")";
+                        });
+
+                    nodeUpdate.select("circle")
+                        .attr("r", 4.5)
+                        .style("fill", function (d) {
+                            return d._children ? "lightgrey" : "#fff";
+                        });
+
+                    nodeUpdate.select("text")
+                        .style("fill-opacity", 1);
+
+                    // Transition exiting nodes to the parent's new position.
+                    var nodeExit = node.exit().transition()
+                        .duration(duration)
+                        .attr("transform", function (d) {
+                            return "translate(" + source.y + "," + source.x + ")";
+                        })
+                        .remove();
+
+                    nodeExit.select("circle")
+                        .attr("r", 1e-6);
+
+                    nodeExit.select("text")
+                        .style("fill-opacity", 1e-6);
+
+                    // Update the links…
+                    var link = vis.selectAll("path.link")
+                        .data(tree.links(nodes), function (d) {
+                            return d.target.id;
+                        });
+
+                    // Enter any new links at the parent's previous position.
+                    link.enter().insert("svg:path", "g")
+                        .attr("class", "link")
+                        .attr("d", function (d) {
+                            var o = {x: source.x0, y: source.y0};
+                            return diagonal({source: o, target: o});
+                        })
+                        .transition()
+                        .duration(duration)
+                        .attr("d", diagonal);
+
+                    // Transition links to their new position.
+                    link.transition()
+                        .duration(duration)
+                        .attr("d", diagonal);
+
+                    // Transition exiting nodes to the parent's new position.
+                    link.exit().transition()
+                        .duration(duration)
+                        .attr("d", function (d) {
+                            var o = {x: source.x, y: source.y};
+                            return diagonal({source: o, target: o});
+                        })
+                        .remove();
+
+                    // Stash the old positions for transition.
+                    nodes.forEach(function (d) {
+                        d.x0 = d.x;
+                        d.y0 = d.y;
+                    });
+
+                }
+
+                // Toggle children.
+                function toggle(d) {
+                    if (d.children) {
+                        d._children = d.children;
+                        d.children = null;
+                    } else {
+                        d.children = d._children;
+                        d._children = null;
+                    }
+                }
+
+                function groupNode(data, type) {
+
+                    var continents = [], countries = [], states = [], cities = [];
+                    var target = [];
+                    if (type === "UPSTREAM")
+                        target = data.upstreamData;
+                    else if (type === "DOWNSTREAM")
+                        target = data.downstreamData;
+
+                    var continentMatch, countryMatch, stateMatch, cityMatch;
+                    var indexContinent, indexCountry, indexState, indexCity;
+
+                    target.forEach(function (j) {
+                        continentMatch =
+                            countryMatch =
+                                stateMatch =
+                                    cityMatch = false;
+                        indexContinent =
+                            indexCountry =
+                                indexState =
+                                    indexCity = false;
+
+                        continents.forEach(function (continent) {
+                            if (continent.name === j.continent) {
+                                continentMatch = true;
+                                indexContinent = continents.indexOf(continent);
+                            }
+                        });
+                        if (!continentMatch) {
+                            continents[continents.length] = {
+                                name: j.continent,
+                                children: [],
+                                type: type,
+                                dataType: "CONTINENT"
+                            };
+                            continentMatch = true;
+                            indexContinent = continents.length - 1;
+                        }
+                        countries = continents[indexContinent].children;
+                        countries.forEach(function (country) {
+                            if (country.name === j.countryCode) {
+                                countryMatch = true;
+                                indexCountry = countries.indexOf(country);
+                            }
+                        });
+                        if (!countryMatch) {
+                            countries[countries.length] = {
+                                name: j.countryCode,
+                                country: j.country,
+                                children: [],
+                                type: type,
+                                dataType: "COUNTRY"
+                            };
+                            countryMatch = true;
+                            indexCountry = countries.length - 1;
+                        }
+                        states = countries[indexCountry].children;
+                        states.forEach(function (state) {
+                            if (state.name === j.state_prov) {
+                                stateMatch = true;
+                                indexState = states.indexOf(state);
+                            }
+                        });
+                        if (!stateMatch) {
+                            states[states.length] = {
+                                name: j.state_prov,
+                                children: [],
+                                type: type,
+                                dataType: "STATE"
+                            };
+                            stateMatch = true;
+                            indexState = states.length - 1;
+                        }
+                        cities = states[indexState].children;
+                        cities.forEach(function (city) {
+                            if (city.name === j.city) {
+                                cityMatch = true;
+                                indexCity = cities.indexOf(city);
+                            }
+
+                        });
+                        if (!cityMatch) {
+                            cities[cities.length] = {
+                                name: j.city,
+                                children: [],
+                                type: type,
+                                dataType: "CITY"
+                            };
+                            cityMatch = true;
+                            indexCity = cities.length - 1;
+                        }
+
+                        //MAKE PUSH
+                        cities[indexCity].children.push(j);
+
+                    });
+
+                    //SORT
+                    continents.forEach(function (continent) {
+                        continent.children.forEach(function (country) {
+                            country.children.forEach(function (state) {
+                                state.children.forEach(function (city) {
+                                    city.children.sort(sort_by('name', false, null));
+                                });
+                                state.children.sort(sort_by('name', false, null));
+                            });
+                            country.children.sort(sort_by('name', false, null));
+                        });
+                        continent.children.sort(sort_by('name', false, null));
+                    });
+
+                    continents.sort(sort_by('name', false, null));
+
+                    if (type === "UPSTREAM")
+                        data.upstreamData = continents;
+                    if (type === "DOWNSTREAM")
+                        data.downstreamData = continents;
+
+                }
+            }
         }
-      });
-    }]
-);
+
+    ])
+;
