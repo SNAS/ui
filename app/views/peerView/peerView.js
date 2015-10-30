@@ -47,9 +47,10 @@ angular.module('bmpUiApp')
       columnDefs: [
         {
           field: 'Status', displayName: 'Status', width: '6%',
+          type: 'number',
           cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
 
-            if ((row.entity.isUp === 1) && (row.entity.isBMPConnected === 1)) {
+            if (row.entity.isUp === 1) {
               return 'up-icon bmp-up';
             }
             else {
@@ -117,6 +118,11 @@ angular.module('bmpUiApp')
         peerPrefixPromise.success(function () {
           for (var i = 0; i < peers.length; i++) {
             var prefix = getPrefix(i, peers, peer_prefix);
+            if (peers[i].isUp == 1) {
+              peers[i].Status = 1;
+            } else {
+              peers[i].Status = 0;
+            }
             peers[i].IPv = (peers[i].isPeerIPv4 === 1) ? '4' : '6';
             peers[i].Pre_RIB = (prefix == null ) ? 0 : prefix.Pre_RIB;
             peers[i].Post_RIB = (prefix == null ) ? 0 : prefix.Post_RIB;
