@@ -80,13 +80,6 @@
   stroke-width: 1.5px;
 }
 
-.node text {
-  &:hover {
-    cursor: pointer;
-    color: purple;
-  }
-}
-
 .node {
   font: 10px sans-serif;
   &:hover {
@@ -137,5 +130,5 @@
   overflow: scroll;
   position: relative;
   height: 400px;
-  width:500px;
+  width: 500px;
 }

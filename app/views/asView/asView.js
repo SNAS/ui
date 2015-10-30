@@ -125,13 +125,13 @@ angular.module('bmpUiApp')
             //used for getting suggestions
             $scope.getSuggestions = function (val) {
                 if (isNaN(val)) {
-                  return apiFactory.getWhoIsASNameLike(val, 10).then(function (response) {
-                    return response.data.w.data.map(function (item) {
-                      return item.as_name; //+" (ASN: "+item.asn+")";
+                    return apiFactory.getWhoIsASNameLike(val, 10).then(function (response) {
+                        return response.data.w.data.map(function (item) {
+                            return item.as_name; //+" (ASN: "+item.asn+")";
+                        });
                     });
-                  });
                 } else {
-                  return [];
+                    return [];
                 }
             };
 
@@ -548,7 +548,7 @@ angular.module('bmpUiApp')
 
                     // Normalize for fixed-depth.
                     nodes.forEach(function (d) {
-                        d.y = d.depth * containerWidth/8;
+                        d.y = d.depth * containerWidth / 8;
                     });
 
                     // Update the nodes…
