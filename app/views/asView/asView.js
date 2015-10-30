@@ -544,7 +544,7 @@ angular.module('bmpUiApp')
 
                     // Normalize for fixed-depth.
                     nodes.forEach(function (d) {
-                        d.y = d.depth * 180;
+                        d.y = d.depth * containerWidth/8;
                     });
 
                     // Update the nodes…
