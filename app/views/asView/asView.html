@@ -13,10 +13,17 @@
                typeahead-on-select="onSelect($item, $model, $label)"/>
         <span class="help-block">Examples: 109, Cisco, etc.</span>
         <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
-
-        <div ng-show="noResults">
-            <i class="glyphicon glyphicon-remove"></i> No Results Found
+      <br/>
+      <br/>
+        <div class="row">
+          <div ng-show="nodata" class="col-md-4">
+            <p ng-style="{'font-size': '20px', opacity: 0.5, align: center}">
+              <i class="glyphicon glyphicon-remove"></i>
+              No Results Found
+            </p>
+          </div>
         </div>
+
         <!--<h3 ng-show="nodata">This AS doesn't exist</h3>-->
         <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
         <!--again! :)</h3>-->

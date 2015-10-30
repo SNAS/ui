@@ -124,11 +124,15 @@ angular.module('bmpUiApp')
 
             //used for getting suggestions
             $scope.getSuggestions = function (val) {
-                return apiFactory.getWhoIsASNameLike(val, 10).then(function (response) {
+                if (isNaN(val)) {
+                  return apiFactory.getWhoIsASNameLike(val, 10).then(function (response) {
                     return response.data.w.data.map(function (item) {
-                        return item.as_name; //+" (ASN: "+item.asn+")";
+                      return item.as_name; //+" (ASN: "+item.asn+")";
                     });
-                });
+                  });
+                } else {
+                  return [];
+                }
             };
 
             $scope.onSelect = function ($item, $model, $label) {
