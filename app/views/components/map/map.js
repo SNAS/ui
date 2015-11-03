@@ -219,13 +219,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
                     $scope.routerLayer.addLayer(marker);
                     $scope.locations.push(marker);
                 }
-              if (data[i].isConnected == 1) {
-                data[i].Status = 1;
-              } else {
-                data[i].Status = 0;
-              }
-              data[i].$$treeLevel = 0;
-              $scope.routerDict[data[i].RouterIP] = [data[i]];
             }
 
             $scope.map.addLayer($scope.routerLayer);
@@ -807,6 +800,16 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       apiFactory.getRouters()
         .success(function (result){
           var routers = result.routers.data;
+          for(var i = 0; i < routers.length; i++) {
+            if (routers[i].isConnected == 1) {
+              routers[i].Status = 1;
+            } else {
+              routers[i].Status = 0;
+            }
+            routers[i].$$treeLevel = 0;
+            $scope.routerDict[routers[i].RouterIP] = [routers[i]];
+          }
+
           $scope.routerCount = result.routers.data.length;
           $rootScope.routerCount = $scope.routerCount;
           //Loop through routers selecting and altering relevant data.
@@ -881,13 +884,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             }
             $scope.routerDict[item.RouterIP].push(item);
           }
-
-          $scope.ips = ips;
-          $rootScope.ips = ips;
-          for (var router in $scope.routerDict) {
-            $rootScope.routerTableOptions.data = $rootScope.routerTableOptions.data.concat($scope.routerDict[router]);
-          }
-
           $scope.peerIpChartData = [
             {
               key: "Up",
@@ -900,6 +896,12 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
               y: ips[0][3] + ips[1][3]
             }
           ];
+          $rootScope.ips = ips;
+          if ($rootScope.hasOwnProperty('routerTableOptions')) {
+            for (var router in $scope.routerDict) {
+              $rootScope.routerTableOptions.data = $rootScope.routerTableOptions.data.concat($scope.routerDict[router]);
+            }
+          }
 
         })
         .error(function(result){

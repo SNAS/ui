@@ -4,7 +4,14 @@
 
       <div class="main-page-search">
         <form ng-init="keywords=''">
-          <input type="text" ng-model="keywords" class="input-medium search-query" placeholder="190.0.103.0" />
+          <input type="text" ng-model="keywords" class="input-large search-query" placeholder="190.0.103.0/hostname"
+                 typeahead="ipAddr for ipAddr in dnsLookup($viewValue)"
+                 typeahead-loading="loadingLocations"
+                 typeahead-no-results="noResults"
+                 typeahead-wait-ms="300"
+                 typeahead-on-select="onSelect($item, $model, $label)"
+                 typeahead-min-length="4"
+          />
           <button type="submit" class="btn btn-sm btn-info" ng-click="search(keywords)">Search</button>
           <label class="btn btn-primary btn-xs" style="margin-left: 20px">Longest Match
             <input type="checkbox" ng-model="isLongestMatch"/>
@@ -16,6 +23,16 @@
             <input type="checkbox" ng-model="isDistinct" ng-click="turnOnDistinct()"/>
           </label>
         </form>
+      </div>
+
+      <div class="main-area row">
+        <div class="col-lg-12">
+          <button type="button" class="btn btn-default"
+                  ng-repeat="ip in ipAddr"
+                  ng-click="search(ip)"
+                  ng-style="{'margin-right': '30px'}"
+          >{{ip}}</button>
+        </div>
       </div>
 
 

@@ -8,7 +8,7 @@
  * Controller of the Dashboard page
  */
 angular.module('bmpUiApp')
-    .controller('PeerViewController', ["$scope", "$rootScope", 'apiFactory', '$timeout', function ($scope, $rootScope, apiFactory, $timeout) {
+    .controller('PeerViewController', ["$scope", "$rootScope", 'apiFactory', 'uiGridConstants', function ($scope, $rootScope, apiFactory, uiGridConstants) {
 
     if ($rootScope.dualWindow.active) {
       if ($rootScope.dualWindow.a === "peerView" && !$rootScope.dualWindow['map-top']) {
@@ -76,33 +76,59 @@ angular.module('bmpUiApp')
 
       onRegisterApi: function (gridApi) {
         $scope.gridApi = gridApi;
+        $scope.gridApi.grid.registerRowsProcessor( $scope.singleFilter, 200 );
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           apiFactory.getPeersAndLocationsByIp(row.entity['RouterIP']).
             success(function (result) {
               var data = result.v_peers.data;
-              var i =0, len = data.length;
-              for (; i < len; i++) {
-                var curr = data[i];
+              for (var i = 0; i < data.length; i++) {
                 if (data[i]['PeerIP'] == row.entity['PeerIP']) {
-                  var latlng = [curr.latitude, curr.longitude];
-                  var options = {
-                    country: curr.country,
-                    stateprov: curr.stateprov,
-                    city: curr.city,
-                    routers: [],
-                    peers: [curr],
-                    expandRouters: false,
-                    expandPeers: false,
-                    type: 'Peer'
-                  };
-                  var marker = new L.Marker(latlng, options);
                   break;
                 }
               }  // end for loop
-              $rootScope.peerPanel(marker, data[i]);
+              data[i].type = 'Peer';
+              $scope.cardApi.changeCard(data[i]);
             });  // end
         });
       }
+    };
+    $scope.clickIpv4Down = function() {
+      $scope.ipv4Down = true;
+      $scope.gridApi.grid.refresh();
+    };
+
+    $scope.clickIpv4Up = function() {
+      $scope.ipv4Up = true;
+      $scope.gridApi.grid.refresh();
+    };
+
+    $scope.clickIpv6Down = function() {
+      $scope.ipv6Down = true;
+      $scope.gridApi.grid.refresh();
+    };
+
+    $scope.clickIpv6Up = function() {
+      $scope.ipv6Up = true;
+      $scope.gridApi.grid.refresh();
+    };
+
+    $scope.singleFilter = function (renderableRows) {
+      if ($scope.ipv4Up || $scope.ipv4Down || $scope.ipv6Down || $scope.ipv6Up) {
+        renderableRows.forEach(function (row) {
+          var match = false;
+          if ($scope.ipv4Down && row.entity['Status'] == 0 && row.entity['IPv'] == 4
+            || $scope.ipv4Up && row.entity['Status'] == 1 && row.entity['IPv'] == 4
+            || $scope.ipv6Down && row.entity['Status'] == 0 && row.entity['IPv'] == 6
+            || $scope.ipv6Up && row.entity['Status'] == 1 && row.entity['IPv'] == 6) {
+            match = true;
+          }
+          if (!match) {
+            row.visible = false;
+          }
+        });
+        $scope.ipv4Down = $scope.ipv4Up = $scope.ipv6Down = $scope.ipv6Up = false;
+      }
+      return renderableRows;
     };
 
     $scope.toggleFiltering = function () {

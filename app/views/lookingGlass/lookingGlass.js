@@ -255,6 +255,26 @@ angular.module('bmpUiApp')
     // IPV6 REGEX - (\d+\:\d+|\d+\s\:\s\d+|\d+\s\:\d+|\d+\:\s\d+)
     //TODO - also XXXX::XXXX: is accepted for some reason
 
+    var ipv4Regex = /\d{1,3}\./;
+    var ipv6Regex = /([0-9a-fA-F]{4}\:)|(\:\:([0-9a-fA-F]{1,4})?)/;
+    $scope.dnsLookup = function (value) {
+      $scope.ipAddr = [];
+      if (ipv4Regex.exec(value) == null && ipv6Regex.exec(value) == null) {
+        return apiFactory.lookupDNS(value).then(function (response) {
+          return response.data.data.map(function(item, key) {
+            $scope.ipAddr.push(item["IPAddr" + key]);
+            return item["IPAddr" + key];
+          })
+        });
+      } else {
+        return [];
+      }
+    };
+
+    $scope.onSelect = function ($item, $model, $label) {
+      $scope.search($label);
+    };
+
     //Loop through data selecting and altering relevant data.
     $scope.search = function(value, init){
       if (value == "" || value == " ") {
@@ -265,9 +285,6 @@ angular.module('bmpUiApp')
       }
       //used to determine which regex's to use ipv4 || ipv6
       var whichIp;
-
-      var ipv4Regex = /\d{1,3}\./;
-      var ipv6Regex = /([0-9a-fA-F]{4}\:)|(\:\:([0-9a-fA-F]{1,4})?)/;
 
       if(ipv4Regex.exec(value) != null){
         whichIp = 0;
@@ -325,33 +342,6 @@ angular.module('bmpUiApp')
         }
       }
 
-   /*   $http.get('http://bmp-dev.openbmp.org:8001/db_rest/v1/rib?where=communities%20like%20%22%251221:610%25%22')
-        .success(function (data){
-          $scope.glassGridOptions = {
-            enableRowSelection : false,
-            expandableRowTemplate : 'expandableRowTemplate.html',
-            expandableRowHeight : 150
-          }
-          $scope.glassGridOptions.columnDefs = [
-            {name:'Prefix'}
-          ];
-
-          for (i = 0; i < data.length; i++){
-            data[i].subGridOptions = {
-              columnDefs:[{name:'Router', field:'RouterName', pinnedleft:true, width:'15%'},
-                          {name:'Peer', field:'PeerName', pinnedleft:true, width:'15%'},
-                          {name:'Communities', field:'Communities', pinnedleft:true, width:'35%'},
-                          {name:'AS Path', field:'AS_Path'},
-                          {name:'MED', field:'MED'},
-                          {name:'NH', field:'NH'},
-                         // {name:'Origin', field:'Origin'},
-                          {name:'LocalPref', field:'LocalPref'}],
-
-            }
-
-          }
-        })
-*/
       $scope.displayPrefix = []; // clear last research result
 
       if (fullIpWithPreLenReg.exec(value) != null || partCompIpRegex.exec(value) != null) {

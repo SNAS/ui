@@ -273,5 +273,10 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "downstream/" + asn + "/count");
     };
 
+    // Looking Glass
+    apiFactory.lookupDNS = function (hostname) {
+      return $http.get(urlBase + "dns/" + hostname);
+    };
+
     return apiFactory;
 });
