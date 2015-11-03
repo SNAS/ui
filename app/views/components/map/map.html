@@ -1,4 +1,4 @@
-<div class="relative" ng-style="{height: dualWindow == true ? '100%' : 'auto'}">
+<div class="relative" ng-style="{height: dualWindow == true ? halfHeight : 'auto'}">
 
   <div ng-show="error" class="error">
     {{error}}
@@ -9,7 +9,7 @@
   <div class="map-container">
 
     <div ng-show="location === 'globalView' || location === 'peerView'" class="map-control router-list expanded" ng-class="{'with-router': selectedRouter != undefined, 'active-location': selectedLocation != undefined, 'peers-only': selectedRouter === true}" ng-style="{ height: dualWindow == true ? mapHeight : mapHeight }">
-      
+
       <h3 class="panel-header">
         {{panelTitle}}
         <div class="panel-search">
@@ -111,7 +111,7 @@
       </div>
     </div>
 
-    <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="{{mapWidth}}" resize></leaflet>  
+    <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="{{mapWidth}}" resize></leaflet>
 
   </div>
 

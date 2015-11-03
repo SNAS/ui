@@ -125,13 +125,13 @@ angular.module('bmpUiApp')
             //used for getting suggestions
             $scope.getSuggestions = function (val) {
                 if (isNaN(val)) {
-                  return apiFactory.getWhoIsASNameLike(val, 10).then(function (response) {
-                    return response.data.w.data.map(function (item) {
-                      return item.as_name; //+" (ASN: "+item.asn+")";
+                    return apiFactory.getWhoIsASNameLike(val, 10).then(function (response) {
+                        return response.data.w.data.map(function (item) {
+                            return item.as_name; //+" (ASN: "+item.asn+")";
+                        });
                     });
-                  });
                 } else {
-                  return [];
+                    return [];
                 }
             };
 
@@ -449,13 +449,15 @@ angular.module('bmpUiApp')
                     root.children.push({
                         name: "UPSTREAM ASES",
                         children: upAndDown.upstreamData,
-                        type: "UPSTREAM"
+                        type: "UPSTREAM",
+                        dataType: "STREAMTYPE"
                     });
                 if (downstreamData.length > 0)
                     root.children.push({
                         name: "DOWNSTREAM ASES",
                         children: upAndDown.downstreamData,
-                        type: "DOWNSTREAM"
+                        type: "DOWNSTREAM",
+                        dataType: "STREAMTYPE"
                     });
 
                 var m = [0, 120, 0, 120],
@@ -487,6 +489,10 @@ angular.module('bmpUiApp')
                     .offset([-10, 0])
                     .html(function () {
                         switch (tipas.dataType) {
+                            case "STREAMTYPE":
+                            {
+                                return "<span style='color:" + tipcolor + "'>" + tipas.name + "</span>";
+                            }
                             case "CONTINENT":
                             {
                                 return "<span style='color:" + tipcolor + "'>" + tipas.name + "</span>";
@@ -548,7 +554,7 @@ angular.module('bmpUiApp')
 
                     // Normalize for fixed-depth.
                     nodes.forEach(function (d) {
-                        d.y = d.depth * containerWidth/8;
+                        d.y = d.depth * containerWidth / 8;
                     });
 
                     // Update the nodes…
@@ -579,9 +585,6 @@ angular.module('bmpUiApp')
 
                     nodeEnter.append("svg:circle")
                         .attr("r", 1e-6)
-                        .style("fill", function (d) {
-                            return d._children ? "gray" : "#fff";
-                        })
                         .style("stroke", function (d) {
                             if (d.type === "UPSTREAM")
                                 return upColor;
@@ -615,7 +618,7 @@ angular.module('bmpUiApp')
                     nodeUpdate.select("circle")
                         .attr("r", 4.5)
                         .style("fill", function (d) {
-                            return d._children ? "lightgrey" : "#fff";
+                            return d._children ? "#CCC" : "#fff";
                         });
 
                     nodeUpdate.select("text")

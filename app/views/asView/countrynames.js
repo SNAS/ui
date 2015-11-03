@@ -2341,15 +2341,15 @@ var countryNames = {
 
         //According to this ISO-3166, "UK" is not the country code for "United Kingdom", instead "GB" is
         //So, to satisfy "UK" in the data:
-        "UK": {
-            "name": "United Kingdom",
-            "native": "United Kingdom",
-            "phone": "44",
-            "continent": "EU",
-            "capital": "London",
-            "currency": "GBP",
-            "languages": "en"
-        },
+        /* "UK": {
+         "name": "United Kingdom",
+         "native": "United Kingdom",
+         "phone": "44",
+         "continent": "EU",
+         "capital": "London",
+         "currency": "GBP",
+         "languages": "en"
+         },*/
 
         "UM": {
             "name": "U.S. Minor Outlying Islands",
@@ -2581,9 +2581,13 @@ var continents = countryNames["continents"];
 
 
 var getCode = function (name) {
+    if (name.trim().toUpperCase() === "UK")
+        name = "GB";
     var result = name;
     for (var country in countries) {
         if ((name.toUpperCase()).indexOf(countries[country]["name"].toUpperCase()) > -1)
+            result = country.toUpperCase();
+        else if (name.toUpperCase() === country)
             result = country.toUpperCase();
     }
     return result;

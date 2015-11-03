@@ -46,6 +46,7 @@ angular.module('bmpUiApp')
       $scope.toggleDualWindows = function(){
         if($rootScope.dualWindow.active){
           $scope.dualState = "Activate";
+          $('body').css("overflow","auto");
           $state.transitionTo('app.' + $rootScope.dualWindow.a);
           $rootScope.dualWindow = {'active': false, 'a': undefined, 'b': undefined, 'map-top': false, 'map-bottom': false};
         }
@@ -53,6 +54,7 @@ angular.module('bmpUiApp')
           $scope.dualState = "Deactivate";
           var curr = $state.current.name.substr($state.current.name.indexOf(".") + 1);
           $rootScope.dualWindow = {'active': true, 'a': curr, 'b': 'globalView', 'map-top': false, 'map-bottom': false};
+          $('body').css("overflow","hidden");
           $state.transitionTo('app.dualWindow.contents', {a: curr, b: 'globalView'});
         }
       }
@@ -91,12 +93,12 @@ angular.module('bmpUiApp')
     $scope.$watch('location.path()', function(newPath) {
 
       switch($state.current.name){
-        case "app.globalView": 
-        case "app.peerView": 
-        case "app.asView": 
-        case "app.linkState": 
-        case "app.orrView": 
-        case "app.whoIs": 
+        case "app.globalView":
+        case "app.peerView":
+        case "app.asView":
+        case "app.linkState":
+        case "app.orrView":
+        case "app.whoIs":
           $scope.category = "Dashboards";
           break;
         case "app.peerAnalysis":
