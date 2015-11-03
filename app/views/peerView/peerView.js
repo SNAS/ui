@@ -21,7 +21,7 @@ angular.module('bmpUiApp')
       }
     }
     else {
-      $scope.name = 'global-view-map';
+      $scope.name = 'peer-view-map';
     }
 
     $scope.location = "peerView";

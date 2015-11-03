@@ -25,6 +25,9 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     $scope.locations = [];
     $scope.peers = [];
     $scope.routerDict = {};
+    $scope.peerDictionary = {};
+
+    $scope.halfHeight = $('.half-height').height() - 50;
 
 
     /****************************************
@@ -262,7 +265,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
     /*******************************
      Populate map with peers
      *******************************/
-    $scope.peerDictionary = {};
     $scope.selectedPeerLocations = [];
     $scope.getPeers = function (ip) {
       $scope.loading = true;
