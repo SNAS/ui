@@ -256,7 +256,7 @@ angular.module('bmpUiApp')
     //TODO - also XXXX::XXXX: is accepted for some reason
 
     var ipv4Regex = /\d{1,3}\./;
-    var ipv6Regex = /([0-9a-fA-F]{4}\:)|(\:\:([0-9a-fA-F]{1,4})?)/;
+    var ipv6Regex = /([0-9a-fA-F]{1,4}\:)|(\:\:([0-9a-fA-F]{1,4})?)/;
     $scope.dnsLookup = function (value) {
       $scope.ipAddr = [];
       if (ipv4Regex.exec(value) == null && ipv6Regex.exec(value) == null) {
@@ -308,9 +308,9 @@ angular.module('bmpUiApp')
       //regex[2] for matching part done ip's        190.0.
 
       var regexs = [
-        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/(?:\d|[1-9]\d|1[0-1]\d|12[0-8])$/ , /^([0-9a-fA-F]{4}\:){7}[0-9a-fA-F]{4}\/[0-128]$/],
-        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/ , /^([0-9a-fA-F]{4}\:){7}[0-9a-fA-F]{4}$/],
-        [/^(\d{1,3}\.){0,2}\d{1,3}\.?$/ , /^([0-9a-fA-F]{4}\:){0,7}[0-9a-fA-F]{4}\:?$/]
+        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/(?:\d|[1-9]\d|1[0-1]\d|12[0-8])$/ , /^([0-9a-fA-F]{1,4}\:){7}[0-9a-fA-F]{1,4}\/[0-128]$/],
+        [/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/ , /^([0-9a-fA-F]{1,4}\:){7}[0-9a-fA-F]{1,4}$/],
+        [/^(\d{1,3}\.){0,2}\d{1,3}\.?$/ , /^([0-9a-fA-F]{1,4}\:){0,7}[0-9a-fA-F]{1,4}\:{1,2}?$/]
       ];
 
       var fullIpWithPreLenReg = regexs[0][whichIp];
@@ -320,13 +320,13 @@ angular.module('bmpUiApp')
       //IPV6 shorthand case
       if (whichIp) { //means its ipv6
         var colOccur = (value.match(/\:\:/g) || []).length;
-        if (0 < colOccur < 2) {
+        if (colOccur == 1) {
           //one occurance of ::
 
           var ipv6Arr = value.split("::");
 
-          var ipv6PartLenRegex = /[0-9a-fA-F]{4}/g;
-          var ipv6PartCheckRegex = /^([0-9a-fA-F]{4}\:){0,5}[0-9a-fA-F]{4}$/;
+          var ipv6PartLenRegex = /[0-9a-fA-F]{1,4}/g;
+          var ipv6PartCheckRegex = /^([0-9a-fA-F]{1,4}\:){0,5}[0-9a-fA-F]{1,4}$/;
 
           var len = 0;
           var check = [];
@@ -335,9 +335,13 @@ angular.module('bmpUiApp')
             check.push(ipv6PartCheckRegex.exec(ipv6Arr[i]) != null);
           }
 
-          if(len < 8 && check.indexOf(0) == -1){
+          if(len < 8 && check.indexOf(false) == -1){
             //valid ipv6 with ::
-            value = ipv6ShortHand(value);
+            //value = ipv6ShortHand(value);
+            for (var i = 0; i < 8 - ipv6Arr.length; i++) {
+              ipv6Arr.splice(1, 0, "0000");
+            }
+            value = ipv6Arr.join(':');
           }
         }
       }
