@@ -63,7 +63,7 @@ angular.module('bmp.components.card')
     apiFactory.getTopPrefixUpdates($scope.data.peer_hash_id)
       .success(function (result){
 
-        var data = result.u.data;
+        var data = result.log.data;
         var len = data.length;
         var gData = [];
         for(var i = 0; i < len; i++){

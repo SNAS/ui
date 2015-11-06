@@ -95,6 +95,7 @@ angular.module('bmpUiApp')
       switch($state.current.name){
         case "app.globalView":
         case "app.peerView":
+        case "app.tops":
         case "app.asView":
         case "app.linkState":
         case "app.orrView":

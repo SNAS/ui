@@ -184,7 +184,16 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "withdrawns/peer/" + peer_hash_id + "/top");
     };
 
-    //orr view
+    //For Tops view
+    apiFactory.getTopUpdates= function(term,searchBy,groupBy,hours){
+      return $http.get(urlBase + "updates/top?term=" + term + "&searchby=" + searchBy + "&groupby=" + groupBy + "&hours=" + hours)
+    };
+
+    apiFactory.getTopWithdrawns= function(term,searchBy,groupBy,hours){
+      return $http.get(urlBase + "withdrawns/top?term=" + term + "&searchby=" + searchBy + "&groupby=" + groupBy + "&hours=" + hours)
+    };
+
+      //orr view
     apiFactory.getORRospf = function (peerHashId,routerId){
       return $http.get(urlBase + "orr/peer/" + peerHashId + "/ospf/" + routerId);
     };

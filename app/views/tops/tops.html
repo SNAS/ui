@@ -1,0 +1,96 @@
+<div ng-controller="TopsViewController">
+
+  <div class="main-page-search">
+
+    <label id="filter" style="margin-right:20px;font-size:15px;cursor:pointer"
+           ng-class="filterClass"
+           ng-mouseover='clearVisible = true; tempClass = filterClass; filterClass = "label label-default";'
+           ng-mouseleave = "clearVisible=false; filterClass=tempClass;"
+           ng-click="clearFilter()">
+      Filter: {{filterText}}
+      <span ng-show="clearVisible" class="glyphicon glyphicon-remove-circle"></span>
+    </label>
+
+    Hours:
+    <input id="hours" type="text" size="25" ng-keypress="keypress($event)" ng-model="hours"
+           placeholder="Ago ..."/>
+    <br/>
+
+    <div class="row">
+      <div ng-show="nodata" class="col-md-4">
+        <p ng-style="{'font-size': '20px', opacity: 0.5, align: center}">
+          <i class="glyphicon glyphicon-remove"></i>
+          No Results Found
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+  <div ng-show="!nodata">
+    <div class="main-area row">
+      <div class="col-lg-6">
+        <div class="d3-container" style="padding:20px">
+          <h4 style="font-size:16px">{{peerText}} Number of Updates In Past {{hours}} Hours</h4>
+
+          <div class="loading-section" ng-style="{'height': 450}">
+            <div ng-show="topUpdatesByPeerLoading" bmp-loading loading-var="topUpdatesByPeerLoading" font-width="80"></div>
+            <nvd3 id="topUpdatesByPeer"
+                  options="topUpdatesByPeerGraph"
+                  data="topUpdatesByPeerData"
+                  config="topUpdatesByPeerConfig">
+            </nvd3>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="d3-container" style="padding:20px">
+          <h4 style="font-size:16px">{{peerText}} By Number of Withdraws In Past {{hours}} Hours</h4>
+
+          <div class="loading-section" ng-style="{'height': 450}">
+            <div ng-show="topWithdrawsByPeerLoading" bmp-loading loading-var="topWithdrawsByPeerLoading" font-width="80"></div>
+            <nvd3 id="topWithdrawsByPeer"
+                  options="topWithdrawsByPeerGraph"
+                  data="topWithdrawsByPeerData"
+                  config="topWithdrawsByPeerConfig">
+            </nvd3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-area row">
+      <div class="col-lg-6">
+        <div class="d3-container" style="padding:20px">
+          <h4 style="font-size:16px">{{prefixText}} By Number of Updates In Past {{hours}} Hours</h4>
+
+          <div class="loading-section" ng-style="{'height': 450}">
+            <div ng-show="topUpdatesByPrefixLoading" bmp-loading loading-var="topUpdatesByPrefixLoading" font-width="80"></div>
+            <nvd3 id="topUpdatesByPrefix"
+                  options="topUpdatesByPrefixGraph"
+                  data="topUpdatesByPrefixData"
+                  config="topUpdatesByPrefixConfig">
+            </nvd3>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="d3-container" style="padding:20px">
+          <h4 style="font-size:16px">{{prefixText}} By Number of Withdraws In Past {{hours}} Hours</h4>
+
+          <div class="loading-section" ng-style="{'height': 450}">
+            <div ng-show="topWithdrawsByPrefixLoading" bmp-loading loading-var="topWithdrawsByPrefixLoading" font-width="80"></div>
+            <nvd3 id="topWithdrawsByPrefix"
+                  options="topWithdrawsByPrefixGraph"
+                  data="topWithdrawsByPrefixData"
+                  config="topWithdrawsByPrefixConfig">
+            </nvd3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
