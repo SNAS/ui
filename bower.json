@@ -32,6 +32,7 @@
   "resolutions": {
     "angular": "1.2.16",
     "d3": "~3.3.13",
-    "angular-ui-grid": "3.0.0-rc.22"
+    "angular-ui-grid": "3.0.0-rc.22",
+    "eonasdan-bootstrap-datetimepicker" : "latest"
   }
 }

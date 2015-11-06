@@ -60,7 +60,7 @@ angular.module('bmp.components.card')
       }
     ];
 
-    apiFactory.getTopPrefixUpdates($scope.data.peer_hash_id)
+    apiFactory.getTopPrefixUpdatesByPeer($scope.data.peer_hash_id)
       .success(function (result){
 
         var data = result.log.data;

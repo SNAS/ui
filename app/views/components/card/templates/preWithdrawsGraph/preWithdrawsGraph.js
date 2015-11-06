@@ -59,7 +59,7 @@ angular.module('bmp.components.card')
       }
     ];
 
-    apiFactory.getWithdrawsOverTime($scope.data.peer_hash_id)
+    apiFactory.getWithdrawsOverTimeByPeer($scope.data.peer_hash_id)
       .success(function (result){
         var data = result.table.data;
         var len = data.length;

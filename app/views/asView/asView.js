@@ -430,18 +430,14 @@ angular.module('bmpUiApp')
                     groupNode(upAndDown, "UPSTREAM");
                 }
                 else {
-                    upAndDown.upstreamData.sort(sort_by('name', false, function (a) {
-                        return a.toUpperCase()
-                    }));
+                    upAndDown.upstreamData.sort(sort_by('name', false, null));
                 }
                 //Downstream ASes
                 if (downstreamData.length > 150) {
                     groupNode(upAndDown, "DOWNSTREAM");
                 }
                 else {
-                    upAndDown.downstreamData.sort(sort_by('name', false, function (a) {
-                        return a.toUpperCase()
-                    }));
+                    upAndDown.downstreamData.sort(sort_by('name', false, null));
                 }
 
                 root.children = [];

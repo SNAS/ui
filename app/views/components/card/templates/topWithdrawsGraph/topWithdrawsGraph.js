@@ -61,7 +61,7 @@ angular.module('bmp.components.card')
       }
     ];
 
-    apiFactory.getWithdrawnPrefixOverTime($scope.data.peer_hash_id)
+    apiFactory.getTopPrefixWithdrawsByPeer($scope.data.peer_hash_id)
       .success(function (result){
 
         var data = result.log.data;
