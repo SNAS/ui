@@ -164,8 +164,8 @@ angular.module('bmpUiApp')
           $scope.filterText = d.label;
           $scope.filterClass = "label label-info";
           $scope.searchBy = "prefix";
+          $scope.peerText = "Top 20 Peers By";
           $scope.prefixText = "Prefix -- " + d.label + " :";
-          $scope.peerText = "Top 20 Prefixes By";
           loadAll();
         });
       }, 2000);
@@ -175,8 +175,8 @@ angular.module('bmpUiApp')
           $scope.filterText = d.label;
           $scope.filterClass = "label label-info";
           $scope.searchBy = "prefix";
+          $scope.peerText = "Top 20 Peers By";
           $scope.prefixText = "Prefix -- " + d.label + " :";
-          $scope.peerText = "Top 20 Prefixes By";
           loadAll();
         });
       }, 2000);
