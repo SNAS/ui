@@ -22,7 +22,8 @@
     "angular-bootstrap": "~0.12.1",
     "d3-tip": "~0.6.7",
     "jquery-ui": "~1.11.4",
-    "angular-loading-bar": "~0.7.1"
+    "angular-loading-bar": "~0.7.1",
+    "eonasdan-bootstrap-datetimepicker" : "latest"
   },
   "devDependencies": {
     "angular-mocks": "1.2.16",
@@ -32,7 +33,6 @@
   "resolutions": {
     "angular": "1.2.16",
     "d3": "~3.3.13",
-    "angular-ui-grid": "3.0.0-rc.22",
-    "eonasdan-bootstrap-datetimepicker" : "latest"
+    "angular-ui-grid": "3.0.0-rc.22"
   }
 }
