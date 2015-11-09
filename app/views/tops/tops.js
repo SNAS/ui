@@ -23,7 +23,7 @@ angular.module('bmpUiApp')
     $scope.searchPeer = null;
     $scope.searchPrefix = null;
 
-    var datetimePicker = $('#datetimepicker').datetimepicker({
+    $('#datetimepicker').datetimepicker({
       sideBySide: true,
       showTodayButton: true,
       format: 'YYYY-MM-DD HH:mm'
@@ -65,6 +65,26 @@ angular.module('bmpUiApp')
       $scope.topWithdrawsByPrefixLoading = true;
       $scope.trendGraphLoading = true;
 
+      $scope.topUpdatesByPeerData = [
+        {
+          key: "Updates"
+        }
+      ];
+      $scope.topWithdrawsByPeerData = [
+        {
+          key: "Withdraws"
+        }
+      ];
+      $scope.topUpdatesByPrefixData = [
+        {
+          key: "Updates"
+        }
+      ];
+      $scope.topWithdrawsByPrefixData = [
+        {
+          key: "Withdraws"
+        }
+      ];
       $scope.trendGraphData = [];
 
       apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", $scope.hours, $scope.timestamp)
@@ -221,40 +241,76 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-
       // ------------------ used for GRAPHS ---------- binding click function-----------------------------//
-      $timeout(function () {
-        d3.selectAll("#topUpdatesByPeer .nv-bar").on('click', function (d) {
-          $scope.searchPeer = d.hash;
-          $scope.filterPeerText = d.label;
-          $scope.peerText = "Peer -- " + d.label + " :";
-          loadAll();
-        });
-      }, $scope.hours > 2 ? 5000 : 2000);
-      $timeout(function () {
-        d3.selectAll("#topWithdrawsByPeer .nv-bar").on('click', function (d) {
-          $scope.searchPeer = d.hash;
-          $scope.filterPeerText = d.label;
-          $scope.peerText = "Peer -- " + d.label + " :";
-          loadAll();
-        });
-      }, $scope.hours > 2 ? 5000 : 2000);
-      $timeout(function () {
-        d3.selectAll("#topUpdatesByPrefix .nv-bar").on('click', function (d) {
-          $scope.searchPrefix = d.label;
-          $scope.filterPrefixText = d.label;
-          $scope.prefixText = "Prefix -- " + d.label + " :";
-          loadAll();
-        });
-      }, $scope.hours > 2 ? 3000 : 2000);
-      $timeout(function () {
-        d3.selectAll("#topWithdrawsByPrefix .nv-bar").on('click', function (d) {
-          $scope.searchPrefix = d.label;
-          $scope.filterPrefixText = d.label;
-          $scope.prefixText = "Prefix -- " + d.label + " :";
-          loadAll();
-        });
-      }, $scope.hours > 2 ? 3000 : 2000);
+      function bindGraphOneClick() {
+        if ($scope.topUpdatesByPeerData[0].values != undefined) {
+          d3.selectAll("#topUpdatesByPeer .nv-bar").on('click', function (d) {
+            $scope.searchPeer = d.hash;
+            $scope.filterPeerText = d.label;
+            $scope.peerText = "Peer -- " + d.label + " :";
+            loadAll();
+          });
+        }
+        else {
+          setTimeout(function () {
+            bindGraphOneClick();
+          }, 250);
+        }
+      }
+
+      function bindGraphTwoClick() {
+        if ($scope.topWithdrawsByPeerData[0].values != undefined) {
+          d3.selectAll("#topWithdrawsByPeer .nv-bar").on('click', function (d) {
+            $scope.searchPeer = d.hash;
+            $scope.filterPeerText = d.label;
+            $scope.peerText = "Peer -- " + d.label + " :";
+            loadAll();
+          });
+        }
+        else {
+          setTimeout(function () {
+            bindGraphTwoClick();
+          }, 250);
+        }
+      }
+
+      function bindGraphThreeClick() {
+        if ($scope.topUpdatesByPrefixData[0].values != undefined) {
+          d3.selectAll("#topUpdatesByPrefix .nv-bar").on('click', function (d) {
+            $scope.searchPrefix = d.label;
+            $scope.filterPrefixText = d.label;
+            $scope.prefixText = "Prefix -- " + d.label + " :";
+            loadAll();
+          });
+        }
+        else {
+          setTimeout(function () {
+            bindGraphThreeClick();
+          }, 250);
+        }
+      }
+
+      function bindGraphFourClick() {
+        if ($scope.topUpdatesByPrefixData[0].values != undefined) {
+          d3.selectAll("#topWithdrawsByPrefix .nv-bar").on('click', function (d) {
+            $scope.searchPrefix = d.label;
+            $scope.filterPrefixText = d.label;
+            $scope.prefixText = "Prefix -- " + d.label + " :";
+            loadAll();
+          });
+        }
+        else {
+          setTimeout(function () {
+            bindGraphFourClick();
+          }, 250);
+        }
+      }
+
+      bindGraphOneClick();
+      bindGraphTwoClick();
+      bindGraphThreeClick();
+      bindGraphFourClick();
+
     };
 
     /* Top 20 Updates By Peer Graph START*/
@@ -307,13 +363,6 @@ angular.module('bmpUiApp')
       $scope.$apply();
     };
 
-    $scope.topUpdatesByPeerData = [
-      {
-        key: "Updates",
-        values: [[]]
-      }
-    ];
-
     /*Top 20 Updates By Peer Graph END*/
 
 
@@ -365,14 +414,6 @@ angular.module('bmpUiApp')
       $scope.hover = y;
       $scope.$apply();
     };
-
-    $scope.topWithdrawsByPeerData = [
-      {
-        key: "Withdraws",
-        values: [[]]
-      }
-    ];
-
 
     /*Top 20 Withdraws By Peer Graph END*/
 
@@ -427,13 +468,6 @@ angular.module('bmpUiApp')
       $scope.$apply();
     };
 
-    $scope.topUpdatesByPrefixData = [
-      {
-        key: "Updates",
-        values: [[]]
-      }
-    ];
-
     /*Top 20 Updates By Peer Graph END*/
 
 
@@ -486,14 +520,6 @@ angular.module('bmpUiApp')
       $scope.$apply();
     };
 
-    $scope.topWithdrawsByPrefixData = [
-      {
-        key: "Withdraws",
-        values: [[]]
-      }
-    ];
-
-
     /*Top 20 Withdraws By Peer Graph END*/
 
     /*Trend Graph START*/
@@ -540,10 +566,7 @@ angular.module('bmpUiApp')
       }
     };
 
-    $scope.trendGraphData = [];
-
     /*Trend Graph END*/
-
 
     loadAll();
 

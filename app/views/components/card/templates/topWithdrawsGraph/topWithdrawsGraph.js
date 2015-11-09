@@ -56,8 +56,7 @@ angular.module('bmp.components.card')
 
     $scope.topWithdrawsData = [
       {
-        key: "Withdraws",
-        values:[[]]
+        key: "Withdraws"
       }
     ];
 
@@ -74,16 +73,27 @@ angular.module('bmp.components.card')
         }
         $scope.topWithdrawsData[0].values = gData;
         $scope.loading = false;
-        //  binding click action
-        $timeout(function(){
-          d3.selectAll("#topWithdraws .nv-bar").on('click', function(){
-            $('#topWithdrawsModal').modal('show');
-          });
-        }, 5000);
       })
       .error(function (error){
         console.log(error.message);
       });
+
+    //  binding click action
+    function bindGraphClick() {
+      if ($scope.topWithdrawsData[0].values != undefined) {
+        d3.selectAll("#topWithdraws .nv-bar").on('click', function(){
+          $('#topWithdrawsModal').modal('show');
+        });
+      }
+      else {
+        setTimeout(function () {
+          bindGraphClick();
+        }, 250);
+      }
+    }
+
+    bindGraphClick();
+
 
     $scope.goWithdraws = function() {
       $('#topWithdrawsModal').modal('hide');
