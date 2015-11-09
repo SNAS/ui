@@ -64,7 +64,7 @@ angular.module('bmp.components.card')
         var data = result.table.data;
         var len = data.length;
         var gData = [];
-        for(var i = len -1; i > 0; i--){
+        for(var i = len -1; i >= 0; i--){
 
           // var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
           // Modified by Jason.

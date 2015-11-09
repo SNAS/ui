@@ -10,7 +10,6 @@ angular.module('bmpUiApp')
     var timeNow = new Date();
     $scope.timestamp = timeNow.getFullYear() + "-" + (timeNow.getMonth() + 1) + "-" + timeNow.getDate() + " " + timeNow.getHours() + ":" + timeNow.getMinutes();
 
-    $scope.nodata = false;
     $scope.filterPeerText = null;
     $scope.filterPrefixText = null;
 
@@ -28,7 +27,6 @@ angular.module('bmpUiApp')
       showTodayButton: true,
       format: 'YYYY-MM-DD HH:mm'
     });
-
 
     $scope.clearFilter = function (type) {
       switch (type) {
@@ -185,15 +183,13 @@ angular.module('bmpUiApp')
         });
 
       //Trend Graph
-      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.timestamp)
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.hours, $scope.timestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
           var gData = [];
-          for (var i = len - 1; i > 0; i--) {
+          for (var i = len - 1; i >= 0; i--) {
 
-            // var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
-            // Modified by Jason. Date.parse returns nothing
             var timestmpArray = data[i].IntervalTime.split(/-| |:|\./); //"2015-03-22 22:23:06"
             var date = new Date(timestmpArray[0], timestmpArray[1], timestmpArray[2], timestmpArray[3], timestmpArray[4], timestmpArray[5]);
             var timestmp = date.getTime();
@@ -213,15 +209,13 @@ angular.module('bmpUiApp')
         .error(function (error) {
           console.log(error.message);
         });
-      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.timestamp)
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.hours, $scope.timestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
           var gData = [];
-          for (var i = len - 1; i > 0; i--) {
+          for (var i = len - 1; i >= 0; i--) {
 
-            // var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
-            // Modified by Jason. Date.parse returns nothing
             var timestmpArray = data[i].IntervalTime.split(/-| |:|\./); //"2015-03-22 22:23:06"
             var date = new Date(timestmpArray[0], timestmpArray[1], timestmpArray[2], timestmpArray[3], timestmpArray[4], timestmpArray[5]);
             var timestmp = date.getTime();
@@ -326,9 +320,7 @@ angular.module('bmpUiApp')
           bottom: 80,
           left: 70
         },
-        color: function (d, i) {
-          return updateColor;
-        },
+        color: [updateColor],
         x: function (d) {
           return d.label;
         },
@@ -379,9 +371,7 @@ angular.module('bmpUiApp')
           bottom: 80,
           left: 55
         },
-        color: function (d, i) {
-          return withdrawColor
-        },
+        color: [withdrawColor],
         x: function (d) {
           return d.label;
         },
@@ -431,9 +421,7 @@ angular.module('bmpUiApp')
           bottom: 80,
           left: 70
         },
-        color: function (d, i) {
-          return updateColor;
-        },
+        color: [updateColor],
         x: function (d) {
           return d.label;
         },
@@ -446,13 +434,12 @@ angular.module('bmpUiApp')
         },
         transitionDuration: 500,
         tooltipContent: function (key, x, y, e, graph) {
-          //hover = y;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
             '<p>' + y + ' on ' + x + '</p>';
         },
         xAxis: {
-          rotateLabels: -25,
+          rotateLabels: -30,
           rotateYLabel: true
         },
         yAxis: {
@@ -484,9 +471,7 @@ angular.module('bmpUiApp')
           bottom: 80,
           left: 55
         },
-        color: function (d, i) {
-          return withdrawColor
-        },
+        color: [withdrawColor],
         x: function (d) {
           return d.label;
         },
@@ -504,7 +489,7 @@ angular.module('bmpUiApp')
             '<p>' + y + ' on ' + x + '</p>';
         },
         xAxis: {
-          rotateLabels: -25,
+          rotateLabels: -30,
           rotateYLabel: true
         },
         yAxis: {
@@ -530,10 +515,15 @@ angular.module('bmpUiApp')
         margin: {
           top: 20,
           right: 20,
-          bottom: 90,
+          bottom: 60,
           left: 80
         },
-        color: [withdrawColor, updateColor],
+        color: function (d) {
+          if (d.key == "Updates")
+            return updateColor;
+          if (d.key == "Withdraws")
+            return withdrawColor;
+        },
         x: function (d) {
           return d[0];
         },

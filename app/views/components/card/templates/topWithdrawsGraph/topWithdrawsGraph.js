@@ -94,7 +94,6 @@ angular.module('bmp.components.card')
 
     bindGraphClick();
 
-
     $scope.goWithdraws = function() {
       $('#topWithdrawsModal').modal('hide');
       $('body').removeClass('modal-open');
