@@ -910,6 +910,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
               y: ips[0][3] + ips[1][3]
             }
           ];
+          $scope.ips = ips;
           $rootScope.ips = ips;
           if ($rootScope.hasOwnProperty('routerTableOptions')) {
             for (var router in $scope.routerDict) {

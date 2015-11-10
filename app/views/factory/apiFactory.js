@@ -297,11 +297,11 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getCommP2ByP1 = function (part1) {
-      return $http.get(urlBase + "community/getP2/" + part1);
+      return $http.get(urlBase + "community/part2/" + part1);
     };
 
     apiFactory.getCommP1Suggestions = function (part1) {
-      return $http.get(urlBase + "community/getP1/" + part1);
+      return $http.get(urlBase + "community/part1/" + part1);
     };
 
     apiFactory.getPrefixByCommunity = function (community) {
