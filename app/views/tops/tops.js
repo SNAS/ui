@@ -123,6 +123,7 @@ angular.module('bmpUiApp')
                 label: data[i].PeerAddr,
                 value: parseInt(data[i].Count),
                 hash: data[i].peer_hash_id,
+                peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
                 collectorIP: data[i].CollectorAddr,
@@ -154,6 +155,7 @@ angular.module('bmpUiApp')
                 label: data[i].PeerAddr,
                 value: parseInt(data[i].Count),
                 hash: data[i].peer_hash_id,
+                peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
                 collectorIP: data[i].CollectorAddr,
@@ -184,6 +186,8 @@ angular.module('bmpUiApp')
             for (var i = 0; i < len; i++) {
               gData.push({
                 label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                peerIP: data[i].PeerAddr,
+                peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
                 collectorIP: data[i].CollectorAddr,
@@ -213,6 +217,8 @@ angular.module('bmpUiApp')
             for (var i = 0; i < len; i++) {
               gData.push({
                 label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                peerIP: data[i].PeerAddr,
+                peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
                 collectorIP: data[i].CollectorAddr,
@@ -415,6 +421,7 @@ angular.module('bmpUiApp')
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
             '<p>' + y + ' on ' + x + '</p>' +
+            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
             '<p>' + 'Router Name - ' + data.routerName + '</p>' +
             '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
@@ -469,6 +476,7 @@ angular.module('bmpUiApp')
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
             '<p>' + y + ' on ' + x + '</p>' +
+            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
             '<p>' + 'Router Name - ' + data.routerName + '</p>' +
             '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
@@ -523,6 +531,8 @@ angular.module('bmpUiApp')
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
             '<p>' + y + ' on ' + x + '</p>' +
+            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
+            '<p>' + 'Peer IP - ' + data.peerIP + '</p>' +
             '<p>' + 'Router Name - ' + data.routerName + '</p>' +
             '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
@@ -577,6 +587,8 @@ angular.module('bmpUiApp')
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
             '<p>' + y + ' on ' + x + '</p>' +
+            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
+            '<p>' + 'Peer IP - ' + data.peerIP + '</p>' +
             '<p>' + 'Router Name - ' + data.routerName + '</p>' +
             '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
