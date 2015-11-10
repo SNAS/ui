@@ -7,8 +7,9 @@ angular.module('bmpUiApp')
     var withdrawColor = "#FF420E";
 
     $scope.hours = 2;
+    var timeFormat = 'YYYY-MM-DD HH:mm';
     var timeNow = new Date();
-    $scope.timestamp = timeNow.getFullYear() + "-" + (timeNow.getMonth() + 1) + "-" + timeNow.getDate() + " " + timeNow.getHours() + ":" + timeNow.getMinutes();
+    var timestamp;
 
     $scope.filterPeerText = null;
     $scope.filterPrefixText = null;
@@ -24,8 +25,7 @@ angular.module('bmpUiApp')
 
     $('#datetimepicker').datetimepicker({
       sideBySide: true,
-      showTodayButton: true,
-      format: 'YYYY-MM-DD HH:mm'
+      defaultDate: timeNow
     });
 
     $scope.clearFilter = function (type) {
@@ -85,7 +85,9 @@ angular.module('bmpUiApp')
       ];
       $scope.trendGraphData = [];
 
-      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", $scope.hours, $scope.timestamp)
+      timestamp = moment($('#timestamp').val()).tz("UTC").format(timeFormat);
+
+      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", $scope.hours, timestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -94,7 +96,14 @@ angular.module('bmpUiApp')
             var gData = [];
             for (var i = 0; i < len; i++) {
               gData.push({
-                label: data[i].PeerAddr, value: parseInt(data[i].Count), hash: data[i].peer_hash_id
+                label: data[i].PeerAddr,
+                value: parseInt(data[i].Count),
+                hash: data[i].peer_hash_id,
+                routerIP: data[i].RouterAddr,
+                routerName: data[i].RouterName,
+                collectorIP: data[i].CollectorAddr,
+                collectorName: data[i].CollectorName,
+                collectorAdminID: data[i].CollectorAdminID
               });
             }
             $scope.topUpdatesByPeerData[0].values = gData;
@@ -109,7 +118,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "peer", $scope.hours, $scope.timestamp)
+      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "peer", $scope.hours, timestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -118,7 +127,14 @@ angular.module('bmpUiApp')
             var gData = [];
             for (var i = 0; i < len; i++) {
               gData.push({
-                label: data[i].PeerAddr, value: parseInt(data[i].Count), hash: data[i].peer_hash_id
+                label: data[i].PeerAddr,
+                value: parseInt(data[i].Count),
+                hash: data[i].peer_hash_id,
+                routerIP: data[i].RouterAddr,
+                routerName: data[i].RouterName,
+                collectorIP: data[i].CollectorAddr,
+                collectorName: data[i].CollectorName,
+                collectorAdminID: data[i].CollectorAdminID
               });
             }
             $scope.topWithdrawsByPeerData[0].values = gData;
@@ -134,7 +150,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", $scope.hours, $scope.timestamp)
+      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", $scope.hours, timestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -143,7 +159,12 @@ angular.module('bmpUiApp')
             var gData = [];
             for (var i = 0; i < len; i++) {
               gData.push({
-                label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count)
+                label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                routerIP: data[i].RouterAddr,
+                routerName: data[i].RouterName,
+                collectorIP: data[i].CollectorAddr,
+                collectorName: data[i].CollectorName,
+                collectorAdminID: data[i].CollectorAdminID
               });
             }
             $scope.topUpdatesByPrefixData[0].values = gData;
@@ -158,7 +179,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", $scope.hours, $scope.timestamp)
+      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", $scope.hours, timestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -167,7 +188,12 @@ angular.module('bmpUiApp')
             var gData = [];
             for (var i = 0; i < len; i++) {
               gData.push({
-                label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count)
+                label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                routerIP: data[i].RouterAddr,
+                routerName: data[i].RouterName,
+                collectorIP: data[i].CollectorAddr,
+                collectorName: data[i].CollectorName,
+                collectorAdminID: data[i].CollectorAdminID
               });
             }
             $scope.topWithdrawsByPrefixData[0].values = gData;
@@ -182,8 +208,10 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
+      var trendGraphUpdates = null, trendGraphWithdraws = null;
+
       //Trend Graph
-      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.hours, $scope.timestamp)
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.hours, timestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -199,17 +227,16 @@ angular.module('bmpUiApp')
             ]);
           }
           updatesTrendData = gData;
-          $scope.trendGraphLoading = false;
 
-          $scope.trendGraphData.push({
+          trendGraphUpdates = {
             key: "Updates",
             values: updatesTrendData
-          });
+          };
         })
         .error(function (error) {
           console.log(error.message);
         });
-      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.hours, $scope.timestamp)
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.hours, timestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -226,14 +253,29 @@ angular.module('bmpUiApp')
           }
           withdrawsTrendData = gData;
 
-          $scope.trendGraphData.push({
+          trendGraphWithdraws = {
             key: "Withdraws",
             values: withdrawsTrendData
-          });
+          };
         })
         .error(function (error) {
           console.log(error.message);
         });
+
+      // For Trend Graph, avoid the bug of the areas stacked together
+      function setTrendData() {
+        if (trendGraphUpdates != null && trendGraphWithdraws != null) {
+          $scope.trendGraphData = [trendGraphWithdraws, trendGraphUpdates];
+          $scope.trendGraphLoading = false;
+        }
+        else {
+          setTimeout(function () {
+            setTrendData();
+          }, 250);
+        }
+      }
+
+      setTrendData();
 
       // ------------------ used for GRAPHS ---------- binding click function-----------------------------//
       function bindGraphOneClick() {
@@ -332,11 +374,14 @@ angular.module('bmpUiApp')
           return d3.format('')(d);
         },
         transitionDuration: 500,
-        tooltipContent: function (key, x, y, e, graph) {
-          //hover = y;
+        tooltipContent: function (key, x, y, e) {
+          var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
-            '<p>' + y + ' on ' + x + '</p>';
+            '<p>' + y + ' on ' + x + '</p>' +
+            '<p>' + 'Router Name:' + data.routerName + '</p>' +
+            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
         },
         xAxis: {
           rotateLabels: -25,
@@ -383,10 +428,14 @@ angular.module('bmpUiApp')
           return d3.format('')(d);
         },
         transitionDuration: 500,
-        tooltipContent: function (key, x, y, e, graph) {
+        tooltipContent: function (key, x, y, e) {
+          var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
-            '<p>' + y + ' on ' + x + '</p>';
+            '<p>' + y + ' on ' + x + '</p>' +
+            '<p>' + 'Router Name:' + data.routerName + '</p>' +
+            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
         },
         xAxis: {
           rotateLabels: -25,
@@ -433,10 +482,14 @@ angular.module('bmpUiApp')
           return d3.format('')(d);
         },
         transitionDuration: 500,
-        tooltipContent: function (key, x, y, e, graph) {
+        tooltipContent: function (key, x, y, e) {
+          var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
-            '<p>' + y + ' on ' + x + '</p>';
+            '<p>' + y + ' on ' + x + '</p>' +
+            '<p>' + 'Router Name:' + data.routerName + '</p>' +
+            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
         },
         xAxis: {
           rotateLabels: -30,
@@ -483,10 +536,14 @@ angular.module('bmpUiApp')
           return d3.format('')(d);
         },
         transitionDuration: 500,
-        tooltipContent: function (key, x, y, e, graph) {
+        tooltipContent: function (key, x, y, e) {
+          var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
-            '<p>' + y + ' on ' + x + '</p>';
+            '<p>' + y + ' on ' + x + '</p>' +
+            '<p>' + 'Router Name:' + data.routerName + '</p>' +
+            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
         },
         xAxis: {
           rotateLabels: -30,
