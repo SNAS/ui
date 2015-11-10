@@ -55,36 +55,43 @@ angular.module('bmp.components.card')
 
     $scope.topUpdatesData = [
       {
-        key: "Updates",
-        values:[[]]
+        key: "Updates"
       }
     ];
 
-    apiFactory.getTopPrefixUpdates($scope.data.peer_hash_id)
+    apiFactory.getTopPrefixUpdatesByPeer($scope.data.peer_hash_id)
       .success(function (result){
 
-        var data = result.u.data;
+        var data = result.log.data;
         var len = data.length;
         var gData = [];
         for(var i = 0; i < len; i++){
           gData.push({
-            //color: "#EAA546",
             label:data[i].Prefix + "/" + data[i].PrefixLen, value:parseInt(data[i].Count)
           });
         }
         $scope.topUpdatesData[0].values = gData;
         $scope.loading = false;
-        // ------------------ used for GRAPHS ---------- binding click function-----------------------------//
-        $timeout(function(){
-          d3.selectAll("#topUpdates .nv-bar").on('click', function(){
-            $('#topUpdatesModal').modal('show');
-          });
-        }, 3000);
-
       })
       .error(function (error){
         console.log(error.message);
       });
+
+    // ------------------ used for GRAPHS ---------- binding click function-----------------------------//
+    function bindGraphClick() {
+      if ($scope.topUpdatesData[0].values != undefined) {
+        d3.selectAll("#topUpdates .nv-bar").on('click', function(){
+          $('#topUpdatesModal').modal('show');
+        });
+      }
+      else {
+        setTimeout(function () {
+          bindGraphClick();
+        }, 250);
+      }
+    }
+
+    bindGraphClick();
 
     $scope.goUpdates= function(){
       $('#topUpdatesModal').modal('hide');

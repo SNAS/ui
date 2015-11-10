@@ -81,6 +81,10 @@ angular
         url: '/peer-view',
         templateUrl: 'views/peerView/peerView.html'
       })
+      .state('app.tops', {
+        url: '/tops',
+        templateUrl: 'views/tops/tops.html'
+      })
       .state('app.asView', {
         url: '/AS-view?:as?',
         templateUrl: 'views/asView/asView.html'

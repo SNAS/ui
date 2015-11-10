@@ -59,12 +59,12 @@ angular.module('bmp.components.card')
       }
     ];
 
-    apiFactory.getWithdrawsOverTime($scope.data.peer_hash_id)
+    apiFactory.getWithdrawsOverTimeByPeer($scope.data.peer_hash_id)
       .success(function (result){
         var data = result.table.data;
         var len = data.length;
         var gData = [];
-        for(var i = len -1; i > 0; i--){
+        for(var i = len -1; i >= 0; i--){
 
           // var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
           // Modified by Jason.

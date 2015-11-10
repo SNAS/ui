@@ -15,6 +15,9 @@
           <li active-item><a ui-sref="app.peerView" ui-sref-opts="{reload: true}">Peer View</a>
             <dual-control d="dualWindow" l="peerView"></dual-control>
           </li>
+          <li active-item><a ui-sref="app.tops" ui-sref-opts="{reload: true}">Tops</a>
+            <dual-control d="dualWindow" l="tops"></dual-control>
+          </li>
           <li active-item><a ui-sref="app.asView" ui-sref-opts="{reload: true}">AS View</a>
             <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text" ng-model="iias" class="instant-input"/></form>
             <dual-control d="dualWindow" l="asView"></dual-control>

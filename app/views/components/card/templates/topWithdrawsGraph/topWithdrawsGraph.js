@@ -56,12 +56,11 @@ angular.module('bmp.components.card')
 
     $scope.topWithdrawsData = [
       {
-        key: "Withdraws",
-        values:[[]]
+        key: "Withdraws"
       }
     ];
 
-    apiFactory.getWithdrawnPrefixOverTime($scope.data.peer_hash_id)
+    apiFactory.getTopPrefixWithdrawsByPeer($scope.data.peer_hash_id)
       .success(function (result){
 
         var data = result.log.data;
@@ -74,16 +73,26 @@ angular.module('bmp.components.card')
         }
         $scope.topWithdrawsData[0].values = gData;
         $scope.loading = false;
-        //  binding click action
-        $timeout(function(){
-          d3.selectAll("#topWithdraws .nv-bar").on('click', function(){
-            $('#topWithdrawsModal').modal('show');
-          });
-        }, 5000);
       })
       .error(function (error){
         console.log(error.message);
       });
+
+    //  binding click action
+    function bindGraphClick() {
+      if ($scope.topWithdrawsData[0].values != undefined) {
+        d3.selectAll("#topWithdraws .nv-bar").on('click', function(){
+          $('#topWithdrawsModal').modal('show');
+        });
+      }
+      else {
+        setTimeout(function () {
+          bindGraphClick();
+        }, 250);
+      }
+    }
+
+    bindGraphClick();
 
     $scope.goWithdraws = function() {
       $('#topWithdrawsModal').modal('hide');

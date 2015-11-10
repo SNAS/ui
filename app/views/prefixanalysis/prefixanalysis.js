@@ -477,7 +477,7 @@ angular.module('bmpUiApp')
     $scope.selectWithdraws = function() {
       $scope.isWithdrawsSelected = true;
       console.log($scope.peerData.selectPeer);
-      apiFactory.getWithdrawnPrefixOverTime($scope.peerData.selectPeer['peer_hash_id'])
+      apiFactory.getTopPrefixWithdrawsByPeer($scope.peerData.selectPeer['peer_hash_id'])
         .success(function(data) {
           var records = data.log.data;
           $scope.WithdrawsOptions.data = records;

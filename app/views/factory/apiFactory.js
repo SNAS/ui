@@ -168,23 +168,41 @@ angular.module('bmpUiApp')
 
 
     //For the Graphs in Card
-    apiFactory.getUpdatesOverTime = function (peer_hash_id){
+    apiFactory.getUpdatesOverTimeByPeer = function (peer_hash_id){
       return $http.get(urlBase + "updates/peer/" + peer_hash_id + "/top/interval/5");
     };
 
-    apiFactory.getTopPrefixUpdates = function (peer_hash_id){
+    apiFactory.getTopPrefixUpdatesByPeer = function (peer_hash_id){
       return $http.get(urlBase + "updates/peer/" + peer_hash_id + "/top");
     };
 
-    apiFactory.getWithdrawsOverTime = function (peer_hash_id){
+    apiFactory.getWithdrawsOverTimeByPeer = function (peer_hash_id){
       return $http.get(urlBase + "withdrawns/peer/" + peer_hash_id + "/top/interval/5");
     };
 
-    apiFactory.getWithdrawnPrefixOverTime = function (peer_hash_id){
+    apiFactory.getTopPrefixWithdrawsByPeer = function (peer_hash_id){
       return $http.get(urlBase + "withdrawns/peer/" + peer_hash_id + "/top");
     };
 
-    //orr view
+    //For Tops view
+    apiFactory.getTopUpdates= function(searchPeer,searchPrefix,groupBy,hours,timestamp){
+      return $http.get(urlBase + "updates/top?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&groupBy=" + groupBy + "&hours=" + hours + "&ts=" + timestamp)
+    };
+
+    apiFactory.getTopWithdraws= function(searchPeer, searchPrefix, groupBy, hours,timestamp){
+      return $http.get(urlBase + "withdrawns/top?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&groupBy=" + groupBy + "&hours=" + hours + "&ts=" + timestamp)
+    };
+
+    apiFactory.getUpdatesOverTime= function(searchPeer, searchPrefix, minutes, hours, timestamp){
+      return $http.get(urlBase + "updates/trend/interval/"+minutes+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&hours=" + hours+ "&ts=" + timestamp)
+    };
+
+    apiFactory.getWithdrawsOverTime= function(searchPeer, searchPrefix, minutes, hours, timestamp){
+      return $http.get(urlBase + "withdrawns/trend/interval/"+minutes+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&hours=" + hours+ "&ts=" + timestamp)
+    };
+
+
+      //orr view
     apiFactory.getORRospf = function (peerHashId,routerId){
       return $http.get(urlBase + "orr/peer/" + peerHashId + "/ospf/" + routerId);
     };
