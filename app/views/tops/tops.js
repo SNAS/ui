@@ -512,7 +512,7 @@ angular.module('bmpUiApp')
           top: 20,
           right: 20,
           bottom: 80,
-          left: 70
+          left: 55
         },
         color: [updateColor],
         x: function (d) {
