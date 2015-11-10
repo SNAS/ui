@@ -3,8 +3,8 @@
 angular.module('bmpUiApp')
   .controller('TopsViewController', ["$scope", "apiFactory", '$timeout', '$state', '$stateParams', function ($scope, apiFactory, $timeout, $state, $stateParams) {
 
-    var updateColor = "#89DA59";
-    var withdrawColor = "#FF420E";
+    var updateColor = "#EAA546";
+    var withdrawColor = "#4B84CA";
 
     $scope.hours = 2;
     var timeFormat = 'YYYY-MM-DD HH:mm';
@@ -53,7 +53,31 @@ angular.module('bmpUiApp')
         loadAll();
     };
 
+    $scope.$on('$locationChangeStart', function (event, next, current) {
+      if ($scope.searchPrefix != null || $scope.searchPeer != null) {
+        // Here you can take the control and call your own functions:
+        $scope.clearFilter('peer');
+        $scope.clearFilter('prefix');
+        // Prevent the browser default action (Going back):
+        event.preventDefault();
+      }
+    });
+
     var updatesTrendData, withdrawsTrendData;
+
+    //For Redirect On The Second Click on prefix bar
+
+    var goPrefixAnaType;
+
+    $scope.goPrefixAnalysis = function () {
+      $('#redirectModal').modal('hide');
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+      $state.go('app.prefixAnalysis', {
+        prefix: $scope.filterPrefixText,
+        type: goPrefixAnaType
+      });
+    };
 
     //load All the graphs
     var loadAll = function () {
@@ -313,10 +337,16 @@ angular.module('bmpUiApp')
       function bindGraphThreeClick() {
         if ($scope.topUpdatesByPrefixData[0].values != undefined) {
           d3.selectAll("#topUpdatesByPrefix .nv-bar").on('click', function (d) {
-            $scope.searchPrefix = d.label;
-            $scope.filterPrefixText = d.label;
-            $scope.prefixText = "Prefix -- " + d.label + " :";
-            loadAll();
+            if ($scope.searchPrefix == null) {
+              $scope.searchPrefix = d.label;
+              $scope.filterPrefixText = d.label;
+              $scope.prefixText = "Prefix -- " + d.label + " :";
+              loadAll();
+            }
+            else {
+              $('#redirectModal').modal('show');
+              goPrefixAnaType = 'updates';
+            }
           });
         }
         else {
@@ -329,10 +359,16 @@ angular.module('bmpUiApp')
       function bindGraphFourClick() {
         if ($scope.topUpdatesByPrefixData[0].values != undefined) {
           d3.selectAll("#topWithdrawsByPrefix .nv-bar").on('click', function (d) {
-            $scope.searchPrefix = d.label;
-            $scope.filterPrefixText = d.label;
-            $scope.prefixText = "Prefix -- " + d.label + " :";
-            loadAll();
+            if ($scope.searchPrefix == null) {
+              $scope.searchPrefix = d.label;
+              $scope.filterPrefixText = d.label;
+              $scope.prefixText = "Prefix -- " + d.label + " :";
+              loadAll();
+            }
+            else {
+              $('#redirectModal').modal('show');
+              goPrefixAnaType = 'withdraws';
+            }
           });
         }
         else {
@@ -379,9 +415,9 @@ angular.module('bmpUiApp')
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
             '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Router Name:' + data.routerName + '</p>' +
-            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
+            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
+            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
         },
         xAxis: {
           rotateLabels: -25,
@@ -433,9 +469,9 @@ angular.module('bmpUiApp')
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
             '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Router Name:' + data.routerName + '</p>' +
-            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
+            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
+            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
         },
         xAxis: {
           rotateLabels: -25,
@@ -487,9 +523,9 @@ angular.module('bmpUiApp')
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
             '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Router Name:' + data.routerName + '</p>' +
-            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
+            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
+            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
         },
         xAxis: {
           rotateLabels: -30,
@@ -541,9 +577,9 @@ angular.module('bmpUiApp')
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
             '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Router Name:' + data.routerName + '</p>' +
-            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
+            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
+            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
         },
         xAxis: {
           rotateLabels: -30,
