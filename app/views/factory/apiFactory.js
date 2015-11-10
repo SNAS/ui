@@ -11,7 +11,7 @@ angular.module('bmpUiApp')
     .factory('apiFactory', function ($http, $q) {
 
     //http://demo.openbmp.org:8001/db_rest/v1/
-    var urlBase = 'http://bmp-dev.openbmp.org:8001/db_rest/v1/';
+    var urlBase = 'http://demo.openbmp.org:8001/db_rest/v1/';
     var limit = 1000;
     var apiFactory = {};
 
@@ -276,6 +276,18 @@ angular.module('bmpUiApp')
     // Looking Glass
     apiFactory.lookupDNS = function (hostname) {
       return $http.get(urlBase + "dns/" + hostname);
+    };
+
+    apiFactory.getCommP2ByP1 = function (part1) {
+      return $http.get(urlBase + "community/getP2/" + part1);
+    };
+
+    apiFactory.getCommP1Suggestions = function (part1) {
+      return $http.get(urlBase + "community/getP1/" + part1);
+    };
+
+    apiFactory.getPrefixByCommunity = function (community) {
+      return $http.get(urlBase + "community/" + community);
     };
 
     return apiFactory;

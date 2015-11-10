@@ -34,10 +34,10 @@ angular.module('bmp.components.table', ['ui.grid.treeView'])
           field: 'Status', displayName: 'Status', width: '6%', type: 'number',
           cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
 
-            if ((row.entity.isUp == 1 /*&& row.entity.isBMPConnected == 1*/) || (row.entity.isConnected == 1)) {
+            if ((row.entity.isUp == 1 && row.entity.isBMPConnected == 1) || (row.entity.isConnected == 1)) {
               return 'up-icon bmp-up';
             }
-            else if ((row.entity.isUp == 0 /*|| row.entity.isBMPConnected == 0*/) || (row.entity.isConnected == 0)) {
+            else if ((row.entity.isUp == 0 || row.entity.isBMPConnected == 0) || (row.entity.isConnected == 0)) {
               return 'down-icon bmp-down';
             }
           }

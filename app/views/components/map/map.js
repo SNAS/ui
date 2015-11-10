@@ -878,8 +878,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
               }
             }
             //count up and downs
-            if (item.isUp == 1) {
-              //Up
+            if (item.isUp == 1 && item.isBMPConnected == 1) {
+              //Up  if and only if router is connected and peer is up
               ips[whichIp][2]++;
               item.Status = 1;
             } else {
