@@ -309,7 +309,7 @@ angular.module('bmpUiApp')
           var match = false, index;
 
           if (withdrawsLength > 0) {
-            if (withdrawsLength < updatesLength) {
+            //if (withdrawsLength < updatesLength) {
               trendGraphUpdates.values.forEach(function (u) {
                 match = false;
                 index = trendGraphUpdates.values.indexOf(u);
@@ -321,13 +321,12 @@ angular.module('bmpUiApp')
                 if (!match) {
                   trendGraphWithdraws.values.splice(index, 0, [u[0], 0]);
                 }
-              })
-            }
-            $scope.trendGraphData.push(trendGraphWithdraws);
+              });
+            //}
           }
 
           if (updatesLength > 0) {
-            if (updatesLength < withdrawsLength) {
+            //if (updatesLength < withdrawsLength) {
               trendGraphWithdraws.values.forEach(function (w) {
                 match = false;
                 index = trendGraphWithdraws.values.indexOf(w);
@@ -339,11 +338,11 @@ angular.module('bmpUiApp')
                 if (!match) {
                   trendGraphUpdates.values.splice(index, 0, [w[0], 0]);
                 }
-              })
-            }
-            $scope.trendGraphData.push(trendGraphUpdates);
+              });
+            //}
           }
 
+          $scope.trendGraphData=[trendGraphWithdraws,trendGraphUpdates];
           $scope.trendGraphLoading = false;
         }
         else {
@@ -468,11 +467,13 @@ angular.module('bmpUiApp')
           var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
+            '<div style="line-height:1">' +
             '<p>' + y + ' on ' + x + '</p>' +
             '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
             '<p>' + 'Router Name - ' + data.routerName + '</p>' +
             '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
+            + '</div>';
         },
         xAxis: {
           rotateLabels: -25,
@@ -523,11 +524,13 @@ angular.module('bmpUiApp')
           var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
+            '<div style="line-height:1">' +
             '<p>' + y + ' on ' + x + '</p>' +
             '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
             '<p>' + 'Router Name - ' + data.routerName + '</p>' +
             '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
+            + '</div>';
         },
         xAxis: {
           rotateLabels: -25,
@@ -578,12 +581,14 @@ angular.module('bmpUiApp')
           var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
+            '<div style="line-height:1">' +
             '<p>' + y + ' on ' + x + '</p>' +
             '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
             '<p>' + 'Peer IP - ' + data.peerIP + '</p>' +
             '<p>' + 'Router Name - ' + data.routerName + '</p>' +
             '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
+            + '</div>';
         },
         xAxis: {
           rotateLabels: -30,
@@ -634,12 +639,14 @@ angular.module('bmpUiApp')
           var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
+            '<div style="line-height:1">' +
             '<p>' + y + ' on ' + x + '</p>' +
             '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
             '<p>' + 'Peer IP - ' + data.peerIP + '</p>' +
             '<p>' + 'Router Name - ' + data.routerName + '</p>' +
             '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>';
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
+            + '</div>';
         },
         xAxis: {
           rotateLabels: -30,
