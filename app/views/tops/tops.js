@@ -44,6 +44,16 @@ angular.module('bmpUiApp')
           $scope.filterPrefixText = null;
           break;
         }
+        case "both":
+        {
+          $scope.searchPeer = null;
+          $scope.peerText = "Top 20 Peers By";
+          $scope.filterPeerText = null;
+          $scope.searchPrefix = null;
+          $scope.prefixText = "Top 20 Prefixes By";
+          $scope.filterPrefixText = null;
+          break;
+        }
       }
       loadAll();
     };
@@ -56,8 +66,7 @@ angular.module('bmpUiApp')
     $scope.$on('$locationChangeStart', function (event, next, current) {
       if ($scope.searchPrefix != null || $scope.searchPeer != null) {
         // Here you can take the control and call your own functions:
-        $scope.clearFilter('peer');
-        $scope.clearFilter('prefix');
+        $scope.clearFilter('both');
         // Prevent the browser default action (Going back):
         event.preventDefault();
       }
