@@ -295,7 +295,46 @@ angular.module('bmpUiApp')
       // For Trend Graph, avoid the bug of the areas stacked together
       function setTrendData() {
         if (trendGraphUpdates != null && trendGraphWithdraws != null) {
-          $scope.trendGraphData = [trendGraphWithdraws, trendGraphUpdates];
+          var withdrawsLength = trendGraphWithdraws.values.length;
+          var updatesLength = trendGraphUpdates.values.length;
+          var match = false, index;
+
+          if (withdrawsLength > 0) {
+            if (withdrawsLength < updatesLength) {
+              trendGraphUpdates.values.forEach(function (u) {
+                match = false;
+                index = trendGraphUpdates.values.indexOf(u);
+                trendGraphWithdraws.values.forEach(function (w) {
+                  if (u[0] == w[0]) {
+                    match = true;
+                  }
+                });
+                if (!match) {
+                  trendGraphWithdraws.values.splice(index, 0, [u[0], 0]);
+                }
+              })
+            }
+            $scope.trendGraphData.push(trendGraphWithdraws);
+          }
+
+          if (updatesLength > 0) {
+            if (updatesLength < withdrawsLength) {
+              trendGraphWithdraws.values.forEach(function (w) {
+                match = false;
+                index = trendGraphWithdraws.values.indexOf(w);
+                trendGraphUpdates.values.forEach(function (u) {
+                  if (w[0] == u[0]) {
+                    match = true;
+                  }
+                });
+                if (!match) {
+                  trendGraphUpdates.values.splice(index, 0, [w[0], 0]);
+                }
+              })
+            }
+            $scope.trendGraphData.push(trendGraphUpdates);
+          }
+
           $scope.trendGraphLoading = false;
         }
         else {
@@ -666,4 +705,5 @@ angular.module('bmpUiApp')
     loadAll();
 
 
-  }]);
+  }])
+;
