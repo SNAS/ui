@@ -2,126 +2,157 @@
 
   <div class="main-page-search">
 
-    <div class="row">
-      <div class="col-lg-3">
-        Within
-        <input id="hours" type="text" class="input input-lg" ng-keypress="keypress($event)" ng-model="hours"
-               placeholder="Hours ..." style="margin-left:10px;margin-right: 10px;height:auto;vertical-align: middle;font-size:14px;padding-bottom:8px;width:70px;"/>
-        Hours Before
-      </div>
-      <div class="col-lg-3">
-    <span class='input-group date' id='datetimepicker'>
-      <input id='timestamp' type='text' class="form-control" ng-keydown="keypress($event)"/>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-    </span>
-      </div>
-      <div class="col-lg-6">
-        <span ng-show="filterPeerText||filterPrefixText">Filter:</span>
-
-        <label id="filterPeer" style="margin-left:5px;font-size:15px;cursor:pointer"
-               ng-show="filterPeerText"
-               class="btn btn-sm btn-info"
-               ng-mouseover='clearOneVisible=true'
-               ng-mouseleave='clearOneVisible=false;'
-               ng-click="clearFilter('peer')">
-          Peer: {{filterPeerText}}
-          <span ng-show="clearOneVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
-        </label>
-
-        <label id="filterPrefix" style="margin-left:5px;font-size:15px;cursor:pointer"
-               ng-show="filterPrefixText"
-               class="btn btn-sm btn-success"
-               ng-mouseover='clearTwoVisible=true'
-               ng-mouseleave='clearTwoVisible=false'
-               ng-click="clearFilter('prefix')">
-          Prefix: {{filterPrefixText}}
-          <span ng-show="clearTwoVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
-        </label>
+    <div class="row" style="margin: 0px 0px 80px 0px;">
+      <div class="col-lg-12" style="padding: 0px 80px 0px 40px;">
+        <div id="timeSelector"></div>
       </div>
     </div>
+    <div class="row" style="padding:0px 25px 0px 25px;">
+      <div class="col-lg-5">
+        <input type='text' class="form-control" id="startDatetimePicker"/>
+      </div>
+      <div class="col-lg-2" style="height:34px;padding-top:6px;">
+        <p type='text' class='label label-info' style="font-size:15px;">Duration: <span id="duration"></span> Minutes
+        </p>
+      </div>
+      <div class="col-lg-5">
+        <span class='input-group'>
+          <input type='text' class="form-control" id='endDatetimePicker'/>
+            <span class="input-group-addon">
+                <span style="cursor:pointer" ng-click="setToNow()">SET TO NOW</span>
+            </span>
+        </span>
+      </div>
+    </div>
+    <div class="row" style="padding:0px 25px 0px 25px;">
+      <div class="col-lg-10" style="margin-top:30px">
+        <div ng-show="filterPeerText||filterPrefixText">
+          <span>Filter:</span>
 
-    <br/>
+          <label id="filterPeer" style="margin-left:5px;font-size:15px;cursor:pointer"
+                 ng-show="filterPeerText"
+                 class="btn btn-sm btn-info"
+                 ng-mouseover='clearOneVisible=true'
+                 ng-mouseleave='clearOneVisible=false;'
+                 ng-click="clearFilter('peer')">
+            Peer: {{filterPeerText}}
+            <span ng-show="clearOneVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
+          </label>
 
+          <label id="filterPrefix" style="margin-left:5px;font-size:15px;cursor:pointer"
+                 ng-show="filterPrefixText"
+                 class="btn btn-sm btn-success"
+                 ng-mouseover='clearTwoVisible=true'
+                 ng-mouseleave='clearTwoVisible=false'
+                 ng-click="clearFilter('prefix')">
+            Prefix: {{filterPrefixText}}
+            <span ng-show="clearTwoVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
+          </label>
+        </div>
+      </div>
+      <div class="col-lg-2" style="margin-top:30px;">
+        <label class="btn btn-sm btn-warning" style="width:300px" ng-click="loadAll()">GO</label>
+      </div>
+    </div>
   </div>
 
-    <div class="main-area row">
-      <div class="col-lg-6">
-        <div class="d3-container" style="padding:20px">
-          <h4 style="font-size:16px">{{peerText}} Number of Updates In Past {{hours}} Hours</h4>
 
-          <div class="loading-section" ng-style="{'height': 450}">
-            <div ng-show="topUpdatesByPeerLoading" bmp-loading loading-var="topUpdatesByPeerLoading"
-                 font-width="80"></div>
-            <nvd3 id="topUpdatesByPeer"
-                  options="topUpdatesByPeerGraph"
-                  data="topUpdatesByPeerData">
-            </nvd3>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="d3-container" style="padding:20px">
-          <h4 style="font-size:16px">{{peerText}} By Number of Withdraws In Past {{hours}} Hours</h4>
+  <div class="main-area row">
+    <div class="col-lg-6">
+      <div class="d3-container" style="padding:20px">
+        <h4 style="font-size:16px">{{peerText}} Number of Updates</h4>
 
-          <div class="loading-section" ng-style="{'height': 450}">
-            <div ng-show="topWithdrawsByPeerLoading" bmp-loading loading-var="topWithdrawsByPeerLoading"
-                 font-width="80"></div>
-            <nvd3 id="topWithdrawsByPeer"
-                  options="topWithdrawsByPeerGraph"
-                  data="topWithdrawsByPeerData">
-            </nvd3>
-          </div>
+        <div class="loading-section" ng-style="{'height': 450}">
+          <div ng-show="topUpdatesByPeerLoading" bmp-loading loading-var="topUpdatesByPeerLoading"
+               font-width="80"></div>
+          <nvd3 id="topUpdatesByPeer"
+                options="topUpdatesByPeerGraph"
+                data="topUpdatesByPeerData">
+          </nvd3>
         </div>
       </div>
     </div>
+    <div class="col-lg-6">
+      <div class="d3-container" style="padding:20px">
+        <h4 style="font-size:16px">{{peerText}} By Number of Withdraws</h4>
 
-    <div class="main-area row">
-      <div class="col-lg-6">
-        <div class="d3-container" style="padding:20px 20px 35px 20px">
-          <h4 style="font-size:16px">{{prefixText}} By Number of Updates In Past {{hours}} Hours</h4>
-
-          <div class="loading-section" ng-style="{'height': 450}">
-            <div ng-show="topUpdatesByPrefixLoading" bmp-loading loading-var="topUpdatesByPrefixLoading"
-                 font-width="80"></div>
-            <nvd3 id="topUpdatesByPrefix"
-                  options="topUpdatesByPrefixGraph"
-                  data="topUpdatesByPrefixData">
-            </nvd3>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="d3-container" style="padding:20px 20px 35px 20px">
-          <h4 style="font-size:16px">{{prefixText}} By Number of Withdraws In Past {{hours}} Hours</h4>
-
-          <div class="loading-section" ng-style="{'height': 450}">
-            <div ng-show="topWithdrawsByPrefixLoading" bmp-loading loading-var="topWithdrawsByPrefixLoading"
-                 font-width="80"></div>
-            <nvd3 id="topWithdrawsByPrefix"
-                  options="topWithdrawsByPrefixGraph"
-                  data="topWithdrawsByPrefixData">
-            </nvd3>
-          </div>
+        <div class="loading-section" ng-style="{'height': 450}">
+          <div ng-show="topWithdrawsByPeerLoading" bmp-loading loading-var="topWithdrawsByPeerLoading"
+               font-width="80"></div>
+          <nvd3 id="topWithdrawsByPeer"
+                options="topWithdrawsByPeerGraph"
+                data="topWithdrawsByPeerData">
+          </nvd3>
         </div>
       </div>
     </div>
-    <div class="main-area row">
-      <div class="col-lg-12">
-        <div class="d3-container" style="padding:20px">
-          <h4 style="font-size:16px">Number of Updates/Withdraws In Past {{hours}} Hours</h4>
+  </div>
 
-          <div class="loading-section" ng-style="{'height': 450}">
-            <div ng-show="trendGraphLoading" bmp-loading loading-var="trendGraphLoading" font-width="80"></div>
-            <nvd3
-              options="trendGraph"
-              data="trendGraphData">
-            </nvd3>
-          </div>
+  <div class="main-area row">
+    <div class="col-lg-6">
+      <div class="d3-container" style="padding:20px 20px 35px 20px">
+        <h4 style="font-size:16px">{{prefixText}} By Number of Updates</h4>
+
+        <div class="loading-section" ng-style="{'height': 450}">
+          <div ng-show="topUpdatesByPrefixLoading" bmp-loading loading-var="topUpdatesByPrefixLoading"
+               font-width="80"></div>
+          <nvd3 id="topUpdatesByPrefix"
+                options="topUpdatesByPrefixGraph"
+                data="topUpdatesByPrefixData">
+          </nvd3>
         </div>
       </div>
     </div>
+    <div class="col-lg-6">
+      <div class="d3-container" style="padding:20px 20px 35px 20px">
+        <h4 style="font-size:16px">{{prefixText}} By Number of Withdraws</h4>
+
+        <div class="loading-section" ng-style="{'height': 450}">
+          <div ng-show="topWithdrawsByPrefixLoading" bmp-loading loading-var="topWithdrawsByPrefixLoading"
+               font-width="80"></div>
+          <nvd3 id="topWithdrawsByPrefix"
+                options="topWithdrawsByPrefixGraph"
+                data="topWithdrawsByPrefixData">
+          </nvd3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="main-area row">
+    <div class="col-lg-12">
+      <div class="d3-container" style="padding:20px">
+        <h4 style="font-size:16px">Number of Updates/Withdraws</h4>
+
+        <div class="loading-section" ng-style="{'height': 450}">
+          <div ng-show="trendGraphLoading" bmp-loading loading-var="trendGraphLoading" font-width="80"></div>
+          <nvd3
+            options="trendGraph"
+            data="trendGraphData">
+          </nvd3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="redirectModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Attention</h4>
+        </div>
+        <div class="modal-body">
+          <p>You are about to jump to Prefix Analysis with prefix: {{filterPrefixText}}.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" ng-click="goPrefixAnalysis()" data-dismiss="modal">Go</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
 </div>
 
 

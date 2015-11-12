@@ -3,13 +3,16 @@
 angular.module('bmpUiApp')
   .controller('TopsViewController', ["$scope", "apiFactory", '$timeout', '$state', '$stateParams', function ($scope, apiFactory, $timeout, $state, $stateParams) {
 
-    var updateColor = "#89DA59";
-    var withdrawColor = "#FF420E";
+    var updateColor = "#EAA546";
+    var withdrawColor = "#4B84CA";
 
-    $scope.hours = 2;
     var timeFormat = 'YYYY-MM-DD HH:mm';
-    var timeNow = new Date();
-    var timestamp;
+
+    var startTimestamp, endTimestamp;
+
+    endTimestamp = new Date();
+    startTimestamp = moment(endTimestamp).subtract('hours', 2).toDate();
+
 
     $scope.filterPeerText = null;
     $scope.filterPrefixText = null;
@@ -23,10 +26,132 @@ angular.module('bmpUiApp')
     $scope.searchPeer = null;
     $scope.searchPrefix = null;
 
-    $('#datetimepicker').datetimepicker({
+    var sliderSettings = {
+      start: [startTimestamp.getTime(), endTimestamp.getTime()], // Handle start position
+      step: 60 * 1000, // Slider moves in increments of a minute
+      margin: 60 * 1000, // Handles must be more than 1 minute apart
+      limit: 120 * 60 * 1000, // Maximum 2 hours
+      connect: true, // Display a colored bar between the handles
+      orientation: 'horizontal', // Orient the slider vertically
+      behaviour: 'tap-drag', // Move handle on tap, bar is draggable
+      range: {'min': moment().subtract(12, 'hours').toDate().getTime(), 'max': moment().toDate().getTime()},
+      format: {
+        to: function (value) {
+          return moment(parseInt(value));
+        },
+        from: function (value) {
+          return parseInt(value);
+        }
+      },
+      pips: {
+        mode: 'range',
+        density: 8.5,
+        format: {
+          to: function (value) {
+            return moment(parseInt(value)).format('MM/DD/YYYY HH:mm');
+          }
+        }
+      }
+    };
+
+    var timeSelector = $('#timeSelector')[0];
+
+    noUiSlider.create(timeSelector, sliderSettings);
+
+    $('#startDatetimePicker').datetimepicker({
       sideBySide: true,
-      defaultDate: timeNow
+      format: 'MM/DD/YYYY HH:mm'
     });
+
+    $('#startDatetimePicker').on('dp.hide', function () {
+      var setDate = $('#startDatetimePicker').data('DateTimePicker').date();
+      var originalValues = timeSelector.noUiSlider.get();
+      if (setDate < moment(sliderSettings.range['min'])) {
+        timeSelector.noUiSlider.destroy();
+        sliderSettings.range = {
+          'min': moment(setDate).toDate().getTime(),
+          'max': moment(setDate).add(12, 'hours').toDate().getTime()
+        };
+        sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
+        noUiSlider.create(timeSelector, sliderSettings);
+        bindValues();
+      }
+      else if (setDate > moment(sliderSettings.range['max']) && setDate < moment()) {
+        timeSelector.noUiSlider.destroy();
+        sliderSettings.range = {
+          'min': moment(setDate).toDate().getTime(),
+          'max': moment(setDate).add(12, 'hours').toDate().getTime()
+        };
+        sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
+        noUiSlider.create(timeSelector, sliderSettings);
+        bindValues();
+      }
+      else if (setDate > moment()) {
+        alert("You can't go to the future! But you can try to go to your past :)");
+      }
+      else {
+        timeSelector.noUiSlider.set([moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])]);
+      }
+    });
+
+    $('#endDatetimePicker').datetimepicker({
+      sideBySide: true,
+      format: 'MM/DD/YYYY HH:mm'
+    });
+
+    $('#endDatetimePicker').on('dp.hide', function () {
+      var setDate = $('#endDatetimePicker').data('DateTimePicker').date();
+      var originalValues = timeSelector.noUiSlider.get();
+      if (setDate < moment(sliderSettings.range['min'])) {
+        timeSelector.noUiSlider.destroy();
+        sliderSettings.range = {
+          'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
+          'max': moment(setDate).toDate().getTime()
+        };
+        sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
+        noUiSlider.create(timeSelector, sliderSettings);
+        bindValues();
+      }
+      else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(12, 'hours') < moment()) {
+        timeSelector.noUiSlider.destroy();
+        sliderSettings.range = {
+          'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
+          'max': moment(setDate).toDate().getTime()
+        };
+        sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
+        noUiSlider.create(timeSelector, sliderSettings);
+        bindValues();
+      }
+      else if (moment(setDate).subtract(12, 'hours') > moment()) {
+        alert("You can't go to the future! But you can try to go to your past :)");
+
+      }
+      else {
+        timeSelector.noUiSlider.set([moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()]);
+      }
+    });
+
+    bindValues();
+
+    function bindValues() {
+      timeSelector.noUiSlider.on('update', function () {
+        $('#startDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
+        $('#endDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
+        $('#duration').text(Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60)));
+      });
+    }
+
+    $scope.setToNow = function () {
+      var originalValues = timeSelector.noUiSlider.get();
+      timeSelector.noUiSlider.destroy();
+      sliderSettings.range = {
+        'min': moment().subtract(12, 'hours').toDate().getTime(),
+        'max': moment().toDate().getTime()
+      };
+      sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
+      noUiSlider.create(timeSelector, sliderSettings);
+      bindValues();
+    };
 
     $scope.clearFilter = function (type) {
       switch (type) {
@@ -44,19 +169,51 @@ angular.module('bmpUiApp')
           $scope.filterPrefixText = null;
           break;
         }
+        case "both":
+        {
+          $scope.searchPeer = null;
+          $scope.peerText = "Top 20 Peers By";
+          $scope.filterPeerText = null;
+          $scope.searchPrefix = null;
+          $scope.prefixText = "Top 20 Prefixes By";
+          $scope.filterPrefixText = null;
+          break;
+        }
       }
       loadAll();
     };
 
-    $scope.keypress = function (keyEvent) {
-      if (keyEvent.which === 13)
-        loadAll();
-    };
+    //$scope.keypress = function (keyEvent) {
+    //  if (keyEvent.which === 13)
+    //    loadAll();
+    //};
+
+    $scope.$on('$locationChangeStart', function (event, next, current) {
+      if ($scope.searchPrefix != null || $scope.searchPeer != null) {
+        // Here you can take the control and call your own functions:
+        $scope.clearFilter('both');
+        // Prevent the browser default action (Going back):
+        event.preventDefault();
+      }
+    });
 
     var updatesTrendData, withdrawsTrendData;
 
+    //For Redirect On The Second Click on prefix bar
+
+    var goPrefixAnaType;
+
+    $scope.goPrefixAnalysis = function () {
+      $('#redirectModal').modal('hide');
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+      $state.go('app.prefixAnalysis', {
+        prefix: $scope.filterPrefixText,
+        type: goPrefixAnaType
+      });
+    };
     //load All the graphs
-    var loadAll = function () {
+    var loadAll = $scope.loadAll = function () {
       $scope.topUpdatesByPeerLoading = true;
       $scope.topWithdrawsByPeerLoading = true;
       $scope.topUpdatesByPrefixLoading = true;
@@ -85,9 +242,10 @@ angular.module('bmpUiApp')
       ];
       $scope.trendGraphData = [];
 
-      timestamp = moment($('#timestamp').val()).tz("UTC").format(timeFormat);
+      startTimestamp = moment($('#startDatetimePicker').data("DateTimePicker").date()).tz('UTC').format(timeFormat);
+      endTimestamp = moment($('#endDatetimePicker').data("DateTimePicker").date()).tz('UTC').format(timeFormat);
 
-      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", $scope.hours, timestamp)
+      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -99,6 +257,7 @@ angular.module('bmpUiApp')
                 label: data[i].PeerAddr,
                 value: parseInt(data[i].Count),
                 hash: data[i].peer_hash_id,
+                peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
                 collectorIP: data[i].CollectorAddr,
@@ -118,7 +277,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "peer", $scope.hours, timestamp)
+      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -130,6 +289,7 @@ angular.module('bmpUiApp')
                 label: data[i].PeerAddr,
                 value: parseInt(data[i].Count),
                 hash: data[i].peer_hash_id,
+                peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
                 collectorIP: data[i].CollectorAddr,
@@ -150,7 +310,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", $scope.hours, timestamp)
+      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -160,6 +320,8 @@ angular.module('bmpUiApp')
             for (var i = 0; i < len; i++) {
               gData.push({
                 label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                peerIP: data[i].PeerAddr,
+                peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
                 collectorIP: data[i].CollectorAddr,
@@ -179,7 +341,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", $scope.hours, timestamp)
+      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -189,6 +351,8 @@ angular.module('bmpUiApp')
             for (var i = 0; i < len; i++) {
               gData.push({
                 label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                peerIP: data[i].PeerAddr,
+                peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
                 collectorIP: data[i].CollectorAddr,
@@ -211,16 +375,13 @@ angular.module('bmpUiApp')
       var trendGraphUpdates = null, trendGraphWithdraws = null;
 
       //Trend Graph
-      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.hours, timestamp)
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 5, startTimestamp, endTimestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
           var gData = [];
           for (var i = len - 1; i >= 0; i--) {
-
-            var timestmpArray = data[i].IntervalTime.split(/-| |:|\./); //"2015-03-22 22:23:06"
-            var date = new Date(timestmpArray[0], timestmpArray[1], timestmpArray[2], timestmpArray[3], timestmpArray[4], timestmpArray[5]);
-            var timestmp = date.getTime();
+            var timestmp = moment.utc(data[i].IntervalTime,"YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
             gData.push([
               timestmp, parseInt(data[i].Count)
@@ -236,16 +397,13 @@ angular.module('bmpUiApp')
         .error(function (error) {
           console.log(error.message);
         });
-      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.hours, timestamp)
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 5, startTimestamp, endTimestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
           var gData = [];
           for (var i = len - 1; i >= 0; i--) {
-
-            var timestmpArray = data[i].IntervalTime.split(/-| |:|\./); //"2015-03-22 22:23:06"
-            var date = new Date(timestmpArray[0], timestmpArray[1], timestmpArray[2], timestmpArray[3], timestmpArray[4], timestmpArray[5]);
-            var timestmp = date.getTime();
+            var timestmp = moment.utc(data[i].IntervalTime,"YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
             gData.push([
               timestmp, parseInt(data[i].Count)
@@ -265,6 +423,44 @@ angular.module('bmpUiApp')
       // For Trend Graph, avoid the bug of the areas stacked together
       function setTrendData() {
         if (trendGraphUpdates != null && trendGraphWithdraws != null) {
+          var withdrawsLength = trendGraphWithdraws.values.length;
+          var updatesLength = trendGraphUpdates.values.length;
+          var match = false, index;
+
+          if (withdrawsLength > 0) {
+            //if (withdrawsLength < updatesLength) {
+            trendGraphUpdates.values.forEach(function (u) {
+              match = false;
+              index = trendGraphUpdates.values.indexOf(u);
+              trendGraphWithdraws.values.forEach(function (w) {
+                if (u[0] == w[0]) {
+                  match = true;
+                }
+              });
+              if (!match) {
+                trendGraphWithdraws.values.splice(index, 0, [u[0], 0]);
+              }
+            });
+            //}
+          }
+
+          if (updatesLength > 0) {
+            //if (updatesLength < withdrawsLength) {
+            trendGraphWithdraws.values.forEach(function (w) {
+              match = false;
+              index = trendGraphWithdraws.values.indexOf(w);
+              trendGraphUpdates.values.forEach(function (u) {
+                if (w[0] == u[0]) {
+                  match = true;
+                }
+              });
+              if (!match) {
+                trendGraphUpdates.values.splice(index, 0, [w[0], 0]);
+              }
+            });
+            //}
+          }
+
           $scope.trendGraphData = [trendGraphWithdraws, trendGraphUpdates];
           $scope.trendGraphLoading = false;
         }
@@ -313,10 +509,16 @@ angular.module('bmpUiApp')
       function bindGraphThreeClick() {
         if ($scope.topUpdatesByPrefixData[0].values != undefined) {
           d3.selectAll("#topUpdatesByPrefix .nv-bar").on('click', function (d) {
-            $scope.searchPrefix = d.label;
-            $scope.filterPrefixText = d.label;
-            $scope.prefixText = "Prefix -- " + d.label + " :";
-            loadAll();
+            if ($scope.searchPrefix == null) {
+              $scope.searchPrefix = d.label;
+              $scope.filterPrefixText = d.label;
+              $scope.prefixText = "Prefix -- " + d.label + " :";
+              loadAll();
+            }
+            else {
+              $('#redirectModal').modal('show');
+              goPrefixAnaType = 'updates';
+            }
           });
         }
         else {
@@ -329,10 +531,16 @@ angular.module('bmpUiApp')
       function bindGraphFourClick() {
         if ($scope.topUpdatesByPrefixData[0].values != undefined) {
           d3.selectAll("#topWithdrawsByPrefix .nv-bar").on('click', function (d) {
-            $scope.searchPrefix = d.label;
-            $scope.filterPrefixText = d.label;
-            $scope.prefixText = "Prefix -- " + d.label + " :";
-            loadAll();
+            if ($scope.searchPrefix == null) {
+              $scope.searchPrefix = d.label;
+              $scope.filterPrefixText = d.label;
+              $scope.prefixText = "Prefix -- " + d.label + " :";
+              loadAll();
+            }
+            else {
+              $('#redirectModal').modal('show');
+              goPrefixAnaType = 'withdraws';
+            }
           });
         }
         else {
@@ -378,10 +586,13 @@ angular.module('bmpUiApp')
           var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
+            '<div style="line-height:1">' +
             '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Router Name:' + data.routerName + '</p>' +
-            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
+            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
+            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
+            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
+            + '</div>';
         },
         xAxis: {
           rotateLabels: -25,
@@ -432,10 +643,13 @@ angular.module('bmpUiApp')
           var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
+            '<div style="line-height:1">' +
             '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Router Name:' + data.routerName + '</p>' +
-            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
+            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
+            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
+            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
+            + '</div>';
         },
         xAxis: {
           rotateLabels: -25,
@@ -468,7 +682,7 @@ angular.module('bmpUiApp')
           top: 20,
           right: 20,
           bottom: 80,
-          left: 70
+          left: 55
         },
         color: [updateColor],
         x: function (d) {
@@ -486,10 +700,14 @@ angular.module('bmpUiApp')
           var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
+            '<div style="line-height:1">' +
             '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Router Name:' + data.routerName + '</p>' +
-            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
+            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
+            '<p>' + 'Peer IP - ' + data.peerIP + '</p>' +
+            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
+            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
+            + '</div>';
         },
         xAxis: {
           rotateLabels: -30,
@@ -540,10 +758,14 @@ angular.module('bmpUiApp')
           var data = e.point;
           hoverValue(x);
           return '<h3>' + key + '</h3>' +
+            '<div style="line-height:1">' +
             '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Router Name:' + data.routerName + '</p>' +
-            '<p>' + 'Router IP:' + data.routerIP + '</p>' +
-            '<p>' + 'Collector Admin ID:' + data.collectorAdminID + '</p>';
+            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
+            '<p>' + 'Peer IP - ' + data.peerIP + '</p>' +
+            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
+            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
+            + '</div>';
         },
         xAxis: {
           rotateLabels: -30,
@@ -618,4 +840,7 @@ angular.module('bmpUiApp')
     loadAll();
 
 
-  }]);
+  }
+
+  ])
+;

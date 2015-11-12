@@ -185,20 +185,20 @@ angular.module('bmpUiApp')
     };
 
     //For Tops view
-    apiFactory.getTopUpdates= function(searchPeer,searchPrefix,groupBy,hours,timestamp){
-      return $http.get(urlBase + "updates/top?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&groupBy=" + groupBy + "&hours=" + hours + "&ts=" + timestamp)
+    apiFactory.getTopUpdates= function(searchPeer,searchPrefix,groupBy, startTimestamp, endTimestamp){
+      return $http.get(urlBase + "updates/top?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&groupBy=" + groupBy + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
-    apiFactory.getTopWithdraws= function(searchPeer, searchPrefix, groupBy, hours,timestamp){
-      return $http.get(urlBase + "withdrawns/top?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&groupBy=" + groupBy + "&hours=" + hours + "&ts=" + timestamp)
+    apiFactory.getTopWithdraws= function(searchPeer, searchPrefix, groupBy, startTimestamp,endTimestamp){
+      return $http.get(urlBase + "withdrawns/top?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&groupBy=" + groupBy + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
-    apiFactory.getUpdatesOverTime= function(searchPeer, searchPrefix, minutes, hours, timestamp){
-      return $http.get(urlBase + "updates/trend/interval/"+minutes+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&hours=" + hours+ "&ts=" + timestamp)
+    apiFactory.getUpdatesOverTime= function(searchPeer, searchPrefix, minutes, startTimestamp,endTimestamp){
+      return $http.get(urlBase + "updates/trend/interval/"+minutes+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
-    apiFactory.getWithdrawsOverTime= function(searchPeer, searchPrefix, minutes, hours, timestamp){
-      return $http.get(urlBase + "withdrawns/trend/interval/"+minutes+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&hours=" + hours+ "&ts=" + timestamp)
+    apiFactory.getWithdrawsOverTime= function(searchPeer, searchPrefix, minutes, startTimestamp,endTimestamp){
+      return $http.get(urlBase + "withdrawns/trend/interval/"+minutes+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
 
