@@ -6,7 +6,6 @@ angular.module('bmpUiApp')
     var updateColor = "#EAA546";
     var withdrawColor = "#4B84CA";
 
-    $scope.hours = 2;
     var timeFormat = 'YYYY-MM-DD HH:mm';
 
     var startTimestamp, endTimestamp;
