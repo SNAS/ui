@@ -30,7 +30,7 @@ angular.module('bmpUiApp')
     var sliderSettings = {
       start: [startTimestamp.getTime(), endTimestamp.getTime()], // Handle start position
       step: 60 * 1000, // Slider moves in increments of a minute
-      margin: 5 * 60 * 1000, // Handles must be more than '20' apart
+      margin: 60 * 1000, // Handles must be more than 1 minute apart
       limit: 120 * 60 * 1000, // Maximum 2 hours
       connect: true, // Display a colored bar between the handles
       orientation: 'horizontal', // Orient the slider vertically
@@ -64,9 +64,51 @@ angular.module('bmpUiApp')
       format: 'MM/DD/YYYY HH:mm'
     });
 
+    $('#startDatetimePicker').on('dp.hide', function () {
+      var setDate = $('#startDatetimePicker').data('DateTimePicker').date();
+      var originalValues = timeSelector.noUiSlider.get();
+      if (setDate < moment(sliderSettings.range['min'])) {
+        timeSelector.noUiSlider.destroy();
+        sliderSettings.range = {
+          'min': moment(setDate).toDate().getTime(),
+          'max': moment(setDate).add(12, 'hours').toDate().getTime()
+        };
+        sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
+        noUiSlider.create(timeSelector, sliderSettings);
+        bindValues();
+      }
+      else if (setDate > moment()) {
+        alert("Don't try to go to the future!");
+      }
+      else {
+        timeSelector.noUiSlider.set([moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])]);
+      }
+    });
+
     $('#endDatetimePicker').datetimepicker({
       sideBySide: true,
       format: 'MM/DD/YYYY HH:mm'
+    });
+
+    $('#endDatetimePicker').on('dp.hide', function () {
+      var setDate = $('#endDatetimePicker').data('DateTimePicker').date();
+      var originalValues = timeSelector.noUiSlider.get();
+      if (setDate < moment(sliderSettings.range['min'])) {
+        timeSelector.noUiSlider.destroy();
+        sliderSettings.range = {
+          'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
+          'max': moment(setDate).toDate().getTime()
+        };
+        sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
+        noUiSlider.create(timeSelector, sliderSettings);
+        bindValues();
+      }
+      else if (setDate > moment()) {
+        alert("Don't try to go to the future!");
+      }
+      else {
+        timeSelector.noUiSlider.set([moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()]);
+      }
     });
 
     bindValues();
@@ -784,5 +826,7 @@ angular.module('bmpUiApp')
     loadAll();
 
 
-  }])
+  }
+
+  ])
 ;
