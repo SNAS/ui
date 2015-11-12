@@ -30,8 +30,8 @@
             <div ng-show="allPreLoad" bmp-loading loading-var="allPreLoad"></div>
             <div ui-grid="AllPrefixOptions" ui-grid-selection ui-grid-resize-columns></div>
             <div ng-show="oneRowSelected" style="margin-left: inherit">
-              <button class="btn btn-sm btn-default" ng-click="selectUpdates()">Updates</button>
-              <button class="btn btn-sm btn-default" ng-click="selectWithdraws()">Withdraws</button>
+              <button id="updatesBtn" class="btn btn-sm btn-default" ng-click="selectUpdates()">Updates</button>
+              <button id="withdrawsBtn" class="btn btn-sm btn-default" ng-click="selectWithdraws()">Withdraws</button>
             </div>
           </div>
         </div>

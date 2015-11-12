@@ -87,6 +87,20 @@ angular.module('bmpUiApp')
           $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
           createPrefixGridTable();
           $scope.allPreLoad=false;
+          $timeout(function() {
+            if ($stateParams.p != 'defaultPrefix') {
+              for (var i = 0, len = $scope.AllPrefixOptions.data.length; i < len; i++) {
+                if ($stateParams.peer == $scope.AllPrefixOptions.data[i].peer_hash_id) {
+                  $scope.AllPrefixGridApi.selection.selectRow($scope.AllPrefixOptions.data[i]);
+                  if ($stateParams.type == "updates")
+                    $('#updatesBtn').click();
+                  else
+                    $('#withdrawsBtn').click();
+                  break;
+                }
+              }
+            }
+          });
         }
       ).error(function(data, status, headers, config){
           console.log("here is s error");
@@ -445,10 +459,9 @@ angular.module('bmpUiApp')
       getPrefixDataGrid($scope.value);
     };
 
-    if($stateParams.prefix){
-      $stateParams.prefix = $stateParams.prefix.replace('%2F', '/');
-      $scope.value = $stateParams.prefix;
-      getPrefixDataGrid($stateParams.prefix);
+    if($stateParams.p != 'defaultPrefix'){
+      $scope.value = $stateParams.p;
+      getPrefixDataGrid($scope.value);
     } else {
       init();
     }

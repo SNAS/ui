@@ -98,7 +98,8 @@ angular.module('bmp.components.card')
       $('body').removeClass('modal-open');
       $('.modal-backdrop').remove();
       $state.go('app.prefixAnalysis', {
-        prefix: $scope.hover,
+        p: $scope.hover,
+        peer: $scope.$parent.$parent.data['peer_hash_id'],
         type: 'updates'
       });
     }

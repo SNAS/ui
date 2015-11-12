@@ -107,6 +107,11 @@ angular
       })
       .state('app.prefixAnalysis', {
         url: '/prefix-analysis?:prefix?',
+        params: {
+          'p': 'defaultPrefix',
+          'type': 'defaultType',
+          'peer': 'defaultPeer'
+        },
         templateUrl: 'views/prefixanalysis/prefixanalysis.html'
       })
       .state('app.whoIs', {
