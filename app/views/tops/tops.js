@@ -77,8 +77,18 @@ angular.module('bmpUiApp')
         noUiSlider.create(timeSelector, sliderSettings);
         bindValues();
       }
+      else if (setDate > moment(sliderSettings.range['max']) && setDate < moment()) {
+        timeSelector.noUiSlider.destroy();
+        sliderSettings.range = {
+          'min': moment(setDate).toDate().getTime(),
+          'max': moment(setDate).add(12, 'hours').toDate().getTime()
+        };
+        sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
+        noUiSlider.create(timeSelector, sliderSettings);
+        bindValues();
+      }
       else if (setDate > moment()) {
-        alert("Don't try to go to the future!");
+        alert("You can't go to the future! But you can try to go to your past :)");
       }
       else {
         timeSelector.noUiSlider.set([moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])]);
@@ -103,8 +113,19 @@ angular.module('bmpUiApp')
         noUiSlider.create(timeSelector, sliderSettings);
         bindValues();
       }
-      else if (setDate > moment()) {
-        alert("Don't try to go to the future!");
+      else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(12, 'hours') < moment()) {
+        timeSelector.noUiSlider.destroy();
+        sliderSettings.range = {
+          'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
+          'max': moment(setDate).toDate().getTime()
+        };
+        sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
+        noUiSlider.create(timeSelector, sliderSettings);
+        bindValues();
+      }
+      else if (moment(setDate).subtract(12, 'hours') > moment()) {
+        alert("You can't go to the future! But you can try to go to your past :)");
+
       }
       else {
         timeSelector.noUiSlider.set([moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()]);
@@ -361,10 +382,7 @@ angular.module('bmpUiApp')
           var data = result.table.data;
           var gData = [];
           for (var i = len - 1; i >= 0; i--) {
-
-            var timestmpArray = data[i].IntervalTime.split(/-| |:|\./); //"2015-03-22 22:23:06"
-            var date = new Date(timestmpArray[0], timestmpArray[1], timestmpArray[2], timestmpArray[3], timestmpArray[4], timestmpArray[5]);
-            var timestmp = date.getTime();
+            var timestmp = moment.utc(data[i].IntervalTime,"YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
             gData.push([
               timestmp, parseInt(data[i].Count)
@@ -386,10 +404,7 @@ angular.module('bmpUiApp')
           var data = result.table.data;
           var gData = [];
           for (var i = len - 1; i >= 0; i--) {
-
-            var timestmpArray = data[i].IntervalTime.split(/-| |:|\./); //"2015-03-22 22:23:06"
-            var date = new Date(timestmpArray[0], timestmpArray[1], timestmpArray[2], timestmpArray[3], timestmpArray[4], timestmpArray[5]);
-            var timestmp = date.getTime();
+            var timestmp = moment.utc(data[i].IntervalTime,"YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
             gData.push([
               timestmp, parseInt(data[i].Count)
