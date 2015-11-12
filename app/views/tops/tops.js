@@ -8,8 +8,12 @@ angular.module('bmpUiApp')
 
     $scope.hours = 2;
     var timeFormat = 'YYYY-MM-DD HH:mm';
-    var timeNow = new Date();
-    var timestamp;
+
+    var startTimestamp, endTimestamp;
+
+    endTimestamp = new Date();
+    startTimestamp = moment(endTimestamp).subtract('hours', 2).toDate();
+
 
     $scope.filterPeerText = null;
     $scope.filterPrefixText = null;
@@ -23,10 +27,69 @@ angular.module('bmpUiApp')
     $scope.searchPeer = null;
     $scope.searchPrefix = null;
 
-    $('#datetimepicker').datetimepicker({
+    var sliderSettings = {
+      start: [startTimestamp.getTime(), endTimestamp.getTime()], // Handle start position
+      step: 60 * 1000, // Slider moves in increments of a minute
+      margin: 5 * 60 * 1000, // Handles must be more than '20' apart
+      limit: 120 * 60 * 1000, // Maximum 2 hours
+      connect: true, // Display a colored bar between the handles
+      orientation: 'horizontal', // Orient the slider vertically
+      behaviour: 'tap-drag', // Move handle on tap, bar is draggable
+      range: {'min': moment().subtract(12, 'hours').toDate().getTime(), 'max': moment().toDate().getTime()},
+      format: {
+        to: function (value) {
+          return moment(parseInt(value));
+        },
+        from: function (value) {
+          return parseInt(value);
+        }
+      },
+      pips: {
+        mode: 'range',
+        density: 8.5,
+        format: {
+          to: function (value) {
+            return moment(parseInt(value)).format('MM/DD/YYYY HH:mm');
+          }
+        }
+      }
+    };
+
+    var timeSelector = $('#timeSelector')[0];
+
+    noUiSlider.create(timeSelector, sliderSettings);
+
+    $('#startDatetimePicker').datetimepicker({
       sideBySide: true,
-      defaultDate: timeNow
+      format: 'MM/DD/YYYY HH:mm'
     });
+
+    $('#endDatetimePicker').datetimepicker({
+      sideBySide: true,
+      format: 'MM/DD/YYYY HH:mm'
+    });
+
+    bindValues();
+
+    function bindValues() {
+      timeSelector.noUiSlider.on('update', function () {
+        $('#startDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
+        $('#endDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
+        $('#duration').text(Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60)));
+      });
+    }
+
+    $scope.setToNow = function () {
+      var originalValues = timeSelector.noUiSlider.get();
+      timeSelector.noUiSlider.destroy();
+      sliderSettings.range = {
+        'min': moment().subtract(12, 'hours').toDate().getTime(),
+        'max': moment().toDate().getTime()
+      };
+      sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
+      noUiSlider.create(timeSelector, sliderSettings);
+      bindValues();
+    };
 
     $scope.clearFilter = function (type) {
       switch (type) {
@@ -58,10 +121,10 @@ angular.module('bmpUiApp')
       loadAll();
     };
 
-    $scope.keypress = function (keyEvent) {
-      if (keyEvent.which === 13)
-        loadAll();
-    };
+    //$scope.keypress = function (keyEvent) {
+    //  if (keyEvent.which === 13)
+    //    loadAll();
+    //};
 
     $scope.$on('$locationChangeStart', function (event, next, current) {
       if ($scope.searchPrefix != null || $scope.searchPeer != null) {
@@ -87,9 +150,8 @@ angular.module('bmpUiApp')
         type: goPrefixAnaType
       });
     };
-
     //load All the graphs
-    var loadAll = function () {
+    var loadAll = $scope.loadAll = function () {
       $scope.topUpdatesByPeerLoading = true;
       $scope.topWithdrawsByPeerLoading = true;
       $scope.topUpdatesByPrefixLoading = true;
@@ -118,9 +180,10 @@ angular.module('bmpUiApp')
       ];
       $scope.trendGraphData = [];
 
-      timestamp = moment($('#timestamp').val()).tz("UTC").format(timeFormat);
+      startTimestamp = moment($('#startDatetimePicker').data("DateTimePicker").date()).tz('UTC').format(timeFormat);
+      endTimestamp = moment($('#endDatetimePicker').data("DateTimePicker").date()).tz('UTC').format(timeFormat);
 
-      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", $scope.hours, timestamp)
+      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -152,7 +215,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "peer", $scope.hours, timestamp)
+      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -185,7 +248,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", $scope.hours, timestamp)
+      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -216,7 +279,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", $scope.hours, timestamp)
+      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -250,7 +313,7 @@ angular.module('bmpUiApp')
       var trendGraphUpdates = null, trendGraphWithdraws = null;
 
       //Trend Graph
-      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.hours, timestamp)
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 5, startTimestamp, endTimestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -275,7 +338,7 @@ angular.module('bmpUiApp')
         .error(function (error) {
           console.log(error.message);
         });
-      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 5, $scope.hours, timestamp)
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 5, startTimestamp, endTimestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -310,39 +373,39 @@ angular.module('bmpUiApp')
 
           if (withdrawsLength > 0) {
             //if (withdrawsLength < updatesLength) {
-              trendGraphUpdates.values.forEach(function (u) {
-                match = false;
-                index = trendGraphUpdates.values.indexOf(u);
-                trendGraphWithdraws.values.forEach(function (w) {
-                  if (u[0] == w[0]) {
-                    match = true;
-                  }
-                });
-                if (!match) {
-                  trendGraphWithdraws.values.splice(index, 0, [u[0], 0]);
+            trendGraphUpdates.values.forEach(function (u) {
+              match = false;
+              index = trendGraphUpdates.values.indexOf(u);
+              trendGraphWithdraws.values.forEach(function (w) {
+                if (u[0] == w[0]) {
+                  match = true;
                 }
               });
+              if (!match) {
+                trendGraphWithdraws.values.splice(index, 0, [u[0], 0]);
+              }
+            });
             //}
           }
 
           if (updatesLength > 0) {
             //if (updatesLength < withdrawsLength) {
-              trendGraphWithdraws.values.forEach(function (w) {
-                match = false;
-                index = trendGraphWithdraws.values.indexOf(w);
-                trendGraphUpdates.values.forEach(function (u) {
-                  if (w[0] == u[0]) {
-                    match = true;
-                  }
-                });
-                if (!match) {
-                  trendGraphUpdates.values.splice(index, 0, [w[0], 0]);
+            trendGraphWithdraws.values.forEach(function (w) {
+              match = false;
+              index = trendGraphWithdraws.values.indexOf(w);
+              trendGraphUpdates.values.forEach(function (u) {
+                if (w[0] == u[0]) {
+                  match = true;
                 }
               });
+              if (!match) {
+                trendGraphUpdates.values.splice(index, 0, [w[0], 0]);
+              }
+            });
             //}
           }
 
-          $scope.trendGraphData=[trendGraphWithdraws,trendGraphUpdates];
+          $scope.trendGraphData = [trendGraphWithdraws, trendGraphUpdates];
           $scope.trendGraphLoading = false;
         }
         else {
