@@ -7,7 +7,7 @@
         <div id="timeSelector"></div>
       </div>
     </div>
-    <div class="row">
+    <div class="row" style="padding:0px 25px 0px 25px;">
       <div class="col-lg-5">
         <input type='text' class="form-control" id="startDatetimePicker"/>
       </div>
@@ -23,39 +23,39 @@
             </span>
         </span>
       </div>
-      <div class="row" style="padding:20px">
-        <div class="col-lg-10" style="margin-top:30px">
-          <div ng-show="filterPeerText||filterPrefixText">
-            <span>Filter:</span>
+    </div>
+    <div class="row" style="padding:0px 25px 0px 25px;">
+      <div class="col-lg-10" style="margin-top:30px">
+        <div ng-show="filterPeerText||filterPrefixText">
+          <span>Filter:</span>
 
-            <label id="filterPeer" style="margin-left:5px;font-size:15px;cursor:pointer"
-                   ng-show="filterPeerText"
-                   class="btn btn-sm btn-info"
-                   ng-mouseover='clearOneVisible=true'
-                   ng-mouseleave='clearOneVisible=false;'
-                   ng-click="clearFilter('peer')">
-              Peer: {{filterPeerText}}
-              <span ng-show="clearOneVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
-            </label>
+          <label id="filterPeer" style="margin-left:5px;font-size:15px;cursor:pointer"
+                 ng-show="filterPeerText"
+                 class="btn btn-sm btn-info"
+                 ng-mouseover='clearOneVisible=true'
+                 ng-mouseleave='clearOneVisible=false;'
+                 ng-click="clearFilter('peer')">
+            Peer: {{filterPeerText}}
+            <span ng-show="clearOneVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
+          </label>
 
-            <label id="filterPrefix" style="margin-left:5px;font-size:15px;cursor:pointer"
-                   ng-show="filterPrefixText"
-                   class="btn btn-sm btn-success"
-                   ng-mouseover='clearTwoVisible=true'
-                   ng-mouseleave='clearTwoVisible=false'
-                   ng-click="clearFilter('prefix')">
-              Prefix: {{filterPrefixText}}
-              <span ng-show="clearTwoVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
-            </label>
-          </div>
-        </div>
-        <div class="col-lg-2" style="margin-top:30px;">
-          <label class="btn btn-sm btn-warning" style="width:100px" ng-click="loadAll()">GO</label>
+          <label id="filterPrefix" style="margin-left:5px;font-size:15px;cursor:pointer"
+                 ng-show="filterPrefixText"
+                 class="btn btn-sm btn-success"
+                 ng-mouseover='clearTwoVisible=true'
+                 ng-mouseleave='clearTwoVisible=false'
+                 ng-click="clearFilter('prefix')">
+            Prefix: {{filterPrefixText}}
+            <span ng-show="clearTwoVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
+          </label>
         </div>
       </div>
+      <div class="col-lg-2" style="margin-top:30px;">
+        <label class="btn btn-sm btn-warning" style="width:300px" ng-click="loadAll()">GO</label>
+      </div>
     </div>
-
   </div>
+
 
   <div class="main-area row">
     <div class="col-lg-6">
