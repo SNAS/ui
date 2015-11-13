@@ -898,7 +898,7 @@ angular.module('bmpUiApp')
     $scope.previewGraph = {
       chart: {
         type: "lineChart",
-        height: 200,
+        height: 120,
         margin: {
           top: 20,
           right: 80,
