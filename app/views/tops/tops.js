@@ -160,7 +160,7 @@ angular.module('bmpUiApp')
       bindValues();
     };
 
-    function loadPreview(){
+    function loadPreview() {
       $scope.previewGraphData = [];
 
       //Load previewGraph updates
@@ -176,10 +176,10 @@ angular.module('bmpUiApp')
               timestmp, parseInt(data[i].Count)
             ]);
           }
-          $scope.previewGraphData.push({
+          $scope.previewGraphData[0] = {
             key: "Updates",
             values: gData
-          });
+          };
         })
         .error(function (error) {
           console.log(error.message);
@@ -198,10 +198,10 @@ angular.module('bmpUiApp')
               timestmp, parseInt(data[i].Count)
             ]);
           }
-          $scope.previewGraphData.push({
+          $scope.previewGraphData[1] = {
             key: "Withdraws",
             values: gData
-          });
+          };
         })
         .error(function (error) {
           console.log(error.message);
@@ -923,8 +923,8 @@ angular.module('bmpUiApp')
         useInteractiveGuideline: true,
         showLegend: false,
         showControls: false,
-        showXAxis:false,
-        showYAxis:false,
+        showXAxis: false,
+        showYAxis: false,
         xAxis: {
           tickFormat: function (d) {
             return moment(d).format("MM/DD/YYYY HH:mm");
