@@ -12,6 +12,7 @@ angular.module('bmpUiApp')
 
     endTimestamp = moment().startOf('minute').toDate();
     startTimestamp = moment().startOf('minute').subtract('hours', 2).toDate();
+    var duration;
 
 
     $scope.filterPeerText = null;
@@ -34,7 +35,10 @@ angular.module('bmpUiApp')
       connect: true, // Display a colored bar between the handles
       orientation: 'horizontal', // Orient the slider vertically
       behaviour: 'tap-drag', // Move handle on tap, bar is draggable
-      range: {'min': moment().startOf('minute').subtract(12, 'hours').toDate().getTime(), 'max': moment().startOf('minute').toDate().getTime()},
+      range: {
+        'min': moment().startOf('minute').subtract(12, 'hours').toDate().getTime(),
+        'max': moment().startOf('minute').toDate().getTime()
+      },
       format: {
         to: function (value) {
           return moment(parseInt(value));
@@ -143,7 +147,8 @@ angular.module('bmpUiApp')
       timeSelector.noUiSlider.on('update', function () {
         $('#startDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
         $('#endDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
-        $('#duration').text(Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60)));
+        duration = Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60));
+        $('#duration').text(duration);
       });
     }
 
@@ -164,7 +169,7 @@ angular.module('bmpUiApp')
       $scope.previewGraphData = [];
 
       //Load previewGraph updates
-      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 1, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 60, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -186,7 +191,7 @@ angular.module('bmpUiApp')
         });
 
       //Load previewGraph withdraws
-      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 1, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 60, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -434,7 +439,7 @@ angular.module('bmpUiApp')
       var trendGraphUpdates = null, trendGraphWithdraws = null;
 
       //Trend Graph
-      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 5, startTimestamp, endTimestamp)
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, ((duration * 60) / 24), startTimestamp, endTimestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -456,7 +461,7 @@ angular.module('bmpUiApp')
         .error(function (error) {
           console.log(error.message);
         });
-      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 5, startTimestamp, endTimestamp)
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, ((duration * 60) / 24), startTimestamp, endTimestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -881,12 +886,10 @@ angular.module('bmpUiApp')
           rotateLabels: -20,
           rotateYLabel: true,
           tickFormat: function (d) {
-            var date = new Date(d);
-            return date.getFullYear() + "-" +
-              date.getMonth() + "-" +
-              date.getDate() + " " +
-              date.getHours() + ":" +
-              date.getMinutes();
+            if (d % 60 == 0)
+              return moment(d).format(timeFormat);
+            else
+              return moment(d).format(timeFormat + ":ss");
           }
         },
         yAxis: {

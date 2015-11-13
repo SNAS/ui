@@ -193,12 +193,12 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "withdrawns/top?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&groupBy=" + groupBy + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
-    apiFactory.getUpdatesOverTime= function(searchPeer, searchPrefix, minutes, startTimestamp,endTimestamp){
-      return $http.get(urlBase + "updates/trend/interval/"+minutes+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
+    apiFactory.getUpdatesOverTime= function(searchPeer, searchPrefix, seconds, startTimestamp,endTimestamp){
+      return $http.get(urlBase + "updates/trend/interval/"+seconds+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
-    apiFactory.getWithdrawsOverTime= function(searchPeer, searchPrefix, minutes, startTimestamp,endTimestamp){
-      return $http.get(urlBase + "withdrawns/trend/interval/"+minutes+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
+    apiFactory.getWithdrawsOverTime= function(searchPeer, searchPrefix, seconds, startTimestamp,endTimestamp){
+      return $http.get(urlBase + "withdrawns/trend/interval/"+seconds+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
 
