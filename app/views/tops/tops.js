@@ -48,11 +48,12 @@ angular.module('bmpUiApp')
         }
       },
       pips: {
-        mode: 'range',
-        density: 8.5,
+        mode: 'count',
+        values: 13,
+        density: 3,
         format: {
           to: function (value) {
-            return moment(parseInt(value)).format('MM/DD/YYYY HH:mm');
+            return moment(parseInt(value)).format('YYYYDDMM HH:mm');
           }
         }
       }
