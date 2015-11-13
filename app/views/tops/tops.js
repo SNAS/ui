@@ -10,8 +10,8 @@ angular.module('bmpUiApp')
 
     var startTimestamp, endTimestamp;
 
-    endTimestamp = new Date();
-    startTimestamp = moment(endTimestamp).subtract('hours', 2).toDate();
+    endTimestamp = moment().startOf('minute').toDate();
+    startTimestamp = moment().startOf('minute').subtract('hours', 2).toDate();
 
 
     $scope.filterPeerText = null;
@@ -34,7 +34,7 @@ angular.module('bmpUiApp')
       connect: true, // Display a colored bar between the handles
       orientation: 'horizontal', // Orient the slider vertically
       behaviour: 'tap-drag', // Move handle on tap, bar is draggable
-      range: {'min': moment().subtract(12, 'hours').toDate().getTime(), 'max': moment().toDate().getTime()},
+      range: {'min': moment().startOf('minute').subtract(12, 'hours').toDate().getTime(), 'max': moment().startOf('minute').toDate().getTime()},
       format: {
         to: function (value) {
           return moment(parseInt(value));
@@ -79,7 +79,7 @@ angular.module('bmpUiApp')
         noUiSlider.create(timeSelector, sliderSettings);
         bindValues();
       }
-      else if (setDate > moment(sliderSettings.range['max']) && setDate < moment()) {
+      else if (setDate > moment(sliderSettings.range['max']) && setDate <= moment()) {
         timeSelector.noUiSlider.destroy();
         sliderSettings.range = {
           'min': moment(setDate).toDate().getTime(),
@@ -117,7 +117,7 @@ angular.module('bmpUiApp')
         noUiSlider.create(timeSelector, sliderSettings);
         bindValues();
       }
-      else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(12, 'hours') < moment()) {
+      else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(12, 'hours') <= moment()) {
         timeSelector.noUiSlider.destroy();
         sliderSettings.range = {
           'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
@@ -151,11 +151,11 @@ angular.module('bmpUiApp')
       var originalValues = timeSelector.noUiSlider.get();
       timeSelector.noUiSlider.destroy();
       sliderSettings.range = {
-        'min': moment().subtract(12, 'hours').toDate().getTime(),
-        'max': moment().toDate().getTime()
+        'min': moment().startOf('minute').subtract(12, 'hours').toDate().getTime(),
+        'max': moment().startOf('minute').toDate().getTime()
       };
       loadPreview();
-      sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
+      sliderSettings.start = [moment().startOf('minute').toDate().getTime() - (originalValues[1] - originalValues[0]), moment().startOf('minute').toDate().getTime()];
       noUiSlider.create(timeSelector, sliderSettings);
       bindValues();
     };
