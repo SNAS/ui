@@ -201,14 +201,15 @@ angular.module('bmpUiApp')
 
     //For Redirect On The Second Click on prefix bar
 
-    var goPrefixAnaType;
+    var goPrefixAnaType,goPrefixPeer;
 
     $scope.goPrefixAnalysis = function () {
       $('#redirectModal').modal('hide');
       $('body').removeClass('modal-open');
       $('.modal-backdrop').remove();
       $state.go('app.prefixAnalysis', {
-        prefix: $scope.filterPrefixText,
+        p: $scope.filterPrefixText,
+        peer: goPrefixPeer,
         type: goPrefixAnaType
       });
     };
@@ -320,6 +321,7 @@ angular.module('bmpUiApp')
             for (var i = 0; i < len; i++) {
               gData.push({
                 label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                peerHash: data[i].peer_hash_id,
                 peerIP: data[i].PeerAddr,
                 peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
@@ -351,6 +353,7 @@ angular.module('bmpUiApp')
             for (var i = 0; i < len; i++) {
               gData.push({
                 label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                peerHash: data[i].peer_hash_id,
                 peerIP: data[i].PeerAddr,
                 peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
@@ -517,6 +520,7 @@ angular.module('bmpUiApp')
             }
             else {
               $('#redirectModal').modal('show');
+              goPrefixPeer = d.peerHash;
               goPrefixAnaType = 'updates';
             }
           });
@@ -539,6 +543,7 @@ angular.module('bmpUiApp')
             }
             else {
               $('#redirectModal').modal('show');
+              goPrefixPeer = d.peerHash;
               goPrefixAnaType = 'withdraws';
             }
           });
