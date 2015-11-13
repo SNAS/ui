@@ -564,7 +564,6 @@ angular.module('bmpUiApp')
 
     /* Top 20 Updates By Peer Graph START*/
 
-    $scope.topUpdatesByPeerLoading = true;
     $scope.topUpdatesByPeerGraph = {
       chart: {
         type: 'discreteBarChart',
@@ -621,7 +620,6 @@ angular.module('bmpUiApp')
 
     /*Top 20 Withdraws By Peer Graph START*/
 
-    $scope.topWithdrawsByPeerLoading = true;
     $scope.topWithdrawsByPeerGraph = {
       chart: {
         type: 'discreteBarChart',
@@ -678,7 +676,6 @@ angular.module('bmpUiApp')
 
     /* Top 20 Updates By Peer Graph START*/
 
-    $scope.topUpdatesByPrefixLoading = true;
     $scope.topUpdatesByPrefixGraph = {
       chart: {
         type: 'discreteBarChart',
@@ -736,7 +733,6 @@ angular.module('bmpUiApp')
 
     /*Top 20 Withdraws By Peer Graph START*/
 
-    $scope.topWithdrawsByPrefixLoading = true;
     $scope.topWithdrawsByPrefixGraph = {
       chart: {
         type: 'discreteBarChart',
