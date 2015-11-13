@@ -54,6 +54,8 @@ angular.module('bmpUiApp')
       }
     };
 
+    loadPreview();
+
     var timeSelector = $('#timeSelector')[0];
 
     noUiSlider.create(timeSelector, sliderSettings);
@@ -72,6 +74,7 @@ angular.module('bmpUiApp')
           'min': moment(setDate).toDate().getTime(),
           'max': moment(setDate).add(12, 'hours').toDate().getTime()
         };
+        loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
         noUiSlider.create(timeSelector, sliderSettings);
         bindValues();
@@ -82,6 +85,7 @@ angular.module('bmpUiApp')
           'min': moment(setDate).toDate().getTime(),
           'max': moment(setDate).add(12, 'hours').toDate().getTime()
         };
+        loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
         noUiSlider.create(timeSelector, sliderSettings);
         bindValues();
@@ -108,6 +112,7 @@ angular.module('bmpUiApp')
           'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
           'max': moment(setDate).toDate().getTime()
         };
+        loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
         noUiSlider.create(timeSelector, sliderSettings);
         bindValues();
@@ -118,6 +123,7 @@ angular.module('bmpUiApp')
           'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
           'max': moment(setDate).toDate().getTime()
         };
+        loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
         noUiSlider.create(timeSelector, sliderSettings);
         bindValues();
@@ -148,10 +154,59 @@ angular.module('bmpUiApp')
         'min': moment().subtract(12, 'hours').toDate().getTime(),
         'max': moment().toDate().getTime()
       };
+      loadPreview();
       sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
       noUiSlider.create(timeSelector, sliderSettings);
       bindValues();
     };
+
+    function loadPreview(){
+      $scope.previewGraphData = [];
+
+      //Load previewGraph updates
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 1, moment(sliderSettings.range['min']).format(timeFormat), moment(sliderSettings.range['max']).format(timeFormat))
+        .success(function (result) {
+          var len = result.table.data.length;
+          var data = result.table.data;
+          var gData = [];
+          for (var i = len - 1; i >= 0; i--) {
+            var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+
+            gData.push([
+              timestmp, parseInt(data[i].Count)
+            ]);
+          }
+          $scope.previewGraphData.push({
+            key: "Updates",
+            values: gData
+          });
+        })
+        .error(function (error) {
+          console.log(error.message);
+        });
+
+      //Load previewGraph withdraws
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 1, moment(sliderSettings.range['min']).format(timeFormat), moment(sliderSettings.range['max']).format(timeFormat))
+        .success(function (result) {
+          var len = result.table.data.length;
+          var data = result.table.data;
+          var gData = [];
+          for (var i = len - 1; i >= 0; i--) {
+            var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+
+            gData.push([
+              timestmp, parseInt(data[i].Count)
+            ]);
+          }
+          $scope.previewGraphData.push({
+            key: "Withdraws",
+            values: gData
+          });
+        })
+        .error(function (error) {
+          console.log(error.message);
+        });
+    }
 
     $scope.clearFilter = function (type) {
       switch (type) {
@@ -180,6 +235,7 @@ angular.module('bmpUiApp')
           break;
         }
       }
+      loadPreview();
       loadAll();
     };
 
@@ -201,7 +257,7 @@ angular.module('bmpUiApp')
 
     //For Redirect On The Second Click on prefix bar
 
-    var goPrefixAnaType,goPrefixPeer;
+    var goPrefixAnaType, goPrefixPeer;
 
     $scope.goPrefixAnalysis = function () {
       $('#redirectModal').modal('hide');
@@ -384,7 +440,7 @@ angular.module('bmpUiApp')
           var data = result.table.data;
           var gData = [];
           for (var i = len - 1; i >= 0; i--) {
-            var timestmp = moment.utc(data[i].IntervalTime,"YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+            var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
             gData.push([
               timestmp, parseInt(data[i].Count)
@@ -406,7 +462,7 @@ angular.module('bmpUiApp')
           var data = result.table.data;
           var gData = [];
           for (var i = len - 1; i >= 0; i--) {
-            var timestmp = moment.utc(data[i].IntervalTime,"YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+            var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
             gData.push([
               timestmp, parseInt(data[i].Count)
@@ -483,6 +539,7 @@ angular.module('bmpUiApp')
             $scope.searchPeer = d.hash;
             $scope.filterPeerText = d.label;
             $scope.peerText = "Peer -- " + d.label + " :";
+            loadPreview();
             loadAll();
           });
         }
@@ -499,6 +556,7 @@ angular.module('bmpUiApp')
             $scope.searchPeer = d.hash;
             $scope.filterPeerText = d.label;
             $scope.peerText = "Peer -- " + d.label + " :";
+            loadPreview();
             loadAll();
           });
         }
@@ -516,6 +574,7 @@ angular.module('bmpUiApp')
               $scope.searchPrefix = d.label;
               $scope.filterPrefixText = d.label;
               $scope.prefixText = "Prefix -- " + d.label + " :";
+              loadPreview();
               loadAll();
             }
             else {
@@ -539,6 +598,7 @@ angular.module('bmpUiApp')
               $scope.searchPrefix = d.label;
               $scope.filterPrefixText = d.label;
               $scope.prefixText = "Prefix -- " + d.label + " :";
+              loadPreview();
               loadAll();
             }
             else {
@@ -832,6 +892,43 @@ angular.module('bmpUiApp')
         yAxis: {
           axisLabel: 'Count',
           tickFormat: d3.format('d')
+        }
+      }
+    };
+    $scope.previewGraph = {
+      chart: {
+        type: "lineChart",
+        height: 200,
+        margin: {
+          top: 20,
+          right: 80,
+          bottom: 10,
+          left: 40
+        },
+        color: function (d) {
+          if (d.key == "Updates")
+            return updateColor;
+          if (d.key == "Withdraws")
+            return withdrawColor;
+        },
+        x: function (d) {
+          return d[0];
+        },
+        y: function (d) {
+          return d[1];
+        },
+        useVoronoi: true,
+        clipEdge: true,
+        transitionDuration: 500,
+        useInteractiveGuideline: true,
+        showLegend: false,
+        showControls: false,
+        showXAxis:false,
+        showYAxis:false,
+        xAxis: {
+          tickFormat: function (d) {
+            return moment(d).format("MM/DD/YYYY HH:mm");
+          }
         }
       }
     };
