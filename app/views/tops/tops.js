@@ -152,6 +152,34 @@ angular.module('bmpUiApp')
       });
     }
 
+    $scope.leftArrow = function () {
+      var originalValues = timeSelector.noUiSlider.get();
+      timeSelector.noUiSlider.destroy();
+      var originalRange = [sliderSettings.range['min'], sliderSettings.range['max']];
+      sliderSettings.range = {
+        'min': originalRange[0] - (originalRange[1] - originalRange[0]),
+        'max': originalRange[0]
+      };
+      loadPreview();
+      sliderSettings.start = [sliderSettings.range['max'] - (originalValues[1] - originalValues[0]), sliderSettings.range['max']];
+      noUiSlider.create(timeSelector, sliderSettings);
+      bindValues();
+    };
+
+    $scope.rightArrow = function () {
+      var originalValues = timeSelector.noUiSlider.get();
+      timeSelector.noUiSlider.destroy();
+      var originalRange = [sliderSettings.range['min'], sliderSettings.range['max']];
+      sliderSettings.range = {
+        'min': originalRange[1],
+        'max': originalRange[1] + (originalRange[1] - originalRange[0])
+      };
+      loadPreview();
+      sliderSettings.start = [sliderSettings.range['min'], sliderSettings.range['min'] + (originalValues[1] - originalValues[0])];
+      noUiSlider.create(timeSelector, sliderSettings);
+      bindValues();
+    };
+
     $scope.setToNow = function () {
       var originalValues = timeSelector.noUiSlider.get();
       timeSelector.noUiSlider.destroy();
@@ -904,9 +932,9 @@ angular.module('bmpUiApp')
         height: 120,
         margin: {
           top: 20,
-          right: 80,
+          right: 0,
           bottom: 10,
-          left: 40
+          left: 0
         },
         color: function (d) {
           if (d.key == "Updates")

@@ -3,37 +3,40 @@
   <div class="main-page-search">
 
     <div class="row">
-      <div class="col-lg-12">
+      <div class="col-lg-1" style="width:4%;vertical-align: middle">
+        <span class="btn btn-default" style="margin-top:110px" ng-click="leftArrow()"><span class="glyphicon glyphicon-arrow-left"></span></span>
+      </div>
+      <div class="col-lg-10" style="width:91%">
         <nvd3
           options="previewGraph"
           data="previewGraphData">
         </nvd3>
-      </div>
-    </div>
-
-    <div class="row" style="margin: 0px 0px 80px 0px;">
-      <div class="col-lg-12" style="padding: 0px 80px 0px 40px;">
         <div id="timeSelector"></div>
       </div>
-    </div>
-    <div class="row" style="padding:0px 25px 0px 25px;">
-      <div class="col-lg-5">
-        <input type='text' class="form-control" id="startDatetimePicker"/>
+      <div class="col-lg-1" style="width:5%;height:100%;">
+        <span class="btn btn-default" style="margin-top:110px" ng-click="rightArrow()"><span class="glyphicon glyphicon-arrow-right"></span></span>
       </div>
-      <div class="col-lg-2" style="height:34px;padding-top:6px;">
+    </div>
+    <div class="row" style="padding:0px 25px 0px 25px; margin-top:80px">
+      <div class="col-lg-5">
+        <span>Start: <input type='text' class="form-control" id="startDatetimePicker"/></span>
+      </div>
+      <div class="col-lg-2" style="height:34px;padding-top:25px;">
         <p type='text' class='label label-info' style="font-size:15px;">Duration: <span id="duration"></span> Minutes
         </p>
       </div>
       <div class="col-lg-5">
+       <span>End:
         <span class='input-group'>
           <input type='text' class="form-control" id='endDatetimePicker'/>
             <span class="input-group-addon">
                 <span style="cursor:pointer" ng-click="setToNow()">SET TO NOW</span>
             </span>
         </span>
+         </span>
       </div>
     </div>
-    <div class="row" style="padding:0px 25px 0px 25px;">
+    <div class="row" style="padding:0px 25px 0px 25px;margin-bottom:20px">
       <div class="col-lg-10" style="margin-top:30px">
         <div ng-show="filterPeerText||filterPrefixText">
           <span>Filter:</span>
@@ -50,7 +53,7 @@
 
           <label id="filterPrefix" style="margin-left:5px;font-size:15px;cursor:pointer"
                  ng-show="filterPrefixText"
-                 class="btn btn-sm btn-success"
+                 class="btn btn-sm btn-warning"
                  ng-mouseover='clearTwoVisible=true'
                  ng-mouseleave='clearTwoVisible=false'
                  ng-click="clearFilter('prefix')">
@@ -60,7 +63,7 @@
         </div>
       </div>
       <div class="col-lg-2" style="margin-top:30px;">
-        <label class="btn btn-sm btn-warning" style="width:300px" ng-click="loadAll()">GO</label>
+        <label class="btn btn-sm btn-success" style="width:300px" ng-click="loadAll()">GO</label>
       </div>
     </div>
   </div>
