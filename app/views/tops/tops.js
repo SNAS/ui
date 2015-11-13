@@ -10,8 +10,8 @@ angular.module('bmpUiApp')
 
     var startTimestamp, endTimestamp;
 
-    endTimestamp = moment().startOf('minute').toDate();
-    startTimestamp = moment().startOf('minute').subtract('hours', 2).toDate();
+    endTimestamp = moment().toDate();
+    startTimestamp = moment().subtract('hours', 2).toDate();
     var duration;
 
 
@@ -36,8 +36,8 @@ angular.module('bmpUiApp')
       orientation: 'horizontal', // Orient the slider vertically
       behaviour: 'tap-drag', // Move handle on tap, bar is draggable
       range: {
-        'min': moment().startOf('minute').subtract(12, 'hours').toDate().getTime(),
-        'max': moment().startOf('minute').toDate().getTime()
+        'min': moment().subtract(12, 'hours').toDate().getTime(),
+        'max': moment().toDate().getTime()
       },
       format: {
         to: function (value) {
@@ -156,11 +156,11 @@ angular.module('bmpUiApp')
       var originalValues = timeSelector.noUiSlider.get();
       timeSelector.noUiSlider.destroy();
       sliderSettings.range = {
-        'min': moment().startOf('minute').subtract(12, 'hours').toDate().getTime(),
-        'max': moment().startOf('minute').toDate().getTime()
+        'min': moment().subtract(12, 'hours').toDate().getTime(),
+        'max': moment().toDate().getTime()
       };
       loadPreview();
-      sliderSettings.start = [moment().startOf('minute').toDate().getTime() - (originalValues[1] - originalValues[0]), moment().startOf('minute').toDate().getTime()];
+      sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
       noUiSlider.create(timeSelector, sliderSettings);
       bindValues();
     };
