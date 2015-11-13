@@ -164,7 +164,7 @@ angular.module('bmpUiApp')
       $scope.previewGraphData = [];
 
       //Load previewGraph updates
-      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 1, moment(sliderSettings.range['min']).format(timeFormat), moment(sliderSettings.range['max']).format(timeFormat))
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 1, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -186,7 +186,7 @@ angular.module('bmpUiApp')
         });
 
       //Load previewGraph withdraws
-      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 1, moment(sliderSettings.range['min']).format(timeFormat), moment(sliderSettings.range['max']).format(timeFormat))
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 1, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
