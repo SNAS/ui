@@ -10,8 +10,8 @@ angular.module('bmpUiApp')
 
     var startTimestamp, endTimestamp;
 
-    endTimestamp = moment().startOf('minute').toDate();
-    startTimestamp = moment().startOf('minute').subtract('hours', 2).toDate();
+    endTimestamp = moment().toDate();
+    startTimestamp = moment().subtract('hours', 2).toDate();
     var duration;
 
 
@@ -31,13 +31,13 @@ angular.module('bmpUiApp')
       start: [startTimestamp.getTime(), endTimestamp.getTime()], // Handle start position
       step: 60 * 1000, // Slider moves in increments of a minute
       margin: 60 * 1000, // Handles must be more than 1 minute apart
-      limit: 120 * 60 * 1000, // Maximum 2 hours
+      //limit: 120 * 60 * 1000, // Maximum 2 hours
       connect: true, // Display a colored bar between the handles
       orientation: 'horizontal', // Orient the slider vertically
       behaviour: 'tap-drag', // Move handle on tap, bar is draggable
       range: {
-        'min': moment().startOf('minute').subtract(12, 'hours').toDate().getTime(),
-        'max': moment().startOf('minute').toDate().getTime()
+        'min': moment().subtract(12, 'hours').toDate().getTime(),
+        'max': moment().toDate().getTime()
       },
       format: {
         to: function (value) {
@@ -53,7 +53,7 @@ angular.module('bmpUiApp')
         density: 3,
         format: {
           to: function (value) {
-            return moment(parseInt(value)).format('YYYYDDMM HH:mm');
+            return moment(parseInt(value)).format('YYYYMMDD HH:mm');
           }
         }
       }
@@ -149,6 +149,10 @@ angular.module('bmpUiApp')
         $('#startDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
         $('#endDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
         duration = Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60));
+        if (duration > 60)
+          duration = Math.floor(duration / 60) + ' Hours ' + duration % 60 + ' Minutes';
+        else
+          duration = duration + ' Minutes';
         $('#duration').text(duration);
       });
     }
@@ -185,8 +189,8 @@ angular.module('bmpUiApp')
       var originalValues = timeSelector.noUiSlider.get();
       timeSelector.noUiSlider.destroy();
       sliderSettings.range = {
-        'min': moment().startOf('minute').subtract(12, 'hours').toDate().getTime(),
-        'max': moment().startOf('minute').toDate().getTime()
+        'min': moment().subtract(12, 'hours').toDate().getTime(),
+        'max': moment().toDate().getTime()
       };
       loadPreview();
       sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
