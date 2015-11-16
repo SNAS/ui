@@ -352,6 +352,7 @@ angular.module('bmpUiApp')
                 label: data[i].PeerAddr,
                 value: parseInt(data[i].Count),
                 hash: data[i].peer_hash_id,
+                peerIP: data[i].PeerAddr,
                 peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
@@ -384,6 +385,7 @@ angular.module('bmpUiApp')
                 label: data[i].PeerAddr,
                 value: parseInt(data[i].Count),
                 hash: data[i].peer_hash_id,
+                peerIP: data[i].PeerAddr,
                 peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
@@ -415,6 +417,8 @@ angular.module('bmpUiApp')
             for (var i = 0; i < len; i++) {
               gData.push({
                 label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                prefixDescr: data[i].PrefixDescr,
+                originAS: data[i].OriginAS,
                 peerHash: data[i].peer_hash_id,
                 peerIP: data[i].PeerAddr,
                 peerName: data[i].PeerName,
@@ -447,6 +451,8 @@ angular.module('bmpUiApp')
             for (var i = 0; i < len; i++) {
               gData.push({
                 label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                prefixDescr: data[i].PrefixDescr,
+                originAS: data[i].OriginAS,
                 peerHash: data[i].peer_hash_id,
                 peerIP: data[i].PeerAddr,
                 peerName: data[i].PeerName,
@@ -687,12 +693,11 @@ angular.module('bmpUiApp')
         tooltipContent: function (key, x, y, e) {
           var data = e.point;
           hoverValue(x);
-          return '<h3>' + key + '</h3>' +
+          return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
-            '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
-            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
-            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Updated ' + y + ' times' + '</p>' +
+            '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
+            '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
         },
@@ -743,12 +748,11 @@ angular.module('bmpUiApp')
         tooltipContent: function (key, x, y, e) {
           var data = e.point;
           hoverValue(x);
-          return '<h3>' + key + '</h3>' +
+          return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
-            '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
-            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
-            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Withdrawn ' + y + ' times' + '</p>' +
+            '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
+            '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
         },
@@ -799,13 +803,13 @@ angular.module('bmpUiApp')
         tooltipContent: function (key, x, y, e) {
           var data = e.point;
           hoverValue(x);
-          return '<h3>' + key + '</h3>' +
+          return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
-            '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
-            '<p>' + 'Peer IP - ' + data.peerIP + '</p>' +
-            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
-            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Updated ' + y + ' times' + '</p>' +
+            '<p>' + 'Description - ' + data.prefixDescr + '</p>' +
+            '<p>' + 'Origin AS - ' + data.originAS + '</p>' +
+            '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
+            '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
         },
@@ -856,13 +860,13 @@ angular.module('bmpUiApp')
         tooltipContent: function (key, x, y, e) {
           var data = e.point;
           hoverValue(x);
-          return '<h3>' + key + '</h3>' +
+          return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
-            '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
-            '<p>' + 'Peer IP - ' + data.peerIP + '</p>' +
-            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
-            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Withdrawn ' + y + ' times' + '</p>' +
+            '<p>' + 'Description - ' + data.prefixDescr + '</p>' +
+            '<p>' + 'Origin AS - ' + data.originAS + '</p>' +
+            '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
+            '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
         },
