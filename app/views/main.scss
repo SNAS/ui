@@ -446,6 +446,13 @@ div.ui-grid-cell input.ng-valid {
   }
 }
 
+.prefix-clickable{
+  cursor: pointer;
+  &:hover{
+    color: #AA22FF;
+  }
+}
+
 .hover-row-highlight{
   cursor: pointer;
   &:hover{

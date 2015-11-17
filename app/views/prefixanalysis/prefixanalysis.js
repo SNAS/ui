@@ -114,9 +114,6 @@ angular.module('bmpUiApp')
       if ($scope.PrefixData.length > 0) {
         var prefix = $scope.PrefixData[0].Prefix+"/"+$scope.PrefixData[0].PrefixLen;
 
-        // create the table
-        var url = apiFactory.getWhoisPrefix(prefix);
-
         var flag = true;
         for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
           if (angular.equals($scope.PrefixData[i].Origin_AS, $scope.PrefixData[i + 1].Origin_AS)) {
@@ -129,12 +126,7 @@ angular.module('bmpUiApp')
 
         if (flag) {
 
-          //notice : synchronization
-          var request = $http({
-            method: "get",
-            url: url
-          });
-          request.success(function (result) {
+          apiFactory.getWhoisPrefix(prefix).success(function (result) {
             $scope.showPrefixInfo = '<table>';
             $scope.values = result.gen_whois_route.data[0];
             $scope.values['prefix'] = $scope.values['prefix'] + '\\' + $scope.values['prefix_len'];

@@ -26,6 +26,7 @@ angular
     'bmp.components.card',
     'bmp.components.loading',
     'bmp.components.asnModel',
+    'bmp.components.prefixModel',
     'ui.bootstrap',
     'bgDirectives',
     'leaflet-directive',

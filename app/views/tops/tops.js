@@ -407,7 +407,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp)
+      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, true)
         .success(function (result) {
 
           if (result.log != undefined) {
@@ -441,7 +441,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp)
+      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, true)
         .success(function (result) {
 
           if (result.log != undefined) {
