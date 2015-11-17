@@ -179,7 +179,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }
 
         for (var i = 0; i < data.length; i++) {
-          var latlng = [data[i].latitude, data[i].longitude];
+          var latlng;
+          if (data[i].latitude != null && data[i].longitude != null)
+            latlng = [data[i].latitude, data[i].longitude];
+          else
+            latlng = [37.3639, -121.929];
           //current router data
           var currData = {
             RouterName: data[i].RouterName,
@@ -274,7 +278,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         var data = result.v_peers.data;
         for (var i = 0, len = data.length; i < len; i++) {
           var curr = data[i];
-          var latlng = [curr.latitude, curr.longitude];
+          var latlng;
+          if (curr.latitude != null && curr.longitude != null)
+            latlng = [curr.latitude, curr.longitude];
+          else
+            latlng = [37.3639, -121.929];
           var temp = curr.latitude + ',' + curr.longitude;
 
           var dist = {km: 99999, m: 999999};
