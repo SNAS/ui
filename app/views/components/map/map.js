@@ -179,11 +179,25 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }
 
         for (var i = 0; i < data.length; i++) {
-          var latlng;
-          if (data[i].latitude != null && data[i].longitude != null)
-            latlng = [data[i].latitude, data[i].longitude];
-          else
-            latlng = [37.3639, -121.929];
+          if (data[i].latitude == null && data[i].longitude == null) {
+            data[i].latitude = 37.3639;
+            data[i].longitude = -121.929;
+          }
+
+          if (data[i].country == null) {
+            data[i].country = 'US';
+          }
+
+          if (data[i].city == null) {
+            data[i].city = 'San Jose';
+          }
+
+          if (data[i].stateprov == null) {
+            data[i].stateprov = "CA";
+          }
+
+          var latlng = [data[i].latitude, data[i].longitude];
+
           //current router data
           var currData = {
             RouterName: data[i].RouterName,
@@ -210,9 +224,9 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             $scope.allLocations.push(data[i].latitude + data[i].longitude);
             var options =
             {
-              country: data[i].country || 'US',
-              stateprov: data[i].stateprov || 'CA',
-              city: data[i].city || 'San Jose',
+              country: data[i].country,
+              stateprov: data[i].stateprov,
+              city: data[i].city,
               routers: [currData],
               peers: [],
               expandRouters: false,
@@ -278,11 +292,25 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         var data = result.v_peers.data;
         for (var i = 0, len = data.length; i < len; i++) {
           var curr = data[i];
-          var latlng;
-          if (curr.latitude != null && curr.longitude != null)
-            latlng = [curr.latitude, curr.longitude];
-          else
-            latlng = [37.3639, -121.929];
+
+          if (curr.latitude == null && curr.longitude == null) {
+            curr.latitude = 37.3639;
+            curr.longitude = -121.929;
+          }
+
+          if (curr.country == null) {
+            curr.country = 'US';
+          }
+
+          if (curr.city == null) {
+            curr.city = 'San Jose';
+          }
+
+          if (curr.stateprov == null) {
+            curr.stateprov = "CA";
+          }
+
+          var latlng = [curr.latitude, curr.longitude];
           var temp = curr.latitude + ',' + curr.longitude;
 
           var dist = {km: 99999, m: 999999};
@@ -304,9 +332,9 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             continue;
 
           var options = {
-            country: curr.country || 'US',
-            stateprov: curr.stateprov || 'CA',
-            city: curr.city || 'San Jose',
+            country: curr.country,
+            stateprov: curr.stateprov,
+            city: curr.city,
             routers: [],
             peers: [curr],
             expandRouters: false,
