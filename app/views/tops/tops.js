@@ -53,7 +53,7 @@ angular.module('bmpUiApp')
         density: 3,
         format: {
           to: function (value) {
-            return moment(parseInt(value)).format('YYYYMMDD HH:mm');
+            return moment(parseInt(value)).format('MM/DD HH:mm');
           }
         }
       }
@@ -150,7 +150,7 @@ angular.module('bmpUiApp')
         $('#endDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
         duration = Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60));
         if (duration > 60)
-          duration = Math.floor(duration / 60) + ' Hours ' + duration % 60 + ' Minutes';
+          duration = Math.floor(duration / 60) + ' hrs ' + duration % 60 + ' mins';
         else
           duration = duration + ' Minutes';
         $('#duration').text(duration);
