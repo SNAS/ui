@@ -676,7 +676,7 @@ angular.module('bmpUiApp')
           top: 20,
           right: 20,
           bottom: 80,
-          left: 70
+          left: 55
         },
         color: [updateColor],
         x: function (d) {
@@ -696,7 +696,7 @@ angular.module('bmpUiApp')
           return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
             '<p>' + 'Updated ' + y + ' times' + '</p>' +
-            '<p>' + 'Peer - ' + data.peerName + '</p>' +
+            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
             '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
@@ -751,7 +751,7 @@ angular.module('bmpUiApp')
           return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
             '<p>' + 'Withdrawn ' + y + ' times' + '</p>' +
-            '<p>' + 'Peer - ' + data.peerName + '</p>' +
+            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
             '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
@@ -786,7 +786,7 @@ angular.module('bmpUiApp')
           top: 20,
           right: 20,
           bottom: 80,
-          left: 55
+          left: 65
         },
         color: [updateColor],
         x: function (d) {
@@ -843,7 +843,7 @@ angular.module('bmpUiApp')
           top: 20,
           right: 20,
           bottom: 80,
-          left: 55
+          left: 65
         },
         color: [withdrawColor],
         x: function (d) {
