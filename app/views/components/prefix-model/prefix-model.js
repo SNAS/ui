@@ -41,7 +41,6 @@ angular.module('bmp.components.prefixModel', [])
               size: size,
               resolve: {
                 items: function () {
-                  var key = $scope.prefix + ":";
                   return {"Sorry": "Didn't find whois information for this prefix!"};
                 }
               }

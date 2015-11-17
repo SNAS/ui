@@ -112,21 +112,10 @@ angular.module('bmpUiApp')
     var createPrefixGridTable = function () {
       //$scope.AllPrefixOptions.data = $scope.PrefixData;
       if ($scope.PrefixData.length > 0) {
-        var prefix = $scope.PrefixData[0].Prefix+"/"+$scope.PrefixData[0].PrefixLen;
+        var prefix = $scope.value.trim();
 
-        var flag = true;
-        for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
-          if (angular.equals($scope.PrefixData[i].Origin_AS, $scope.PrefixData[i + 1].Origin_AS)) {
-          }
-          else {
-            flag = false;
-            break;
-          }
-        }
-
-        if (flag) {
-
-          apiFactory.getWhoisPrefix(prefix).success(function (result) {
+          apiFactory.getWhoisPrefix(prefix)
+            .success(function (result) {
             $scope.showPrefixInfo = '<table>';
             if(result.gen_whois_route.data.length>0) {
               $scope.values = result.gen_whois_route.data[0];
@@ -154,14 +143,13 @@ angular.module('bmpUiApp')
 
             });
             $scope.showPrefixInfo += '</table>';
+          }).error(function (error){
+            console.log(error);
           });
         }
         else {
-          $scope.showPrefixInfo = '</table>there are not enough information</table>';
+          $scope.showPrefixInfo = '</table>There are not enough information</table>';
         }
-      } else {
-        $scope.nodata = true;  // nodata
-      }
     };
 
     // define the Origin AS Data create function
