@@ -8,10 +8,12 @@
  * Factory for API calls
  */
 angular.module('bmpUiApp')
-    .factory('apiFactory', function ($http, $q) {
+    .factory('apiFactory', function ($http, $q, $location) {
 
     //http://demo.openbmp.org:8001/db_rest/v1/
-    var urlBase = 'http://bmp-dev.openbmp.org:8001/db_rest/v1/';
+    //Change this to your Tomcat port if debugging with local API
+    var port = $location.port();
+    var urlBase = 'http://' + $location.host() + ':' + port + '/db_rest/v1/';
     var limit = 1000;
     var apiFactory = {};
 
