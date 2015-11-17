@@ -64,8 +64,8 @@
                   <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true" tooltip="IP: {{peer.PeerIP}}" tooltip-placement="top">{{peer.PeerIP}}</div>
                 </div>
                 <span class="is-up">
-                  <icon ng-show="peer.isUp" class="bmp-up"></icon>
-                  <icon ng-show="!peer.isUp" class="bmp-down"></icon>
+                  <icon ng-show="peer.isUp && peer.isBMPConnected" class="bmp-up"></icon>
+                  <icon ng-show="!(peer.isUp&&peer.isBMPConnected)" class="bmp-down"></icon>
                 </span>
               </li>
             </ul>

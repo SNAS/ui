@@ -210,9 +210,9 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             $scope.allLocations.push(data[i].latitude + data[i].longitude);
             var options =
             {
-              country: data[i].country,
-              stateprov: data[i].stateprov,
-              city: data[i].city,
+              country: data[i].country || 'US',
+              stateprov: data[i].stateprov || 'CA',
+              city: data[i].city || 'San Jose',
               routers: [currData],
               peers: [],
               expandRouters: false,
@@ -304,9 +304,9 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             continue;
 
           var options = {
-            country: curr.country,
-            stateprov: curr.stateprov,
-            city: curr.city,
+            country: curr.country || 'US',
+            stateprov: curr.stateprov || 'CA',
+            city: curr.city || 'San Jose',
             routers: [],
             peers: [curr],
             expandRouters: false,

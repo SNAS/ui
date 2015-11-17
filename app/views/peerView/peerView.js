@@ -50,7 +50,7 @@ angular.module('bmpUiApp')
           type: 'number',
           cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
 
-            if (row.entity.isUp === 1) {
+            if (row.entity.isUp == 1 && row.entity.isBMPConnected == 1) {
               return 'up-icon bmp-up';
             }
             else {
@@ -144,7 +144,7 @@ angular.module('bmpUiApp')
         peerPrefixPromise.success(function () {
           for (var i = 0; i < peers.length; i++) {
             var prefix = getPrefix(i, peers, peer_prefix);
-            if (peers[i].isUp == 1) {
+            if (peers[i].isUp == 1 && peers[i].isBMPConnected == 1) {
               peers[i].Status = 1;
             } else {
               peers[i].Status = 0;
