@@ -10,8 +10,8 @@ angular.module('bmpUiApp')
 
     var startTimestamp, endTimestamp;
 
-    endTimestamp = moment().startOf('minute').toDate();
-    startTimestamp = moment().startOf('minute').subtract('hours', 2).toDate();
+    endTimestamp = moment().toDate();
+    startTimestamp = moment().subtract('hours', 2).toDate();
     var duration;
 
 
@@ -31,13 +31,13 @@ angular.module('bmpUiApp')
       start: [startTimestamp.getTime(), endTimestamp.getTime()], // Handle start position
       step: 60 * 1000, // Slider moves in increments of a minute
       margin: 60 * 1000, // Handles must be more than 1 minute apart
-      limit: 120 * 60 * 1000, // Maximum 2 hours
+      //limit: 120 * 60 * 1000, // Maximum 2 hours
       connect: true, // Display a colored bar between the handles
       orientation: 'horizontal', // Orient the slider vertically
       behaviour: 'tap-drag', // Move handle on tap, bar is draggable
       range: {
-        'min': moment().startOf('minute').subtract(12, 'hours').toDate().getTime(),
-        'max': moment().startOf('minute').toDate().getTime()
+        'min': moment().subtract(12, 'hours').toDate().getTime(),
+        'max': moment().toDate().getTime()
       },
       format: {
         to: function (value) {
@@ -53,7 +53,7 @@ angular.module('bmpUiApp')
         density: 3,
         format: {
           to: function (value) {
-            return moment(parseInt(value)).format('YYYYDDMM HH:mm');
+            return moment(parseInt(value)).format('MM/DD HH:mm');
           }
         }
       }
@@ -149,6 +149,10 @@ angular.module('bmpUiApp')
         $('#startDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
         $('#endDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
         duration = Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60));
+        if (duration > 60)
+          duration = Math.floor(duration / 60) + ' hrs ' + duration % 60 + ' mins';
+        else
+          duration = duration + ' Minutes';
         $('#duration').text(duration);
       });
     }
@@ -185,8 +189,8 @@ angular.module('bmpUiApp')
       var originalValues = timeSelector.noUiSlider.get();
       timeSelector.noUiSlider.destroy();
       sliderSettings.range = {
-        'min': moment().startOf('minute').subtract(12, 'hours').toDate().getTime(),
-        'max': moment().startOf('minute').toDate().getTime()
+        'min': moment().subtract(12, 'hours').toDate().getTime(),
+        'max': moment().toDate().getTime()
       };
       loadPreview();
       sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
@@ -348,6 +352,7 @@ angular.module('bmpUiApp')
                 label: data[i].PeerAddr,
                 value: parseInt(data[i].Count),
                 hash: data[i].peer_hash_id,
+                peerIP: data[i].PeerAddr,
                 peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
@@ -380,6 +385,7 @@ angular.module('bmpUiApp')
                 label: data[i].PeerAddr,
                 value: parseInt(data[i].Count),
                 hash: data[i].peer_hash_id,
+                peerIP: data[i].PeerAddr,
                 peerName: data[i].PeerName,
                 routerIP: data[i].RouterAddr,
                 routerName: data[i].RouterName,
@@ -411,6 +417,8 @@ angular.module('bmpUiApp')
             for (var i = 0; i < len; i++) {
               gData.push({
                 label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                prefixDescr: data[i].PrefixDescr,
+                originAS: data[i].OriginAS,
                 peerHash: data[i].peer_hash_id,
                 peerIP: data[i].PeerAddr,
                 peerName: data[i].PeerName,
@@ -443,6 +451,8 @@ angular.module('bmpUiApp')
             for (var i = 0; i < len; i++) {
               gData.push({
                 label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                prefixDescr: data[i].PrefixDescr,
+                originAS: data[i].OriginAS,
                 peerHash: data[i].peer_hash_id,
                 peerIP: data[i].PeerAddr,
                 peerName: data[i].PeerName,
@@ -683,12 +693,11 @@ angular.module('bmpUiApp')
         tooltipContent: function (key, x, y, e) {
           var data = e.point;
           hoverValue(x);
-          return '<h3>' + key + '</h3>' +
+          return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
-            '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
-            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
-            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Updated ' + y + ' times' + '</p>' +
+            '<p>' + 'Peer - ' + data.peerName + '</p>' +
+            '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
         },
@@ -739,12 +748,11 @@ angular.module('bmpUiApp')
         tooltipContent: function (key, x, y, e) {
           var data = e.point;
           hoverValue(x);
-          return '<h3>' + key + '</h3>' +
+          return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
-            '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
-            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
-            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Withdrawn ' + y + ' times' + '</p>' +
+            '<p>' + 'Peer - ' + data.peerName + '</p>' +
+            '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
         },
@@ -795,13 +803,13 @@ angular.module('bmpUiApp')
         tooltipContent: function (key, x, y, e) {
           var data = e.point;
           hoverValue(x);
-          return '<h3>' + key + '</h3>' +
+          return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
-            '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
-            '<p>' + 'Peer IP - ' + data.peerIP + '</p>' +
-            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
-            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Updated ' + y + ' times' + '</p>' +
+            '<p>' + 'Description - ' + data.prefixDescr + '</p>' +
+            '<p>' + 'Origin AS - ' + data.originAS + '</p>' +
+            '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
+            '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
         },
@@ -852,13 +860,13 @@ angular.module('bmpUiApp')
         tooltipContent: function (key, x, y, e) {
           var data = e.point;
           hoverValue(x);
-          return '<h3>' + key + '</h3>' +
+          return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
-            '<p>' + y + ' on ' + x + '</p>' +
-            '<p>' + 'Peer Name - ' + data.peerName + '</p>' +
-            '<p>' + 'Peer IP - ' + data.peerIP + '</p>' +
-            '<p>' + 'Router Name - ' + data.routerName + '</p>' +
-            '<p>' + 'Router IP - ' + data.routerIP + '</p>' +
+            '<p>' + 'Withdrawn ' + y + ' times' + '</p>' +
+            '<p>' + 'Description - ' + data.prefixDescr + '</p>' +
+            '<p>' + 'Origin AS - ' + data.originAS + '</p>' +
+            '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
+            '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
         },

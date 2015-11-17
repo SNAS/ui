@@ -261,6 +261,10 @@ angular.module('bmpUiApp')
       return urlBase + "whois/asn?where=w.asn=" + asn;
     };
 
+    apiFactory.getWhoisPrefix = function (prefix) {
+      return urlBase + "whois/prefix/" + prefix;
+    };
+
     // Aggregation analysis
     apiFactory.getAsnCount = function (asn) {
       return $http.get(urlBase + "rib/asn/" + asn + "/count");
