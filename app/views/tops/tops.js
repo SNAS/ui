@@ -696,7 +696,7 @@ angular.module('bmpUiApp')
           return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
             '<p>' + 'Updated ' + y + ' times' + '</p>' +
-            '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
+            '<p>' + 'Peer - ' + data.peerName + '</p>' +
             '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';
@@ -751,7 +751,7 @@ angular.module('bmpUiApp')
           return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
             '<p>' + 'Withdrawn ' + y + ' times' + '</p>' +
-            '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
+            '<p>' + 'Peer - ' + data.peerName + '</p>' +
             '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
             + '</div>';

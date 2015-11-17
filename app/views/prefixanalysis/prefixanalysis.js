@@ -86,6 +86,7 @@ angular.module('bmpUiApp')
           var peerDataOriginal = data.v_routes.data;
           $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
           createPrefixGridTable();
+          createOriginASGridTable();
           $scope.allPreLoad=false;
           $timeout(function() {
             if ($stateParams.p != 'defaultPrefix') {
@@ -109,6 +110,65 @@ angular.module('bmpUiApp')
 
     // define the Prefix Data create function
     var createPrefixGridTable = function () {
+      //$scope.AllPrefixOptions.data = $scope.PrefixData;
+      if ($scope.PrefixData.length > 0) {
+        var prefix = $scope.PrefixData[0].Prefix+"/"+$scope.PrefixData[0].PrefixLen;
+
+        // create the table
+        var url = apiFactory.getWhoisPrefix(prefix);
+
+        var flag = true;
+        for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
+          if (angular.equals($scope.PrefixData[i].Origin_AS, $scope.PrefixData[i + 1].Origin_AS)) {
+          }
+          else {
+            flag = false;
+            break;
+          }
+        }
+
+        if (flag) {
+
+          //notice : synchronization
+          var request = $http({
+            method: "get",
+            url: url
+          });
+          request.success(function (result) {
+            $scope.showPrefixInfo = '<table>';
+            $scope.values = result.gen_whois_route.data[0];
+            $scope.values['prefix'] = $scope.values['prefix'] + '\\' + $scope.values['prefix_len'];
+            delete $scope.values['prefix_len'];
+            angular.forEach($scope.values, function (value, key) {
+
+              if (key != "raw_output") {
+                $scope.showPrefixInfo += (
+                  '<tr>' +
+                  '<td>' +
+                  key + ': ' +
+                  '</td>' +
+
+                  '<td>' +
+                  value +
+                  '</td>' +
+                  '</tr>'
+                );
+              }
+
+            });
+            $scope.showPrefixInfo += '</table>';
+          });
+        }
+        else {
+          $scope.showPrefixInfo = '</table>there are not enough information</table>';
+        }
+      } else {
+        $scope.nodata = true;  // nodata
+      }
+    };
+
+    // define the Origin AS Data create function
+    var createOriginASGridTable = function () {
       //$scope.AllPrefixOptions.data = $scope.PrefixData;
       if ($scope.PrefixData.length > 0) {
         var Origin_AS = $scope.PrefixData[0].Origin_AS;
