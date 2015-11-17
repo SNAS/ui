@@ -11,7 +11,7 @@ angular.module('bmp.components.prefixModel', [])
 
           //build the modal
           $scope.modelData = result.gen_whois_route.data[0];
-          $scope.modelData['prefix'] = $scope.modelData['prefix'] + '\\' + $scope.modelData['prefix_len'];
+          $scope.modelData['prefix'] = $scope.modelData['prefix'] + '/' + $scope.modelData['prefix_len'];
           delete $scope.modelData['prefix_len'];
 
           $scope.open = function (size) {
@@ -31,6 +31,25 @@ angular.module('bmp.components.prefixModel', [])
 
           $scope.noModal = false;
         }
+        else {
+          $scope.open = function (size) {
+
+            var modalInstance = $modal.open({
+              animation: $scope.animationsEnabled,
+              templateUrl: 'myModalContent.html',
+              controller: 'ModalInstanceCtrl',
+              size: size,
+              resolve: {
+                items: function () {
+                  var key = $scope.prefix + ":";
+                  return {"Sorry": "Didn't find whois information for this prefix!"};
+                }
+              }
+            });
+          };
+        }
+
+        $scope.noModal = false;
 
       }).error(function (error) {
       console.log(error.message);

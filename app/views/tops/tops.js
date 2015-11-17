@@ -12,7 +12,7 @@ angular.module('bmpUiApp')
 
     endTimestamp = moment().toDate();
     startTimestamp = moment().subtract('hours', 2).toDate();
-    var duration;
+    var duration, durationInMinutes;
 
 
     $scope.filterPeerText = null;
@@ -148,11 +148,11 @@ angular.module('bmpUiApp')
       timeSelector.noUiSlider.on('update', function () {
         $('#startDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
         $('#endDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
-        duration = Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60));
-        if (duration > 60)
-          duration = Math.floor(duration / 60) + ' hrs ' + duration % 60 + ' mins';
+        durationInMinutes = Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60));
+        if (durationInMinutes > 60)
+          duration = Math.floor(durationInMinutes / 60) + ' hrs ' + durationInMinutes % 60 + ' mins';
         else
-          duration = duration + ' Minutes';
+          duration = durationInMinutes + ' Minutes';
         $('#duration').text(duration);
       });
     }
@@ -478,7 +478,7 @@ angular.module('bmpUiApp')
       var trendGraphUpdates = null, trendGraphWithdraws = null;
 
       //Trend Graph
-      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, ((duration * 60) / 24), startTimestamp, endTimestamp)
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, ((durationInMinutes * 60) / 24), startTimestamp, endTimestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -500,7 +500,7 @@ angular.module('bmpUiApp')
         .error(function (error) {
           console.log(error.message);
         });
-      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, ((duration * 60) / 24), startTimestamp, endTimestamp)
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, ((durationInMinutes * 60) / 24), startTimestamp, endTimestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -531,40 +531,41 @@ angular.module('bmpUiApp')
           var match = false, index;
 
           if (withdrawsLength > 0) {
-            //if (withdrawsLength < updatesLength) {
-            trendGraphUpdates.values.forEach(function (u) {
-              match = false;
-              index = trendGraphUpdates.values.indexOf(u);
-              trendGraphWithdraws.values.forEach(function (w) {
-                if (u[0] == w[0]) {
-                  match = true;
+            if (updatesLength > 0) {
+              trendGraphUpdates.values.forEach(function (u) {
+                match = false;
+                index = trendGraphUpdates.values.indexOf(u);
+                trendGraphWithdraws.values.forEach(function (w) {
+                  if (u[0] == w[0]) {
+                    match = true;
+                  }
+                });
+                if (!match) {
+                  trendGraphWithdraws.values.splice(index, 0, [u[0], 0]);
                 }
               });
-              if (!match) {
-                trendGraphWithdraws.values.splice(index, 0, [u[0], 0]);
-              }
-            });
-            //}
+            }
+            $scope.trendGraphData.push(trendGraphWithdraws);
           }
 
           if (updatesLength > 0) {
-            //if (updatesLength < withdrawsLength) {
-            trendGraphWithdraws.values.forEach(function (w) {
-              match = false;
-              index = trendGraphWithdraws.values.indexOf(w);
-              trendGraphUpdates.values.forEach(function (u) {
-                if (w[0] == u[0]) {
-                  match = true;
+            if (withdrawsLength > 0) {
+              trendGraphWithdraws.values.forEach(function (w) {
+                match = false;
+                index = trendGraphWithdraws.values.indexOf(w);
+                trendGraphUpdates.values.forEach(function (u) {
+                  if (w[0] == u[0]) {
+                    match = true;
+                  }
+                });
+                if (!match) {
+                  trendGraphUpdates.values.splice(index, 0, [w[0], 0]);
                 }
               });
-              if (!match) {
-                trendGraphUpdates.values.splice(index, 0, [w[0], 0]);
-              }
-            });
-            //}
+            }
+            $scope.trendGraphData.push(trendGraphUpdates);
           }
 
-          $scope.trendGraphData = [trendGraphWithdraws, trendGraphUpdates];
           $scope.trendGraphLoading = false;
         }
         else {

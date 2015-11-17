@@ -128,9 +128,14 @@ angular.module('bmpUiApp')
 
           apiFactory.getWhoisPrefix(prefix).success(function (result) {
             $scope.showPrefixInfo = '<table>';
-            $scope.values = result.gen_whois_route.data[0];
-            $scope.values['prefix'] = $scope.values['prefix'] + '\\' + $scope.values['prefix_len'];
-            delete $scope.values['prefix_len'];
+            if(result.gen_whois_route.data.length>0) {
+              $scope.values = result.gen_whois_route.data[0];
+              $scope.values['prefix'] = $scope.values['prefix'] + '/' + $scope.values['prefix_len'];
+              delete $scope.values['prefix_len'];
+            }
+            else{
+              $scope.values = { "Sorry" :"Didn't find whois information for this prefix!"};
+            }
             angular.forEach($scope.values, function (value, key) {
 
               if (key != "raw_output") {
