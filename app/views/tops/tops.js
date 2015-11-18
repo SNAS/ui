@@ -11,7 +11,7 @@ angular.module('bmpUiApp')
     var startTimestamp, endTimestamp;
 
     endTimestamp = moment().toDate();
-    startTimestamp = moment().subtract('hours', 2).toDate();
+    startTimestamp = moment().subtract('minutes', 15).toDate();
     var duration, durationInMinutes;
 
 
@@ -31,12 +31,12 @@ angular.module('bmpUiApp')
       start: [startTimestamp.getTime(), endTimestamp.getTime()], // Handle start position
       step: 60 * 1000, // Slider moves in increments of a minute
       margin: 60 * 1000, // Handles must be more than 1 minute apart
-      //limit: 120 * 60 * 1000, // Maximum 2 hours
+      limit: 120 * 60 * 1000, // Maximum 2 hours
       connect: true, // Display a colored bar between the handles
       orientation: 'horizontal', // Orient the slider vertically
       behaviour: 'tap-drag', // Move handle on tap, bar is draggable
       range: {
-        'min': moment().subtract(12, 'hours').toDate().getTime(),
+        'min': moment().subtract(4, 'hours').toDate().getTime(),
         'max': moment().toDate().getTime()
       },
       format: {
@@ -49,8 +49,8 @@ angular.module('bmpUiApp')
       },
       pips: {
         mode: 'count',
-        values: 13,
-        density: 3,
+        values: 5,
+        density: 4,
         format: {
           to: function (value) {
             return moment(parseInt(value)).format('MM/DD HH:mm');
@@ -77,7 +77,7 @@ angular.module('bmpUiApp')
         timeSelector.noUiSlider.destroy();
         sliderSettings.range = {
           'min': moment(setDate).toDate().getTime(),
-          'max': moment(setDate).add(12, 'hours').toDate().getTime()
+          'max': moment(setDate).add(4, 'hours').toDate().getTime()
         };
         loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
@@ -88,7 +88,7 @@ angular.module('bmpUiApp')
         timeSelector.noUiSlider.destroy();
         sliderSettings.range = {
           'min': moment(setDate).toDate().getTime(),
-          'max': moment(setDate).add(12, 'hours').toDate().getTime()
+          'max': moment(setDate).add(4, 'hours').toDate().getTime()
         };
         loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
@@ -114,7 +114,7 @@ angular.module('bmpUiApp')
       if (setDate <= moment(sliderSettings.range['min'])) {
         timeSelector.noUiSlider.destroy();
         sliderSettings.range = {
-          'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
+          'min': moment(setDate).subtract(4, 'hours').toDate().getTime(),
           'max': moment(setDate).toDate().getTime()
         };
         loadPreview();
@@ -122,10 +122,10 @@ angular.module('bmpUiApp')
         noUiSlider.create(timeSelector, sliderSettings);
         bindValues();
       }
-      else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(12, 'hours') <= moment()) {
+      else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(4, 'hours') <= moment()) {
         timeSelector.noUiSlider.destroy();
         sliderSettings.range = {
-          'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
+          'min': moment(setDate).subtract(4, 'hours').toDate().getTime(),
           'max': moment(setDate).toDate().getTime()
         };
         loadPreview();
@@ -133,7 +133,7 @@ angular.module('bmpUiApp')
         noUiSlider.create(timeSelector, sliderSettings);
         bindValues();
       }
-      else if (moment(setDate).subtract(12, 'hours') > moment()) {
+      else if (moment(setDate).subtract(4, 'hours') > moment()) {
         alert("You can't go to the future! But you can try to go to your past :)");
 
       }
@@ -189,7 +189,7 @@ angular.module('bmpUiApp')
       var originalValues = timeSelector.noUiSlider.get();
       timeSelector.noUiSlider.destroy();
       sliderSettings.range = {
-        'min': moment().subtract(12, 'hours').toDate().getTime(),
+        'min': moment().subtract(4, 'hours').toDate().getTime(),
         'max': moment().toDate().getTime()
       };
       loadPreview();
