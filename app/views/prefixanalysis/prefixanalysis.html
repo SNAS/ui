@@ -53,6 +53,23 @@
           <div class="table-container">
             <h3>History of prefix {{searchPrefix}} </h3>
 
+            <div class="row">
+              <div class="col-md-2 input">
+                <select ng-model="timeRange"
+                        ng-options="timerange.label for timerange in timeranges track by timerange.value"
+                        ng-change="selectTimeRange()">
+                </select>
+              </div>
+              <div class="col-md-4">
+                <span class='input-group'>
+                  <input type='text' class="form-control" id='endTimePicker'/>
+                    <span class="input-group-addon">
+                        <span style="cursor:pointer" ng-click="setToNow()">SET TO NOW</span>
+                    </span>
+                </span>
+              </div>
+            </div>
+
             <div class="loading-section">
               <div ng-show="loading" bmp-loading loading-var="loading" font-width="80"></div>
               <!--Selects BGP Peer please:-->

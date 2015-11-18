@@ -209,6 +209,51 @@ angular.module('bmpUiApp')
       }
     };
 
+    /******************** Following is for updates button *****************/
+    var NUMBER_OF_RECTS = 30;
+
+    $scope.timeranges = [
+      {label: 'Last 2 hours', range: 2},
+      {label: 'Last 4 hours', range: 4},
+      {label: 'Last 10 hours', range: 10}
+    ];
+
+    $scope.timeRange = $scope.timeranges[0];
+
+    $scope.timeranges.forEach(function(row){
+      row.value = row.range * 60 / NUMBER_OF_RECTS;
+    });
+
+    var changeTimeRange = function() {
+      var setDate = $('#endTimePicker').data('DateTimePicker').date();
+      $scope.currentSetTime = setDate;
+      var searchPrefix = $scope.currentValue + '?hours=' + $scope.timeRange.range + '&ts=' + moment.utc(setDate).format("YYYY-MM-DD HH:mm:ss");
+      getPrefixHisData(searchPrefix);
+      if(!$scope.$$phase) {
+        //$digest or $apply
+        $scope.$apply();
+      }
+    };
+
+    $scope.selectTimeRange = function() {
+      changeTimeRange();
+    };
+
+    $("#endTimePicker").on('dp.hide', function(){
+      changeTimeRange();
+    });
+
+    $("#endTimePicker").datetimepicker({
+      sideBySide: true,
+      format: 'MM/DD/YYYY HH:mm:ss',
+      defaultDate: moment()
+    });
+
+    $scope.setToNow = function(){
+      $scope.currentSetTime = moment();
+      $("#endTimePicker").data("DateTimePicker").date($scope.currentSetTime);
+    };
+
     //deal with the data from History of prefix
     $scope.HistoryPrefixOptions = {
       showGridFooter: true,
@@ -229,8 +274,6 @@ angular.module('bmpUiApp')
       $scope.HistoryPrefixGridApi = gridApi;
 
       gridApi.selection.on.rowSelectionChanged($scope,function(row){
-        var msg = 'row selected ' + row.isSelected;
-        var rowMsg = row.entity.PeerASN;
         $scope.itemValue = row.entity; //how can i get data from one row before
         $scope.createShowTable();
         $scope.$apply()
@@ -258,72 +301,51 @@ angular.module('bmpUiApp')
     ];
 
     // the only Function is creating a history prefix gird , inject data should be $scope.HisData
-     $scope.createPrefixHisGrid = function (hour) {
+    $scope.createPrefixHisGrid = function (i) {
       if (typeof $scope.HisData != "undefined") {
         $scope.HistoryPrefixOptions.data = [];
-        $scope.HistoryPrefixOptions.data = $scope.HisData[hour];
+        $scope.HistoryPrefixOptions.data = $scope.HisData[i];
         $scope.showGrid = true;
         $scope.$apply();
       }
     };
 
     var getPrefixHisData = function (searchPrefix) {
-      if ("All peers" == searchPrefix) {
-        apiFactory.getHistoryPrefix(searchPrefix)
-          .success(function (data) {
+      $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
+      apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId)
+        .success(function (data) {
+          $scope.originHisData = data.v_routes_history.data;
 
-            // still don't know why we need $scope.HistoryPrefixOptions.data here
-            $scope.HistoryPrefixOptions.data =  $scope.originHisData = data.v_routes_history.data;
-
-            if($scope.HistoryPrefixOptions.data.length == 0)
-            {
-              $scope.showTip = "true";
-            }
-            //prepared the data to put into grid
-            getPrefixHisDataHour();
-            //createPrefixHisGrid(7);
-          });
-      }
-      else {
-        $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
-        apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId)
-          .success(function (data) {
-            $scope.originHisData = data.v_routes_history.data;
-
-            if($scope.originHisData.length == 0)
-            {
-              $scope.showTip = "true";
-            }
-            else
-            {
-              $scope.showTip = "false";
-            }
-            getPrefixHisDataHour();
-          });
-        if(!$scope.$$phase) {
-          //$digest or $apply
-          $scope.$apply();
-        }
-        //$scope.$apply();
+          if($scope.originHisData.length == 0)
+          {
+            $scope.showTip = "true";
+          }
+          else
+          {
+            $scope.showTip = "false";
+          }
+          getPrefixHisDataHour();
+        });
+      if(!$scope.$$phase) {
+        $scope.$apply();
       }
     };
-
 
     var getPrefixHisDataHour = function () {
 
       var allHisData = $scope.originHisData.reverse();
       $scope.asPathList = new Array();
 
-      $scope.asPathChangeNumber = new Array(24);
-      $scope.asPathChangeRate = new Array(24);
-      $scope.HisData = new Array(24);
+      $scope.asPathChangeNumber = new Array(NUMBER_OF_RECTS);
+      $scope.asPathChangeRate = new Array(NUMBER_OF_RECTS);
+      $scope.HisData = new Array(NUMBER_OF_RECTS);
 
-      $scope.asPathChangeAS_PATH = new Array(24).fill(0);//this is for AS_PATH
-      $scope.asPathChangeNH = new Array(24).fill(0);//this is for next hop
-      $scope.asPathChangeCommunites = new Array(24).fill(0);//this is for Communites
-      $scope.asPathChangeMED = new Array(24).fill(0);
+      $scope.asPathChangeAS_PATH = new Array(NUMBER_OF_RECTS).fill(0);//this is for AS_PATH
+      $scope.asPathChangeNH = new Array(NUMBER_OF_RECTS).fill(0);//this is for next hop
+      $scope.asPathChangeCommunites = new Array(NUMBER_OF_RECTS).fill(0);//this is for Communites
+      $scope.asPathChangeMED = new Array(NUMBER_OF_RECTS).fill(0);
 
-      for(var i = 0; i < 24; i++) {
+      for(var i = 0; i < NUMBER_OF_RECTS; i++) {
         $scope.HisData[i] = new Array();
       }
 
@@ -346,7 +368,7 @@ angular.module('bmpUiApp')
           allHisData[i].preData = allHisData[i-1];
         }
 
-        var hour = parseInt(allHisData[i].LastModified.substring(11, 13));
+        var offsetInMin = ($scope.currentSetTime - moment.utc(allHisData[i].LastModified).local())/1000/60;
 
         // ********* the following code is to create two field to record the As Path changing
         if(typeof(allHisData[i].AS_Path) == "string") {
@@ -363,7 +385,6 @@ angular.module('bmpUiApp')
             allHisData[i+1].AS_Path =  allHisData[i+1].AS_Path.slice(1); // remove the first blank
           }
         }
-
 
         //to record all the last flag and the last line
         allHisData[i].AS_Path_list = [];
@@ -436,7 +457,8 @@ angular.module('bmpUiApp')
           allHisData[i].Communities_list[j]["last_flag"] = allHisData[i].Communities_list_flag_last[j];
         }
 // ********* the  above code is to create two field to record the Communities changing
-        $scope.HisData[hour].push(allHisData[i]);
+        if (offsetInMin/$scope.timeRange.value <= NUMBER_OF_RECTS - 1)
+          $scope.HisData[NUMBER_OF_RECTS-1-Math.floor(offsetInMin/$scope.timeRange.value)].push(allHisData[i]);
       }
 
       Array.prototype.compare = function (array) {
@@ -464,7 +486,7 @@ angular.module('bmpUiApp')
       };
 
       // to calculate the data color
-      for(i = 0; i < 24; i++) {
+      for(i = 0; i < NUMBER_OF_RECTS; i++) {
         $scope.asPathChangeNumber[i] = $scope.HisData[i].length;
 
         for(var j = 1;j < $scope.HisData[i].length; j++) {
@@ -488,11 +510,10 @@ angular.module('bmpUiApp')
         $scope.asPathChange[1] = $scope.asPathChangeAS_PATH;
         $scope.asPathChange[2] = $scope.asPathChangeNH;
         $scope.asPathChange[3] = $scope.asPathChangeCommunites;
-
-        if(!$scope.$$phase) {
-          //$digest or $apply
-          $scope.$apply();
-        }
+      }
+      if(!$scope.$$phase) {
+        //$digest or $apply
+        $scope.$apply();
       }
       $scope.loading = false;
     };
@@ -517,7 +538,7 @@ angular.module('bmpUiApp')
       if(typeof($scope.currentValue) == "undefined"){
         $scope.currentValue = $scope.value;
       }
-      getPrefixHisData($scope.currentValue);
+      getPrefixHisData($scope.currentValue+"?hours=2"); //default fetch data in the past two hours
 
       if(!$scope.$$phase) {
         //$digest or $apply
@@ -529,12 +550,16 @@ angular.module('bmpUiApp')
       $scope.loading = true;
       $scope.showGrid = false;
       $scope.isUpdatesSelected = true;
+      if ($scope.currentSetTime == null) {
+        $scope.currentSetTime = moment();
+      }
       $scope.selectChange();
     };
 
+    /**************** For Withdraws part *************************/
+
     $scope.selectWithdraws = function() {
       $scope.isWithdrawsSelected = true;
-      console.log($scope.peerData.selectPeer);
       apiFactory.getTopPrefixWithdrawsByPeer($scope.peerData.selectPeer['peer_hash_id'])
         .success(function(data) {
           var records = data.log.data;
@@ -564,13 +589,14 @@ angular.module('bmpUiApp')
       {name: "Count", displayName: 'Count', cellClass:'background'}
     ];
 
+    /************************ END for withdraws part *********************/
+
     var myModal = new modal();
 
     $scope.showModal = function() {
       $scope.createShowTable();
       myModal.open();
     };
-
 
     // createShowTable function is to add a table in showDetails modal.
     $scope.createShowTable = function()
@@ -857,9 +883,11 @@ angular.module('bmpUiApp')
   }])
   .directive('d3Directive',['$compile', function($compile){
     function link($scope,element,scope){
+      var NUMBER_OF_RECTS = 30;
       var w = 600;
       var h = 20;
-      var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      //var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      var data = new Array(NUMBER_OF_RECTS).fill(0);
 
       var colorPicker = function(number,x){
         var color = new Array();
@@ -896,7 +924,11 @@ angular.module('bmpUiApp')
 
         var tip = d3.tip()
           .html(function(d,i) {
-            var content = i + ":00~" + (parseInt(i)+1).toString() + ":00" + " " + "<strong>Number:</strong>" + d ;
+            if (d != 0) d += 1;
+            var time = $scope.currentSetTime;
+            var content = moment.utc(time - (NUMBER_OF_RECTS-parseInt(i))*$scope.timeRange.value*60000).local().format("MM/DD HH:mm")
+              +"~"+ moment.utc(time - (NUMBER_OF_RECTS-1-parseInt(i))* $scope.timeRange.value*60000).local().format("MM/DD HH:mm")
+              +"<br/><strong>Number:</strong>" + d;
             return content;
           });
 
@@ -905,7 +937,7 @@ angular.module('bmpUiApp')
           .enter()
           .append("rect")
           .attr("x", function(d, i) {
-            return (i%24) * 23 + 10;	//Bar width of 20 plus 1 for padding
+            return (i%NUMBER_OF_RECTS) * 25 + 10;	//Bar width of 20 plus 1 for padding
           })
           .attr("width", 20)
           .attr("y", 0)
