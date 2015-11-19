@@ -342,32 +342,25 @@ angular.module('bmpUiApp')
 
       apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
         .success(function (result) {
-
-          if (result.log != undefined) {
-            var data = result.log.data;
-            var len = data.length;
-            var gData = [];
-            for (var i = 0; i < len; i++) {
-              gData.push({
-                label: data[i].PeerAddr,
-                value: parseInt(data[i].Count),
-                hash: data[i].peer_hash_id,
-                peerIP: data[i].PeerAddr,
-                peerName: data[i].PeerName,
-                routerIP: data[i].RouterAddr,
-                routerName: data[i].RouterName,
-                collectorIP: data[i].CollectorAddr,
-                collectorName: data[i].CollectorName,
-                collectorAdminID: data[i].CollectorAdminID
-              });
-            }
-            $scope.topUpdatesByPeerData[0].values = gData;
-            $scope.topUpdatesByPeerLoading = false;
+          var data = result.updates.data.data;
+          var len = data.length;
+          var gData = [];
+          for (var i = 0; i < len; i++) {
+            gData.push({
+              label: data[i].PeerAddr,
+              value: parseInt(data[i].Count),
+              hash: data[i].peer_hash_id,
+              peerIP: data[i].PeerAddr,
+              peerName: data[i].PeerName,
+              routerIP: data[i].RouterAddr,
+              routerName: data[i].RouterName,
+              collectorIP: data[i].CollectorAddr,
+              collectorName: data[i].CollectorName,
+              collectorAdminID: data[i].CollectorAdminID
+            });
           }
-          else {
-            $scope.topUpdatesByPeerData[0].values = null;
-            $scope.topUpdatesByPeerLoading = false;
-          }
+          $scope.topUpdatesByPeerData[0].values = gData;
+          $scope.topUpdatesByPeerLoading = false;
         })
         .error(function (error) {
           console.log(error.message);
@@ -375,33 +368,25 @@ angular.module('bmpUiApp')
 
       apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
         .success(function (result) {
-
-          if (result.log != undefined) {
-            var data = result.log.data;
-            var len = data.length;
-            var gData = [];
-            for (var i = 0; i < len; i++) {
-              gData.push({
-                label: data[i].PeerAddr,
-                value: parseInt(data[i].Count),
-                hash: data[i].peer_hash_id,
-                peerIP: data[i].PeerAddr,
-                peerName: data[i].PeerName,
-                routerIP: data[i].RouterAddr,
-                routerName: data[i].RouterName,
-                collectorIP: data[i].CollectorAddr,
-                collectorName: data[i].CollectorName,
-                collectorAdminID: data[i].CollectorAdminID
-              });
-            }
-            $scope.topWithdrawsByPeerData[0].values = gData;
-            $scope.topWithdrawsByPeerLoading = false;
+          var data = result.withdraws.data.data;
+          var len = data.length;
+          var gData = [];
+          for (var i = 0; i < len; i++) {
+            gData.push({
+              label: data[i].PeerAddr,
+              value: parseInt(data[i].Count),
+              hash: data[i].peer_hash_id,
+              peerIP: data[i].PeerAddr,
+              peerName: data[i].PeerName,
+              routerIP: data[i].RouterAddr,
+              routerName: data[i].RouterName,
+              collectorIP: data[i].CollectorAddr,
+              collectorName: data[i].CollectorName,
+              collectorAdminID: data[i].CollectorAdminID
+            });
           }
-          else {
-            $scope.topWithdrawsByPeerData[0].values = [];
-            $scope.topWithdrawsByPeerLoading = false;
-          }
-
+          $scope.topWithdrawsByPeerData[0].values = gData;
+          $scope.topWithdrawsByPeerLoading = false;
         })
         .error(function (error) {
           console.log(error.message);
@@ -409,33 +394,26 @@ angular.module('bmpUiApp')
 
       apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, true)
         .success(function (result) {
-
-          if (result.log != undefined) {
-            var data = result.log.data;
-            var len = data.length;
-            var gData = [];
-            for (var i = 0; i < len; i++) {
-              gData.push({
-                label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
-                prefixDescr: data[i].PrefixDescr,
-                originAS: data[i].OriginAS,
-                peerHash: data[i].peer_hash_id,
-                peerIP: data[i].PeerAddr,
-                peerName: data[i].PeerName,
-                routerIP: data[i].RouterAddr,
-                routerName: data[i].RouterName,
-                collectorIP: data[i].CollectorAddr,
-                collectorName: data[i].CollectorName,
-                collectorAdminID: data[i].CollectorAdminID
-              });
-            }
-            $scope.topUpdatesByPrefixData[0].values = gData;
-            $scope.topUpdatesByPrefixLoading = false;
+          var data = result.updates.data.data;
+          var len = data.length;
+          var gData = [];
+          for (var i = 0; i < len; i++) {
+            gData.push({
+              label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+              prefixDescr: data[i].PrefixDescr,
+              originAS: data[i].OriginAS,
+              peerHash: data[i].peer_hash_id,
+              peerIP: data[i].PeerAddr,
+              peerName: data[i].PeerName,
+              routerIP: data[i].RouterAddr,
+              routerName: data[i].RouterName,
+              collectorIP: data[i].CollectorAddr,
+              collectorName: data[i].CollectorName,
+              collectorAdminID: data[i].CollectorAdminID
+            });
           }
-          else {
-            $scope.topUpdatesByPrefixData[0].values = [];
-            $scope.topUpdatesByPrefixLoading = false;
-          }
+          $scope.topUpdatesByPrefixData[0].values = gData;
+          $scope.topUpdatesByPrefixLoading = false;
         })
         .error(function (error) {
           console.log(error.message);
@@ -443,33 +421,26 @@ angular.module('bmpUiApp')
 
       apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, true)
         .success(function (result) {
-
-          if (result.log != undefined) {
-            var data = result.log.data;
-            var len = data.length;
-            var gData = [];
-            for (var i = 0; i < len; i++) {
-              gData.push({
-                label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
-                prefixDescr: data[i].PrefixDescr,
-                originAS: data[i].OriginAS,
-                peerHash: data[i].peer_hash_id,
-                peerIP: data[i].PeerAddr,
-                peerName: data[i].PeerName,
-                routerIP: data[i].RouterAddr,
-                routerName: data[i].RouterName,
-                collectorIP: data[i].CollectorAddr,
-                collectorName: data[i].CollectorName,
-                collectorAdminID: data[i].CollectorAdminID
-              });
-            }
-            $scope.topWithdrawsByPrefixData[0].values = gData;
-            $scope.topWithdrawsByPrefixLoading = false;
+          var data = result.withdraws.data.data;
+          var len = data.length;
+          var gData = [];
+          for (var i = 0; i < len; i++) {
+            gData.push({
+              label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+              prefixDescr: data[i].PrefixDescr,
+              originAS: data[i].OriginAS,
+              peerHash: data[i].peer_hash_id,
+              peerIP: data[i].PeerAddr,
+              peerName: data[i].PeerName,
+              routerIP: data[i].RouterAddr,
+              routerName: data[i].RouterName,
+              collectorIP: data[i].CollectorAddr,
+              collectorName: data[i].CollectorName,
+              collectorAdminID: data[i].CollectorAdminID
+            });
           }
-          else {
-            $scope.topWithdrawsByPrefixData[0].values = [];
-            $scope.topWithdrawsByPrefixLoading = false;
-          }
+          $scope.topWithdrawsByPrefixData[0].values = gData;
+          $scope.topWithdrawsByPrefixLoading = false;
         })
         .error(function (error) {
           console.log(error.message);
