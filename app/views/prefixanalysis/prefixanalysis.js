@@ -252,6 +252,7 @@ angular.module('bmpUiApp')
     $scope.setToNow = function(){
       $scope.currentSetTime = moment();
       $("#endTimePicker").data("DateTimePicker").date($scope.currentSetTime);
+      changeTimeRange();
     };
 
     //deal with the data from History of prefix
@@ -910,14 +911,21 @@ angular.module('bmpUiApp')
         var number = index;
 
         var div2 = d3.select(element[0])
-          .append("div");
+          .append("div")
+          .attr("class", "panel panel-default");
 
-        div2.append("text")
+        //var div3 = div2
+        //  .append("div");
+
+        div2.append("div")
+          .attr("class", "panel-heading")
+          .append("text")
           .text(function(){ return textchoser(number);})
           .style("text-anchor", "middle")
           .attr("x",10);
 
-        var svg2 = div2
+        var svg2 = div2.append("div")
+          .attr("class", "panel-body")
           .append("svg")
           .attr("width", w)
           .attr("height", h);
@@ -937,7 +945,7 @@ angular.module('bmpUiApp')
           .enter()
           .append("rect")
           .attr("x", function(d, i) {
-            return (i%NUMBER_OF_RECTS) * 25 + 10;	//Bar width of 20 plus 1 for padding
+            return (i%NUMBER_OF_RECTS) * 30 + 50;	//Bar width of 20 plus 1 for padding
           })
           .attr("width", 20)
           .attr("y", 0)
@@ -970,12 +978,13 @@ angular.module('bmpUiApp')
       };
 
       // draw four lines of rectangles
-      drawRect(0);  // MED
-      drawRect(1);  // AS Path
-      drawRect(2);  // Communities
-      drawRect(3);  // NH
+      //drawRect(0);  // MED
+      //drawRect(1);  // AS Path
+      //drawRect(2);  // Communities
+      //drawRect(3);  // NH
 
       var removeSvg = function() {
+        d3.selectAll(".panel").remove();
         d3.selectAll("svg").remove();
         d3.selectAll("text").remove();
       };
