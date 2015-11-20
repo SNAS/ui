@@ -820,7 +820,7 @@ angular.module('bmpUiApp')
         margin: {
           top: 20,
           right: 20,
-          bottom: 95,
+          bottom: 85,
           left: 65
         },
         color: [updateColor],
@@ -877,7 +877,7 @@ angular.module('bmpUiApp')
         margin: {
           top: 20,
           right: 20,
-          bottom: 95,
+          bottom: 85,
           left: 65
         },
         color: [withdrawColor],
