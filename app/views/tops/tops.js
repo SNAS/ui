@@ -841,7 +841,7 @@ angular.module('bmpUiApp')
           return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
             '<p>' + 'Updated ' + y + ' times' + '</p>' +
-            (data.prefixDescr=='null'?('<p>' + 'Description - ' + data.prefixDescr + '</p>'):"") +
+            (data.prefixDescr&&data.prefixDescr!='null'?('<p>' + 'Description - ' + data.prefixDescr + '</p>'):"") +
             (data.originAS>0?('<p>' + 'Origin AS - ' + data.originAS + '</p>'):"") +
             '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
             '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
