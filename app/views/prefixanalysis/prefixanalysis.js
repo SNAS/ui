@@ -213,18 +213,21 @@ angular.module('bmpUiApp')
     var NUMBER_OF_RECTS = 30;
 
     $scope.timeranges = [
-      {label: 'Last 2 hours', range: 2},
-      {label: 'Last 4 hours', range: 4},
-      {label: 'Last 10 hours', range: 10}
+      {label: '2 hours', range: 2},
+      {label: '4 hours', range: 4},
+      {label: '10 hours', range: 10},
+      {label: 'others', range: 0}
     ];
 
     $scope.timeRange = $scope.timeranges[0];
+    $scope.customisedTime = false;
 
     $scope.timeranges.forEach(function(row){
       row.value = row.range * 60 / NUMBER_OF_RECTS;
     });
 
     var changeTimeRange = function() {
+      $scope.loading = true;
       var setDate = $('#endTimePicker').data('DateTimePicker').date();
       $scope.currentSetTime = setDate;
       var searchPrefix = $scope.currentValue + '?hours=' + $scope.timeRange.range + '&ts=' + moment.utc(setDate).format("YYYY-MM-DD HH:mm:ss");
@@ -236,6 +239,22 @@ angular.module('bmpUiApp')
     };
 
     $scope.selectTimeRange = function() {
+      if ($scope.timeRange.range != 0) {
+        $scope.customisedTime = false;
+        changeTimeRange();
+      }
+      else
+        $scope.customisedTime = true;
+    };
+
+    $scope.hours = 0;
+    $scope.setHour = function(hours){
+      var newRange = {
+        label: hours + ' hours',
+        range: hours,
+        value: hours * 60 / NUMBER_OF_RECTS
+      };
+      $scope.timeRange = newRange;
       changeTimeRange();
     };
 
@@ -458,8 +477,8 @@ angular.module('bmpUiApp')
           allHisData[i].Communities_list[j]["last_flag"] = allHisData[i].Communities_list_flag_last[j];
         }
 // ********* the  above code is to create two field to record the Communities changing
-        if (offsetInMin/$scope.timeRange.value <= NUMBER_OF_RECTS - 1)
-          $scope.HisData[NUMBER_OF_RECTS-1-Math.floor(offsetInMin/$scope.timeRange.value)].push(allHisData[i]);
+        if (offsetInMin/$scope.timeRange.value <= NUMBER_OF_RECTS)
+          $scope.HisData[NUMBER_OF_RECTS-Math.ceil(offsetInMin/$scope.timeRange.value)].push(allHisData[i]);
       }
 
       Array.prototype.compare = function (array) {
@@ -887,7 +906,6 @@ angular.module('bmpUiApp')
       var NUMBER_OF_RECTS = 30;
       var w = 600;
       var h = 20;
-      //var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       var data = new Array(NUMBER_OF_RECTS).fill(0);
 
       var colorPicker = function(number,x){
@@ -911,21 +929,15 @@ angular.module('bmpUiApp')
         var number = index;
 
         var div2 = d3.select(element[0])
-          .append("div")
-          .attr("class", "panel panel-default");
+          .append("div");
 
-        //var div3 = div2
-        //  .append("div");
-
-        div2.append("div")
-          .attr("class", "panel-heading")
+        div2
           .append("text")
           .text(function(){ return textchoser(number);})
           .style("text-anchor", "middle")
           .attr("x",10);
 
-        var svg2 = div2.append("div")
-          .attr("class", "panel-body")
+        var svg2 = div2
           .append("svg")
           .attr("width", w)
           .attr("height", h);
@@ -934,9 +946,9 @@ angular.module('bmpUiApp')
           .html(function(d,i) {
             if (d != 0) d += 1;
             var time = $scope.currentSetTime;
-            var content = moment.utc(time - (NUMBER_OF_RECTS-parseInt(i))*$scope.timeRange.value*60000).local().format("MM/DD HH:mm")
+            var content = moment.utc(time - (NUMBER_OF_RECTS-parseInt(i))*$scope.timeRange.range*60000).local().format("MM/DD HH:mm")
               +"~"+ moment.utc(time - (NUMBER_OF_RECTS-1-parseInt(i))* $scope.timeRange.value*60000).local().format("MM/DD HH:mm")
-              +"<br/><strong>Number:</strong>" + d;
+              +"<br/><strong>Changes:</strong>" + d;
             return content;
           });
 
@@ -977,14 +989,7 @@ angular.module('bmpUiApp')
         }
       };
 
-      // draw four lines of rectangles
-      //drawRect(0);  // MED
-      //drawRect(1);  // AS Path
-      //drawRect(2);  // Communities
-      //drawRect(3);  // NH
-
       var removeSvg = function() {
-        d3.selectAll(".panel").remove();
         d3.selectAll("svg").remove();
         d3.selectAll("text").remove();
       };
@@ -1012,6 +1017,171 @@ angular.module('bmpUiApp')
           }
         }
       },true)
+    }
+    return {
+      link: link,
+      restrict: 'E'
+    }
+  }])
+  .directive("updateHistory", ['$compile', function($compile){
+    function link($scope, element) {
+      var drawCircles = function (data) {
+        var NUMBER_OF_RECTS = 30;
+        var margin = {top: 0, right: 20, bottom: 0, left: 20},
+          width = 800,
+          height = 200;
+        var start_time = moment.utc($scope.currentSetTime - $scope.timeRange.range*60*60000).local();
+        var end_time = $scope.currentSetTime;
+        var x = d3.time.scale().range([0, width]).domain([start_time, end_time]);
+        var xAxis = d3.svg.axis().scale(x).orient("bottom")
+          .tickFormat(d3.time.format("%m/%d %H:%M"));
+        var xScale = d3.scale.linear().domain([0, NUMBER_OF_RECTS]).range([0, width]);
+        var textchoser = function(number){
+          if (0 == number){return "MED"}
+          else if(1 == number){return "As Path"}
+          else if(2 == number){return "Next Hop"}
+          else if(3 == number){return "Communities"}
+        };
+        var color = [];
+        color[0] = d3.scale.linear().range(['#E3F2FD','#0D47A1']);
+        color[1] = d3.scale.linear().range(['#E0F2F1','#004D40']);
+        color[2] = d3.scale.linear().range(['#FFF3E0','#a691c6']);
+        color[3] = d3.scale.linear().range(['#FFEBEE','#B71C1C']);
+        var colorPicker = function(index, r) {
+          if (r != 0) {
+            return color[index](r);
+          } else {
+            return "white";
+          }
+        };
+
+        var strokePicker = function(index, r) {
+          if (r != 0) {
+            return 'none';
+          } else {
+            return 'grey';
+          }
+        };
+
+        var tip = d3.tip()
+          .html(function(d,i) {
+            if (d != 0) d += 1;
+            var time = $scope.currentSetTime;
+            var content = moment.utc(time - (NUMBER_OF_RECTS-parseInt(i))*$scope.timeRange.value*60000).local().format("MM/DD HH:mm")
+              +"~"+ moment.utc(time - (NUMBER_OF_RECTS-1-parseInt(i))* $scope.timeRange.value*60000).local().format("MM/DD HH:mm")
+              +"<br/><strong>Changes:</strong>" + d;
+            return content;
+          });
+
+        var svg = d3.select(element[0])
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(" + 7 + "," + 50 + ")")
+          .call(xAxis);
+
+        for (var j = 0; j < data.length; j++) {
+          var g = svg.append("g")
+            .attr("class", "path_attribute")
+            .attr("tranform", "translate(20, 0)");
+          var circles = g.selectAll("circle")
+            .data(data[j])
+            .enter()
+            .append("circle");
+          var text = g.selectAll("text")
+            .data(data[j])
+            .enter()
+            .append("text");
+          var rScale = d3.scale.linear()
+            .domain([0, d3.max(data[j])])
+            .range([1, 12]);
+          var radiusCal = function(d) {
+            if (d != 0) {
+              return rScale(d);
+            } else {
+              return 5;
+            }
+          };
+          if (d3.max(data[j]) != 0)
+            color[j].domain([0, d3.max(data[j])]);
+          else
+            color[j].domain([0, 1]);
+
+          circles
+            .attr("cx", function(d, i) { return xScale(i) + margin.left; })
+            .attr("cy", j*50 + 100)
+            .attr("r", function(d) { return radiusCal(d); })
+            .style("fill", function(d) { return colorPicker(j, d); })
+            .style("stroke", function(d) {return strokePicker(j, d); })
+            .style("opacity",.8)
+            .call(tip)
+            .on("click",function(d, i) {
+              $scope.createPrefixHisGrid(i);
+            })
+            .on("mouseout",function(d,i){
+              tip.destroy(d);
+            })
+            .on('mouseover', function(d,i) {
+              tip.attr("class", "d3-tip").show(d,i);
+            });
+
+          text
+            .attr("y", j*50 + 100)
+            .attr("x", function(d, i) { return xScale(i) + margin.left; })
+            .attr("class", "value")
+            .text(function(d) { return d; })
+            .style("fill", function(d) { return color[j](d); })
+            .style("display", "none");
+
+          g.append("text")
+            .attr("y", j*50 + 103)
+            .attr("x", width + margin.left + margin.right)
+            .attr("class", "label")
+            .style("font-size", "18px")
+            .text(textchoser(j))
+            .style("fill", function(d) { return color[j](d3.max(data[j]) == 0 ? 1 : d3.max(data[j])); })
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseout);
+
+        }
+        function mouseover(p) {
+          var g = d3.select(this).node().parentNode;
+          d3.select(g).selectAll("circle").style("display", "none");
+          d3.select(g).selectAll("text.value").style("display", "block");
+        }
+        function mouseout(p) {
+          var g = d3.select(this).node().parentNode;
+          d3.select(g).selectAll("circle").style("display","block");
+          d3.select(g).selectAll("text.value").style("display","none");
+        }
+
+        if(!$scope.$$phase) {
+          //$digest or $apply
+          $scope.$apply();
+        }
+      }; // end of drawCircles
+
+      var removeSvg = function() {
+        d3.selectAll("svg").remove();
+      };
+
+      $scope.$watch('asPathChange',function(newVal, oldVal) {
+        if (typeof(newVal) != "undefined") {
+          removeSvg();
+          drawCircles(newVal);
+          if (!$scope.$$phase) {
+            //$digest or $apply
+            $scope.$apply();
+          }
+        }
+      });
+
+
     }
     return {
       link: link,

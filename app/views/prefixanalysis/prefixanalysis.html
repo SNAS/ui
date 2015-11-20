@@ -53,13 +53,25 @@
           <div class="table-container">
             <h3>History of prefix {{searchPrefix}} </h3>
 
-              <div ng-style="{'padding-left': '20px'}" class="form-inline">
+              <div ng-style="{'padding-left': '25px'}" class="form-inline">
                 <div class="form-group">
                   <select class="btn btn-primary btn-lg form-control"
                           ng-model="timeRange"
                           ng-options="timerange.label for timerange in timeranges track by timerange.value"
                           ng-change="selectTimeRange()">
                   </select>
+                </div>
+
+                <div class="form-group" ng-if="customisedTime">
+                  <input type="text" ng-model="hours" ng-change="setHour(hours)" ng-style="{'width': '30px'}">
+                </div>
+                <div class="form-group" ng-if="customisedTime">
+                  <span class="text-primary" ng-style="{'font-size':'18px'}">hours</span>
+                </div>
+                <div class="form-group">
+                  <span class="text-primary" ng-style="{'font-size':'18px'}">
+                    before
+                  </span>
                 </div>
                 <div class="form-group">
                   <div class="input-group">
@@ -70,8 +82,8 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <span class="text-info" ng-style="{'font-size': '18px'}">
-                    Each rectangle is {{timeRange.value}} minutes
+                  <span class="text-primary" ng-style="{'font-size': '18px'}">
+                    ,  each circle is {{timeRange.value}} minutes
                   </span>
                 </div>
               </div>
@@ -85,8 +97,9 @@
                     <div ng-show="showTip" class="watermark" ng-style="{'top': '0px', 'position': 'relative'}">
                       <span>Nothing changed in this time!</span>
                     </div>
-                    <div ng-style="{'padding': '20px 10px'}">
-                      <d3-directive ng-model="data"></d3-directive>
+                    <div>
+                      <!--<d3-directive ng-model="data"></d3-directive>-->
+                      <update-history ng-model="data"></update-history>
                     </div>
                   </div>
 
