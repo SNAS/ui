@@ -36,7 +36,9 @@ angular.module('bmpUiApp')
     $scope.glassGridOptions.glassGridIsLoad = true;
 
     $scope.glassGridOptions.columnDefs = [
-      {name: "wholePrefix", displayName: 'Prefix', width: "10%"},
+      {name: "wholePrefix", displayName: 'Prefix', width: "10%",
+        cellTemplate: '<div class="ui-grid-cell-contents prefix-clickable"><div bmp-prefix-model prefix="{{ COL_FIELD }}"></div></div>'
+      },
       {name: "RouterName", displayName: 'Router', width: "15%"},
       {name: "PeerName", displayName: 'Peer', width: "20%"},
       {name: "AS_Path", displayName: 'AS Path', width: "20%"},
