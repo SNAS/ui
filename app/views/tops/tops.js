@@ -392,7 +392,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, true)
+      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, $scope.joinWhoisPrefix)
         .success(function (result) {
           var data = result.updates.data.data;
           var len = data.length;
@@ -419,7 +419,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, true)
+      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, $scope.joinWhoisPrefix)
         .success(function (result) {
           var data = result.withdraws.data.data;
           var len = data.length;
