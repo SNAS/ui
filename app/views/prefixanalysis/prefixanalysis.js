@@ -209,6 +209,69 @@ angular.module('bmpUiApp')
       }
     };
 
+    /******************** Following is for updates button *****************/
+    var NUMBER_OF_RECTS = 30;
+
+    $scope.timeranges = [
+      {label: '2 hours', range: 2},
+      {label: '4 hours', range: 4},
+      {label: '10 hours', range: 10},
+      {label: 'set duration', range: 0}
+    ];
+
+    $scope.timeRange = $scope.timeranges[0];
+    $scope.customisedTime = false;
+
+    $scope.timeranges.forEach(function(row){
+      row.value = row.range * 60 / NUMBER_OF_RECTS;
+    });
+
+    var changeTimeRange = function() {
+      $scope.loading = true;
+      var setDate = $('#endTimePicker').data('DateTimePicker').date();
+      $scope.currentSetTime = setDate;
+      var searchPrefix = $scope.currentValue + '?hours=' + $scope.timeRange.range + '&ts=' + moment.utc(setDate).format("YYYY-MM-DD HH:mm:ss");
+      getPrefixHisData(searchPrefix);
+      if(!$scope.$$phase) {
+        //$digest or $apply
+        $scope.$apply();
+      }
+    };
+
+    $scope.selectTimeRange = function() {
+      if ($scope.timeRange.range == 2 || $scope.timeRange.range == 4 || $scope.timeRange.range == 10) {
+        $scope.customisedTime = false;
+        changeTimeRange();
+      }
+      else {
+        $scope.customisedTime = true;
+        $scope.timeranges[3].range = $scope.hours;
+      }
+    };
+
+    $scope.hours = 0;
+    $scope.setHour = function(hours){
+      $scope.timeranges[3].range = hours;
+      $scope.timeranges[3].value = hours * 60 / NUMBER_OF_RECTS;
+      changeTimeRange();
+    };
+
+    $("#endTimePicker").on('dp.hide', function(){
+      changeTimeRange();
+    });
+
+    $("#endTimePicker").datetimepicker({
+      sideBySide: true,
+      format: 'MM/DD/YYYY HH:mm:ss',
+      defaultDate: moment()
+    });
+
+    $scope.setToNow = function(){
+      $scope.currentSetTime = moment();
+      $("#endTimePicker").data("DateTimePicker").date($scope.currentSetTime);
+      changeTimeRange();
+    };
+
     //deal with the data from History of prefix
     $scope.HistoryPrefixOptions = {
       showGridFooter: true,
@@ -229,11 +292,10 @@ angular.module('bmpUiApp')
       $scope.HistoryPrefixGridApi = gridApi;
 
       gridApi.selection.on.rowSelectionChanged($scope,function(row){
-        var msg = 'row selected ' + row.isSelected;
-        var rowMsg = row.entity.PeerASN;
         $scope.itemValue = row.entity; //how can i get data from one row before
-        $scope.createShowTable();
-        $scope.$apply()
+        console.log($scope.itemValue);
+        $scope.showModal();
+        //$scope.$apply()
       });
       // test for the sort change
       $scope.HistoryPrefixGridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
@@ -258,72 +320,51 @@ angular.module('bmpUiApp')
     ];
 
     // the only Function is creating a history prefix gird , inject data should be $scope.HisData
-     $scope.createPrefixHisGrid = function (hour) {
+    $scope.createPrefixHisGrid = function (i) {
       if (typeof $scope.HisData != "undefined") {
         $scope.HistoryPrefixOptions.data = [];
-        $scope.HistoryPrefixOptions.data = $scope.HisData[hour];
+        $scope.HistoryPrefixOptions.data = $scope.HisData[i];
         $scope.showGrid = true;
         $scope.$apply();
       }
     };
 
     var getPrefixHisData = function (searchPrefix) {
-      if ("All peers" == searchPrefix) {
-        apiFactory.getHistoryPrefix(searchPrefix)
-          .success(function (data) {
+      $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
+      apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId)
+        .success(function (data) {
+          $scope.originHisData = data.v_routes_history.data;
 
-            // still don't know why we need $scope.HistoryPrefixOptions.data here
-            $scope.HistoryPrefixOptions.data =  $scope.originHisData = data.v_routes_history.data;
-
-            if($scope.HistoryPrefixOptions.data.length == 0)
-            {
-              $scope.showTip = "true";
-            }
-            //prepared the data to put into grid
-            getPrefixHisDataHour();
-            //createPrefixHisGrid(7);
-          });
-      }
-      else {
-        $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
-        apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId)
-          .success(function (data) {
-            $scope.originHisData = data.v_routes_history.data;
-
-            if($scope.originHisData.length == 0)
-            {
-              $scope.showTip = "true";
-            }
-            else
-            {
-              $scope.showTip = "false";
-            }
-            getPrefixHisDataHour();
-          });
-        if(!$scope.$$phase) {
-          //$digest or $apply
-          $scope.$apply();
-        }
-        //$scope.$apply();
+          if($scope.originHisData.length == 0)
+          {
+            $scope.showTip = "true";
+          }
+          else
+          {
+            $scope.showTip = "false";
+          }
+          getPrefixHisDataHour();
+        });
+      if(!$scope.$$phase) {
+        $scope.$apply();
       }
     };
-
 
     var getPrefixHisDataHour = function () {
 
       var allHisData = $scope.originHisData.reverse();
       $scope.asPathList = new Array();
 
-      $scope.asPathChangeNumber = new Array(24);
-      $scope.asPathChangeRate = new Array(24);
-      $scope.HisData = new Array(24);
+      $scope.asPathChangeNumber = new Array(NUMBER_OF_RECTS);
+      $scope.asPathChangeRate = new Array(NUMBER_OF_RECTS);
+      $scope.HisData = new Array(NUMBER_OF_RECTS);
 
-      $scope.asPathChangeAS_PATH = new Array(24).fill(0);//this is for AS_PATH
-      $scope.asPathChangeNH = new Array(24).fill(0);//this is for next hop
-      $scope.asPathChangeCommunites = new Array(24).fill(0);//this is for Communites
-      $scope.asPathChangeMED = new Array(24).fill(0);
+      $scope.asPathChangeAS_PATH = new Array(NUMBER_OF_RECTS).fill(0);//this is for AS_PATH
+      $scope.asPathChangeNH = new Array(NUMBER_OF_RECTS).fill(0);//this is for next hop
+      $scope.asPathChangeCommunites = new Array(NUMBER_OF_RECTS).fill(0);//this is for Communites
+      $scope.asPathChangeMED = new Array(NUMBER_OF_RECTS).fill(0);
 
-      for(var i = 0; i < 24; i++) {
+      for(var i = 0; i < NUMBER_OF_RECTS; i++) {
         $scope.HisData[i] = new Array();
       }
 
@@ -346,7 +387,7 @@ angular.module('bmpUiApp')
           allHisData[i].preData = allHisData[i-1];
         }
 
-        var hour = parseInt(allHisData[i].LastModified.substring(11, 13));
+        var offsetInMin = ($scope.currentSetTime - moment.utc(allHisData[i].LastModified).local())/1000/60;
 
         // ********* the following code is to create two field to record the As Path changing
         if(typeof(allHisData[i].AS_Path) == "string") {
@@ -363,7 +404,6 @@ angular.module('bmpUiApp')
             allHisData[i+1].AS_Path =  allHisData[i+1].AS_Path.slice(1); // remove the first blank
           }
         }
-
 
         //to record all the last flag and the last line
         allHisData[i].AS_Path_list = [];
@@ -436,7 +476,8 @@ angular.module('bmpUiApp')
           allHisData[i].Communities_list[j]["last_flag"] = allHisData[i].Communities_list_flag_last[j];
         }
 // ********* the  above code is to create two field to record the Communities changing
-        $scope.HisData[hour].push(allHisData[i]);
+        if (offsetInMin/$scope.timeRange.value <= NUMBER_OF_RECTS)
+          $scope.HisData[NUMBER_OF_RECTS-Math.ceil(offsetInMin/$scope.timeRange.value)].push(allHisData[i]);
       }
 
       Array.prototype.compare = function (array) {
@@ -464,7 +505,7 @@ angular.module('bmpUiApp')
       };
 
       // to calculate the data color
-      for(i = 0; i < 24; i++) {
+      for(i = 0; i < NUMBER_OF_RECTS; i++) {
         $scope.asPathChangeNumber[i] = $scope.HisData[i].length;
 
         for(var j = 1;j < $scope.HisData[i].length; j++) {
@@ -488,11 +529,10 @@ angular.module('bmpUiApp')
         $scope.asPathChange[1] = $scope.asPathChangeAS_PATH;
         $scope.asPathChange[2] = $scope.asPathChangeNH;
         $scope.asPathChange[3] = $scope.asPathChangeCommunites;
-
-        if(!$scope.$$phase) {
-          //$digest or $apply
-          $scope.$apply();
-        }
+      }
+      if(!$scope.$$phase) {
+        //$digest or $apply
+        $scope.$apply();
       }
       $scope.loading = false;
     };
@@ -517,7 +557,7 @@ angular.module('bmpUiApp')
       if(typeof($scope.currentValue) == "undefined"){
         $scope.currentValue = $scope.value;
       }
-      getPrefixHisData($scope.currentValue);
+      getPrefixHisData($scope.currentValue+"?hours=2"); //default fetch data in the past two hours
 
       if(!$scope.$$phase) {
         //$digest or $apply
@@ -529,12 +569,16 @@ angular.module('bmpUiApp')
       $scope.loading = true;
       $scope.showGrid = false;
       $scope.isUpdatesSelected = true;
+      if ($scope.currentSetTime == null) {
+        $scope.currentSetTime = moment();
+      }
       $scope.selectChange();
     };
 
+    /**************** For Withdraws part *************************/
+
     $scope.selectWithdraws = function() {
       $scope.isWithdrawsSelected = true;
-      console.log($scope.peerData.selectPeer);
       apiFactory.getTopPrefixWithdrawsByPeer($scope.peerData.selectPeer['peer_hash_id'])
         .success(function(data) {
           var records = data.log.data;
@@ -564,13 +608,14 @@ angular.module('bmpUiApp')
       {name: "Count", displayName: 'Count', cellClass:'background'}
     ];
 
+    /************************ END for withdraws part *********************/
+
     var myModal = new modal();
 
     $scope.showModal = function() {
       $scope.createShowTable();
       myModal.open();
     };
-
 
     // createShowTable function is to add a table in showDetails modal.
     $scope.createShowTable = function()
@@ -580,9 +625,6 @@ angular.module('bmpUiApp')
 
       angular.forEach($scope.itemValue, function (value,key) {
 
-        //console.log("in the top");
-        //console.log("$scope.itemValue",$scope.itemValue);
-        //console.log("in the top");
         if(key == "Prefix")
         {
           $scope.showItems += (
@@ -857,9 +899,10 @@ angular.module('bmpUiApp')
   }])
   .directive('d3Directive',['$compile', function($compile){
     function link($scope,element,scope){
+      var NUMBER_OF_RECTS = 30;
       var w = 600;
       var h = 20;
-      var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      var data = new Array(NUMBER_OF_RECTS).fill(0);
 
       var colorPicker = function(number,x){
         var color = new Array();
@@ -884,7 +927,8 @@ angular.module('bmpUiApp')
         var div2 = d3.select(element[0])
           .append("div");
 
-        div2.append("text")
+        div2
+          .append("text")
           .text(function(){ return textchoser(number);})
           .style("text-anchor", "middle")
           .attr("x",10);
@@ -896,7 +940,11 @@ angular.module('bmpUiApp')
 
         var tip = d3.tip()
           .html(function(d,i) {
-            var content = i + ":00~" + (parseInt(i)+1).toString() + ":00" + " " + "<strong>Number:</strong>" + d ;
+            if (d != 0) d += 1;
+            var time = $scope.currentSetTime;
+            var content = moment.utc(time - (NUMBER_OF_RECTS-parseInt(i))*$scope.timeRange.range*60000).local().format("MM/DD HH:mm")
+              +"~"+ moment.utc(time - (NUMBER_OF_RECTS-1-parseInt(i))* $scope.timeRange.value*60000).local().format("MM/DD HH:mm")
+              +"<br/><strong>Changes:</strong>" + d;
             return content;
           });
 
@@ -905,7 +953,7 @@ angular.module('bmpUiApp')
           .enter()
           .append("rect")
           .attr("x", function(d, i) {
-            return (i%24) * 23 + 10;	//Bar width of 20 plus 1 for padding
+            return (i%NUMBER_OF_RECTS) * 30 + 50;	//Bar width of 20 plus 1 for padding
           })
           .attr("width", 20)
           .attr("y", 0)
@@ -937,12 +985,6 @@ angular.module('bmpUiApp')
         }
       };
 
-      // draw four lines of rectangles
-      drawRect(0);  // MED
-      drawRect(1);  // AS Path
-      drawRect(2);  // Communities
-      drawRect(3);  // NH
-
       var removeSvg = function() {
         d3.selectAll("svg").remove();
         d3.selectAll("text").remove();
@@ -971,6 +1013,171 @@ angular.module('bmpUiApp')
           }
         }
       },true)
+    }
+    return {
+      link: link,
+      restrict: 'E'
+    }
+  }])
+  .directive("updateHistory", ['$compile', function($compile){
+    function link($scope, element) {
+      var drawCircles = function (data) {
+        var NUMBER_OF_RECTS = 30;
+        var margin = {top: 0, right: 20, bottom: 0, left: 20},
+          width = 800,
+          height = 200;
+        var start_time = moment.utc($scope.currentSetTime - $scope.timeRange.range*60*60000).local();
+        var end_time = $scope.currentSetTime;
+        var x = d3.time.scale().range([0, width]).domain([start_time, end_time]);
+        var xAxis = d3.svg.axis().scale(x).orient("bottom")
+          .tickFormat(d3.time.format("%m/%d %H:%M"));
+        var xScale = d3.scale.linear().domain([0, NUMBER_OF_RECTS]).range([0, width]);
+        var textchoser = function(number){
+          if (0 == number){return "MED"}
+          else if(1 == number){return "As Path"}
+          else if(2 == number){return "Next Hop"}
+          else if(3 == number){return "Communities"}
+        };
+        var color = [];
+        color[0] = d3.scale.linear().range(['#E3F2FD','#0D47A1']);
+        color[1] = d3.scale.linear().range(['#E0F2F1','#004D40']);
+        color[2] = d3.scale.linear().range(['#FFF3E0','#a691c6']);
+        color[3] = d3.scale.linear().range(['#FFEBEE','#B71C1C']);
+        var colorPicker = function(index, r) {
+          if (r != 0) {
+            return color[index](r);
+          } else {
+            return "white";
+          }
+        };
+
+        var strokePicker = function(index, r) {
+          if (r != 0) {
+            return 'none';
+          } else {
+            return 'grey';
+          }
+        };
+
+        var tip = d3.tip()
+          .html(function(d,i) {
+            if (d != 0) d += 1;
+            var time = $scope.currentSetTime;
+            var content = moment.utc(time - (NUMBER_OF_RECTS-parseInt(i))*$scope.timeRange.value*60000).local().format("MM/DD HH:mm")
+              +"~"+ moment.utc(time - (NUMBER_OF_RECTS-1-parseInt(i))* $scope.timeRange.value*60000).local().format("MM/DD HH:mm")
+              +"<br/><strong>Changes:</strong>" + d;
+            return content;
+          });
+
+        var svg = d3.select(element[0])
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(" + 7 + "," + 50 + ")")
+          .call(xAxis);
+
+        for (var j = 0; j < data.length; j++) {
+          var g = svg.append("g")
+            .attr("class", "path_attribute")
+            .attr("tranform", "translate(20, 0)");
+          var circles = g.selectAll("circle")
+            .data(data[j])
+            .enter()
+            .append("circle");
+          var text = g.selectAll("text")
+            .data(data[j])
+            .enter()
+            .append("text");
+          var rScale = d3.scale.linear()
+            .domain([0, d3.max(data[j])])
+            .range([1, 12]);
+          var radiusCal = function(d) {
+            if (d != 0) {
+              return rScale(d);
+            } else {
+              return 5;
+            }
+          };
+          if (d3.max(data[j]) != 0)
+            color[j].domain([0, d3.max(data[j])]);
+          else
+            color[j].domain([0, 1]);
+
+          circles
+            .attr("cx", function(d, i) { return xScale(i) + margin.left; })
+            .attr("cy", j*50 + 100)
+            .attr("r", function(d) { return radiusCal(d); })
+            .style("fill", function(d) { return colorPicker(j, d); })
+            .style("stroke", function(d) {return strokePicker(j, d); })
+            .style("opacity",.8)
+            .call(tip)
+            .on("click",function(d, i) {
+              $scope.createPrefixHisGrid(i);
+            })
+            .on("mouseout",function(d,i){
+              tip.destroy(d);
+            })
+            .on('mouseover', function(d,i) {
+              tip.attr("class", "d3-tip").show(d,i);
+            });
+
+          text
+            .attr("y", j*50 + 100)
+            .attr("x", function(d, i) { return xScale(i) + margin.left; })
+            .attr("class", "value")
+            .text(function(d) { return d; })
+            .style("fill", function(d) { return color[j](d); })
+            .style("display", "none");
+
+          g.append("text")
+            .attr("y", j*50 + 103)
+            .attr("x", width + margin.left + margin.right)
+            .attr("class", "label")
+            .style("font-size", "18px")
+            .text(textchoser(j))
+            .style("fill", function(d) { return color[j](d3.max(data[j]) == 0 ? 1 : d3.max(data[j])); })
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseout);
+
+        }
+        function mouseover(p) {
+          var g = d3.select(this).node().parentNode;
+          d3.select(g).selectAll("circle").style("display", "none");
+          d3.select(g).selectAll("text.value").style("display", "block");
+        }
+        function mouseout(p) {
+          var g = d3.select(this).node().parentNode;
+          d3.select(g).selectAll("circle").style("display","block");
+          d3.select(g).selectAll("text.value").style("display","none");
+        }
+
+        if(!$scope.$$phase) {
+          //$digest or $apply
+          $scope.$apply();
+        }
+      }; // end of drawCircles
+
+      var removeSvg = function() {
+        d3.selectAll("svg").remove();
+      };
+
+      $scope.$watch('asPathChange',function(newVal, oldVal) {
+        if (typeof(newVal) != "undefined") {
+          removeSvg();
+          drawCircles(newVal);
+          if (!$scope.$$phase) {
+            //$digest or $apply
+            $scope.$apply();
+          }
+        }
+      });
+
+
     }
     return {
       link: link,
