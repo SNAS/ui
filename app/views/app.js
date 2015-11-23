@@ -98,10 +98,10 @@ angular
         url: '/orr-view',
         templateUrl: 'views/orrView/orrView.html'
       })
-      .state('app.peerAnalysis', {
-        url: '/peer-analysis',
-        templateUrl: 'views/peeranalysis/peeranalysis.html'
-      })
+      //.state('app.peerAnalysis', {
+      //  url: '/peer-analysis',
+      //  templateUrl: 'views/peeranalysis/peeranalysis.html'
+      //})
       .state('app.asAnalysis', {
         url: '/AS-analysis',
         templateUrl: 'views/asAnalysis/asAnalysis.html'
