@@ -29,14 +29,8 @@ angular.module('bmp.components.card')
             showMaxMin: false,
             rotateLabels: -20,
             rotateYLabel: true,
-            tickFormat: function(d) {
-              var date = new Date(d);
-              return date.getDay() + "/" +
-                date.getMonth() + "/" +
-                date.getFullYear() + ", " +
-                date.getHours() + ":" +
-                date.getMinutes() + ":" +
-                date.getSeconds() + " UTC";
+            tickFormat: function (d) {
+              return moment(d).format("MM/DD/YYYY HH:mm");
             }
           },
           yAxis: {
@@ -65,13 +59,7 @@ angular.module('bmp.components.card')
         var len = data.length;
         var gData = [];
         for(var i = len -1; i >= 0; i--){
-
-          // var timestmp = Date.parse(data[i].IntervalTime); //"2015-03-22 22:23:06"
-          // Modified by Jason.
-          // Issue: Date.parse returns nothing
-          var timestmpArray = data[i].IntervalTime.split(/-| |:|\./); //"2015-03-22 22:23:06"
-          var date = new Date(timestmpArray[0], timestmpArray[1], timestmpArray[2], timestmpArray[3], timestmpArray[4], timestmpArray[5]);
-          var timestmp = date.getTime();
+          var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
           gData.push([
             timestmp, parseInt(data[i].Count)
