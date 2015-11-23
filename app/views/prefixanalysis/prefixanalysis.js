@@ -216,7 +216,7 @@ angular.module('bmpUiApp')
       {label: '2 hours', range: 2},
       {label: '4 hours', range: 4},
       {label: '10 hours', range: 10},
-      {label: 'others', range: 0}
+      {label: 'set duration', range: 0}
     ];
 
     $scope.timeRange = $scope.timeranges[0];
@@ -239,22 +239,20 @@ angular.module('bmpUiApp')
     };
 
     $scope.selectTimeRange = function() {
-      if ($scope.timeRange.range != 0) {
+      if ($scope.timeRange.range == 2 || $scope.timeRange.range == 4 || $scope.timeRange.range == 10) {
         $scope.customisedTime = false;
         changeTimeRange();
       }
-      else
+      else {
         $scope.customisedTime = true;
+        $scope.timeranges[3].range = $scope.hours;
+      }
     };
 
     $scope.hours = 0;
     $scope.setHour = function(hours){
-      var newRange = {
-        label: hours + ' hours',
-        range: hours,
-        value: hours * 60 / NUMBER_OF_RECTS
-      };
-      $scope.timeRange = newRange;
+      $scope.timeranges[3].range = hours;
+      $scope.timeranges[3].value = hours * 60 / NUMBER_OF_RECTS;
       changeTimeRange();
     };
 
@@ -295,8 +293,9 @@ angular.module('bmpUiApp')
 
       gridApi.selection.on.rowSelectionChanged($scope,function(row){
         $scope.itemValue = row.entity; //how can i get data from one row before
-        $scope.createShowTable();
-        $scope.$apply()
+        console.log($scope.itemValue);
+        $scope.showModal();
+        //$scope.$apply()
       });
       // test for the sort change
       $scope.HistoryPrefixGridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
@@ -626,9 +625,6 @@ angular.module('bmpUiApp')
 
       angular.forEach($scope.itemValue, function (value,key) {
 
-        //console.log("in the top");
-        //console.log("$scope.itemValue",$scope.itemValue);
-        //console.log("in the top");
         if(key == "Prefix")
         {
           $scope.showItems += (

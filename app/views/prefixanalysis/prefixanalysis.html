@@ -57,7 +57,7 @@
                 <div class="form-group">
                   <select class="btn btn-primary btn-lg form-control"
                           ng-model="timeRange"
-                          ng-options="timerange.label for timerange in timeranges track by timerange.value"
+                          ng-options="timerange.label for timerange in timeranges track by timerange.range"
                           ng-change="selectTimeRange()">
                   </select>
                 </div>
@@ -109,9 +109,9 @@
                   </div>
                   <br><br>
 
-                  <div ng-if="HistoryPrefixOptions.data.length && showGrid">
-                    <button id="showButton" ng-click="showModal()" class="btn btn-info">Show details</button>
-                  </div>
+                  <!--<div ng-if="HistoryPrefixOptions.data.length && showGrid">-->
+                    <!--<button id="showButton" ng-click="showModal()" class="btn btn-info">Show details</button>-->
+                  <!--</div>-->
                 </div>
               </div><!-- end of loading-section -->
 
