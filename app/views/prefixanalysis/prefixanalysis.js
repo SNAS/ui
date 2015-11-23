@@ -666,6 +666,26 @@ angular.module('bmpUiApp')
               );
             }
         }
+        else if (key == "Origin_AS"){
+          $scope.showItems += (
+            '<tr>' +
+            '<td>' +
+            key + ': ' +
+            '</td>' +
+
+            '<td>' +
+            "<span tooltip id='AS" + value+ "'>" + value + " " + "</span>" +
+            '</td>' +
+            '</tr>'
+          );
+          apiFactory.getWhoIsASN(value).then(function(result){
+            if(result.data.gen_whois_asn.data.length>0) {
+              var temp = result.data.gen_whois_asn.data[0];
+              var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+              $('[id=AS' + value + ']').attr('title', title);
+            }
+          });
+        }
         else if (key == "AS_Path")
         {
 
@@ -904,7 +924,8 @@ angular.module('bmpUiApp')
         }
         //wow this is super ugly , i will optimize it after cisco live
         else if(key != "Prefix" && key!= "PrefixLen" && key != "AS_Path_list_flag" && key != "AS_Path_list" && key != "Communities_list" && key != "Communities_list"
-          && key != "preData" && key != "AS_Path_list_flag_last" && key != "Communities_list_flag" && key != "Communities_list_flag_last") {
+          && key != "preData" && key != "AS_Path_list_flag_last" && key != "Communities_list_flag" && key != "Communities_list_flag_last" && key!="path_attr_hash_id"
+          && key != "peer_hash_id" && key != "router_hash_id" && key != "$$hashKey") {
           $scope.showItems += (
           '<tr>' +
           '<td>' +
