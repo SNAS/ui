@@ -352,12 +352,11 @@ angular.module('bmpUiApp')
             var len = data.length;
             var gData = [];
             for (var i = 0; i < len; i++) {
-              var index=1;
-              for(var j = i + 1; j< len;j++){
-                if(data[j].PeerAddr == data[i].PeerAddr)
-                {
-                  data[i].PeerAddr+="("+ index++ +")";
-                  data[j].PeerAddr+="("+ index++ +")";
+              var index = 1;
+              for (var j = i + 1; j < len; j++) {
+                if (data[j].PeerAddr == data[i].PeerAddr) {
+                  data[i].PeerAddr += "(" + index++ + ")";
+                  data[j].PeerAddr += "(" + index++ + ")";
                 }
               }
               gData.push({
@@ -393,12 +392,11 @@ angular.module('bmpUiApp')
             var len = data.length;
             var gData = [];
             for (var i = 0; i < len; i++) {
-              var index=1;
-              for(var j = i + 1; j< len;j++){
-                if(data[j].PeerAddr == data[i].PeerAddr)
-                {
-                  data[i].PeerAddr+="("+ index++ +")";
-                  data[j].PeerAddr+="("+ index++ +")";
+              var index = 1;
+              for (var j = i + 1; j < len; j++) {
+                if (data[j].PeerAddr == data[i].PeerAddr) {
+                  data[i].PeerAddr += "(" + index++ + ")";
+                  data[j].PeerAddr += "(" + index++ + ")";
                 }
               }
               gData.push({
@@ -435,12 +433,11 @@ angular.module('bmpUiApp')
             var len = data.length;
             var gData = [];
             for (var i = 0; i < len; i++) {
-              var index=1;
-              for(var j = i + 1; j< len;j++){
-                if(data[j].Prefix == data[i].Prefix && data[j].PrefixLen == data[i].PrefixLen)
-                {
-                  data[i].PrefixLen+="("+ index++ +")";
-                  data[j].PrefixLen+="("+ index++ +")";
+              var index = 1;
+              for (var j = i + 1; j < len; j++) {
+                if (data[j].Prefix == data[i].Prefix && data[j].PrefixLen == data[i].PrefixLen) {
+                  data[i].PrefixLen += "(" + index++ + ")";
+                  data[j].PrefixLen += "(" + index++ + ")";
                 }
               }
               gData.push({
@@ -478,12 +475,11 @@ angular.module('bmpUiApp')
             var len = data.length;
             var gData = [];
             for (var i = 0; i < len; i++) {
-              var index=1;
-              for(var j = i + 1; j< len;j++){
-                if(data[j].Prefix == data[i].Prefix && data[j].PrefixLen == data[i].PrefixLen)
-                {
-                  data[i].PrefixLen+="("+ index++ +")";
-                  data[j].PrefixLen+="("+ index++ +")";
+              var index = 1;
+              for (var j = i + 1; j < len; j++) {
+                if (data[j].Prefix == data[i].Prefix && data[j].PrefixLen == data[i].PrefixLen) {
+                  data[i].PrefixLen += "(" + index++ + ")";
+                  data[j].PrefixLen += "(" + index++ + ")";
                 }
               }
               gData.push({
@@ -617,7 +613,7 @@ angular.module('bmpUiApp')
 
       // ------------------ used for GRAPHS ---------- binding click function-----------------------------//
       function bindGraphOneClick() {
-        if ($scope.topUpdatesByPeerData[0].values != undefined) {
+        if ($scope.topUpdatesByPeerData[0].values.length > 0) {
           d3.selectAll("#topUpdatesByPeer .nv-bar").on('click', function (d) {
             $scope.searchPeer = d.hash;
             $scope.filterPeerText = d.label;
@@ -634,7 +630,7 @@ angular.module('bmpUiApp')
       }
 
       function bindGraphTwoClick() {
-        if ($scope.topWithdrawsByPeerData[0].values != undefined) {
+        if ($scope.topWithdrawsByPeerData[0].values.length > 0) {
           d3.selectAll("#topWithdrawsByPeer .nv-bar").on('click', function (d) {
             $scope.searchPeer = d.hash;
             $scope.filterPeerText = d.label;
@@ -651,7 +647,7 @@ angular.module('bmpUiApp')
       }
 
       function bindGraphThreeClick() {
-        if ($scope.topUpdatesByPrefixData[0].values != undefined) {
+        if ($scope.topUpdatesByPrefixData[0].values.length > 0) {
           d3.selectAll("#topUpdatesByPrefix .nv-bar").on('click', function (d) {
             if ($scope.searchPrefix == null) {
               $scope.searchPrefix = d.label;
@@ -675,7 +671,7 @@ angular.module('bmpUiApp')
       }
 
       function bindGraphFourClick() {
-        if ($scope.topUpdatesByPrefixData[0].values != undefined) {
+        if ($scope.topUpdatesByPrefixData[0].values.length > 0) {
           d3.selectAll("#topWithdrawsByPrefix .nv-bar").on('click', function (d) {
             if ($scope.searchPrefix == null) {
               $scope.searchPrefix = d.label;
@@ -845,8 +841,8 @@ angular.module('bmpUiApp')
           return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
             '<p>' + 'Updated ' + y + ' times' + '</p>' +
-            (data.prefixDescr&&data.prefixDescr!='null'?('<p>' + 'Description - ' + data.prefixDescr + '</p>'):"") +
-            (data.originAS>0?('<p>' + 'Origin AS - ' + data.originAS + '</p>'):"") +
+            (data.prefixDescr && data.prefixDescr != 'null' ? ('<p>' + 'Description - ' + data.prefixDescr + '</p>') : "") +
+            (data.originAS > 0 ? ('<p>' + 'Origin AS - ' + data.originAS + '</p>') : "") +
             '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
             '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
@@ -902,8 +898,8 @@ angular.module('bmpUiApp')
           return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
             '<p>' + 'Updated ' + y + ' times' + '</p>' +
-            (data.prefixDescr&&data.prefixDescr!='null'?('<p>' + 'Description - ' + data.prefixDescr + '</p>'):"") +
-            (data.originAS>0?('<p>' + 'Origin AS - ' + data.originAS + '</p>'):"") +
+            (data.prefixDescr && data.prefixDescr != 'null' ? ('<p>' + 'Description - ' + data.prefixDescr + '</p>') : "") +
+            (data.originAS > 0 ? ('<p>' + 'Origin AS - ' + data.originAS + '</p>') : "") +
             '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
             '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
