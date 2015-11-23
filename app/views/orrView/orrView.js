@@ -25,38 +25,6 @@ angular.module('bmpUiApp')
     var longitudes = [-149.8286774, -122.332, -95.3633, -87.65, -84.1959236252621, -93.2638, -118.244, -94.5786,
       -74.0143, -77.0364, -122.676, -73.7562, -80.1937, -117.157, -71.0598, -120.754451723841];
 
-    //var topologyData = {
-    //  nodes: [
-    //    {"id": 0, "x": 410, "y": 100, "name": "12K-1"},
-    //    {"id": 1, "x": 410, "y": 280, "name": "12K-2"},
-    //    {"id": 2, "x": 660, "y": 280, "name": "Of-9k-03"},
-    //    {"id": 3, "x": 660, "y": 100, "name": "Of-9k-02"},
-    //    {"id": 4, "x": 180, "y": 190, "name": "Of-9k-01"}
-    //  ],
-    //  links: [
-    //    {"source": 0, "target": 1},
-    //    {"source": 1, "target": 2},
-    //    {"source": 1, "target": 3},
-    //    {"source": 4, "target": 1},
-    //    {"source": 2, "target": 3},
-    //    {"source": 2, "target": 0},
-    //    {"source": 3, "target": 0},
-    //    {"source": 3, "target": 0},
-    //    {"source": 3, "target": 0},
-    //    {"source": 0, "target": 4},
-    //    {"source": 0, "target": 4},
-    //    {"source": 0, "target": 3}
-    //  ]
-    //};
-
-    // initialize a topology
-    //(function(nx, global) {
-    //nx.define('LinkStateTopology.', nx.ui.Component, {
-    //  view: {
-    //    content: {
-    //      name: 'topo',
-    //      type: 'nx.graphic.Topology',
-    //      props: {
     var topo = new nx.graphic.Topology({
       //width: 1000,
       //height: 500,
@@ -222,8 +190,12 @@ angular.module('bmpUiApp')
       apiFactory.getLinkStatePeers().success(
         function (result){
           $scope.peerData = result.ls_peers.data;
-          $scope.selectedPeer = $scope.peerData[0];
-          init();
+          if ($scope.peerData.length == 0) {
+            $scope.topologyIsLoad = false;
+          } else {
+            $scope.selectedPeer = $scope.peerData[0];
+            init();
+          }
         })
         .error(function (error) {
           console.log(error.message);
@@ -234,17 +206,6 @@ angular.module('bmpUiApp')
       var app = new nx.ui.Application();
       app.container(document.getElementById('link_state_topology'));
       topo.attach(app);
-
-      //hierarchical Layout
-      //var layout = topo.getLayout('hierarchicalLayout');
-      //layout.direction('horizontal');
-      //// layout.sortOrder(['Core', 'Distribution', 'Access']);
-      //layout.levelBy(function (node, model) {
-      //  var level = model._data.level % 3;
-      //  //   var level = Math.floor(model._data.level/5);
-      //  return level;
-      //});
-      //topo.activateLayout('hierarchicalLayout');
 
       $scope.selectChange();
     }
