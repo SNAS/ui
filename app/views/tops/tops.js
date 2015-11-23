@@ -317,22 +317,26 @@ angular.module('bmpUiApp')
 
       $scope.topUpdatesByPeerData = [
         {
-          key: "Updates"
+          key: "Updates",
+          values: []
         }
       ];
       $scope.topWithdrawsByPeerData = [
         {
-          key: "Withdraws"
+          key: "Withdraws",
+          values: []
         }
       ];
       $scope.topUpdatesByPrefixData = [
         {
-          key: "Updates"
+          key: "Updates",
+          values: []
         }
       ];
       $scope.topWithdrawsByPrefixData = [
         {
-          key: "Withdraws"
+          key: "Withdraws",
+          values: []
         }
       ];
       $scope.trendGraphData = [];
