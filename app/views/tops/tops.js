@@ -343,11 +343,19 @@ angular.module('bmpUiApp')
       apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
         .success(function (result) {
 
-          if (result.log != undefined) {
-            var data = result.log.data;
+          if (result.l != undefined) {
+            var data = result.l.data;
             var len = data.length;
             var gData = [];
             for (var i = 0; i < len; i++) {
+              var index=1;
+              for(var j = i + 1; j< len;j++){
+                if(data[j].PeerAddr == data[i].PeerAddr)
+                {
+                  data[i].PeerAddr+="("+ index++ +")";
+                  data[j].PeerAddr+="("+ index++ +")";
+                }
+              }
               gData.push({
                 label: data[i].PeerAddr,
                 value: parseInt(data[i].Count),
@@ -376,11 +384,19 @@ angular.module('bmpUiApp')
       apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
         .success(function (result) {
 
-          if (result.log != undefined) {
-            var data = result.log.data;
+          if (result.l != undefined) {
+            var data = result.l.data;
             var len = data.length;
             var gData = [];
             for (var i = 0; i < len; i++) {
+              var index=1;
+              for(var j = i + 1; j< len;j++){
+                if(data[j].PeerAddr == data[i].PeerAddr)
+                {
+                  data[i].PeerAddr+="("+ index++ +")";
+                  data[j].PeerAddr+="("+ index++ +")";
+                }
+              }
               gData.push({
                 label: data[i].PeerAddr,
                 value: parseInt(data[i].Count),
@@ -410,13 +426,22 @@ angular.module('bmpUiApp')
       apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, true)
         .success(function (result) {
 
-          if (result.log != undefined) {
-            var data = result.log.data;
+          if (result.l != undefined) {
+            var data = result.l.data;
             var len = data.length;
             var gData = [];
             for (var i = 0; i < len; i++) {
+              var index=1;
+              for(var j = i + 1; j< len;j++){
+                if(data[j].Prefix == data[i].Prefix && data[j].PrefixLen == data[i].PrefixLen)
+                {
+                  data[i].PrefixLen+="("+ index++ +")";
+                  data[j].PrefixLen+="("+ index++ +")";
+                }
+              }
               gData.push({
-                label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                label: data[i].Prefix + "/" + data[i].PrefixLen,
+                value: parseInt(data[i].Count),
                 prefixDescr: data[i].PrefixDescr,
                 originAS: data[i].OriginAS,
                 peerHash: data[i].peer_hash_id,
@@ -444,13 +469,22 @@ angular.module('bmpUiApp')
       apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, true)
         .success(function (result) {
 
-          if (result.log != undefined) {
-            var data = result.log.data;
+          if (result.l != undefined) {
+            var data = result.l.data;
             var len = data.length;
             var gData = [];
             for (var i = 0; i < len; i++) {
+              var index=1;
+              for(var j = i + 1; j< len;j++){
+                if(data[j].Prefix == data[i].Prefix && data[j].PrefixLen == data[i].PrefixLen)
+                {
+                  data[i].PrefixLen+="("+ index++ +")";
+                  data[j].PrefixLen+="("+ index++ +")";
+                }
+              }
               gData.push({
-                label: data[i].Prefix + "/" + data[i].PrefixLen, value: parseInt(data[i].Count),
+                label: data[i].Prefix + "/" + data[i].PrefixLen,
+                value: parseInt(data[i].Count),
                 prefixDescr: data[i].PrefixDescr,
                 originAS: data[i].OriginAS,
                 peerHash: data[i].peer_hash_id,
@@ -676,7 +710,7 @@ angular.module('bmpUiApp')
         margin: {
           top: 20,
           right: 20,
-          bottom: 80,
+          bottom: 95,
           left: 55
         },
         color: [updateColor],
@@ -731,7 +765,7 @@ angular.module('bmpUiApp')
         margin: {
           top: 20,
           right: 20,
-          bottom: 80,
+          bottom: 95,
           left: 55
         },
         color: [withdrawColor],
@@ -786,7 +820,7 @@ angular.module('bmpUiApp')
         margin: {
           top: 20,
           right: 20,
-          bottom: 80,
+          bottom: 85,
           left: 65
         },
         color: [updateColor],
@@ -807,8 +841,8 @@ angular.module('bmpUiApp')
           return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
             '<p>' + 'Updated ' + y + ' times' + '</p>' +
-            '<p>' + 'Description - ' + data.prefixDescr + '</p>' +
-            '<p>' + 'Origin AS - ' + data.originAS + '</p>' +
+            (data.prefixDescr&&data.prefixDescr!='null'?('<p>' + 'Description - ' + data.prefixDescr + '</p>'):"") +
+            (data.originAS>0?('<p>' + 'Origin AS - ' + data.originAS + '</p>'):"") +
             '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
             '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
@@ -843,7 +877,7 @@ angular.module('bmpUiApp')
         margin: {
           top: 20,
           right: 20,
-          bottom: 80,
+          bottom: 85,
           left: 65
         },
         color: [withdrawColor],
@@ -863,9 +897,9 @@ angular.module('bmpUiApp')
           hoverValue(x);
           return '<h3>' + x + '</h3>' +
             '<div style="line-height:1">' +
-            '<p>' + 'Withdrawn ' + y + ' times' + '</p>' +
-            '<p>' + 'Description - ' + data.prefixDescr + '</p>' +
-            '<p>' + 'Origin AS - ' + data.originAS + '</p>' +
+            '<p>' + 'Updated ' + y + ' times' + '</p>' +
+            (data.prefixDescr&&data.prefixDescr!='null'?('<p>' + 'Description - ' + data.prefixDescr + '</p>'):"") +
+            (data.originAS>0?('<p>' + 'Origin AS - ' + data.originAS + '</p>'):"") +
             '<p>' + 'Peer - ' + data.peerIP + " " + data.peerName + '</p>' +
             '<p>' + 'Router - ' + data.routerIP + " " + data.routerName + '</p>' +
             '<p>' + 'Collector Admin ID - ' + data.collectorAdminID + '</p>'
