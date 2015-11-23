@@ -671,26 +671,6 @@ angular.module('bmpUiApp')
               );
             }
         }
-        else if (key == "Origin_AS"){
-          $scope.showItems += (
-            '<tr>' +
-            '<td>' +
-            key + ': ' +
-            '</td>' +
-
-            '<td>' +
-            "<span tooltip id='AS" + value+ "'>" + value + " " + "</span>" +
-            '</td>' +
-            '</tr>'
-          );
-          apiFactory.getWhoIsASN(value).then(function(result){
-            if(result.data.gen_whois_asn.data.length>0) {
-              var temp = result.data.gen_whois_asn.data[0];
-              var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
-              $('[id=AS' + value + ']').attr('title', title);
-            }
-          });
-        }
         else if (key == "AS_Path")
         {
 
@@ -881,7 +861,7 @@ angular.module('bmpUiApp')
             {
               valueAs = valueAs + "<span class='green'>" + value + " " +"</span>";
             }
-          })
+          });
 
           $scope.showItems += (
           '<tr>' +
@@ -911,7 +891,7 @@ angular.module('bmpUiApp')
               {
                 valusAsLast += "<span class='red'>" + value + " " +"</span>";
               }
-            })
+            });
 
 
             $scope.showItems += (
@@ -936,7 +916,7 @@ angular.module('bmpUiApp')
           '</td>' +
 
           '<td>' +
-          value +
+          (key.indexOf("AS" > -1)?("<span tooltip id='AS" + value+ "'>" + value + " " + "</span>"):value) +
           '</td>' +
           '</tr>'
           );
