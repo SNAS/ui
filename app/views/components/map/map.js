@@ -252,7 +252,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         $scope.loading = false;
         return false;
       });
-    }
+    };
 
 
     function distance(obj) {
@@ -819,6 +819,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           $scope.routerTotals[2]++;
           urlCalls.push(apiFactory.getPeersByIp(value.RouterIP));
         });
+        $rootScope.routersTotals = $scope.routerTotals;
 
         $scope.routerChartData = [
           {
@@ -903,16 +904,16 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
               whichIp = 0;
             }
 
-            if (item.isBMPConnected == 0) {
-              //Count Down-collected up || down
-              if (item.isUp == 1) {
-                //Up
-                ips[whichIp][0]++;
-              } else {
-                //Down
-                ips[whichIp][1]++;
-              }
-            }
+            //if (item.isBMPConnected == 0) {
+            //  //Count Down-collected up || down
+            //  if (item.isUp == 1) {
+            //    //Up
+            //    ips[whichIp][0]++;
+            //  } else {
+            //    //Down
+            //    ips[whichIp][1]++;
+            //  }
+            //}
             //count up and downs
             if (item.isUp == 1 && item.isBMPConnected == 1) {
               //Up  if and only if router is connected and peer is up
