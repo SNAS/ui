@@ -675,10 +675,20 @@ angular.module('bmpUiApp')
           angular.forEach($scope.itemValue.AS_Path,function(value,key)
           {
             if($scope.itemValue.AS_Path_list[key].flag){
-              valueAs += value + " ";
+              valueAs += "<span tooltip id='AS" + value+ "'>" + value + " " + "</span>";
+              apiFactory.getWhoIsASN(value).then(function(result){
+                var temp = result.data.gen_whois_asn.data[0];
+                var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+                $('[id=AS' + value + ']').attr('title', title);
+              });
             }
             else{
-              valueAs += "<span class='green'>" + value + " " + "</span>";
+              valueAs += "<span tooltip class='green' id='AS" + value+ "'>" + value + " " + "</span>";
+              apiFactory.getWhoIsASN(value).then(function(result){
+                var temp = result.data.gen_whois_asn.data[0];
+                var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+                $('[id=AS' + value + ']').attr('title', title);
+              });
             }
           });
 
@@ -703,13 +713,23 @@ angular.module('bmpUiApp')
 
                 if($scope.itemValueLast.AS_Path_list[key].last_flag)
                 {
-                  valusAsLast += value + " ";
+                  valusAsLast += "<span tooltip id='AS" + value+ "'>" + value + " " + "</span>";
+                  apiFactory.getWhoIsASN(value).then(function(result){
+                    var temp = result.data.gen_whois_asn.data[0];
+                    var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+                    $('[id=AS' + value + ']').attr('title', title);
+                  });
                 }
                 else
                 {
-                  valusAsLast += "<span class='red'>" + value + " " +"</span>";
+                  valusAsLast += "<span tooltip class='red' id='AS" + value+ "'>" + value + " " +"</span>";
+                  apiFactory.getWhoIsASN(value).then(function(result){
+                    var temp = result.data.gen_whois_asn.data[0];
+                    var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+                    $('[id=AS' + value + ']').attr('title', title);
+                  });
                 }
-              })
+              });
 
 
             $scope.showItems += (
@@ -1062,6 +1082,20 @@ angular.module('bmpUiApp')
       restrict: 'E'
     }
   }])
+  .directive('tooltip', function(){
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs){
+        $(element).hover(function(){
+          // on mouseenter
+          $(element).tooltip('show');
+        }, function(){
+          // on mouseleave
+          $(element).tooltip('hide');
+        });
+      }
+    };
+  })
 .factory('modal', ['$compile', '$rootScope', function ($compile, $rootScope) {
   return function() {
     var elm;
