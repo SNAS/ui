@@ -194,8 +194,12 @@ angular.module('bmpUiApp')
       apiFactory.getLinkStatePeers().success(
         function (result){
           $scope.peerData = result.ls_peers.data;
-          $scope.selectedPeer = $scope.peerData[0];
-          init();
+          if ($scope.peerData == 0) {
+            $scope.topologyIsLoad = false;
+          } else {
+            $scope.selectedPeer = $scope.peerData[0];
+            init();
+          }
         })
         .error(function (error) {
           console.log(error.message);

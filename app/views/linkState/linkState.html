@@ -11,7 +11,9 @@
   <!--<topology></topology>-->
 
   <div class="loading-section">
-    <div id="link_state_topology"></div>
+    <div id="link_state_topology">
+      <div class="watermark" ng-if="!$scope.peerData.length">No data available</div>
+    </div>
     <div bmp-loading loading-var="topologyIsLoad"></div>
   </div>
 

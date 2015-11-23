@@ -622,8 +622,14 @@ angular.module('bmpUiApp')
     {
       $scope.showItems = '<table class="modal-table">';
       $scope.itemValueLast = $scope.itemValue.preData;
+      console.log($scope.itemValue);
+      var keys = [
+        'RouterName', 'PeerName', 'Prefix', 'Origin_AS', 'Current_AS_Path', 'Previous_AS_Path', 'ASPath_Count', 'Current_Communities',
+        'ExtCommunities', 'ClusterList', 'Aggregator', 'PeerAddress', 'PeerASN', 'IsPeerIPv4', 'IsPeerVPN', 'Id', 'LastModified'
+      ]
 
       angular.forEach($scope.itemValue, function (value,key) {
+
 
         if(key == "Prefix")
         {
@@ -875,8 +881,7 @@ angular.module('bmpUiApp')
           }
         }
         //wow this is super ugly , i will optimize it after cisco live
-        else if(key != "Prefix" && key!= "PrefixLen" && key != "AS_Path_list_flag" && key != "AS_Path_list" && key != "Communities_list" && key != "Communities_list"
-          && key != "preData" && key != "AS_Path_list_flag_last" && key != "Communities_list_flag" && key != "Communities_list_flag_last") {
+        else if(keys.contains(key)) {
           $scope.showItems += (
           '<tr>' +
           '<td>' +
@@ -973,7 +978,7 @@ angular.module('bmpUiApp')
             .append("text");
           var rScale = d3.scale.linear()
             .domain([0, d3.max(data[j])])
-            .range([1, 12]);
+            .range([2, 12]);
           var radiusCal = function(d) {
             if (d != 0) {
               return rScale(d);

@@ -60,7 +60,6 @@ angular.module('bmp.components.table', ['ui.grid.treeView'])
         $scope.gridApi = gridApi;
         $scope.gridApi.grid.registerRowsProcessor( $scope.singleFilter, 200 );
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-          console.log(row);
           if (!row.entity.hasOwnProperty('$$treeLevel')) {
             apiFactory.getPeersAndLocationsByIp(row.entity['RouterIP']).
               success(function (result) {
@@ -73,19 +72,7 @@ angular.module('bmp.components.table', ['ui.grid.treeView'])
                 data[i].type = 'Peer';
                 $scope.cardApi.changeCard(data[i]);
               });  // end
-          } else if (row.entity.hasOwnProperty("$$treeLevel") && row.entity.$$treeLevel == 0) {
-            //apiFactory.getRoutersAndLocations().
-            //  success(function (result){
-            //    var data = result.routers.data;
-            //    for(var i = 0; i < data.length; i++){
-            //      if (data[i]['RouterIP'] == row.entity['RouterIP']) {
-            //        break;
-            //      }
-            //    }
-            //    data[i].type = 'Router';
-            //    $scope.cardApi.changeCard(data[i]);
-            //  });
-          } // end of else
+          }
         });
       }
     };
@@ -97,40 +84,23 @@ angular.module('bmp.components.table', ['ui.grid.treeView'])
     };
 
     $scope.clickIpv4Down = function() {
-      console.log($scope.gridApi);
-      $scope.gridApi.grid.columns[1].filters[0] = {term: 0};  // up or down
-      $scope.gridApi.grid.columns[6].filters[0] = {term: 1};  // isIPv4
-      $scope.routerTableOptions.enableFiltering = true;
-      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-      //$scope.ipv4Down = true;
-      //$scope.gridApi.grid.refresh();
+      $scope.ipv4Down = true;
+      $scope.gridApi.grid.refresh();
     };
 
     $scope.clickIpv4Up = function() {
-      $scope.gridApi.grid.columns[1].filters[0] = {term: 1};
-      $scope.gridApi.grid.columns[6].filters[0] = {term: 1};
-      $scope.routerTableOptions.enableFiltering = true;
-      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-      //$scope.ipv4Up = true;
-      //$scope.gridApi.grid.refresh();
+      $scope.ipv4Up = true;
+      $scope.gridApi.grid.refresh();
     };
 
     $scope.clickIpv6Down = function() {
-      $scope.gridApi.grid.columns[1].filters[0] = {term: 0};
-      $scope.gridApi.grid.columns[6].filters[0] = {term: 0};
-      $scope.routerTableOptions.enableFiltering = true;
-      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-      //$scope.ipv6Down = true;
-      //$scope.gridApi.grid.refresh();
+      $scope.ipv6Down = true;
+      $scope.gridApi.grid.refresh();
     };
 
     $scope.clickIpv6Up = function() {
-      $scope.gridApi.grid.columns[1].filters[0] = {term: 1};
-      $scope.gridApi.grid.columns[6].filters[0] = {term: 0};
-      $scope.routerTableOptions.enableFiltering = true;
-      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-      //$scope.ipv6Up = true;
-      //$scope.gridApi.grid.refresh();
+      $scope.ipv6Up = true;
+      $scope.gridApi.grid.refresh();
     };
 
     $scope.clickDisconnected = function() {
@@ -148,7 +118,6 @@ angular.module('bmp.components.table', ['ui.grid.treeView'])
             || ($scope.ipv6Up && row.entity['Status'] == 1 && row.entity['isPeerIPv4'] == 0)
             || ($scope.disconnected && row.entity['Status'] == 0 && row.entity.$$treeLevel == 0)) {
             match = true;
-
           }
           if (!match) {
             row.visible = false;
