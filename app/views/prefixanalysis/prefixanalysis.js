@@ -677,17 +677,21 @@ angular.module('bmpUiApp')
             if($scope.itemValue.AS_Path_list[key].flag){
               valueAs += "<span tooltip id='AS" + value+ "'>" + value + " " + "</span>";
               apiFactory.getWhoIsASN(value).then(function(result){
-                var temp = result.data.gen_whois_asn.data[0];
-                var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
-                $('[id=AS' + value + ']').attr('title', title);
+                if(result.data.gen_whois_asn.data.length>0) {
+                  var temp = result.data.gen_whois_asn.data[0];
+                  var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+                  $('[id=AS' + value + ']').attr('title', title);
+                }
               });
             }
             else{
               valueAs += "<span tooltip class='green' id='AS" + value+ "'>" + value + " " + "</span>";
               apiFactory.getWhoIsASN(value).then(function(result){
-                var temp = result.data.gen_whois_asn.data[0];
-                var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
-                $('[id=AS' + value + ']').attr('title', title);
+                if(result.data.gen_whois_asn.data.length>0) {
+                  var temp = result.data.gen_whois_asn.data[0];
+                  var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+                  $('[id=AS' + value + ']').attr('title', title);
+                }
               });
             }
           });
@@ -715,18 +719,22 @@ angular.module('bmpUiApp')
                 {
                   valusAsLast += "<span tooltip id='AS" + value+ "'>" + value + " " + "</span>";
                   apiFactory.getWhoIsASN(value).then(function(result){
-                    var temp = result.data.gen_whois_asn.data[0];
-                    var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
-                    $('[id=AS' + value + ']').attr('title', title);
+                    if(result.data.gen_whois_asn.data.length>0) {
+                      var temp = result.data.gen_whois_asn.data[0];
+                      var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+                      $('[id=AS' + value + ']').attr('title', title);
+                    }
                   });
                 }
                 else
                 {
                   valusAsLast += "<span tooltip class='red' id='AS" + value+ "'>" + value + " " +"</span>";
                   apiFactory.getWhoIsASN(value).then(function(result){
-                    var temp = result.data.gen_whois_asn.data[0];
-                    var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
-                    $('[id=AS' + value + ']').attr('title', title);
+                    if(result.data.gen_whois_asn.data.length>0) {
+                      var temp = result.data.gen_whois_asn.data[0];
+                      var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+                      $('[id=AS' + value + ']').attr('title', title);
+                    }
                   });
                 }
               });
