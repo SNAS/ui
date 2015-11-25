@@ -329,6 +329,32 @@ angular.module('bmpUiApp')
       }
     };
 
+    $scope.createTimeline = function(i) {
+        $scope.timelineData = $scope.HisData[i];
+        $scope.timelineHtml = "";
+        angular.forEach($scope.timelineData,function(row){
+          var changed = "";
+          if($scope.timelineData.indexOf(row)>0) {
+            angular.forEach(row.AS_Path, function (value, key) {
+              if (!row.AS_Path_list[key].flag) {
+                changed += "<span tooltip class='green' id='AS" + value + "'>" + "+" + value + " " + "</span>";
+              }
+            });
+            angular.forEach(row.preData.AS_Path, function (value, key) {
+              if (!row.preData.AS_Path_list[key].last_flag) {
+                changed += "<span tooltip class='red' id='AS" + value + "'>" + "-" + value + " " + "</span>";
+              }
+            });
+          }
+          $scope.timelineHtml+='<li><p class="timeline-left">' + changed + '</p>'
+            + '<div class="timeline-right">'
+            + '<h4>'+ row.AS_Path +'</h4>'
+            + '<p>' + moment.utc(row.LastModified, "YYYY-MM-DD HH:mm:ss.SSSSSS").local().format("MM/DD/YYYY HH:mm:ss") + '</p>'
+            + '</div>'
+            + '</li>';
+        });
+      };
+
     var getPrefixHisData = function (searchPrefix) {
       $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
       apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId)
@@ -1028,6 +1054,7 @@ angular.module('bmpUiApp')
             .call(tip)
             .on("click",function(d, i) {
               $scope.createPrefixHisGrid(i);
+              $scope.createTimeline(i);
             })
             .on("mouseout",function(d,i){
               tip.destroy(d);

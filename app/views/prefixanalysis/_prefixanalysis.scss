@@ -189,3 +189,45 @@ $btn-colour: #314a5d;
 }
 
 .background { background-color: white !important;;}
+
+
+
+
+//Timeline
+.timeline {
+  list-style: none;
+  margin: 40px;
+}
+.timeline > li {
+  margin-bottom: 60px;
+}
+
+/* for Desktop */
+@media ( min-width : 640px ){
+  .timeline > li {
+    overflow: hidden;
+    margin: 0;
+    position: relative;
+  }
+  .timeline-left {
+    width: 110px;
+    float: left;
+    margin-top: 20px;
+  }
+  .timeline-right {
+    width: 75%;
+    float: left;
+    border-left: 3px #e5e5d1 solid;
+    padding-left: 30px;
+  }
+  .timeline-right:before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: #6fc173;
+    position: absolute;
+    left: 106px;
+    top: 24px;
+    border-radius: 100%;
+  }
+}

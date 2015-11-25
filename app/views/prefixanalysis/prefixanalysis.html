@@ -109,6 +109,9 @@
                   </div>
                   <br><br>
 
+                  <div ng-bind-html="timelineHtml" ng-if="timelineData.length" class="timeline">
+                  </div>
+
                   <!--<div ng-if="HistoryPrefixOptions.data.length && showGrid">-->
                     <!--<button id="showButton" ng-click="showModal()" class="btn btn-info">Show details</button>-->
                   <!--</div>-->
