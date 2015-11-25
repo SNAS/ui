@@ -319,6 +319,18 @@ angular.module('bmpUiApp')
       }
     ];
 
+    var bindTooltipsForAS = function(ASArray){
+      angular.forEach(ASArray,function(value){
+        apiFactory.getWhoIsASN(value).then(function (result) {
+          if (result.data.gen_whois_asn.data.length > 0) {
+            var temp = result.data.gen_whois_asn.data[0];
+            var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+            $('[name=AS' + value + ']').attr('title', title);
+          }
+        });
+      });
+    };
+
     // the only Function is creating a history prefix gird , inject data should be $scope.HisData
     $scope.createPrefixHisGrid = function (i) {
       if (typeof $scope.HisData != "undefined") {
@@ -330,30 +342,37 @@ angular.module('bmpUiApp')
     };
 
     $scope.createTimeline = function(i) {
-        $scope.timelineData = $scope.HisData[i];
-        $scope.timelineHtml = "";
-        angular.forEach($scope.timelineData,function(row){
-          var changed = "";
-          if($scope.timelineData.indexOf(row)>0) {
-            angular.forEach(row.AS_Path, function (value, key) {
-              if (!row.AS_Path_list[key].flag) {
-                changed += "<span tooltip class='green' id='AS" + value + "'>" + "+" + value + " " + "</span>";
-              }
-            });
-            angular.forEach(row.preData.AS_Path, function (value, key) {
-              if (!row.preData.AS_Path_list[key].last_flag) {
-                changed += "<span tooltip class='red' id='AS" + value + "'>" + "-" + value + " " + "</span>";
-              }
-            });
+      $scope.timelineData = $scope.HisData[i];
+      $scope.timelineHtml = "";
+      var ASArray = [];
+      angular.forEach($scope.timelineData,function(row){
+        var ASPath = "";
+        var changed = "";
+
+        angular.forEach(row.AS_Path, function (value, key) {
+          if($scope.timelineData.indexOf(row)>0)
+            if(!row.AS_Path_list[key].flag)
+              changed += "<span tooltip class='green' name='AS" + value + "'>" + "+" + value + " " + "</span>";
+          ASPath += "<span tooltip name='AS" + value + "'>" + value + " " + "</span>";
+          if(!ASArray.indexOf(value)>-1) {
+            ASArray.push(value);
           }
-          $scope.timelineHtml+='<li><p class="timeline-left">' + changed + '</p>'
-            + '<div class="timeline-right">'
-            + '<h4>'+ row.AS_Path +'</h4>'
-            + '<p>' + moment.utc(row.LastModified, "YYYY-MM-DD HH:mm:ss.SSSSSS").local().format("MM/DD/YYYY HH:mm:ss") + '</p>'
-            + '</div>'
-            + '</li>';
         });
-      };
+        if($scope.timelineData.indexOf(row)>0)
+          angular.forEach(row.preData.AS_Path, function (value, key) {
+            if (!row.preData.AS_Path_list[key].last_flag) {
+              changed += "<span tooltip class='red' name='AS" + value + "'>" + "-" + value + " " + "</span>";
+            }
+          });
+        $scope.timelineHtml+='<li><p class="timeline-left">' + changed + '</p>'
+          + '<div class="timeline-right">'
+          + '<h4>' + ASPath +'</h4>'
+          + '<p>' + moment.utc(row.LastModified, "YYYY-MM-DD HH:mm:ss.SSSSSS").local().format("MM/DD/YYYY HH:mm:ss") + '</p>'
+          + '</div>'
+          + '</li>';
+      });
+      bindTooltipsForAS(ASArray);
+    };
 
     var getPrefixHisData = function (searchPrefix) {
       $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
@@ -702,30 +721,25 @@ angular.module('bmpUiApp')
 
           var valueAs = "";
           var valusAsLast = "";
+          var ASArray = [];
 
           angular.forEach($scope.itemValue.AS_Path,function(value,key)
           {
             if($scope.itemValue.AS_Path_list[key].flag){
-              valueAs += "<span tooltip id='AS" + value+ "'>" + value + " " + "</span>";
-              apiFactory.getWhoIsASN(value).then(function(result){
-                if(result.data.gen_whois_asn.data.length>0) {
-                  var temp = result.data.gen_whois_asn.data[0];
-                  var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
-                  $('[id=AS' + value + ']').attr('title', title);
-                }
-              });
+              valueAs += "<span tooltip name='AS" + value+ "'>" + value + " " + "</span>";
+              if(!ASArray.indexOf(value)>-1) {
+                ASArray.push(value);
+              }
             }
             else{
-              valueAs += "<span tooltip class='green' id='AS" + value+ "'>" + value + " " + "</span>";
-              apiFactory.getWhoIsASN(value).then(function(result){
-                if(result.data.gen_whois_asn.data.length>0) {
-                  var temp = result.data.gen_whois_asn.data[0];
-                  var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
-                  $('[id=AS' + value + ']').attr('title', title);
-                }
-              });
+              valueAs += "<span tooltip class='green' name='AS" + value+ "'>" + value + " " + "</span>";
+              if(!ASArray.indexOf(value)>-1) {
+                ASArray.push(value);
+              }
             }
           });
+
+
 
           $scope.showItems += (
           '<tr>' +
@@ -748,25 +762,17 @@ angular.module('bmpUiApp')
 
                 if($scope.itemValueLast.AS_Path_list[key].last_flag)
                 {
-                  valusAsLast += "<span tooltip id='AS" + value+ "'>" + value + " " + "</span>";
-                  apiFactory.getWhoIsASN(value).then(function(result){
-                    if(result.data.gen_whois_asn.data.length>0) {
-                      var temp = result.data.gen_whois_asn.data[0];
-                      var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
-                      $('[id=AS' + value + ']').attr('title', title);
-                    }
-                  });
+                  valusAsLast += "<span tooltip name='AS" + value+ "'>" + value + " " + "</span>";
+                  if(!ASArray.indexOf(value)>-1) {
+                    ASArray.push(value);
+                  }
                 }
                 else
                 {
-                  valusAsLast += "<span tooltip class='red' id='AS" + value+ "'>" + value + " " +"</span>";
-                  apiFactory.getWhoIsASN(value).then(function(result){
-                    if(result.data.gen_whois_asn.data.length>0) {
-                      var temp = result.data.gen_whois_asn.data[0];
-                      var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
-                      $('[id=AS' + value + ']').attr('title', title);
-                    }
-                  });
+                  valusAsLast += "<span tooltip class='red' name='AS" + value+ "'>" + value + " " +"</span>";
+                  if(!ASArray.indexOf(value)>-1) {
+                    ASArray.push(value);
+                  }
                 }
               });
 
@@ -783,6 +789,9 @@ angular.module('bmpUiApp')
             '</tr>'
             );
           }
+
+          bindTooltipsForAS(ASArray);
+
         }
         else if (key == "MED")
         {
@@ -942,7 +951,7 @@ angular.module('bmpUiApp')
           '</td>' +
 
           '<td>' +
-          (key.indexOf("AS" > -1)?("<span tooltip id='AS" + value+ "'>" + value + " " + "</span>"):value) +
+          (key.indexOf("AS" > -1)?("<span tooltip name='AS" + value+ "'>" + value + " " + "</span>"):value) +
           '</td>' +
           '</tr>'
           );
