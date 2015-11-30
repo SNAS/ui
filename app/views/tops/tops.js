@@ -650,9 +650,9 @@ angular.module('bmpUiApp')
         if ($scope.topUpdatesByPrefixData[0].values.length > 0) {
           d3.selectAll("#topUpdatesByPrefix .nv-bar").on('click', function (d) {
             if ($scope.searchPrefix == null) {
-              $scope.searchPrefix = d.label;
-              $scope.filterPrefixText = d.label;
-              $scope.prefixText = "Prefix -- " + d.label + " :";
+              $scope.searchPrefix = d.label.split("(")[0];
+              $scope.filterPrefixText = d.label.split("(")[0];
+              $scope.prefixText = "Prefix -- " + $scope.filterPrefixText + " :";
               loadPreview();
               loadAll();
             }
@@ -674,9 +674,9 @@ angular.module('bmpUiApp')
         if ($scope.topUpdatesByPrefixData[0].values.length > 0) {
           d3.selectAll("#topWithdrawsByPrefix .nv-bar").on('click', function (d) {
             if ($scope.searchPrefix == null) {
-              $scope.searchPrefix = d.label;
-              $scope.filterPrefixText = d.label;
-              $scope.prefixText = "Prefix -- " + d.label + " :";
+              $scope.searchPrefix = d.label.split("(")[0];
+              $scope.filterPrefixText = d.label.split("(")[0];
+              $scope.prefixText = "Prefix -- " + $scope.filterPrefixText + " :";
               loadPreview();
               loadAll();
             }
