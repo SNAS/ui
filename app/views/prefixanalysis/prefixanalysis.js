@@ -387,8 +387,8 @@ angular.module('bmpUiApp')
 
         $scope.timelineHtml+='<li><div class="timeline-left">' + '<h5>' + ASPathChanged + '</h5>' + '<h5>' + communitiesChanged + '</h5>' + '</div>'
           + '<div class="timeline-right">'
-          + '<h5>' + 'AS Path: ' + ASPath +'</h5>'
-          + (communities.trim()!=''?('<h5>' + 'Communities: ' + communities +'</h5>'):(''))
+          + (ASPath.trim()!=''?('<h5>' + 'AS Path: ' + ASPath + '</h5>') : (''))
+          + (communities.trim()!=''?('<h5>' + 'Communities: ' + communities + '</h5>'):(''))
           + '<p>' + moment.utc(row.LastModified, "YYYY-MM-DD HH:mm:ss.SSSSSS").local().format("MM/DD/YYYY HH:mm:ss.SSS") + '</p>'
           + '</div>'
           + '</li>';
@@ -635,6 +635,7 @@ angular.module('bmpUiApp')
     $scope.selectUpdates = function() {
       $scope.loading = true;
       $scope.showGrid = false;
+      $scope.timelineHtml = "";
       $scope.isUpdatesSelected = true;
       if ($scope.currentSetTime == null) {
         $scope.currentSetTime = moment();
