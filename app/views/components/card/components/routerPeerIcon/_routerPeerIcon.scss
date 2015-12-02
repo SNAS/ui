@@ -1,21 +1,44 @@
 $router-color: #5795DC;
 $peer-color: #EAA546;
-$connector-color: #AFAFAF;
+$connector-color: #a7a7a7;
 $peer-text-color: #FFFFFF;
 
-.amount-img{
-  position: relative;
-  width: 280px;
-  margin: 80px auto 0;
-  font-family: 'CiscoSansExtraLight';
+//.amount-img{
+//  position: relative;
+//  width: 280px;
+//  margin: 80px auto 0;
+//}
+
+.router-name-text{
+  color: $connector-color;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-size: 13px;
 }
 
 .peers-amount-img {
   height: 55px;
+  font-family: 'CiscoSansExtraLight';
 
   .rib-icon {
     font-size: 45px;
     color: #EAA546;
+  }
+
+  .as-section {
+    margin: auto;
+    width: 90%;
+    height: auto;
+    .centre {
+      text-align: center;
+      .bmp-outline-route {
+        color:$router-color;
+        font-size:50px;
+      }
+      .peer {
+        color: #EAA546;
+      }
+    }
   }
 
   .left-section {
@@ -88,4 +111,12 @@ $peer-text-color: #FFFFFF;
   top: 50%;
   width: 83px;
   left: 39%;
+}
+
+.router-peer-line-wide {
+  background-color: $connector-color;
+  position: absolute;
+  left: -37%;
+  height: 1px;
+  width: 183%;
 }

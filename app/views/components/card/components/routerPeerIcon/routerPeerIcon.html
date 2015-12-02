@@ -1,31 +1,90 @@
 <div>
   <h4> Router - Peer Diagram</h4>
-  <div class="amount-img">
     <div class="peers-amount-img">
-      <div class="router-peer-line"></div>
-      <div class="left-section">
-        <div class="centre" style="position: relative;">
-          <div style="position: absolute;top: -45px;left: 20px;">
-            <div class="router-name-text" tooltip="{{ data.RouterASN }}">{{ wordCheck(data.RouterASN) }}</div>
-            <div class="router-name-text" tooltip="{{ data.RouterName }}">{{ wordCheck(data.RouterName) }}</div>
+      <div class="row" style="margin-top: 30px; padding-top: 50px" ng-style="outerBorder">
+        <div class="col-lg-4" ng-style="innerBorder">
+          <div class="row">
+            <div class="col-xs-2">
+              <div class="router-name-text">AS</div>
+            </div>
+            <div class="col-xs-10">
+              <div class="router-name-text"><span style="float:left">{{ data.RouterASN }}</span><span style="float:right">{{ RouterASName }}</span></div>
+            </div>
           </div>
-          <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
-          <div class="router-name-text" tooltip="{{data.RouterIP}}" tooltip-placement="bottom">{{ wordCheck(data.RouterIP) }}</div>
-        </div>
-      </div>
-
-      <span class="middle-section"></span>
-
-      <div class="left-section">
-        <div class="centre" style="position: relative;">
-          <div style="position: absolute;top: -45px;left: 20px;">
-            <div class="router-name-text" tooltip="{{ data.PeerASN }}">{{ wordCheck(data.PeerASN) }}</div>
-            <div class="router-name-text" tooltip="{{ data.PeerName }}">{{ wordCheck(data.PeerName) }}</div>
+          <div class="row">
+            <div class="as-section">
+              <div class="centre">
+                <div style="position: relative;">
+                  <div class="router-name-text">Router Name: {{ data.RouterName }}</div>
+                </div>
+                <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
+                <div class="router-name-text">Router IP: {{ data.RouterIP }}</div>
+                <div class="router-name-text">BGP ID: {{ data.LocalBGPId }}</div>
+              </div>
+            </div>
           </div>
-          <div class="{{ routerIcon }} peer bmp-outline-route" ng-style="{'color':colour}"></div>
-          <div class="router-name-text" tooltip="{{ data.PeerIP }}" tooltip-placement="bottom">{{ wordCheck(data.PeerIP) }}</div>
+          <div class="row" style="margin-bottom: 10px;">
+            <div style="float:right">
+              <div class="router-name-text">TCP Port: {{ data.LocalPort }}</div>
+              <div class="router-name-text">Hold Time: {{ data.LocalHoldTime }}</div>
+            </div>
+          </div>
         </div>
-      </div>
+
+        <div class="col-lg-4" style="padding-top: 88px">
+          <div class="row" style="margin:0">
+            <span style="float:left">Local IP</span>
+            <span style="float:right">Peer IP</span>
+          </div>
+          <div class="row">
+            <div class="router-peer-line-wide"></div>
+            <span style="float:left">{{ data.LocalIP }}</span>
+            <span style="float:right">{{ data.PeerIP }}</span>
+          </div>
+          <div class="row" style="text-align:center">
+            <div style="width: 80%;margin: auto;">
+              <div class="router-name-text">Enabled Capabilities:</div>
+              <div ng-repeat="capability in enabledCapabs">
+                <div class="router-name-text">{{capability}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4" ng-style="innerBorder">
+          <div class="row" ng-show="data.RouterASN!=data.PeerASN">
+            <div class="col-xs-2">
+              <div class="router-name-text">AS</div>
+            </div>
+            <div class="col-xs-10">
+              <div class="router-name-text"><span style="float:left">{{ data.PeerASN }}</span><span style="float:right">{{ PeerASName }}</span></div>
+            </div>
+          </div>
+          <div class="row" ng-show="data.RouterASN==data.PeerASN">
+            <div class="col-xs-5 col-xs-offset-3">
+              <div class="router-name-text">Same AS</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="as-section">
+              <div class="centre">
+                <div style="position: relative;">
+                  <div class="router-name-text">Peer Name: {{ data.PeerName }}</div>
+                </div>
+                <div class="{{ routerIcon }} peer bmp-outline-route" ng-style="{'color':colour}"></div>
+                <div class="router-name-text">Peer IP: {{ data.PeerIP }}</div>
+                <div class="router-name-text">BGP ID: {{ data.PeerBGPId }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="margin-bottom: 10px;">
+            <div style="float:left">
+              <div class="router-name-text">TCP Port: {{ data.PeerPort }}</div>
+              <div class="router-name-text">Hold Time: {{ data.PeerHoldTime }}</div>
+            </div>
+          </div>
+        </div>
+
     </div>
   </div>
 </div>
