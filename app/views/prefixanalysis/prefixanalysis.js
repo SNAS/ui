@@ -990,7 +990,7 @@ angular.module('bmpUiApp')
     function link($scope, element) {
       var drawCircles = function (data) {
         var NUMBER_OF_RECTS = 30;
-        var margin = {top: 0, right: 20, bottom: 0, left: 20},
+        var margin = {top: 0, right: 20, bottom: 20, left: 25},
           width = 800,
           height = 200;
         var start_time = moment($scope.currentSetTime - $scope.timeRange.range*60*60000);
@@ -1034,7 +1034,8 @@ angular.module('bmpUiApp')
               +"~"+ moment(time - (NUMBER_OF_RECTS-1-parseInt(i))* $scope.timeRange.value*60000).format("MM/DD HH:mm")
               +"<br/><strong>Changes:</strong>" + d;
             return content;
-          });
+          })
+          .offset([-10, 0]);
 
         var svg = d3.select(element[0])
           .append("svg")
@@ -1045,7 +1046,7 @@ angular.module('bmpUiApp')
 
         svg.append("g")
           .attr("class", "x axis")
-          .attr("transform", "translate(" + 7 + "," + 50 + ")")
+          .attr("transform", "translate(" + 15 + "," + 50 + ")")
           .call(xAxis);
 
         for (var j = 0; j < data.length; j++) {
