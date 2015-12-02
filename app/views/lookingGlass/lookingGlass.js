@@ -17,7 +17,6 @@ angular.module('bmpUiApp')
     $scope.isAggregate = false;
     $scope.isDistinct = false;
     $scope.isLongestMatch = true;
-    $scope.displayPrefix = [];
 
     $scope.turnOnDistinct = function () {
       if (!$scope.isDistinct)
@@ -87,9 +86,6 @@ angular.module('bmpUiApp')
           } else{
             for(var i = 0; i < resultData.length; i++) {
               resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
-              if ($scope.displayPrefix.indexOf(resultData[i].wholePrefix) == -1) {
-                $scope.displayPrefix.push(resultData[i].wholePrefix);
-              }
             }
             $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
           }
@@ -108,8 +104,7 @@ angular.module('bmpUiApp')
 
     $scope.glassGridSelection = function(){
       $scope.values = $scope.glassGridApi.selection.getSelectedRows()[0];
-
-        createASpath($scope.values.AS_Path);
+      createASpath($scope.values.AS_Path);
     };
 
     var createASpath = function(path){
@@ -253,10 +248,92 @@ angular.module('bmpUiApp')
 
     //--------------------------------------- SEARCH --------------------------------------------//
 
+    $scope.searchOptions = [
+      'Prefix/IP',
+      'Hostname',
+      'Community',
+      'AS Number'
+    ];
+    $scope.searchOption = 'Prefix/IP';
+
+    $scope.preSearch = function() {
+      $scope.glassGridOptions.glassGridIsLoad = true;
+      $scope.p2 = [];
+      $scope.ipAddr = [];
+      if ($scope.searchOption == 'Prefix/IP') {
+        $scope.search($("#prefixSearchBox").val());
+      } else if($scope.searchOption == 'Hostname') {
+        $scope.search($("#hostnameSearchBox").val());
+      } else if ($scope.searchOption == 'Community'){
+        var part1 = $("#part1SearchBox").val();
+        var part2 = $("#part2SearchBox").val();
+        var community = part1 + ":" + part2;
+        $scope.searchCommunity(community);
+      } else {
+        $scope.searchASN(value);
+      }
+    };
+
+    $scope.searchCommunity = function (keywords) {
+      $scope.glassGridOptions.glassGridIsLoad = true;
+      $scope.glassGridOptions.data = [];
+      apiFactory.getPrefixByCommunity(keywords)
+        .success(function(data){
+          var resultData = data.Community.data.data;
+          for(var i = 0; i < resultData.length; i++) {
+            resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+          }
+          if (resultData.length == 0) { // no data
+            $scope.glassGridOptions.data = [];
+            $scope.glassGridOptions.showGridFooter = false;
+          } else{
+            $scope.glassGridOptions.data = resultData;
+            $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
+          }
+          $scope.glassGridOptions.glassGridIsLoad = false;
+        });
+    };
+
+    $scope.part1Lookup = function (value) {
+      if (value.indexOf(":") == -1) {
+        return apiFactory.getCommP1Suggestions(value).then(function (response) {
+          return response.data.Community.data.data.map(function (item, key) {
+            return item['part1'];
+          })
+        })
+      }
+    };
+
+    $scope.onSelectPart1 = function ($item, $model, $label) {
+      $scope.p2 = [];
+      $scope.selectedPart1 = $label;
+      apiFactory.getCommP2ByP1($label)
+        .success(function(data){
+          data = data.Community.data.data;
+          $scope.p2 = data.sort(function(a,b){
+            if(a.count > b.count) {
+              return 1;
+            }
+            if (a.count < b.count) {
+              return -1;
+            }
+            return 0;
+          });
+        })
+    };
+
+    $scope.onSelectPart2 = function ($item, $model, $label) {
+      var community = $scope.selectedPart1 + ":" + $label;
+      $scope.searchCommunity(community);
+    };
+
+    $scope.compareP2 = function(actual, expected) {
+      return actual.toString().indexOf(expected, 0) === 0;
+    };
+
     //TODO - ATM IPV6 with XXXX:0:  not accepted need to add place to fill zero's
     // IPV6 REGEX - (\d+\:\d+|\d+\s\:\s\d+|\d+\s\:\d+|\d+\:\s\d+)
     //TODO - also XXXX::XXXX: is accepted for some reason
-
     var ipv4Regex = /\d{1,3}\./;
     var ipv6Regex = /([0-9a-fA-F]{1,4}\:)|(\:\:([0-9a-fA-F]{1,4})?)/;
     $scope.dnsLookup = function (value) {
@@ -273,12 +350,12 @@ angular.module('bmpUiApp')
       }
     };
 
-    $scope.onSelect = function ($item, $model, $label) {
+    $scope.onSelectHostname = function ($item, $model, $label) {
       $scope.search($label);
     };
 
     //Loop through data selecting and altering relevant data.
-    $scope.search = function(value, init){
+    $scope.search = function(value){
       if (value == "" || value == " ") {
         //when clear search populates original data.
         $scope.glassGridOptions.data = $scope.initalRibdata;
@@ -348,8 +425,6 @@ angular.module('bmpUiApp')
         }
       }
 
-      $scope.displayPrefix = []; // clear last research result
-
       if (fullIpWithPreLenReg.exec(value) != null || partCompIpRegex.exec(value) != null) {
         //Full ip with prefix or partial ip
         if ($scope.isAggregate && $scope.isDistinct) {
@@ -365,9 +440,6 @@ angular.module('bmpUiApp')
               var resultData = result.v_routes.data;
               for(var i = 0; i < resultData.length; i++) {
                 resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
-                if ($scope.displayPrefix.indexOf(resultData[i].wholePrefix) == -1) {
-                  $scope.displayPrefix.push(resultData[i].wholePrefix);
-                }
               }
               if (resultData.length == 0) { // no data
                 $scope.glassGridOptions.data = [];
@@ -375,12 +447,14 @@ angular.module('bmpUiApp')
               } else{
                 $scope.glassGridOptions.data = resultData;
                 $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
+
               }
 
             } else{
               $scope.glassGridOptions.data = [];
               $scope.glassGridOptions.showGridFooter = false;
             }
+            $scope.glassGridOptions.glassGridIsLoad = false;
           }).
           error(function (error) {
             console.log(error.message);
@@ -401,9 +475,6 @@ angular.module('bmpUiApp')
               var resultData = result.v_routes.data;
               for(var i = 0; i < resultData.length; i++) {
                 resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
-                if ($scope.displayPrefix.indexOf(resultData[i].wholePrefix) == -1) {
-                  $scope.displayPrefix.push(resultData[i].wholePrefix);
-                }
               }
               if (resultData.length == 0) { // no data
                 $scope.glassGridOptions.data = [];
@@ -416,6 +487,7 @@ angular.module('bmpUiApp')
               $scope.glassGridOptions.data = [];
               $scope.glassGridOptions.showGridFooter = false;
             }
+            $scope.glassGridOptions.glassGridIsLoad = false;
           }).
           error(function (error) {
             console.log(error.message);
