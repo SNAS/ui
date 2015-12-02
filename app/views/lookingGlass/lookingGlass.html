@@ -22,7 +22,7 @@
           />
           <input id="part1SearchBox" ng-if="searchOption == 'Community'"
                  type="text" ng-model="part1Keywords" class="input-large search-query" placeholder="3257"
-                 typeahead="part1 for part1 in part1Lookup($viewValue) | limitTo: 20"
+                 typeahead="part1 for part1 in part1Lookup($viewValue)"
                  typeahead-loading="loadingLocations"
                  typeahead-no-results="noResults"
                  typeahead-wait-ms="300"
@@ -32,7 +32,7 @@
           <span ng-if="searchOption == 'Community'"> : </span>
           <input id="part2SearchBox" ng-if="searchOption == 'Community'"
                  type="text" ng-model="part2Keywords" class="input-large search-query" placeholder="8012"
-                 typeahead="p2.part2 for p2 in p2 | filter: {part2: $viewValue} : compareP2| limitTo: 10"
+                 typeahead="p2.part2 for p2 in p2 | filter: {part2: $viewValue} : compareP2"
                  typeahead-on-select="onSelectPart2($item, $model, $label)"
                  typeahead-min-length="1"
           />
