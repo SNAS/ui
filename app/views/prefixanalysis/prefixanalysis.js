@@ -624,8 +624,8 @@ angular.module('bmpUiApp')
       if(typeof($scope.currentValue) == "undefined"){
         $scope.currentValue = $scope.value;
       }
-      getPrefixHisData($scope.currentValue+"?hours=2"); //default fetch data in the past two hours
-
+      //getPrefixHisData($scope.currentValue+"?hours=2"); //default fetch data in the past two hours
+      changeTimeRange();
       if(!$scope.$$phase) {
         //$digest or $apply
         $scope.$apply();

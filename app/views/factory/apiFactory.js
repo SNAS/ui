@@ -314,7 +314,7 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getPrefixByCommunity = function (community) {
-      return $http.get(urlBase + "community/" + community);
+      return $http.get(urlBase + "community?community=" + community);
     };
 
     return apiFactory;
