@@ -385,7 +385,7 @@ angular.module('bmpUiApp')
           + '<div class="timeline-right">'
           + (ASPath.trim()!=''?('<h5>' + 'AS Path: ' + ASPath + '</h5>') : (''))
           + (communities.trim()!=''?('<h5>' + 'Communities: ' + communities + '</h5>'):(''))
-          + '<p>' + moment.utc(row.LastModified, "YYYY-MM-DD HH:mm:ss.SSSSSS").local().format("MM/DD/YYYY HH:mm:ss.SSS") + '</p>'
+          + '<p>' + moment(row.LastModified, "YYYY-MM-DD HH:mm:ss.SSSSSS").format("MM/DD/YYYY HH:mm:ss.SSS") + '</p>'
           + '</div>'
           + '</li>';
       }
@@ -396,6 +396,10 @@ angular.module('bmpUiApp')
       apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId)
         .success(function (data) {
           $scope.originHisData = data.v_routes_history.data;
+
+          angular.forEach($scope.originHisData, function(item){
+            item['LastModified'] = moment.utc(item['LastModified'], 'YYYY-MM-DD HH:mm:ss.SSSSSS').local().format('YYYY-MM-DD HH:mm:ss.SSSSSS');
+          });
 
           if($scope.originHisData.length == 0)
           {
@@ -449,7 +453,7 @@ angular.module('bmpUiApp')
           allHisData[i].preData = allHisData[i-1];
         }
 
-        var offsetInMin = ($scope.currentSetTime - moment.utc(allHisData[i].LastModified).local())/1000/60;
+        var offsetInMin = ($scope.currentSetTime - moment(allHisData[i].LastModified))/1000/60;
 
         // ********* the following code is to create two field to record the As Path changing
         if(typeof(allHisData[i].AS_Path) == "string") {
@@ -989,7 +993,7 @@ angular.module('bmpUiApp')
         var margin = {top: 0, right: 20, bottom: 0, left: 20},
           width = 800,
           height = 200;
-        var start_time = moment.utc($scope.currentSetTime - $scope.timeRange.range*60*60000).local();
+        var start_time = moment($scope.currentSetTime - $scope.timeRange.range*60*60000);
         var end_time = $scope.currentSetTime;
         var x = d3.time.scale().range([0, width]).domain([start_time, end_time]);
         var xAxis = d3.svg.axis().scale(x).orient("bottom")
@@ -1026,8 +1030,8 @@ angular.module('bmpUiApp')
           .html(function(d,i) {
             if (d != 0) d += 1;
             var time = $scope.currentSetTime;
-            var content = moment.utc(time - (NUMBER_OF_RECTS-parseInt(i))*$scope.timeRange.value*60000).local().format("MM/DD HH:mm")
-              +"~"+ moment.utc(time - (NUMBER_OF_RECTS-1-parseInt(i))* $scope.timeRange.value*60000).local().format("MM/DD HH:mm")
+            var content = moment(time - (NUMBER_OF_RECTS-parseInt(i))*$scope.timeRange.value*60000).format("MM/DD HH:mm")
+              +"~"+ moment(time - (NUMBER_OF_RECTS-1-parseInt(i))* $scope.timeRange.value*60000).format("MM/DD HH:mm")
               +"<br/><strong>Changes:</strong>" + d;
             return content;
           });
