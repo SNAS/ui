@@ -344,7 +344,6 @@ angular.module('bmpUiApp')
     $scope.createTimeline = function(i) {
       $scope.timelineData = $scope.HisData[i];
       $scope.timelineHtml = "";
-      var ASArray = [];
       for(var index = $scope.timelineData.length - 1; index > -1 ; index--){
         var row = $scope.timelineData[index];
         var ASPath = "";
@@ -358,9 +357,6 @@ angular.module('bmpUiApp')
               if(value)
                 ASPathChanged += "<span tooltip class='green' name='AS" + value + "'>" + "+" + value + " " + "</span>";
           ASPath += "<span tooltip name='AS" + value + "'>" + value + " " + "</span>";
-          if(!ASArray.indexOf(value)>-1) {
-            ASArray.push(value);
-          }
         });
         if(index > 0)
           angular.forEach(row.preData.AS_Path, function (value, key) {
@@ -393,7 +389,6 @@ angular.module('bmpUiApp')
           + '</div>'
           + '</li>';
       }
-      bindTooltipsForAS(ASArray);
     };
 
     var getPrefixHisData = function (searchPrefix) {
