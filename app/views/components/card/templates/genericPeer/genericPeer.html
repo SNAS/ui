@@ -39,51 +39,49 @@
   <div class="template-content" ng-class="{expanded: cardExpand}">
 
     <div class="row">
-
-      <div class="col-lg-4">
-        <div class="icon-container">
+      <div class="col-lg-9">
+        <div class="icon-container" style="height:530px;">
           <div
-            bmp-card-router-peer-icon
-            data="rpIconData">
+            bmp-card-router-peer-diagram
+            data="rpDiagramData">
           </div>
         </div>
       </div>
 
-      <div class="col-lg-4">
+      <div class="col-lg-3">
+        <div class="row">
+          <div class="icon-container">
 
-        <div class="icon-container">
+            <h4>Number Of Prefixes</h4>
+            <div class="rib-image">
 
-          <h4>Number Of Prefixes</h4>
-          <div class="rib-image">
-
-            <div class="rib-section" ng-repeat="item in ribData">
-              <div class="rib-part">
-                <div class="{{ item[2] }} rib-icon"></div>
-                <div>{{ item[0] }}</div>
+              <div class="rib-section" ng-repeat="item in ribData">
+                <div class="rib-part">
+                  <div class="{{ item[2] }} rib-icon"></div>
+                  <div>{{ item[0] }}</div>
+                </div>
+                <div class="rib-value">
+                  {{ item[1] }}
+                </div>
               </div>
-              <div class="rib-value">
-                {{ item[1] }}
+
+              <div class="rib-section">
+                <div class="rib-part">
+                  <div>Filter Rate</div>
+                  <div style="font-size: 20px">{{ filterRate }}%</div>
+                </div>
               </div>
+
             </div>
-
-            <div class="rib-section">
-              <div class="rib-part">
-                <div>Filter Rate</div>
-                <div style="font-size: 20px">{{ filterRate }}%</div>
-              </div>
-            </div>
-
+          </div>
+        </div>
+        <div class="row">
+          <div class="icon-container">
+              <h4>Location Information</h4>
+              <span ng-bind-html="locationInfo"></span>
           </div>
         </div>
       </div>
-
-      <div class="col-lg-4">
-        <div class="icon-container">
-          <h4>Location Information</h4>
-          <span ng-bind-html="locationInfo"></span>
-        </div>
-      </div>
-
     </div>
 
     <div class="row">

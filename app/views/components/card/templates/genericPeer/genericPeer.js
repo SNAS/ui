@@ -151,15 +151,13 @@ angular.module('bmp.components.card')
       }
     };
 
-    $scope.rpIconData = {
-      RouterName: $scope.data.RouterName,
-      RouterIP: $scope.fullIp($scope.data.RouterIP, $scope.data.LocalPort),
-      //RouterIPWithLength: $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP),
-      RouterASN: $scope.data.LocalASN,
-      PeerName: $scope.data.PeerName,
-      PeerIP: $scope.fullIp($scope.data.PeerIP, $scope.data.PeerPort),
-      PeerASN: $scope.data.PeerASN
-    };
+    $scope.rpDiagramData = {};
+
+    for(var attrname in $scope.data){
+      $scope.rpDiagramData[attrname] = $scope.data[attrname];
+    }
+
+    $scope.rpDiagramData.RouterASN = $scope.data.LocalASN;
 
     $scope.locationInfo = cardFactory.createLocationTable({
       stateprov: $scope.data.stateprov,
