@@ -345,32 +345,54 @@ angular.module('bmpUiApp')
       $scope.timelineData = $scope.HisData[i];
       $scope.timelineHtml = "";
       var ASArray = [];
-      angular.forEach($scope.timelineData,function(row){
+      for(var index = $scope.timelineData.length - 1; index > -1 ; index--){
+        var row = $scope.timelineData[index];
         var ASPath = "";
-        var changed = "";
+        var ASPathChanged = "";
+        var communities = "";
+        var communitiesChanged = "";
 
         angular.forEach(row.AS_Path, function (value, key) {
-          if($scope.timelineData.indexOf(row)>0)
+          if(index > 0)
             if(!row.AS_Path_list[key].flag)
-              changed += "<span tooltip class='green' name='AS" + value + "'>" + "+" + value + " " + "</span>";
+              if(value)
+                ASPathChanged += "<span tooltip class='green' name='AS" + value + "'>" + "+" + value + " " + "</span>";
           ASPath += "<span tooltip name='AS" + value + "'>" + value + " " + "</span>";
           if(!ASArray.indexOf(value)>-1) {
             ASArray.push(value);
           }
         });
-        if($scope.timelineData.indexOf(row)>0)
+        if(index > 0)
           angular.forEach(row.preData.AS_Path, function (value, key) {
             if (!row.preData.AS_Path_list[key].last_flag) {
-              changed += "<span tooltip class='red' name='AS" + value + "'>" + "-" + value + " " + "</span>";
+              if(value)
+                ASPathChanged += "<span tooltip class='red' name='AS" + value + "'>" + "-" + value + " " + "</span>";
             }
           });
-        $scope.timelineHtml+='<li><p class="timeline-left">' + changed + '</p>'
+
+        angular.forEach(row.Communities, function (value, key) {
+          if(index > 0)
+            if(!row.Communities_list[key].flag)
+              if(value)
+                communitiesChanged += "<span class='green'>" + "+" + value + " " + "</span>";
+          communities += value + " ";
+        });
+        if(index > 0)
+          angular.forEach(row.preData.Communities, function (value, key) {
+            if (!row.preData.Communities_list[key].last_flag) {
+              if(value)
+                communitiesChanged += "<span tooltip class='red' name='AS" + value + "'>" + "-" + value + " " + "</span>";
+            }
+          });
+
+        $scope.timelineHtml+='<li><div class="timeline-left">' + '<h5>' + ASPathChanged + '</h5>' + '<h5>' + communitiesChanged + '</h5>' + '</div>'
           + '<div class="timeline-right">'
-          + '<h4>' + ASPath +'</h4>'
-          + '<p>' + moment.utc(row.LastModified, "YYYY-MM-DD HH:mm:ss.SSSSSS").local().format("MM/DD/YYYY HH:mm:ss") + '</p>'
+          + (ASPath.trim()!=''?('<h5>' + 'AS Path: ' + ASPath + '</h5>') : (''))
+          + (communities.trim()!=''?('<h5>' + 'Communities: ' + communities + '</h5>'):(''))
+          + '<p>' + moment.utc(row.LastModified, "YYYY-MM-DD HH:mm:ss.SSSSSS").local().format("MM/DD/YYYY HH:mm:ss.SSS") + '</p>'
           + '</div>'
           + '</li>';
-      });
+      }
       bindTooltipsForAS(ASArray);
     };
 
@@ -613,6 +635,7 @@ angular.module('bmpUiApp')
     $scope.selectUpdates = function() {
       $scope.loading = true;
       $scope.showGrid = false;
+      $scope.timelineHtml = "";
       $scope.isUpdatesSelected = true;
       if ($scope.currentSetTime == null) {
         $scope.currentSetTime = moment();
