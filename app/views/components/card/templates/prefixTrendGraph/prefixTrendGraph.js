@@ -79,7 +79,7 @@ angular.module('bmp.components.card')
 
         for (var i = 0; i < peer_history.length; i++) {
           var format = d3.time.format("%Y-%m-%d %H:%M:%S");
-          var date = +format.parse(peer_history[i].TS.split(".")[0]);
+          var date = +format.parse(moment.utc(peer_history[i].TS, 'YYYY-MM-DD HH:mm:ss.SSSSSS').local().format('YYYY-MM-DD HH:mm:ss'));
 
           pre_rib_values.push({
             x: date,
