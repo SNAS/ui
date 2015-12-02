@@ -25,7 +25,7 @@ $peer-text-color: #FFFFFF;
     color: #EAA546;
   }
 
-  .left-section {
+  .as-section {
     margin: auto;
     width: 90%;
     height: auto;
@@ -37,6 +37,25 @@ $peer-text-color: #FFFFFF;
       }
       .peer {
         color: #EAA546;
+      }
+    }
+  }
+
+  .left-section {
+    width: 141px;
+    height:50px;
+    display:table-cell;
+    .centre {
+      text-align: center;
+      .bmp-outline-route {
+        color:$router-color;
+        font-size:50px;
+      }
+      .peer {
+        color: #EAA546;
+      }
+      .router-name-text{
+        color: $connector-color;
       }
     }
   }
@@ -86,6 +105,15 @@ $peer-text-color: #FFFFFF;
 }
 
 .router-peer-line {
+  position: absolute;
+  background-color: $connector-color;
+  height: 1px;
+  top: 50%;
+  width: 83px;
+  left: 39%;
+}
+
+.router-peer-line-wide {
   background-color: $connector-color;
   position: absolute;
   left: -37%;
