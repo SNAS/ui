@@ -41,7 +41,8 @@ angular.module('bmpUiApp')
       {name: "RouterName", displayName: 'Router', width: "15%"},
       {name: "PeerName", displayName: 'Peer', width: "20%"},
       {name: "AS_Path", displayName: 'AS Path', width: "20%"},
-      {name: "Communities", displayName: 'Communities'}
+      {name: "Communities", displayName: 'Communities'},
+      {name: "isWithdrawn", displayName: 'Withdrawn', type: 'number'}
     ];
 
     $scope.glassGridOptions.multiSelect = false;
@@ -175,20 +176,20 @@ angular.module('bmpUiApp')
             $scope.as_path[index].popOut = pcontent;//+1 cause starting router node
           }
 
-          if($scope.data.PeerASN == $scope.norepeat[0]){
+          if($scope.values.PeerASN == $scope.norepeat[0]){
             //EBGP
             $scope.as_path[0].icon = "bmp-ebgp_router10-17";
             $scope.as_path[0].colour = "#EAA546";
             $scope.as_path[0].noTopText = true;
             $scope.as_path[0].addWidth = nodeWidth + 28; //width of label from icon
-          }else if($scope.data.PeerASN != $scope.norepeat[0]){
+          }else if($scope.values.PeerASN != $scope.norepeat[0]){
             //IBGP
             $scope.as_path = [{
               icon: "bmp-ibgp_router10-17",
               topVal: "",
               noTopText: true,
               colour: "#7bad85",
-              botVal: $scope.data.PeerASN,
+              botVal: $scope.values.PeerASN,
               isEnd: true,
               addWidth: nodeWidth + 28 //width of label from icon
             }].concat($scope.as_path);
@@ -199,7 +200,7 @@ angular.module('bmpUiApp')
             topVal: "",
             noTopText: true,
             colour: "#4b84ca",
-            botVal: $scope.data.LocalASN,
+            botVal: $scope.values.LocalASN,
             isEnd: true,
             addWidth: nodeWidth
           }].concat($scope.as_path);
