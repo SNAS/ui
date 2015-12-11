@@ -42,29 +42,20 @@ angular.module('bmpUiApp')
         placeholder: 'Search...'
       },
       onAdd: function (map) {
-        var container = L.DomUtil.create('div', 'my-custom-control');
+        var container = L.DomUtil.create('div', 'map-control-group');
 
         this.input = L.DomUtil.create('input', 'form-control input-sm', container);
         this.input.type = 'text';
         this.input.placeholder = this.options.placeholder;
-        L.DomEvent.addListener(this.input, 'keyup', _.debounce(this.keyup, 300), this);
+        this.input.id = "locator";
+
+        container.innerHTML += '<label class="display-block"><input id="toggleLines" type="checkbox" checked="checked" />Show Lines</label>';
+
+        container.innerHTML += '<label class="display-block"><input id="toggleList" type="checkbox" checked="checked" />Show List</label>';
+
         L.DomEvent.disableClickPropagation(container);
+
         return container;
-      },
-      keyup: function (e) {
-        if (e.keyCode == 13) {
-          var searchValue = this.input.value;
-          if (searchValue.indexOf("/") < 0) {
-            map.setView(ASCircles[searchValue]._latlng, 12);
-            selectAS(searchValue);
-          }
-          else {
-            apiFactory.getWhoisPrefix(searchValue).success(function (result) {
-              map.setView(ASCircles[result.gen_whois_route.data[0].origin_as]._latlng, 12);
-              selectAS(result.gen_whois_route.data[0].origin_as);
-            });
-          }
-        }
       }
     });
 
@@ -73,18 +64,66 @@ angular.module('bmpUiApp')
         position: 'topright'
       },
       onAdd: function (map) {
-        var container = L.DomUtil.create('div', 'my-custom-control');
-
-        this.list = L.DomUtil.create('div', 'listView', container);
-        this.list.id = 'list';
-        L.DomEvent.addListener(this.list, 'click', panMap, this);
-
+        var container = L.DomUtil.create('div', 'listView');
+        container.id = 'list';
+        L.DomEvent.addListener(container, 'click', panMap, this);
+        L.DomEvent.disableClickPropagation(container);
+        L.DomEvent.addListener(container, 'mousewheel', function (e) {
+          L.DomEvent.stopPropagation(e);
+        });
         return container;
       }
     });
 
     map.addControl(new L.Control.Locator());
     map.addControl(new L.Control.ListView());
+
+    function locate(e) {
+      if (e.keyCode == 13) {
+        var searchValue = this.value;
+        if (searchValue.indexOf("/") < 0) {
+          map.panTo(ASCircles[searchValue]._latlng, {animate: true});
+          selectAS(searchValue);
+        }
+        else {
+          apiFactory.getWhoisPrefix(searchValue).success(function (result) {
+            map.panTo(ASCircles[result.gen_whois_route.data[0].origin_as]._latlng, {animate: true});
+            selectAS(result.gen_whois_route.data[0].origin_as);
+          });
+        }
+      }
+    }
+
+    $("#locator")[0].addEventListener("keyup", locate, false);
+
+    var showLines = true, showList = true;
+
+    function toggleLines() {
+      showLines = this.checked;
+      angular.forEach(ASPolyLines, function (line) {
+        if (showLines) {
+          if (!map.hasLayer(line))
+            line.addTo(map);
+        }
+        else {
+          if (map.hasLayer(line))
+            map.removeLayer(line);
+        }
+      });
+    }
+
+    $("#toggleLines")[0].addEventListener("click", toggleLines, false);
+
+    function toggleList() {
+      showList = this.checked;
+      if (showList)
+        $('#list').show();
+      else
+        $('#list').hide();
+    }
+
+    $("#toggleList")[0].addEventListener("click", toggleList, false);
+
 
     var ASPolyLines = [], ASCircles = [], prefixCircles = [];
 
@@ -124,32 +163,43 @@ angular.module('bmpUiApp')
       });
 
       angular.forEach(ASPolyLines, function (polyline) {
-        map.removeLayer(polyline);
+        if (map.hasLayer(polyline))
+          map.removeLayer(polyline);
       });
       angular.forEach(prefixCircles, function (circle) {
-        map.removeLayer(circle);
+        if (map.hasLayer(circle))
+          map.removeLayer(circle);
       });
+
+      ASPolyLines = [];
+      prefixCircles = [];
 
       listViewHTML = "";
 
       angular.forEach(upstreams, function (upAS) {
         if (ASCircles[upAS] != undefined) {
-          ASPolyLines.push(L.polyline([thisCircle._latlng, ASCircles[upAS]._latlng], {
+          var line = L.polyline([thisCircle._latlng, ASCircles[upAS]._latlng], {
             color: '#FF4448',
             weight: 2,
-            opacity: 0.3
-          }).addTo(map));
+            opacity: 0.2
+          });
+          ASPolyLines.push(line);
+          if (showLines)
+            line.addTo(map);
           listViewHTML += "<p class='label labelCustom' style='background-color: #FF4448;display: block;cursor: pointer' asn='" + upAS + "'>" + (ASCircles[upAS].AS.as_name ? ASCircles[upAS].AS.as_name : upAS) + "</p>";
         }
       });
 
       angular.forEach(downstreams, function (downAS) {
         if (ASCircles[downAS] != undefined) {
-          ASPolyLines.push(L.polyline([thisCircle._latlng, ASCircles[downAS]._latlng], {
+          var line = L.polyline([thisCircle._latlng, ASCircles[downAS]._latlng], {
             color: '#5CC5EF',
             weight: 2,
-            opacity: 0.3
-          }).addTo(map));
+            opacity: 0.2
+          });
+          ASPolyLines.push(line);
+          if (showLines)
+            line.addTo(map);
           listViewHTML += "<p class='label labelCustom' style='background-color: #5CC5EF;display: block;cursor: pointer' asn='" + downAS + "'>" + (ASCircles[downAS].AS.as_name ? ASCircles[downAS].AS.as_name : downAS) + "</p>";
         }
       });
@@ -165,9 +215,9 @@ angular.module('bmpUiApp')
             var long = geoData.longitude;
             var fullPrefix = row.Prefix + "/" + row.PrefixLen;
             var circle = L.circle([lat, long], 300, {
-                color: "lightgreen",
-                fillColor: 'white',
-                fillOpacity: 0.5
+                color: "#3F6C45"
+                //fillColor: 'white',
+                //fillOpacity: 0.5
               })
               .addTo(map).bindPopup("<p>" + "Prefix: " + fullPrefix + "</p>"
                 + "<p>" + "Peer Name: " + row.PeerName + "</p>"
@@ -175,11 +225,14 @@ angular.module('bmpUiApp')
               );
             circle.prefix = row;
             prefixCircles[fullPrefix] = circle;
-            ASPolyLines.push(L.polyline([thisCircle._latlng, L.latLng(lat, long)], {
+            var line = L.polyline([thisCircle._latlng, L.latLng(lat, long)], {
               color: 'lightgreen',
               weight: 2,
-              opacity: 0.3
-            }).addTo(map));
+              opacity: 0.2
+            });
+            ASPolyLines.push(line);
+            if (showLines)
+              line.addTo(map);
             $('#list')[0].innerHTML += "<p class='label labelCustom' style='background-color: lightgreen;display: block;cursor: pointer'>" + fullPrefix + "</p>";
           });
         });
@@ -218,9 +271,9 @@ angular.module('bmpUiApp')
 
               var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 8;
               var circle = L.circle([lat, long], radius, {
-                color: '#686868',
-                fillColor: 'white',
-                fillOpacity: 0.5
+                color: '#686868'
+                //fillColor: 'white',
+                //fillOpacity: 0.5
               }).addTo(map).bindPopup("<p>" + "AS: " + as.asn + "</p>"
                 + "<p>" + "AS Name: " + as.as_name + "</p>"
                 + "<p>" + "Org Name: " + as.org_name + "</p>"
