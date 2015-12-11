@@ -16,12 +16,12 @@ angular.module('bmpUiApp')
       })
     }
 
-    var map = L.map('map').setView([37.4250, -121.9460], 8);
+    var map = L.map('map').setView([39.50, -98.35], 5);
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       accessToken: 'pk.eyJ1IjoicmFpbnk5MjcxIiwiYSI6ImNpaHNicmNlaDAwcWp0N2tobmxiOGRnbXgifQ.iWcbPl8TwyIX-qaX6nTx-g',
       id: 'rainy9271.obcfe84n',
-      minZoom: 3
+      minZoom: 4
     }).addTo(map);
 
     var panMap = function (e) {
@@ -133,14 +133,14 @@ angular.module('bmpUiApp')
 
     var selectAS = function (as) {
       if (lastCircle != null) {
-        lastCircle.options.color = "#686868";
+        lastCircle.options.color = "#888888";
         angular.forEach(lastCircle.AS.upstreams.split(','), function (e) {
           if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "#686868";
+            ASCircles[e].options.color = "#888888";
         });
         angular.forEach(lastCircle.AS.downstreams.split(','), function (e) {
           if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "#686868";
+            ASCircles[e].options.color = "#888888";
         });
       }
 
@@ -271,7 +271,7 @@ angular.module('bmpUiApp')
 
               var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 8;
               var circle = L.circle([lat, long], radius, {
-                color: '#686868'
+                color: '#888888'
                 //fillColor: 'white',
                 //fillOpacity: 0.5
               }).addTo(map).bindPopup("<p>" + "AS: " + as.asn + "</p>"
