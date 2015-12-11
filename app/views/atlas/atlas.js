@@ -125,107 +125,138 @@ angular.module('bmpUiApp')
     $("#toggleList")[0].addEventListener("click", toggleList, false);
 
 
-    var ASPolyLines = [], ASCircles = [], prefixCircles = [];
+    var ASPolyLines = [], ASCircles = {}, prefixCircles = {}, prefixCaches = {};
 
     var lastCircle = null;
 
     var listViewHTML = "";
 
     var selectAS = function (as) {
-      if (lastCircle != null) {
-        lastCircle.options.color = "#888888";
-        angular.forEach(lastCircle.AS.upstreams.split(','), function (e) {
-          if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "#888888";
-        });
-        angular.forEach(lastCircle.AS.downstreams.split(','), function (e) {
-          if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "#888888";
-        });
-      }
-
-      var thisCircle = ASCircles[as];
-
-      lastCircle = thisCircle;
-
-      var upstreams = thisCircle.AS.upstreams.split(',');
-      var downstreams = thisCircle.AS.downstreams.split(',');
-
-      thisCircle.options.color = "#FF00CC";
-
-      angular.forEach(upstreams, function (e) {
-        if (ASCircles[e] != undefined)
-          ASCircles[e].options.color = "#FF4448";
-      });
-      angular.forEach(downstreams, function (e) {
-        if (ASCircles[e] != undefined)
-          ASCircles[e].options.color = "#5CC5EF";
-      });
-
-      angular.forEach(ASPolyLines, function (polyline) {
-        if (map.hasLayer(polyline))
-          map.removeLayer(polyline);
-      });
-      angular.forEach(prefixCircles, function (circle) {
-        if (map.hasLayer(circle))
-          map.removeLayer(circle);
-      });
-
-      ASPolyLines = [];
-      prefixCircles = [];
-
-      listViewHTML = "";
-
-      angular.forEach(upstreams, function (upAS) {
-        if (ASCircles[upAS] != undefined) {
-          var line = L.polyline([thisCircle._latlng, ASCircles[upAS]._latlng], {
-            color: '#FF4448',
-            weight: 2,
-            opacity: 0.2
+        if (lastCircle != null) {
+          lastCircle.options.color = "#888888";
+          angular.forEach(lastCircle.AS.upstreams.split(','), function (e) {
+            if (ASCircles[e] != undefined)
+              ASCircles[e].options.color = "#888888";
           });
-          ASPolyLines.push(line);
-          if (showLines)
-            line.addTo(map);
-          listViewHTML += "<p class='label labelCustom' style='background-color: #FF4448;display: block;cursor: pointer' asn='" + upAS + "'>" + (ASCircles[upAS].AS.as_name ? ASCircles[upAS].AS.as_name : upAS) + "</p>";
-        }
-      });
-
-      angular.forEach(downstreams, function (downAS) {
-        if (ASCircles[downAS] != undefined) {
-          var line = L.polyline([thisCircle._latlng, ASCircles[downAS]._latlng], {
-            color: '#5CC5EF',
-            weight: 2,
-            opacity: 0.2
+          angular.forEach(lastCircle.AS.downstreams.split(','), function (e) {
+            if (ASCircles[e] != undefined)
+              ASCircles[e].options.color = "#888888";
           });
-          ASPolyLines.push(line);
-          if (showLines)
-            line.addTo(map);
-          listViewHTML += "<p class='label labelCustom' style='background-color: #5CC5EF;display: block;cursor: pointer' asn='" + downAS + "'>" + (ASCircles[downAS].AS.as_name ? ASCircles[downAS].AS.as_name : downAS) + "</p>";
         }
-      });
 
-      apiFactory.getPrefixesOriginingFrom(as).success(function (result) {
+        var thisCircle = ASCircles[as];
 
-        var v_routes = result.v_routes.data;
+        lastCircle = thisCircle;
 
-        angular.forEach(v_routes, function (row) {
-          apiFactory.getPeerGeo(row.PeerAddress).success(function (geo) {
-            var geoData = geo.v_geo_ip.data[0];
-            var lat = geoData.latitude;
-            var long = geoData.longitude;
+        var upstreams = thisCircle.AS.upstreams.split(',');
+        var downstreams = thisCircle.AS.downstreams.split(',');
+
+        thisCircle.options.color = "#FF00CC";
+
+        angular.forEach(upstreams, function (e) {
+          if (ASCircles[e] != undefined)
+            ASCircles[e].options.color = "#FF4448";
+        });
+        angular.forEach(downstreams, function (e) {
+          if (ASCircles[e] != undefined)
+            ASCircles[e].options.color = "#5CC5EF";
+        });
+
+        angular.forEach(ASPolyLines, function (polyline) {
+          if (map.hasLayer(polyline))
+            map.removeLayer(polyline);
+        });
+        angular.forEach(prefixCircles, function (circle) {
+          if (map.hasLayer(circle))
+            map.removeLayer(circle);
+        });
+
+        ASPolyLines = [];
+        prefixCircles = {};
+
+        listViewHTML = "";
+
+        angular.forEach(upstreams, function (upAS) {
+          if (ASCircles[upAS] != undefined) {
+            var line = L.polyline([thisCircle._latlng, ASCircles[upAS]._latlng], {
+              color: '#FF4448',
+              weight: 2,
+              opacity: 0.2
+            });
+            ASPolyLines.push(line);
+            if (showLines)
+              line.addTo(map);
+            listViewHTML += "<p class='label labelCustom' style='background-color: #FF4448;display: block;cursor: pointer' asn='" + upAS + "'>" + (ASCircles[upAS].AS.as_name ? ASCircles[upAS].AS.as_name : upAS) + "</p>";
+          }
+        });
+
+        angular.forEach(downstreams, function (downAS) {
+          if (ASCircles[downAS] != undefined) {
+            var line = L.polyline([thisCircle._latlng, ASCircles[downAS]._latlng], {
+              color: '#5CC5EF',
+              weight: 2,
+              opacity: 0.2
+            });
+            ASPolyLines.push(line);
+            if (showLines)
+              line.addTo(map);
+            listViewHTML += "<p class='label labelCustom' style='background-color: #5CC5EF;display: block;cursor: pointer' asn='" + downAS + "'>" + (ASCircles[downAS].AS.as_name ? ASCircles[downAS].AS.as_name : downAS) + "</p>";
+          }
+        });
+
+        apiFactory.getPrefixesOriginingFrom(as).success(function (result) {
+
+          var v_routes = result.v_routes.data;
+          var existedPrefixes = [];
+          var nonExistedPrefixes = [];
+
+
+          angular.forEach(v_routes, function (row) {
             var fullPrefix = row.Prefix + "/" + row.PrefixLen;
-            var circle = L.circle([lat, long], 300, {
-                color: "#3F6C45"
-                //fillColor: 'white',
-                //fillOpacity: 0.5
-              })
-              .addTo(map).bindPopup("<p>" + "Prefix: " + fullPrefix + "</p>"
-                + "<p>" + "Peer Name: " + row.PeerName + "</p>"
-                + "<p>" + "Router Name: " + row.RouterName + "</p>"
-              );
-            circle.prefix = row;
+            if (prefixCaches[fullPrefix] != undefined)
+              existedPrefixes.push(prefixCaches[fullPrefix]);
+            else
+              nonExistedPrefixes.push(row);
+          });
+          angular.forEach(nonExistedPrefixes, function (row) {
+            apiFactory.getPeerGeo(row.PeerAddress).success(function (geo) {
+
+              var fullPrefix = row.Prefix + "/" + row.PrefixLen;
+              var geoData = geo.v_geo_ip.data[0];
+              var lat = geoData.latitude;
+              var long = geoData.longitude;
+              var circle = L.circle([lat, long], 300, {
+                  color: "#3F6C45"
+                  //fillColor: 'white',
+                  //fillOpacity: 0.5
+                })
+                .addTo(map).bindPopup("<p>" + "Prefix: " + fullPrefix + "</p>"
+                  + "<p>" + "Peer Name: " + row.PeerName + "</p>"
+                  + "<p>" + "Router Name: " + row.RouterName + "</p>"
+                );
+              circle.prefix = row;
+              circle.fullPrefix = fullPrefix;
+              prefixCircles[fullPrefix] = circle;
+              var line = L.polyline([thisCircle._latlng, L.latLng(lat, long)], {
+                color: 'lightgreen',
+                weight: 2,
+                opacity: 0.2
+              });
+              ASPolyLines.push(line);
+              if (showLines)
+                line.addTo(map);
+              $('#list')[0].innerHTML += "<p class='label labelCustom' style='background-color: lightgreen;display: block;cursor: pointer'>" + fullPrefix + "</p>";
+
+              prefixCaches[fullPrefix] = circle;
+
+            });
+          });
+          angular.forEach(existedPrefixes, function (circle) {
+
+            circle.addTo(map);
+            var fullPrefix = circle.fullPrefix;
             prefixCircles[fullPrefix] = circle;
-            var line = L.polyline([thisCircle._latlng, L.latLng(lat, long)], {
+            var line = L.polyline([thisCircle._latlng, circle._latlng], {
               color: 'lightgreen',
               weight: 2,
               opacity: 0.2
@@ -234,14 +265,14 @@ angular.module('bmpUiApp')
             if (showLines)
               line.addTo(map);
             $('#list')[0].innerHTML += "<p class='label labelCustom' style='background-color: lightgreen;display: block;cursor: pointer'>" + fullPrefix + "</p>";
+
           });
         });
 
-      });
+        $('#list')[0].innerHTML = listViewHTML;
 
-      $('#list')[0].innerHTML = listViewHTML;
-
-    };
+      }
+      ;
 
     var ASCollection;
 
@@ -323,4 +354,5 @@ angular.module('bmpUiApp')
     });
 
   }
-  ]);
+  ])
+;
