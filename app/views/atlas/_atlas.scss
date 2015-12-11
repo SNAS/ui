@@ -1,0 +1,23 @@
+.atlas {
+  height: 930px;
+  width: 100%
+}
+
+.leaflet-zoom-animated {
+  display: inline !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.listView {
+  padding: 5px;
+  width: 150px;
+  height: 850px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.labelCustom {
+  font-size: 10px !important;
+  margin-bottom: 3px !important;
+}

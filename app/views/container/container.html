@@ -35,6 +35,9 @@
           <li active-item><a ui-sref="app.lookingGlass" ui-sref-opts="{reload: true}">Looking Glass</a>
             <dual-control d="dualWindow" l="lookingGlass"></dual-control>
           </li>
+          <li active-item><a ui-sref="app.atlas" ui-sref-opts="{reload: true}">ATLAS</a>
+            <dual-control d="dualWindow" l="atlas"></dual-control>
+          </li>
         </ul>
       </div>
       <div class="nav-section last">
@@ -100,7 +103,7 @@
     <!-- END HEADER -->
 
   <!-- MAIN -->
-  <div class="main-container {{page}}" ng-class="{'no-padding': dualWindow.active}">
+  <div class="main-container {{page}}" ng-class="{'no-padding': dualWindow.active || atlas}">
     <div ui-view></div>
     <!-- FOOTER -->
     <div class="footer">

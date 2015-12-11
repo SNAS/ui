@@ -102,6 +102,10 @@ angular
       //  url: '/peer-analysis',
       //  templateUrl: 'views/peeranalysis/peeranalysis.html'
       //})
+      .state('app.atlas', {
+        url: '/atlas',
+        templateUrl: 'views/atlas/atlas.html'
+      })
       .state('app.asAnalysis', {
         url: '/AS-analysis',
         templateUrl: 'views/asAnalysis/asAnalysis.html'

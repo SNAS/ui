@@ -317,5 +317,18 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "community?community=" + community);
     };
 
+    //ATLAS
+    apiFactory.getAllASAndRelationships = function(){
+      return $http.get(urlBase + "whois/asn/all");
+    };
+
+    apiFactory.getPrefixesOriginingFrom = function(asn){
+      return $http.get(urlBase + "whois/prefix/from/"+asn);
+    };
+
+    apiFactory.getGeoLocation = function (countryCode, city) {
+      return $http.get(urlBase + "geolocation/" + countryCode + "/" + city);
+    };
+
     return apiFactory;
 });
