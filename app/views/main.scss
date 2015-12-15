@@ -71,12 +71,10 @@
 @import "components/card/templates/topUpdatesGraph/topUpdatesGraph";
 @import "components/card/templates/topWithdrawsGraph/topWithdrawsGraph";
 
-
 //map
 @import "components/map/map";
 @import "components/loading/loading";
 @import "components/asn-model/asn-model";
-
 
 //============================================================
 // Sections
@@ -96,6 +94,7 @@
 @import "lookingGlass/lookingGlass";
 @import "tops/tops";
 @import "atlas/atlas";
+@import "adminView/adminView";
 
 //test pages
 @import "cardChanges/cardChanges";
@@ -388,19 +387,19 @@ div.ui-grid-cell input.ng-valid {
   border:none;
 }
 
-.ui-grid-pager-control .first-bar {
-  border:none;
-}
-.ui-grid-pager-control .first-triangle {
-  border:none;
-}
-
-.ui-grid-pager-control .last-triangle {
-  border:none;
-}
-.ui-grid-pager-control .last-bar {
-  border:none;
-}
+//.ui-grid-pager-control .first-bar {
+//  border:none;
+//}
+//.ui-grid-pager-control .first-triangle {
+//  border:none;
+//}
+//
+//.ui-grid-pager-control .last-triangle {
+//  border:none;
+//}
+//.ui-grid-pager-control .last-bar {
+//  border:none;
+//}
 
 .ui-grid-pinned-container.ui-grid-pinned-container-left .ui-grid-header-cell:last-child {
   border:none;

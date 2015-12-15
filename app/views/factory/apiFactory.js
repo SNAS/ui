@@ -330,5 +330,30 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "geolocation/" + countryCode + "/" + city);
     };
 
+    //Admin Page
+    apiFactory.getGeoIPList = function (page, limit, sort) {
+      return $http.get(urlBase + "geoip/get/" + page + "/" + limit + (sort ? ("?sort=" + sort.name + "&sortDirection=" + sort.sort.direction) : ""));
+    };
+
+    apiFactory.getGeoIPCount = function () {
+      return $http.get(urlBase + "geoip/getcount");
+    };
+
+    apiFactory.updateGeoIP = function(ip_start, col, value){
+      return $http.get(urlBase + "geoip/update/" + ip_start + "/" + col + "/" + value);
+    };
+
+    apiFactory.getGeoLocationList = function (page, limit, sort) {
+      return $http.get(urlBase + "geolocation/get/" + page + "/" + limit + (sort ? ("?sort=" + sort.name + "&sortDirection=" + sort.sort.direction) : ""));
+    };
+
+    apiFactory.getGeoLocationCount = function () {
+      return $http.get(urlBase + "geolocation/getcount");
+    };
+
+    apiFactory.updateGeoLocation = function (country, city, col, value) {
+      return $http.get(urlBase + "geolocation/update/" + country + "/" + city + "/" + col + "/" + value);
+    };
+
     return apiFactory;
 });

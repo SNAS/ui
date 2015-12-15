@@ -100,6 +100,7 @@ angular.module('bmpUiApp')
         case "app.linkState":
         case "app.orrView":
         case "app.whoIs":
+        case "app.adminView":
           $scope.category = "Dashboards";
           $scope.atlas = false;
           break;

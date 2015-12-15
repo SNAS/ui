@@ -1,0 +1,24 @@
+<div ng-controller="AdminViewController">
+  <tabset>
+    <tab heading="Maintain GeoIP">
+      <div ng-show="geoIPGridOptions.data.length">
+        <h3 style="display:inline-block">GeoIP List</h3>
+        <div id="IPResult" class="update-result">Just double click then type in.</div>
+        <div class="grid" ui-grid="geoIPGridOptions" ui-grid-pagination ui-grid-edit
+             ng-style="{'height': geoIPGridOptions.height}">
+        </div>
+      </div>
+    </tab>
+    <tab heading="Maintain GeoLocation">
+      <div ng-show="geoLocationGridOptions.data.length">
+        <h3 style="display:inline-block">Geo Location List</h3>
+        <div id="LocationResult" class="update-result">Just double click then type in.</div>
+        <div class="grid" ui-grid="geoLocationGridOptions" ui-grid-pagination ui-grid-edit
+             ng-style="{'height': geoLocationGridOptions.height}">
+        </div>
+      </div>
+    </tab>
+  </tabset>
+</div>
+
+
