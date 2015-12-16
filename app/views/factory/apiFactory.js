@@ -339,8 +339,16 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "geoip/getcount");
     };
 
-    apiFactory.updateGeoIP = function(ip_start, col, value){
+    apiFactory.insertGeoIP = function(suffix){
+      return $http.post(urlBase + "geoip/insert?"+suffix);
+    };
+
+    apiFactory.updateGeoIP = function (ip_start, col, value) {
       return $http.get(urlBase + "geoip/update/" + ip_start + "/" + col + "/" + value);
+    };
+
+    apiFactory.deleteGeoIP = function (ip_start) {
+      return $http.get(urlBase + "geoip/delete/" + ip_start);
     };
 
     apiFactory.getGeoLocationList = function (page, limit, sort) {
@@ -351,8 +359,16 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "geolocation/getcount");
     };
 
+    apiFactory.insertGeoLocation = function(suffix){
+      return $http.post(urlBase + "geolocation/insert?"+suffix);
+    };
+
     apiFactory.updateGeoLocation = function (country, city, col, value) {
       return $http.get(urlBase + "geolocation/update/" + country + "/" + city + "/" + col + "/" + value);
+    };
+
+    apiFactory.deleteGeoLocation = function (country, city) {
+      return $http.get(urlBase + "geolocation/delete/" + country + "/" + city);
     };
 
     return apiFactory;
