@@ -6,12 +6,12 @@ angular.module('bmpUiApp')
     var timer, resultDisappearTime = 2500;
 
     function showResult(affectedRows, type) {
-      $("#"+type+"Result")[0].innerHTML = affectedRows > 0 ? "Commit Successful. " : "Commit Failed. ";
-      $("#"+type+"Result").css('color', affectedRows > 0 ? "green" : "red");
-      $("#"+type+"Result").show();
+      $("#" + type + "Result")[0].innerHTML = affectedRows > 0 ? "Commit Successful. " : "Commit Failed. ";
+      $("#" + type + "Result").css('color', affectedRows > 0 ? "green" : "red");
+      $("#" + type + "Result").show();
       clearTimeout(timer);
       timer = setTimeout(function () {
-        $("#"+type+"Result").hide();
+        $("#" + type + "Result").hide();
       }, resultDisappearTime);
     }
 
@@ -64,7 +64,7 @@ angular.module('bmpUiApp')
         });
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef) {
           apiFactory.updateGeoIP(rowEntity.ip_start, colDef.name, rowEntity[colDef.name]).success(function (affectedRows) {
-            showResult(affectedRows,'IP');
+            showResult(affectedRows, 'IP');
           });
         });
       }
@@ -128,7 +128,7 @@ angular.module('bmpUiApp')
         });
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef) {
           apiFactory.updateGeoLocation(rowEntity.country, rowEntity.city, colDef.name, rowEntity[colDef.name]).success(function (affectedRows) {
-            showResult(affectedRows,'Location');
+            showResult(affectedRows, 'Location');
           });
         });
       }
@@ -150,7 +150,7 @@ angular.module('bmpUiApp')
       });
     };
 
-    $scope.showGeoLocation = function(){
+    $scope.showGeoLocation = function () {
       getGeoLocationPage();
     };
 
@@ -159,9 +159,77 @@ angular.module('bmpUiApp')
         case 'IP':
           switch (action) {
             case 'import':
-              $('#modal-title')[0].innerText = "Import GeoIP data file";
-              $('#modal-body')[0].innerHTML = "<p>Are you sure?</p>";
+              var fieldArray = [], typeArray = [];
+              $('#modal-title')[0].innerText = "Import GeoLocation data file";
+              $('#modal-body')[0].innerHTML = "<h3><span class='label label-danger col-sm-12' style='margin-bottom:20px'>Warning: uppon import, the original data will be erased</span></h3> \
+              <form id='ipForm' class='form-horizontal' role='form' enctype='multipart/form-data' method='post'> \
+                <div class='form-group'> \
+                  <div class='input-group col-lg-8 col-lg-offset-2'> \
+                  <span class='btn btn-primary btn-file input-group-addon'> \
+                    Browse<input type='file' name='file' id='file'/>\
+                  </span> \
+                  <input type='text' class='form-control' id='file-indicator' readonly> \
+                  </div> \
+                </div> \
+                <div id='delimiterDiv' class='form-group'> \
+                <label class='control-label col-sm-2' for='delimiter'>Delimiter:</label> \
+              <div class='col-sm-10'> \
+                <input type='text' class='form-control' id='delimiter' name='delimiter'> \
+                </div> \
+                </div> \
+                <h3><span class='label label-warning col-sm-12' style='margin-bottom:20px'>Please input order of fields</span></h3> \
+                <div id='columnDef'></div> \
+              </form>";
+              apiFactory.describeGeoIP().success(function (result) {
+                angular.forEach(result.COLUMNS.data, function (column) {
+                  fieldArray.push(column.Field);
+                  typeArray.push(column.Type);
+                  $('#columnDef').append("<div class='form-group'> \
+              <label class='control-label col-sm-7'>" + (column.Null == "NO" ? "Required field " : "Field ") + "\'" + column.Field + "\'(" +column.Type + ") is column:" + "</label> \
+              <div class='col-sm-5'> \
+                <input type='text' class='form-control' id='" + column.Field + "' placeholder='Starting from 0'> \
+                </div> \
+              </div>");
+                });
+              });
               $('#save-button')[0].innerText = "Save Changes";
+              $('#save-button').on('click', function () {
+                var indexArray = [];
+
+                angular.forEach($('#columnDef input'), function (dom) {
+                  var value = parseInt(dom.value);
+                  if (value > -1)
+                    indexArray.push(value);
+                  else
+                    indexArray.push(-1);
+                });
+
+                var formData = new FormData();
+
+                formData.append("file", $('#file')[0].files[0]);
+                formData.append("indexes", indexArray);
+                formData.append("fields", fieldArray);
+                formData.append("types", typeArray);
+                formData.append("delimiter", $('#delimiter').val());
+
+                $('#modal-body').append("<h4>Working... You'll get your result or exception below.</h4><h5>This could take long, so go somewhere else or go make a coffee :)</h5>");
+                apiFactory.importGeoIPFromFile(formData).success(function (result) {
+                  $('#modal-body').append("<p>" + result + "</p>");
+                })
+              });
+              $('#file').on('change', function () {
+                var input = $(this),
+                  label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                $('#file-indicator').val(label);
+                switch (label.split('.')[1]) {
+                  case 'txt':
+                    $('#delimiterDiv').show();
+                    break;
+                  default:
+                    $('#delimiterDiv').hide();
+                    break;
+                }
+              });
               break;
             case 'delete':
               var row = $scope.IPGridApi.selection.getSelectedRows()[0];
@@ -174,7 +242,7 @@ angular.module('bmpUiApp')
                 $('#save-button')[0].innerText = "Confirm";
                 $('#save-button').on('click', function () {
                   apiFactory.deleteGeoIP(row.ip_start).success(function (affectedRows) {
-                    showResult(affectedRows,'IP');
+                    showResult(affectedRows, 'IP');
                     getGeoIPPage();
                   })
                 });
@@ -250,7 +318,7 @@ angular.module('bmpUiApp')
                 var timezoneValue = $('#timezone').val().split('|');
                 suffix += "&timezone_name=" + timezoneValue[0] + "&timezone_offset=" + timezoneValue[1];
                 apiFactory.insertGeoIP(suffix).success(function (result) {
-                  showResult(result,'IP');
+                  showResult(result, 'IP');
                   getGeoIPPage();
                 });
                 $('#myModal').modal('hide');
@@ -261,9 +329,77 @@ angular.module('bmpUiApp')
         case 'location':
           switch (action) {
             case 'import':
-              $('#modal-title')[0].innerText = "Import Geo Location data file";
-              $('#modal-body')[0].innerHTML = "<p>Are you sure?</p>";
+              var fieldArray = [], typeArray = [];
+              $('#modal-title')[0].innerText = "Import GeoLocation data file";
+              $('#modal-body')[0].innerHTML = "<h3><span class='label label-danger col-sm-12' style='margin-bottom:20px'>Warning: uppon import, the original data will be erased</span></h3> \
+              <form id='ipForm' class='form-horizontal' role='form' enctype='multipart/form-data' method='post'> \
+                <div class='form-group'> \
+                  <div class='input-group col-lg-8 col-lg-offset-2'> \
+                  <span class='btn btn-primary btn-file input-group-addon'> \
+                    Browse<input type='file' name='file' id='file'/>\
+                  </span> \
+                  <input type='text' class='form-control' id='file-indicator' readonly> \
+                  </div> \
+                </div> \
+                <div id='delimiterDiv' class='form-group'> \
+                <label class='control-label col-sm-2' for='delimiter'>Delimiter:</label> \
+              <div class='col-sm-10'> \
+                <input type='text' class='form-control' id='delimiter' name='delimiter'> \
+                </div> \
+                </div> \
+                <h3><span class='label label-warning col-sm-12' style='margin-bottom:20px'>Please input order of fields</span></h3> \
+                <div id='columnDef'></div> \
+              </form>";
+              apiFactory.describeGeoLocation().success(function (result) {
+                angular.forEach(result.COLUMNS.data, function (column) {
+                  fieldArray.push(column.Field);
+                  typeArray.push(column.Type);
+                  $('#columnDef').append("<div class='form-group'> \
+              <label class='control-label col-sm-7'>" + (column.Null == "NO" ? "Required field " : "Field ") + "\'" + column.Field + "\'(" +column.Type + ") is column:" + "</label> \
+              <div class='col-sm-5'> \
+                <input type='text' class='form-control' id='" + column.Field + "' placeholder='Starting from 0'> \
+                </div> \
+              </div>");
+                });
+              });
               $('#save-button')[0].innerText = "Save Changes";
+              $('#save-button').on('click', function () {
+                var indexArray = [];
+
+                angular.forEach($('#columnDef input'), function (dom) {
+                  var value = parseInt(dom.value);
+                  if (value > -1)
+                    indexArray.push(value);
+                  else
+                    indexArray.push(-1);
+                });
+
+                var formData = new FormData();
+
+                formData.append("file", $('#file')[0].files[0]);
+                formData.append("indexes", indexArray);
+                formData.append("fields", fieldArray);
+                formData.append("types", typeArray);
+                formData.append("delimiter", $('#delimiter').val());
+
+                $('#modal-body').append("<h4>Working... You'll get your result or exception below.</h4><h5>This could take long, so go somewhere else or go make a coffee :)</h5>");
+                apiFactory.importGeoLocationFromFile(formData).success(function (result) {
+                  $('#modal-body').append("<p>" + result + "</p>");
+                })
+              });
+              $('#file').on('change', function () {
+                var input = $(this),
+                  label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                $('#file-indicator').val(label);
+                switch (label.split('.')[1]) {
+                  case 'txt':
+                    $('#delimiterDiv').show();
+                    break;
+                  default:
+                    $('#delimiterDiv').hide();
+                    break;
+                }
+              });
               break;
             case 'delete':
               var row = $scope.locationGridApi.selection.getSelectedRows()[0];
@@ -276,7 +412,7 @@ angular.module('bmpUiApp')
                 $('#save-button')[0].innerText = "Confirm";
                 $('#save-button').on('click', function () {
                   apiFactory.deleteGeoLocation(row.country, row.city).success(function (affectedRows) {
-                    showResult(affectedRows,'Location');
+                    showResult(affectedRows, 'Location');
                     getGeoLocationPage();
                   });
                   $('#myModal').modal('hide');
@@ -284,7 +420,7 @@ angular.module('bmpUiApp')
               }
               break;
             case 'insert':
-              $('#modal-title')[0].innerText = "Insert GeoIP data";
+              $('#modal-title')[0].innerText = "Insert Geo Location data";
               $('#modal-body')[0].innerHTML = "<form id='locationForm' class='form-horizontal' role='form'> \
                   <div class='form-group'> \
                   <label class='control-label col-sm-4' for='country'>Country:</label> \
@@ -315,7 +451,7 @@ angular.module('bmpUiApp')
               $('#save-button').on('click', function () {
                 var suffix = $('#locationForm').serialize();
                 apiFactory.insertGeoLocation(suffix).success(function (result) {
-                  showResult(result,'Location');
+                  showResult(result, 'Location');
                   getGeoLocationPage();
                 });
                 $('#myModal').modal('hide');
