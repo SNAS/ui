@@ -133,14 +133,14 @@ angular.module('bmpUiApp')
 
     var selectAS = function (as) {
       if (lastCircle != null) {
-        lastCircle.options.color = "#888888";
+        lastCircle.options.color = "#FFFFFF";
         angular.forEach(lastCircle.AS.upstreams.split(','), function (e) {
           if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "#888888";
+            ASCircles[e].options.color = "#FFFFFF";
         });
         angular.forEach(lastCircle.AS.downstreams.split(','), function (e) {
           if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "#888888";
+            ASCircles[e].options.color = "#FFFFFF";
         });
       }
 
@@ -181,7 +181,7 @@ angular.module('bmpUiApp')
           var line = L.polyline([thisCircle._latlng, ASCircles[upAS]._latlng], {
             color: '#FF4448',
             weight: 2,
-            opacity: 0.2
+            opacity: 0.5
           });
           ASPolyLines.push(line);
           if (showLines)
@@ -195,7 +195,7 @@ angular.module('bmpUiApp')
           var line = L.polyline([thisCircle._latlng, ASCircles[downAS]._latlng], {
             color: '#5CC5EF',
             weight: 2,
-            opacity: 0.2
+            opacity: 0.5
           });
           ASPolyLines.push(line);
           if (showLines)
@@ -240,7 +240,7 @@ angular.module('bmpUiApp')
             var line = L.polyline([thisCircle._latlng, L.latLng(lat, long)], {
               color: 'lightgreen',
               weight: 2,
-              opacity: 0.2
+              opacity: 0.5
             });
             ASPolyLines.push(line);
             if (showLines)
@@ -259,7 +259,7 @@ angular.module('bmpUiApp')
           var line = L.polyline([thisCircle._latlng, circle._latlng], {
             color: 'lightgreen',
             weight: 2,
-            opacity: 0.2
+            opacity: 0.5
           });
           ASPolyLines.push(line);
           if (showLines)
@@ -303,7 +303,7 @@ angular.module('bmpUiApp')
 
               var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 8;
               var circle = L.circle([lat, long], radius, {
-                color: '#888888'
+                color: '#FFFFFF'
                 //fillColor: 'white',
                 //fillOpacity: 0.5
               }).addTo(map).bindPopup("<p>" + "AS: " + as.asn + "</p>"
@@ -331,8 +331,8 @@ angular.module('bmpUiApp')
 
             var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 7;
             var circle = L.circle([lat, long], radius, {
-              color: 'black',
-              fillColor: 'orange',
+              color: 'lightgrey',
+              fillColor: 'red',
               fillOpacity: 0.4
             }).addTo(map).bindPopup("<p>" + "AS: " + as.asn + "</p>"
               + "<p>" + "AS Name: " + as.as_name + "</p>"

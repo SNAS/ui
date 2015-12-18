@@ -182,14 +182,16 @@ angular.module('bmpUiApp')
               </form>";
               apiFactory.describeGeoIP().success(function (result) {
                 angular.forEach(result.COLUMNS.data, function (column) {
-                  fieldArray.push(column.Field);
-                  typeArray.push(column.Type);
-                  $('#columnDef').append("<div class='form-group'> \
-              <label class='control-label col-sm-7'>" + (column.Null == "NO" ? "Required field " : "Field ") + "\'" + column.Field + "\'(" +column.Type + ") is column:" + "</label> \
-              <div class='col-sm-5'> \
-                <input type='text' class='form-control' id='" + column.Field + "' placeholder='Starting from 0'> \
-                </div> \
-              </div>");
+                  if (column.Field != "addr_type") {
+                    fieldArray.push(column.Field);
+                    typeArray.push(column.Type);
+                    $('#columnDef').append("<div class='form-group'> \
+                      <label class='control-label col-sm-8'>" + (column.Null == "NO" ? "Required field " : "Field ") + "\'" + column.Field + "\'(" + column.Type + ") is column:" + "</label> \
+                      <div class='col-sm-4'> \
+                        <input type='text' class='form-control' id='" + column.Field + "' placeholder='Starting from 0'> \
+                        </div> \
+                      </div>");
+                  }
                 });
               });
               $('#save-button')[0].innerText = "Save Changes";
@@ -223,10 +225,11 @@ angular.module('bmpUiApp')
                 $('#file-indicator').val(label);
                 switch (label.split('.')[1]) {
                   case 'txt':
+                  case 'csv':
                     $('#delimiterDiv').show();
                     break;
                   default:
-                    $('#delimiterDiv').hide();
+                    $('#delimiterDiv').show();
                     break;
                 }
               });
@@ -355,8 +358,8 @@ angular.module('bmpUiApp')
                   fieldArray.push(column.Field);
                   typeArray.push(column.Type);
                   $('#columnDef').append("<div class='form-group'> \
-              <label class='control-label col-sm-7'>" + (column.Null == "NO" ? "Required field " : "Field ") + "\'" + column.Field + "\'(" +column.Type + ") is column:" + "</label> \
-              <div class='col-sm-5'> \
+              <label class='control-label col-sm-8'>" + (column.Null == "NO" ? "Required field " : "Field ") + "\'" + column.Field + "\'(" + column.Type + ") is column:" + "</label> \
+              <div class='col-sm-4'> \
                 <input type='text' class='form-control' id='" + column.Field + "' placeholder='Starting from 0'> \
                 </div> \
               </div>");
@@ -393,10 +396,11 @@ angular.module('bmpUiApp')
                 $('#file-indicator').val(label);
                 switch (label.split('.')[1]) {
                   case 'txt':
+                  case 'csv':
                     $('#delimiterDiv').show();
                     break;
                   default:
-                    $('#delimiterDiv').hide();
+                    $('#delimiterDiv').show();
                     break;
                 }
               });
