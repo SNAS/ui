@@ -3,7 +3,7 @@
 angular.module('bmpUiApp')
   .controller('AdminViewController', ['$scope', 'apiFactory', function ($scope, apiFactory) {
 
-    var timer, resultDisappearTime = 2500;
+    var timer, searchTimer, resultDisappearTime = 2500;
 
     function showResult(affectedRows, type) {
       $("#" + type + "Result")[0].innerHTML = affectedRows > 0 ? "Commit Successful. " : "Commit Failed. ";
@@ -22,6 +22,8 @@ angular.module('bmpUiApp')
       useExternalSorting: true,
       enableRowSelection: true,
       enableRowHeaderSelection: false,
+      enableFiltering: true,
+      useExternalFiltering: true,
       multiSelect: false,
       rowHeight: 32,
       columnDefs: [
@@ -32,34 +34,49 @@ angular.module('bmpUiApp')
           name: "ip_end", displayName: 'IP_END', width: '15%', enableCellEdit: false
         },
         {
-          name: "country", displayName: 'Country', width: '10%', enableCellEdit: true
+          name: "country", displayName: 'Country', width: '10%'
         },
         {
-          name: "stateprov", displayName: 'State/Prov', width: '20%', enableCellEdit: true
+          name: "stateprov", displayName: 'State/Prov', width: '20%'
         },
         {
-          name: "city", displayName: 'City', width: '20%', enableCellEdit: true
+          name: "city", displayName: 'City', width: '20%'
         },
         {
-          name: "latitude", displayName: 'Latitude', width: '10%', enableCellEdit: true
+          name: "latitude", displayName: 'Latitude', width: '10%', enableFiltering: false
         },
         {
-          name: "longitude", displayName: 'Longitude', width: '10%', enableCellEdit: true
+          name: "longitude", displayName: 'Longitude', width: '10%', enableFiltering: false
         }
       ],
       onRegisterApi: function (gridApi) {
         $scope.IPGridApi = gridApi;
         gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
           if (sortColumns.length == 0) {
-            GeoIPPaginationOptions.sort = null;
+            geoIPGetOptions.sort = null;
           } else {
-            GeoIPPaginationOptions.sort = sortColumns[0];
+            geoIPGetOptions.sort = sortColumns[0];
           }
           getGeoIPPage();
         });
+        gridApi.core.on.filterChanged($scope, function () {
+          var grid = this.grid;
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(function () {
+            geoIPGetOptions.whereClause = "";
+            angular.forEach(grid.columns, function (column) {
+              if (column.filters[0].term != undefined)
+                geoIPGetOptions.whereClause += column.field + " LIKE '%25" + column.filters[0].term + "%25' AND ";
+            });
+            if (geoIPGetOptions.whereClause.length > 0)
+              geoIPGetOptions.whereClause = "WHERE " + geoIPGetOptions.whereClause.substring(0, geoIPGetOptions.whereClause.length - 4);
+            getGeoIPPagination();
+            getGeoIPPage();
+          }, 777);
+        });
         gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
-          GeoIPPaginationOptions.pageNumber = newPage;
-          GeoIPPaginationOptions.pageSize = pageSize;
+          geoIPGetOptions.pageNumber = newPage;
+          geoIPGetOptions.pageSize = pageSize;
           getGeoIPPage();
         });
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef) {
@@ -70,22 +87,25 @@ angular.module('bmpUiApp')
       }
     };
 
-    var GeoIPPaginationOptions = {
+    var geoIPGetOptions = {
       pageNumber: 1,
       pageSize: 1000,
+      whereClause: "",
       sort: null
     };
 
-    apiFactory.getGeoIPCount().success(function (result) {
-      $scope.geoIPGridOptions.totalItems = result.table.data[0]['COUNT'];
-    });
-
+    var getGeoIPPagination = function () {
+      apiFactory.getGeoIPCount(geoIPGetOptions.whereClause).success(function (result) {
+        $scope.geoIPGridOptions.totalItems = result.table.data[0]['COUNT'];
+      });
+    };
     var getGeoIPPage = function () {
-      apiFactory.getGeoIPList(GeoIPPaginationOptions.pageNumber, GeoIPPaginationOptions.pageSize, GeoIPPaginationOptions.sort).success(function (result) {
+      apiFactory.getGeoIPList(geoIPGetOptions.pageNumber, geoIPGetOptions.pageSize, geoIPGetOptions.whereClause, geoIPGetOptions.sort).success(function (result) {
         $scope.geoIPGridOptions.data = result.v_geo_ip.data;
       });
     };
 
+    getGeoIPPagination();
     getGeoIPPage();
 
     $scope.geoLocationGridOptions = {
@@ -96,6 +116,8 @@ angular.module('bmpUiApp')
       enableRowSelection: true,
       multiSelect: false,
       enableRowHeaderSelection: false,
+      enableFiltering: true,
+      useExternalFiltering: true,
       rowHeight: 32,
       columnDefs: [
         {
@@ -105,25 +127,40 @@ angular.module('bmpUiApp')
           name: "city", displayName: 'City', width: '30%', enableCellEdit: false
         },
         {
-          name: "latitude", displayName: 'Latitude', width: '25%', enableCellEdit: true
+          name: "latitude", displayName: 'Latitude', width: '25%', enableFiltering: false
         },
         {
-          name: "longitude", displayName: 'Longitude', width: '25%', enableCellEdit: true
+          name: "longitude", displayName: 'Longitude', width: '25%', enableFiltering: false
         }
       ],
       onRegisterApi: function (gridApi) {
         $scope.locationGridApi = gridApi;
         gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
           if (sortColumns.length == 0) {
-            geoLocationPaginationOptions.sort = null;
+            geoLocationGetOptions.sort = null;
           } else {
-            geoLocationPaginationOptions.sort = sortColumns[0];
+            geoLocationGetOptions.sort = sortColumns[0];
           }
           getGeoLocationPage();
         });
+        gridApi.core.on.filterChanged($scope, function () {
+          var grid = this.grid;
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(function () {
+            geoLocationGetOptions.whereClause = "";
+            angular.forEach(grid.columns, function (column) {
+              if (column.filters[0].term != undefined)
+                geoLocationGetOptions.whereClause += column.field + " LIKE '%25" + column.filters[0].term + "%25' AND ";
+            });
+            if (geoLocationGetOptions.whereClause.length > 0)
+              geoLocationGetOptions.whereClause = "WHERE " + geoLocationGetOptions.whereClause.substring(0, geoLocationGetOptions.whereClause.length - 4);
+            getGeoLocationPagination();
+            getGeoLocationPage();
+          }, 777);
+        });
         gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
-          geoLocationPaginationOptions.pageNumber = newPage;
-          geoLocationPaginationOptions.pageSize = pageSize;
+          geoLocationGetOptions.pageNumber = newPage;
+          geoLocationGetOptions.pageSize = pageSize;
           getGeoLocationPage();
         });
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef) {
@@ -134,23 +171,26 @@ angular.module('bmpUiApp')
       }
     };
 
-    var geoLocationPaginationOptions = {
+    var geoLocationGetOptions = {
       pageNumber: 1,
       pageSize: 1000,
+      whereClause: "",
       sort: null
     };
 
-    apiFactory.getGeoLocationCount().success(function (result) {
-      $scope.geoLocationGridOptions.totalItems = result.table.data[0]['COUNT'];
-    });
-
+    var getGeoLocationPagination = function () {
+      apiFactory.getGeoLocationCount(geoLocationGetOptions.whereClause).success(function (result) {
+        $scope.geoLocationGridOptions.totalItems = result.table.data[0]['COUNT'];
+      });
+    };
     var getGeoLocationPage = function () {
-      apiFactory.getGeoLocationList(geoLocationPaginationOptions.pageNumber, geoLocationPaginationOptions.pageSize, geoLocationPaginationOptions.sort).success(function (result) {
+      apiFactory.getGeoLocationList(geoLocationGetOptions.pageNumber, geoLocationGetOptions.pageSize, geoLocationGetOptions.whereClause, geoLocationGetOptions.sort).success(function (result) {
         $scope.geoLocationGridOptions.data = result.geo_location.data;
       });
     };
 
     $scope.showGeoLocation = function () {
+      getGeoLocationPagination();
       getGeoLocationPage();
     };
 
