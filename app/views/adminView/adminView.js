@@ -69,7 +69,7 @@ angular.module('bmpUiApp')
                 geoIPGetOptions.whereClause += column.field + " LIKE '%25" + column.filters[0].term + "%25' AND ";
             });
             if (geoIPGetOptions.whereClause.length > 0)
-              geoIPGetOptions.whereClause = "WHERE " + geoIPGetOptions.whereClause.substring(0, geoIPGetOptions.whereClause.length - 4);
+              geoIPGetOptions.whereClause = "WHERE " + geoIPGetOptions.whereClause.substring(0, geoIPGetOptions.whereClause.length - 5);
             getGeoIPPagination();
             getGeoIPPage();
           }, 777);
@@ -153,7 +153,7 @@ angular.module('bmpUiApp')
                 geoLocationGetOptions.whereClause += column.field + " LIKE '%25" + column.filters[0].term + "%25' AND ";
             });
             if (geoLocationGetOptions.whereClause.length > 0)
-              geoLocationGetOptions.whereClause = "WHERE " + geoLocationGetOptions.whereClause.substring(0, geoLocationGetOptions.whereClause.length - 4);
+              geoLocationGetOptions.whereClause = "WHERE " + geoLocationGetOptions.whereClause.substring(0, geoLocationGetOptions.whereClause.length - 5);
             getGeoLocationPagination();
             getGeoLocationPage();
           }, 777);
