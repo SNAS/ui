@@ -129,6 +129,11 @@ angular.module('bmpUiApp')
                 $scope.map.removeLayer(polyline);
             });
 
+            angular.forEach(paths, function (path) {
+              if ($scope.map.hasLayer(path))
+                $scope.map.removeLayer(path);
+            });
+
             cluster = L.markerClusterGroup({
               maxClusterRadius: 20,
               disableClusteringAtZoom: 6
@@ -137,8 +142,13 @@ angular.module('bmpUiApp')
               var selectedRouterId = e.layer.options.data.routerId;
               if ($scope.protocol == "OSPF") {
                 apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
-                    SPFdata = result.igp_ospf.data;
-                    drawShortestPathTree(SPFdata);
+                    if (result.igp_ospf) {
+                      SPFdata = result.igp_ospf.data;
+                      drawShortestPathTree(SPFdata);
+                    }
+                    else {
+                      $scope.SPFtableOptions.data = [];
+                    }
                   }
                 ).error(function (error) {
                   console.log(error.message);
@@ -146,8 +156,13 @@ angular.module('bmpUiApp')
               }
               else if ($scope.protocol == "ISIS") {
                 apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
-                    SPFdata = result.igp_isis.data;
-                    drawShortestPathTree(SPFdata);
+                    if (result.igp_isis) {
+                      SPFdata = result.igp_isis.data;
+                      drawShortestPathTree(SPFdata);
+                    }
+                    else {
+                      $scope.SPFtableOptions.data = [];
+                    }
                   }
                 ).error(function (error) {
                   console.log(error.message);
