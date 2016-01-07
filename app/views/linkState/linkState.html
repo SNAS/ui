@@ -105,7 +105,8 @@
 
             </div>
 
-            <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="{{mapWidth}}" resize></leaflet>
+            <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="{{mapWidth}}"
+                     resize></leaflet>
 
           </div>
           <div class="watermark" ng-if="!peerData.length">No data available</div>
@@ -113,12 +114,14 @@
         <div bmp-loading ng-show="topologyIsLoad"></div>
       </div>
 
-      <div class="main-area" style="margin-top: 15px" ng-show="show===true">
+      <div class="main-area" style="margin-top: 15px">
         <div class="table-container">
           <h3>Node Information</h3>
 
           <div class="loading-section">
-            <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
+            <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize>
+              <div class="watermark" ng-show="!SPFtableOptions.data.length>0">No data available</div>
+            </div>
           </div>
         </div>
       </div>
