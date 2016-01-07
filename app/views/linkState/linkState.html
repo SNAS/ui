@@ -10,7 +10,7 @@
   </div>
 
   <tabset>
-    <tab heading="Map View">
+    <tab heading="Map View" ng-click="changeTab('map')">
       <div class="loading-section">
         <div>
           <div class="map-container">
@@ -124,7 +124,7 @@
       </div>
     </tab>
 
-    <tab heading="Table View">
+    <tab heading="Table View" ng-click="changeTab('table')">
       <div class="loading-section" ng-style="{'height': 'lsTableInitHeight'}">
         <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns></div>
       </div>

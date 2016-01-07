@@ -9,7 +9,8 @@
  */
 
 angular.module('bmpUiApp')
-  .controller('linkStateController', ['$scope', 'apiFactory', 'toolsFactory', 'leafletData', '$timeout', function ($scope, apiFactory, toolsFactory, leafletData, $timeout) {
+  .controller('linkStateController', ['$scope', 'apiFactory', 'toolsFactory', 'leafletData', '$timeout', '$q',
+    function ($scope, apiFactory, toolsFactory, leafletData, $timeout, $q) {
 
     getPeers();
 
@@ -270,7 +271,9 @@ angular.module('bmpUiApp')
             });
           var location = [nodesData[i].city, nodesData[i].stateprov, nodesData[i].country].join(', ');
           nodesData[i].location = location;
-          $scope.lsTableOptions.data = nodesData;
+          $q.when($scope.tab == 'table', function(){
+            $scope.lsTableOptions.data = nodesData;
+          });
         }
       }).error(function (error) {
         console.log(error.message);
@@ -496,6 +499,8 @@ angular.module('bmpUiApp')
         }
       }
     });
+
+    $scope.tab = 'map';
     /**************** Table View ***************/
     $scope.lsTableInitHeight = 300;
     $scope.lsTableOptions = {
@@ -521,4 +526,8 @@ angular.module('bmpUiApp')
         $scope.gridApi = gridApi;
       }
     };
+
+    $scope.changeTab = function(value) {
+      $scope.tab = value;
+    }
   }]);
