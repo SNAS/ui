@@ -13,6 +13,8 @@ angular.module('bmpUiApp')
 
     getPeers();
 
+    $scope.id = "LinkState";
+
     $scope.protocol;
     $scope.show = false;
     var nodesPromise, linksPromise;
@@ -113,6 +115,8 @@ angular.module('bmpUiApp')
       getNodes();
       getLinks();
 
+      var tempNodes = {};
+
       linksPromise.success(function () {
         nodesPromise.success(function () {
 
@@ -127,29 +131,35 @@ angular.module('bmpUiApp')
             console.log(e.layer.options.data)
           });
           angular.forEach(nodes, function (node) {
-            var marker = new L.Marker([node.latitude, node.longitude], {
+            var lat = node.latitude;
+            var long = node.longitude;
+            if (tempNodes[lat + "," + long]) {
+              lat = parseFloat(lat) + (Math.random() > 0.5 ? 1 : -1) * Math.random()*0.5;
+              long = parseFloat(long) + (Math.random() > 0.5 ? 1 : -1) * Math.random()*0.5;
+            }
+            var marker = new L.Marker([lat, long], {
               icon: routerIcon,
               data: node,
               title: node.routerIP
             });
             marker.addTo(markerLayer);
+            tempNodes[node.latitude + "," + node.longitude] = node;
           });
-          var linkLayer = new L.FeatureGroup();
           angular.forEach(links, function (link) {
             var sourceNode, targetNode;
-            angular.forEach(nodes, function (node) {
+            angular.forEach(tempNodes, function (node) {
               if (node.id == link.source)
                 sourceNode = node;
               if (node.id == link.target)
                 targetNode = node;
             });
             if (sourceNode && targetNode) {
-              var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)]);
-              polyline.addTo(linkLayer);
+              var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)],{color:'black'});
+              //$scope.map.addLayer(polyline);
+              polyline.addTo($scope.map);
             }
           });
           $scope.map.addLayer(cluster.addLayer(markerLayer));
-          $scope.map.addLayer(linkLayer);
 
           $scope.topologyIsLoad = false; //stop loading
 
