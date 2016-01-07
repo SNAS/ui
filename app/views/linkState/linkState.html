@@ -1,22 +1,22 @@
 <div ng-controller="linkStateController">
+  <div class="main-page-search">
+    Select Peer
+    <select ng-model="selectedPeer"
+            ng-options="(peer.PeerName != '' ? peer.PeerName : peer.PeerIP + ' (' + peer.protocol + ')' ) for peer in peerData"
+            ng-change="selectChange()">
+    </select>
+    Protocol: {{protocol}}
+  </div>
   <tabset>
     <tab heading="Map View">
-      <div class="main-page-search">
-        Select Peer
-        <select ng-model="selectedPeer"
-                ng-options="(peer.PeerName != '' ? peer.PeerName : peer.PeerIP + ' (' + peer.protocol + ')' ) for peer in peerData"
-                ng-change="selectChange()">
-        </select>
-        Protocol: {{protocol}}
-      </div>
       <!--<nextTopology data="topologyData" options="topologyOptions" protocol="protocol" peer-hash-id="peerHashId" get-spf-table="getSPFtable" path="path"></nextTopology>-->
       <!--<topology></topology>-->
 
       <div class="loading-section">
+        <!--<div ng-show="topologyIsLoad" bmp-loading loading-var="topologyIsLoad"></div>-->
         <div id="link_state_topology">
           <div class="watermark" ng-if="!$scope.peerData.length">No data available</div>
         </div>
-        <!--<div bmp-loading loading-var="topologyIsLoad"></div>-->
       </div>
 
       <div class="main-area" style="margin-top: 15px" ng-show="show===true">
@@ -31,7 +31,9 @@
     </tab>
 
     <tab heading="Table View">
-      <ls-table></ls-table>
+      <div class="loading-section" ng-style="{'height': 'lsTableInitHeight'}">
+        <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns></div>
+      </div>
     </tab>
   </tabset>
 

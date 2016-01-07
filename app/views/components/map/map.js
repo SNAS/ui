@@ -8,7 +8,8 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-  .controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", function ($scope, $rootScope, $timeout, apiFactory, leafletData, $compile, $window, $q) {
+  .controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", "toolsFactory",
+    function ($scope, $rootScope, $timeout, apiFactory, leafletData, $compile, $window, $q, toolsFactory) {
 
     window.SCOPEMAP = $scope;
 
@@ -179,22 +180,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }
 
         for (var i = 0; i < data.length; i++) {
-          if (data[i].latitude == null && data[i].longitude == null) {
-            data[i].latitude = 37.3639;
-            data[i].longitude = -121.929;
-          }
-
-          if (data[i].country == null) {
-            data[i].country = 'US';
-          }
-
-          if (data[i].city == null) {
-            data[i].city = 'San Jose';
-          }
-
-          if (data[i].stateprov == null) {
-            data[i].stateprov = "CA";
-          }
+          toolsFactory.addDefaultInfo(data[i]);
 
           var latlng = [data[i].latitude, data[i].longitude];
 
