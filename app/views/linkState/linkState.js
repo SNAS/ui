@@ -179,7 +179,7 @@ angular.module('bmpUiApp')
                 var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)], {
                   color: 'grey',
                   weight: 2,
-                  opacity: 0.3,
+                  opacity: 0.2,
                   data: link,
                   sourceID: sourceNode.id,
                   targetID: targetNode.id
@@ -226,8 +226,7 @@ angular.module('bmpUiApp')
           defaults: {
             tileLayer: 'https://{s}.tiles.mapbox.com/v4/' + mapID + '/{z}/{x}/{y}.png?access_token=' + accessToken,
             minZoom: 2,
-            zoomControl: false,
-            opacity: 0.5
+            zoomControl: false
           }
         });
 
@@ -426,12 +425,15 @@ angular.module('bmpUiApp')
             reverse = true;
           }
           angular.forEach(selectedLinks, function (polyline) {
-            var path = new L.polylineDecorator(polyline, {
+            var newLine = new L.polyline(reverse ? [polyline._latlngs[1], polyline._latlngs[0]] : polyline._latlngs, {color: 'purple'});
+            newLine.addTo($scope.map);
+            paths.push(newLine);
+            var path = new L.polylineDecorator(newLine, {
               patterns: [{
                 offset: 0,
-                repeat: 20,
+                repeat: 25,
                 symbol: L.Symbol.arrowHead({
-                  pixelSize: 15,
+                  pixelSize: 7,
                   polygon: false,
                   pathOptions: {stroke: true}
                 })
