@@ -9,8 +9,7 @@
  */
 
 angular.module('bmpUiApp')
-  .controller('linkStateController', ['$scope', 'apiFactory', 'toolsFactory',
-    function ($scope, apiFactory, toolsFactory) {
+  .controller('linkStateController', ['$scope', 'apiFactory', 'toolsFactory', 'leafletData', '$timeout', function ($scope, apiFactory, toolsFactory, leafletData, $timeout) {
 
     getPeers();
 
@@ -34,50 +33,6 @@ angular.module('bmpUiApp')
     //      name: 'topo',
     //      type: 'nx.graphic.Topology',
     //      props: {
-    var topo = new nx.graphic.Topology({
-      //width: 1000,
-      //height: 500,
-      padding:10,
-      nodeConfig: {
-        // label: 'model.index',
-        label: 'model.routerId',
-        iconType: 'router'
-      },
-      linkConfig: {
-        //  label :'model.id',
-        linkType: 'parallel',
-        width: 2,
-        label: 'model.igp_metric',
-        sourceLabel: 'model.sourceLabel',
-        targetLabel: 'model.targetLabel'
-      },
-      nodeSetConfig: {
-        label: 'model.id',
-        iconType: 'model.iconType'
-      },
-      tooltipManagerConfig: {
-        showNodeTooltip: false
-      },
-      dataProcessor: 'force',
-      identityKey: 'id',
-      adaptive: true,
-      showIcon: true,
-      scalable: false,
-      layoutType: 'USMap',
-      //layoutType: 'WorldMap',
-      layoutConfig: {
-        //worldTopoJson: 'lib/world-50m.json',
-        longitude: 'model.longitude',
-        latitude: 'model.latitude'
-      },
-      linkInstanceClass: 'ExtendLink'
-      //}
-      //    }
-      //  }
-    });
-    //})(nx, nx.global);
-
-    //var topo = new LinkStateTopology();
 
     //SPF Table options
     $scope.SPFtableOptions = {
@@ -102,8 +57,6 @@ angular.module('bmpUiApp')
         {field: 'nei_router_id', displayName: 'Neighbor Router Id', width: '*'},
         {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '*'},
       ],
-
-      rowTemplate: '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>',
       onRegisterApi: function (gridApi) {
         $scope.gridApi = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
@@ -114,85 +67,101 @@ angular.module('bmpUiApp')
       }
     };
 
-    topo.view('stage').upon('mousewheel', function (sender, event) {
-      return false;
-    });
+    //topo.on('clickStage', function (sender, event) {
+    //  clear();
+    //  $scope.SPFtableOptions.data = {};
+    //  $scope.show = false;
+    //  $scope.$apply();
+    //});
+    //topo.on('clickNode', function (sender, node) {
+    //  var selectedRouterId = node['_label'];
+    //
+    //  clear();
+    //  topo.selectedNodes().clear();
+    //  topo.selectedNodes().add(node);
+    //
+    //  if ($scope.protocol == "OSPF") {
+    //    apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
+    //        SPFdata = result.igp_ospf.data;
+    //        drawShortestPathTree(SPFdata);
+    //      }
+    //    ).error(function (error) {
+    //        console.log(error.message);
+    //      });
+    //  }
+    //  else if ($scope.protocol == "ISIS") {
+    //    apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
+    //        SPFdata = result.igp_isis.data;
+    //        drawShortestPathTree(SPFdata);
+    //      }
+    //    ).error(function (error) {
+    //        console.log(error.message);
+    //      });
+    //  }
+    //});
 
-    topo.on('clickStage', function (sender, event) {
-      clear();
-      $scope.SPFtableOptions.data = {};
-      $scope.show = false;
-      $scope.$apply();
-    });
+    var cluster;
 
-    topo.upon('enterNode', function (sender, node) {
-      return false;
-    });
-
-    topo.upon('dragNode', function (sender, node) {
-      return false;
-    });
-
-    topo.on('clickNode', function (sender, node) {
-      var selectedRouterId = node['_label'];
-
-      clear();
-      topo.selectedNodes().clear();
-      topo.selectedNodes().add(node);
-
-      if ($scope.protocol == "OSPF") {
-        apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
-            SPFdata = result.igp_ospf.data;
-            drawShortestPathTree(SPFdata);
-          }
-        ).error(function (error) {
-            console.log(error.message);
-          });
-      }
-      else if ($scope.protocol == "ISIS") {
-        apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
-            SPFdata = result.igp_isis.data;
-            drawShortestPathTree(SPFdata);
-          }
-        ).error(function (error) {
-            console.log(error.message);
-          });
-      }
+    var routerIcon = L.icon({
+      iconUrl: 'images/Router-icon.png',
+      iconSize: [15, 15]
     });
 
     $scope.selectChange = function () {
+
       $scope.topologyIsLoad = true; //start loading
       getNodes();
       getLinks();
+
       linksPromise.success(function () {
         nodesPromise.success(function () {
-          var topologyData = {
-            nodes: nodes,
-            links: links,
-            //nodeSet: [{
-            //  id: 1,
-            //  type: 'nodeSet',
-            //  nodes: [nodes[8].id, nodes[9].id],
-            //  //root: nodes[8].id,
-            //  latitude: nodes[8].latitude,
-            //  longitude: nodes[8].longitude,
-            //  name: "Node set 1",
-            //  iconType: 'server'
-            //}]
-          };
-          topo.data(topologyData);
+
+          if (cluster)
+            $scope.map.removeLayer(cluster);
+
+          cluster = L.markerClusterGroup({
+            maxClusterRadius: 20,
+            disableClusteringAtZoom: 6
+          });
+          var markerLayer = new L.FeatureGroup().on('click', function (e) {
+            console.log(e.layer.options.data)
+          });
+          angular.forEach(nodes, function (node) {
+            var marker = new L.Marker([node.latitude, node.longitude], {
+              icon: routerIcon,
+              data: node,
+              title: node.routerIP
+            });
+            marker.addTo(markerLayer);
+          });
+          var linkLayer = new L.FeatureGroup();
+          angular.forEach(links, function (link) {
+            var sourceNode, targetNode;
+            angular.forEach(nodes, function (node) {
+              if (node.id == link.source)
+                sourceNode = node;
+              if (node.id == link.target)
+                targetNode = node;
+            });
+            if (sourceNode && targetNode) {
+              var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)]);
+              polyline.addTo(linkLayer);
+            }
+          });
+          $scope.map.addLayer(cluster.addLayer(markerLayer));
+          $scope.map.addLayer(linkLayer);
 
           $scope.topologyIsLoad = false; //stop loading
 
-          $scope.SPFtableOptions.data = {};
+          $scope.SPFtableOptions.data = [];
           $scope.show = false;
         });
       });
     };
 
-    function getPeers(){
+    function getPeers() {
       apiFactory.getLinkStatePeers().success(
-        function (result){
+        function (result) {
           $scope.peerData = result.ls_peers.data;
           if ($scope.peerData == 0) {
             $scope.topologyIsLoad = false;
@@ -207,23 +176,57 @@ angular.module('bmpUiApp')
     }
 
     function init() {
-      var app = new nx.ui.Application();
-      app.container(document.getElementById('link_state_topology'));
-      topo.attach(app);
+      var accessToken = 'pk.eyJ1IjoicmFpbnk5MjcxIiwiYSI6ImNpaHNicmNlaDAwcWp0N2tobmxiOGRnbXgifQ.iWcbPl8TwyIX-qaX6nTx-g';
+      var mapID = 'rainy9271.obcfe84n';
+      angular.extend($scope, {
+        defaults: {
+          tileLayer: 'https://{s}.tiles.mapbox.com/v4/' + mapID + '/{z}/{x}/{y}.png?access_token=' + accessToken,
+          minZoom: 2,
+          zoomControl: false
+        }
+      });
 
-      //hierarchical Layout
-      //var layout = topo.getLayout('hierarchicalLayout');
-      //layout.direction('horizontal');
-      //// layout.sortOrder(['Core', 'Distribution', 'Access']);
-      //layout.levelBy(function (node, model) {
-      //  var level = model._data.level % 3;
-      //  //   var level = Math.floor(model._data.level/5);
-      //  return level;
-      //});
-      //topo.activateLayout('hierarchicalLayout');
+      /****************************************
+       Store map object when available
+       *****************************************/
+      leafletData.getMap($scope.id).then(function (map) {
+        $scope.map = map;
+        //L.control.zoomslider().addTo(map);
+        $scope.map.scrollWheelZoom.disable();
+        //$scope.init();
+        $scope.map.setView([39.50, -84.35], 4);
+      });
 
       $scope.selectChange();
     }
+
+    $scope.goto = function (location) {
+      $scope.map.setView(location.getLatLng());
+      if (location.options.type === 'Router') {
+        location.expandRouters = true;
+        if ($scope.selectedLocation != undefined) {
+          $scope.selectedLocation.closePopup();
+          $scope.selectedLocation.options.zIndexOffset = 0;
+          setIcon($scope.selectedLocation, 'default');
+        }
+        $scope.selectedLocation = location;
+        $scope.selectedLocation.options.zIndexOffset = 1000;
+        setIcon($scope.selectedLocation, 'active');
+        $scope.selectedLocation.openPopup();
+      }
+      else {
+        location.options.expandPeers = true;
+        if ($scope.selectedLocation != undefined) {
+          $scope.selectedLocation.closePopup();
+          $scope.selectedLocation.options.zIndexOffset = 0;
+          setIcon($scope.selectedLocation, 'default');
+        }
+        $scope.selectedLocation = location;
+        $scope.selectedLocation.options.zIndexOffset = 1000;
+        setIcon($scope.selectedLocation, 'active');
+        $scope.selectedLocation.openPopup();
+      }
+    };
 
     function getNodes() {
       nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id);
@@ -245,6 +248,12 @@ angular.module('bmpUiApp')
             {
               id: nodesData[i].hash_id,
               routerId: routerId,
+              routerIP: nodesData[i].RouterIP,
+              country: nodesData[i].country,
+              stateprov: nodesData[i].stateprov,
+              city: nodesData[i].city,
+              //latitude: latitudes[i],
+              //longitude: longitudes[i],
               latitude: nodesData[i].latitude,
               longitude: nodesData[i].longitude,
               level: i
