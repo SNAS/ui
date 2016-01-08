@@ -287,6 +287,21 @@ angular.module('bmpUiApp')
         }
       };
 
+      $scope.toggleLocationSelection = function(location) {
+        if (!$("#"+location).hasClass("expanded")) {
+          $scope.selectedLocation = location;
+          $("#"+location).addClass("expanded");
+          $("#"+location+'nodes').show();
+        } else {
+          $scope.selectedLocation = undefined;
+          $("#"+location).removeClass("expanded");
+          $("#"+location+'nodes').hide();
+        }
+
+      };
+
+      $scope.locations = {};  //used for card
+
       function getNodes() {
         nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id);
         nodesPromise.success(function (result) {
@@ -303,26 +318,28 @@ angular.module('bmpUiApp')
               routerId = nodesData[i].RouterId;
               $scope.protocol = 'ISIS';
             }
-            nodes.push(
-              {
-                id: nodesData[i].hash_id,
-                routerId: routerId,
-                routerIP: nodesData[i].RouterIP,
-                country: nodesData[i].country,
-                stateprov: nodesData[i].stateprov,
-                city: nodesData[i].city,
-                //latitude: latitudes[i],
-                //longitude: longitudes[i],
-                latitude: nodesData[i].latitude,
-                longitude: nodesData[i].longitude,
-                level: i
-              });
-            var location = [nodesData[i].city, nodesData[i].stateprov, nodesData[i].country].join(', ');
-            nodesData[i].location = location;
-            $q.when($scope.tab == 'table', function () {
-              $scope.lsTableOptions.data = nodesData;
-            });
+            var newNode = {
+              id: nodesData[i].hash_id,
+              routerId: routerId,
+              routerIP: nodesData[i].RouterIP,
+              country: nodesData[i].country,
+              stateprov: nodesData[i].stateprov,
+              city: nodesData[i].city,
+              latitude: nodesData[i].latitude,
+              longitude: nodesData[i].longitude,
+              level: i
+            };
+            nodes.push(newNode);
+            if (newNode.city in $scope.locations) {
+              $scope.locations[newNode.city].push(newNode);
+            } else {
+              $scope.locations[newNode.city] = [newNode];
+            }
+            nodesData[i].location = [nodesData[i].city, nodesData[i].stateprov, nodesData[i].country].join(', ');
           }
+          $q.when($scope.tab == 'table', function () {
+            $scope.lsTableOptions.data = nodesData;
+          });
         }).error(function (error) {
           console.log(error.message);
         });
@@ -600,7 +617,10 @@ angular.module('bmpUiApp')
         }
       };
 
-      $scope.changeTab = function (value) {
-        $scope.tab = value;
-      }
-    }]);
+    $scope.changeTab = function(value) {
+      $scope.tab = value;
+    }
+
+    $scope.mapHeight = $(window).height() - 220;
+
+  }]);

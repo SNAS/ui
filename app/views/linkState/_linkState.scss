@@ -7,3 +7,11 @@
   width: auto;
   height: auto;
 }
+
+.locations{
+  .expanded{
+    .glyphicon{
+      transform: rotate(90deg);
+    }
+  }
+}

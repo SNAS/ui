@@ -75,7 +75,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
     $scope.$watch('selectionMade', function (val) {
       if ($rootScope.dualWindow.active) {
-        $scope.mapHeight = '100%';
+        $scope.mapHeight = 350;
         if (val === true) {
           $scope.panelHeight = 'calc(100% - 100px)'
         }
@@ -88,7 +88,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         return;
       }
       if (val === true) {
-        $scope.mapHeight = 400;
+        $scope.mapHeight = 400 - 50;
         $scope.panelHeight = 'calc(100% - 100px)'
       }
       else {
@@ -973,7 +973,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }, 1000);
       }
       scope.getWindowDimensions = function () {
-        return {'h': w.height()};
+        return {'h': w.height() - 50};  // for tab height
       };
       scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
         if ($rootScope.dualWindow.active) {
