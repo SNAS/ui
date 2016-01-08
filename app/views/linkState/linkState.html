@@ -14,45 +14,62 @@
       <div class="loading-section">
         <div>
           <div class="map-container relative">
-            <div class="map-control router-list expanded" ng-style="{'height': mapHeight}">
-
-              <h3 class="panel-header">
-                Link State
-                <div class="panel-search">
-                  <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey"
-                         ng-click="panelSearch(panelSearchKey)"/>
+            <div class="map-control router-list expanded" ng-style="{'height': mapHeight, 'overflow-y':'scroll'}">
+              <tabset>
+                <tab heading="Router List" style="width:50%">
+                  <h3 class="panel-header">
+                    Link State Routers
+                    <div class="panel-search">
+                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey"
+                             ng-click="panelSearch(panelSearchKey)"/>
                   <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey"
                         ng-click="panelSearchKey = ''"></span>
-                </div>
-              </h3>
+                    </div>
+                  </h3>
 
-              <div class="main">
-                <ul class="locations">
-                  <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}">
-                    <p class="router-list-city" ng-click="toggleLocationSelection(location)">
-                      <span class="glyphicon glyphicon-play"></span>{{location}}
-                      <span class="count">({{locaNodes.length}})</span>
-                    </p>
-                    <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
-                    <ul class="peers locationItems" id="{{location}}nodes" hidden>
-                      <li ng-repeat="node in locaNodes | filter:panelSearchKey">
-                        <div class="row">
-                          <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true"
-                               tooltip="Name: {{node.routerId}}" tooltip-placement="top">{{node.routerId}}
-                          </div>
-                          <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true"
-                               tooltip="IP: {{node.routerIP}}" tooltip-placement="top">{{node.routerIP}}
-                          </div>
-                        </div>
+                  <div class="main">
+                    <ul class="locations">
+                      <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}">
+                        <p class="router-list-city" ng-click="toggleLocationSelection(location)">
+                          <span class="glyphicon glyphicon-play"></span>{{location}}
+                          <span class="count">({{locaNodes.length}})</span>
+                        </p>
+                        <!--<span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>-->
+                        <ul class="peers locationItems" id="{{location}}nodes" hidden>
+                          <li ng-repeat="node in locaNodes | filter:panelSearchKey"
+                              ng-click="goto([node.latitude,node.longitude],8)">
+                            <div class="row">
+                              <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true"
+                                   tooltip="Name: {{node.routerId}}" tooltip-placement="top">{{node.routerId}}
+                              </div>
+                              <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true"
+                                   tooltip="IP: {{node.routerIP}}" tooltip-placement="top">{{node.routerIP}}
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
                       </li>
                     </ul>
-                  </li>
-                </ul>
-              </div>  <!-- end of main expanded -->
-
+                  </div>  <!-- end of main expanded -->
+                </tab>
+                <tab heading="Path Trace" style="width:50%;">
+                  <h3 class="panel-header">
+                    Path Trace
+                  </h3>
+                  <div class="text-center">
+                    <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
+                    <ul ng-if="pathTraces">
+                      <li class="path-trace" ng-repeat="router in pathTraces" tooltip="Router IP: {{router.routerIP}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
+                         ng-click="goto([router.latitude,router.longitude])">
+                        <h4><img src="images/Router-icon.png"/><span class="label label-primary">Router ID:{{router.routerId}}</span></h4>
+                        <span class="glyphicon glyphicon-chevron-down" ng-if="!$last"></span>
+                      </li>
+                    </ul>
+                  </div>
+                </tab>
+              </tabset>
             </div> <!-- End of router-list -->
-
-            <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}"></leaflet>
+            <leaflet ng-attr-id="{{id}}" class="map" defaults="defaults" height="{{mapHeight}}" width="71.9%"></leaflet>
 
           </div>
           <div class="watermark" ng-if="!peerData.length">No data available</div>

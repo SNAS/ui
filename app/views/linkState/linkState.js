@@ -132,28 +132,24 @@ angular.module('bmpUiApp')
         linksPromise.success(function () {
           nodesPromise.success(function () {
 
+            $scope.pathTraces = null;
+
             if (cluster)
               $scope.map.removeLayer(cluster);
 
-            angular.forEach(polylines, function (polyline) {
-              if ($scope.map.hasLayer(polyline))
-                $scope.map.removeLayer(polyline);
-            });
+            removeLayers(polylines);
 
-            angular.forEach(paths, function (path) {
-              if ($scope.map.hasLayer(path))
-                $scope.map.removeLayer(path);
-            });
+            removeLayers(paths);
 
             cluster = L.markerClusterGroup({
               maxClusterRadius: 20,
               disableClusteringAtZoom: 6
             });
             var markerLayer = new L.FeatureGroup().on('click', function (e) {
-              angular.forEach(paths, function (path) {
-                if ($scope.map.hasLayer(path))
-                  $scope.map.removeLayer(path);
-              });
+              removeLayers(paths);
+
+              $scope.pathTraces = null;
+
               var selectedRouterId = e.layer.options.data.routerId;
               if ($scope.protocol == "OSPF") {
                 apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
@@ -192,7 +188,7 @@ angular.module('bmpUiApp')
               var marker = new L.Marker([node.latitude, node.longitude], {
                 icon: routerIcon,
                 data: node,
-                title: node.routerIP
+                title: "IP:" + node.routerIP
               });
               var popup = "";
               angular.forEach(node, function (value, key) {
@@ -260,53 +256,32 @@ angular.module('bmpUiApp')
         leafletData.getMap($scope.id).then(function (map) {
           $scope.map = map;
           L.control.zoomslider().addTo($scope.map);
-          $scope.map.setView([39.50, -84.35], 4);
+          $scope.map.setView([39.50, -95.35], 4);
         });
 
         $scope.selectChange();
       }
 
-      $scope.goto = function (location) {
-        $scope.map.setView(location.getLatLng());
-        if (location.options.type === 'Router') {
-          location.expandRouters = true;
-          if ($scope.selectedLocation != undefined) {
-            $scope.selectedLocation.closePopup();
-            $scope.selectedLocation.options.zIndexOffset = 0;
-            setIcon($scope.selectedLocation, 'default');
-          }
-          $scope.selectedLocation = location;
-          $scope.selectedLocation.options.zIndexOffset = 1000;
-          setIcon($scope.selectedLocation, 'active');
-          $scope.selectedLocation.openPopup();
-        }
-        else {
-          location.options.expandPeers = true;
-          if ($scope.selectedLocation != undefined) {
-            $scope.selectedLocation.closePopup();
-            $scope.selectedLocation.options.zIndexOffset = 0;
-            setIcon($scope.selectedLocation, 'default');
-          }
-          $scope.selectedLocation = location;
-          $scope.selectedLocation.options.zIndexOffset = 1000;
-          setIcon($scope.selectedLocation, 'active');
-          $scope.selectedLocation.openPopup();
-        }
+      $scope.goto = function (latlng, zoom) {
+        if (zoom)
+          $scope.map.setView(latlng, zoom);
+        else
+          $scope.map.panTo(latlng, {animate: true});
       };
 
-      $scope.toggleLocationSelection = function(location) {
-        if (!$("#"+location).hasClass("expanded")) {
+      $scope.toggleLocationSelection = function (location) {
+        if (!$("#" + location).hasClass("expanded")) {
           $scope.selectedLocation = location;
-          $("#"+location).addClass("expanded");
-          $("#"+location+'nodes').show();
+          $("#" + location).addClass("expanded");
+          $("#" + location + 'nodes').show();
         } else {
           $scope.selectedLocation = undefined;
-          $("#"+location).removeClass("expanded");
-          $("#"+location+'nodes').hide();
+          $("#" + location).removeClass("expanded");
+          $("#" + location + 'nodes').hide();
         }
       };
 
-      $scope.panelSearch = function(key) {
+      $scope.panelSearch = function (key) {
         $('.locationItems').show();
       };
 
@@ -446,10 +421,8 @@ angular.module('bmpUiApp')
 
       //draw the path
       $scope.drawPath = function (path_hash_ids, neighbor_addr) {
-        angular.forEach(paths, function (path) {
-          if ($scope.map.hasLayer(path))
-            $scope.map.removeLayer(path);
-        });
+        $scope.pathTraces = null;
+        removeLayers(paths);
 
         var selectedNodes = path_hash_ids.split(",");
         var selectedLinks = [];
@@ -458,7 +431,7 @@ angular.module('bmpUiApp')
           selectedLinks.push(selectedLink);
         }
 
-        if (selectedLinks.length != 0) {
+        if (selectedLinks.length != 0 && selectedLinks.indexOf(undefined) < 0) {
           var reverse = false;
           if (selectedLinks.length == 1 && selectedNodes[0] > selectedNodes[1]) {
             reverse = true;
@@ -481,18 +454,11 @@ angular.module('bmpUiApp')
             path.addTo($scope.map);
             paths.push(path);
           });
-          //var path = new L.polylineDecorator({
-          //  links: selectedLinks,
-          //  arrow: 'cap',
-          //  pathStyle: {
-          //    'stroke': '#9ec654',
-          //    'stroke-width': '0px',
-          //    fill: '#9ec654'
-          //  },
-          //  pathWidth: 4,
-          //  reverse: reverse
-          //});
-
+          $scope.pathTraces = [];
+          angular.forEach(reverse ? nodes.slice().reverse() : nodes, function (node) {
+            if (selectedNodes.indexOf(node.id) > -1)
+              $scope.pathTraces.push(node);
+          });
         }
       };
 
@@ -531,6 +497,13 @@ angular.module('bmpUiApp')
           path.dispose();
         });
         pathLayer.clear();
+      }
+
+      function removeLayers(layers) {
+        angular.forEach(layers, function (layer) {
+          if ($scope.map.hasLayer(layer))
+            $scope.map.removeLayer(layer);
+        });
       }
 
       //nx.define('ExtendLink', nx.graphic.Topology.Link, {
@@ -624,10 +597,10 @@ angular.module('bmpUiApp')
         }
       };
 
-    $scope.changeTab = function(value) {
-      $scope.tab = value;
-    }
+      $scope.changeTab = function (value) {
+        $scope.tab = value;
+      }
 
-    $scope.mapHeight = $(window).height() - 220;
+      $scope.mapHeight = $(window).height() - 220;
 
-  }]);
+    }]);

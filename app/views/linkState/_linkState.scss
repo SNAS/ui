@@ -8,13 +8,34 @@
   height: auto;
 }
 
-.locations{
-  .expanded{
-    .glyphicon{
+.locations {
+  .expanded {
+    .glyphicon {
       transform: rotate(90deg);
     }
     .locationItems {
       visibility: visible;
     }
   }
+}
+
+.path-trace {
+  height: 60px;
+  margin: 7px;
+  img {
+    height: 35px;
+    width: 35px;
+  }
+  .glyphicon {
+    color: black;
+    font-size: 15px;
+  }
+  h4 {
+    margin: 8px;
+    cursor: pointer;
+  }
+}
+
+.text-center ul {
+  padding-left: 0;
 }
