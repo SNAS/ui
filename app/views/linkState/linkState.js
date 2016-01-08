@@ -304,7 +304,10 @@ angular.module('bmpUiApp')
           $("#"+location).removeClass("expanded");
           $("#"+location+'nodes').hide();
         }
+      };
 
+      $scope.panelSearch = function(key) {
+        $('.locationItems').show();
       };
 
       $scope.locations = {};  //used for card

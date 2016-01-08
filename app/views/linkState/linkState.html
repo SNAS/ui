@@ -19,10 +19,10 @@
               <h3 class="panel-header">
                 Link State
                 <div class="panel-search">
-                  <input type="text" placeholder="Search..." class="search" ng-model="panelSearch"
-                         ng-click="expandPanelLocations()"/>
-                  <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearch"
-                        ng-click="panelSearch = ''"></span>
+                  <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey"
+                         ng-click="panelSearch(panelSearchKey)"/>
+                  <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey"
+                        ng-click="panelSearchKey = ''"></span>
                 </div>
               </h3>
 
@@ -34,8 +34,8 @@
                       <span class="count">({{locaNodes.length}})</span>
                     </p>
                     <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
-                    <ul class="routers" id="{{location}}nodes" hidden>
-                      <li ng-repeat="node in locaNodes">
+                    <ul class="peers locationItems" id="{{location}}nodes" hidden>
+                      <li ng-repeat="node in locaNodes | filter:panelSearchKey">
                         <div class="row">
                           <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true"
                                tooltip="Name: {{node.routerId}}" tooltip-placement="top">{{node.routerId}}
