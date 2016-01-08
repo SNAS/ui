@@ -445,12 +445,12 @@ angular.module('bmpUiApp')
           }
           angular.forEach(selectedLinks, function (polyline) {
             var newLine = new L.polyline(reverse ? [polyline._latlngs[1], polyline._latlngs[0]] : polyline._latlngs, {color: 'purple'});
-            newLine.addTo($scope.map);
+            newLine.bindPopup(polyline._popup).addTo($scope.map);
             paths.push(newLine);
             var path = new L.polylineDecorator(newLine, {
               patterns: [{
                 offset: 0,
-                repeat: 25,
+                repeat: 50,
                 symbol: L.Symbol.arrowHead({
                   pixelSize: 7,
                   polygon: false,
@@ -480,7 +480,7 @@ angular.module('bmpUiApp')
         //var links = nx.util.values(topo.getLinksByNode(nodeId1, nodeId2))
         var links = [];
         angular.forEach(polylines, function (polyline) {
-          if ([polyline.options.sourceID, polyline.options.targetID].indexOf(nodeId1) > -1 ||
+          if ([polyline.options.sourceID, polyline.options.targetID].indexOf(nodeId1) > -1 &&
             [polyline.options.sourceID, polyline.options.targetID].indexOf(nodeId2) > -1)
             links.push(polyline);
         });
