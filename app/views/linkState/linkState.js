@@ -14,10 +14,20 @@ angular.module('bmpUiApp')
 
       getPeers();
 
+      var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
+      var mapID = 'pickledbadger.mbkpbek5';
+      angular.extend($scope, {
+        defaults: {
+          tileLayer: 'https://{s}.tiles.mapbox.com/v4/' + mapID + '/{z}/{x}/{y}.png?access_token=' + accessToken,
+          minZoom: 2,
+          zoomControl: false,
+          scrollWheelZoom: false
+        }
+      });
+
       $scope.id = "LinkState";
 
       $scope.protocol;
-      $scope.show = false;
       var nodesPromise, linksPromise;
       var nodes = [];
       var links = [];
@@ -103,7 +113,8 @@ angular.module('bmpUiApp')
       //  }
       //});
 
-      var polylines = [], cluster;
+      var polylines = [], cluster, paths = [];
+
 
       var routerIcon = L.icon({
         iconUrl: 'images/Router-icon.png',
@@ -139,6 +150,10 @@ angular.module('bmpUiApp')
               disableClusteringAtZoom: 6
             });
             var markerLayer = new L.FeatureGroup().on('click', function (e) {
+              angular.forEach(paths, function (path) {
+                if ($scope.map.hasLayer(path))
+                  $scope.map.removeLayer(path);
+              });
               var selectedRouterId = e.layer.options.data.routerId;
               if ($scope.protocol == "OSPF") {
                 apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
@@ -179,6 +194,11 @@ angular.module('bmpUiApp')
                 data: node,
                 title: node.routerIP
               });
+              var popup = "";
+              angular.forEach(node, function (value, key) {
+                popup += key + ":" + value + "<br>";
+              });
+              marker.bindPopup(popup);
               marker.addTo(markerLayer);
               tempNodes[node.latitude + "," + node.longitude] = node;
             });
@@ -213,7 +233,6 @@ angular.module('bmpUiApp')
             $scope.topologyIsLoad = false; //stop loading
 
             $scope.SPFtableOptions.data = [];
-            $scope.show = false;
           });
         });
       };
@@ -235,24 +254,12 @@ angular.module('bmpUiApp')
       }
 
       function init() {
-        var accessToken = 'pk.eyJ1IjoicmFpbnk5MjcxIiwiYSI6ImNpaHNicmNlaDAwcWp0N2tobmxiOGRnbXgifQ.iWcbPl8TwyIX-qaX6nTx-g';
-        var mapID = 'rainy9271.obcfe84n';
-        angular.extend($scope, {
-          defaults: {
-            tileLayer: 'https://{s}.tiles.mapbox.com/v4/' + mapID + '/{z}/{x}/{y}.png?access_token=' + accessToken,
-            minZoom: 2,
-            zoomControl: false
-          }
-        });
-
         /****************************************
          Store map object when available
          *****************************************/
         leafletData.getMap($scope.id).then(function (map) {
           $scope.map = map;
-          //L.control.zoomslider().addTo(map);
-          $scope.map.scrollWheelZoom.disable();
-          //$scope.init();
+          L.control.zoomslider().addTo($scope.map);
           $scope.map.setView([39.50, -84.35], 4);
         });
 
@@ -416,7 +423,6 @@ angular.module('bmpUiApp')
           SPFdata[i].neighbor_addr_adjusted = (SPFdata[i].neighbor_addr == null) ? 'local' : SPFdata[i].neighbor_addr;
         }
         $scope.SPFtableOptions.data = SPFdata;
-        $scope.show = true;
       }
 
       function getSelectedLinks(SPFdata) {
@@ -434,8 +440,6 @@ angular.module('bmpUiApp')
         }
         return selectedLinks;
       }
-
-      var paths = [];
 
       //draw the path
       $scope.drawPath = function (path_hash_ids, neighbor_addr) {
@@ -458,12 +462,12 @@ angular.module('bmpUiApp')
           }
           angular.forEach(selectedLinks, function (polyline) {
             var newLine = new L.polyline(reverse ? [polyline._latlngs[1], polyline._latlngs[0]] : polyline._latlngs, {color: 'purple'});
-            newLine.addTo($scope.map);
+            newLine.bindPopup(polyline._popup).addTo($scope.map);
             paths.push(newLine);
             var path = new L.polylineDecorator(newLine, {
               patterns: [{
                 offset: 0,
-                repeat: 25,
+                repeat: 50,
                 symbol: L.Symbol.arrowHead({
                   pixelSize: 7,
                   polygon: false,
@@ -493,7 +497,7 @@ angular.module('bmpUiApp')
         //var links = nx.util.values(topo.getLinksByNode(nodeId1, nodeId2))
         var links = [];
         angular.forEach(polylines, function (polyline) {
-          if ([polyline.options.sourceID, polyline.options.targetID].indexOf(nodeId1) > -1 ||
+          if ([polyline.options.sourceID, polyline.options.targetID].indexOf(nodeId1) > -1 &&
             [polyline.options.sourceID, polyline.options.targetID].indexOf(nodeId2) > -1)
             links.push(polyline);
         });
