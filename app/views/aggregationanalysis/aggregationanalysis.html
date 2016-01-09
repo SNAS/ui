@@ -5,7 +5,7 @@
     <input type="text" ng-model="searchPrefix" placeholder="Search ..."/>
     <button ng-click="getsShowPrefixInfo()" class="btn btn-sm btn-info">Search</button>
   </div>
-  
+
   <div class="main-area row">
     <div class="col-lg-12">
       <div class="table-container">
@@ -31,7 +31,7 @@
         <!--<select ng-model="peerData.selectPeer" ng-options="peer.PeerName as peer.title for peer in peerData" ng-change="selectChange()">-->
         <div class="input">
           <select ng-model="peerData.selectPeer" ng-options="peer.PeerName for peer in peerData | orderBy : 'PeerName'"
-                  ng-change="selectChange()">
+                  ng-change="selectChange()" class="select">
             <option value="">Selects BGP Peer please</option>
           </select>
         </div>

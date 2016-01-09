@@ -270,6 +270,10 @@ angular.module('bmpUiApp')
       };
 
       $scope.toggleLocationSelection = function (location) {
+        var index = location.indexOf(' ');
+        if (index > -1) {
+          location = location.substring(0, index) + '\\' + location.substring(index, location.length);
+        }
         if (!$("#" + location).hasClass("expanded")) {
           $scope.selectedLocation = location;
           $("#" + location).addClass("expanded");
