@@ -113,7 +113,7 @@ angular.module('bmpUiApp')
       //  }
       //});
 
-      var polylines = [], cluster, paths = [];
+      var polylines, cluster, paths;
 
 
       var routerIcon = L.icon({
@@ -138,8 +138,10 @@ angular.module('bmpUiApp')
               $scope.map.removeLayer(cluster);
 
             removeLayers(polylines);
+            polylines=[];
 
             removeLayers(paths);
+            paths=[];
 
             cluster = L.markerClusterGroup({
               maxClusterRadius: 20,
@@ -147,6 +149,7 @@ angular.module('bmpUiApp')
             });
             var markerLayer = new L.FeatureGroup().on('click', function (e) {
               removeLayers(paths);
+              paths=[];
 
               $scope.pathTraces = null;
 
@@ -423,6 +426,7 @@ angular.module('bmpUiApp')
       $scope.drawPath = function (path_hash_ids, neighbor_addr) {
         $scope.pathTraces = null;
         removeLayers(paths);
+        paths=[];
 
         var selectedNodes = path_hash_ids.split(",");
         var selectedLinks = [];
@@ -442,8 +446,8 @@ angular.module('bmpUiApp')
             paths.push(newLine);
             var path = new L.polylineDecorator(newLine, {
               patterns: [{
-                offset: 0,
-                repeat: 50,
+                offset: '20%',
+                repeat: '20%',
                 symbol: L.Symbol.arrowHead({
                   pixelSize: 7,
                   polygon: false,
