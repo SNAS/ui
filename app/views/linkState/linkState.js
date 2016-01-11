@@ -78,6 +78,42 @@ angular.module('bmpUiApp')
         iconSize: [15, 15]
       });
 
+      $scope.selectNode = function(selectedRouterId){
+        removeLayers(paths);
+        paths = [];
+
+        $scope.pathTraces = null;
+
+        if ($scope.protocol == "OSPF") {
+          apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
+              if (result.igp_ospf) {
+                SPFdata = result.igp_ospf.data;
+                drawShortestPathTree(SPFdata);
+              }
+              else {
+                $scope.SPFtableOptions.data = [];
+              }
+            }
+          ).error(function (error) {
+            console.log(error.message);
+          });
+        }
+        else if ($scope.protocol == "ISIS") {
+          apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
+              if (result.igp_isis) {
+                SPFdata = result.igp_isis.data;
+                drawShortestPathTree(SPFdata);
+              }
+              else {
+                $scope.SPFtableOptions.data = [];
+              }
+            }
+          ).error(function (error) {
+            console.log(error.message);
+          });
+        }
+      };
+
       $scope.selectChange = function () {
 
         $scope.topologyIsLoad = true; //start loading
@@ -106,40 +142,7 @@ angular.module('bmpUiApp')
               disableClusteringAtZoom: 6
             });
             var markerLayer = new L.FeatureGroup().on('click', function (e) {
-              removeLayers(paths);
-              paths = [];
-
-              $scope.pathTraces = null;
-
-              var selectedRouterId = e.layer.options.data.routerId;
-              if ($scope.protocol == "OSPF") {
-                apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
-                    if (result.igp_ospf) {
-                      SPFdata = result.igp_ospf.data;
-                      drawShortestPathTree(SPFdata);
-                    }
-                    else {
-                      $scope.SPFtableOptions.data = [];
-                    }
-                  }
-                ).error(function (error) {
-                  console.log(error.message);
-                });
-              }
-              else if ($scope.protocol == "ISIS") {
-                apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
-                    if (result.igp_isis) {
-                      SPFdata = result.igp_isis.data;
-                      drawShortestPathTree(SPFdata);
-                    }
-                    else {
-                      $scope.SPFtableOptions.data = [];
-                    }
-                  }
-                ).error(function (error) {
-                  console.log(error.message);
-                });
-              }
+              selectNode(e.layer.options.data.routerId);
             });
             angular.forEach(nodes, function (node) {
               if (tempNodes[node.latitude + "," + node.longitude]) {
