@@ -33,19 +33,10 @@ angular.module('bmpUiApp')
       var links = [];
       var SPFdata;
 
-      var latitudes = [63.391326, 47.6062, 29.7633, 41.85, 33.7861178428426, 44.98, 34.0522, 39.0997, 40.7879, 38.8951,
-        45.5234, 42.6526, 25.7743, 32.7153, 42.3584, 36.137242513163];
-      var longitudes = [-149.8286774, -122.332, -95.3633, -87.65, -84.1959236252621, -93.2638, -118.244, -94.5786,
-        -74.0143, -77.0364, -122.676, -73.7562, -80.1937, -117.157, -71.0598, -120.754451723841];
-
-      // initialize a topology
-      //(function(nx, global) {
-      //nx.define('LinkStateTopology.', nx.ui.Component, {
-      //  view: {
-      //    content: {
-      //      name: 'topo',
-      //      type: 'nx.graphic.Topology',
-      //      props: {
+      //var latitudes = [63.391326, 47.6062, 29.7633, 41.85, 33.7861178428426, 44.98, 34.0522, 39.0997, 40.7879, 38.8951,
+      //  45.5234, 42.6526, 25.7743, 32.7153, 42.3584, 36.137242513163];
+      //var longitudes = [-149.8286774, -122.332, -95.3633, -87.65, -84.1959236252621, -93.2638, -118.244, -94.5786,
+      //  -74.0143, -77.0364, -122.676, -73.7562, -80.1937, -117.157, -71.0598, -120.754451723841];
 
       //SPF Table options
       $scope.SPFtableOptions = {
@@ -80,41 +71,7 @@ angular.module('bmpUiApp')
         }
       };
 
-      //topo.on('clickStage', function (sender, event) {
-      //  clear();
-      //  $scope.SPFtableOptions.data = {};
-      //  $scope.show = false;
-      //  $scope.$apply();
-      //});
-      //topo.on('clickNode', function (sender, node) {
-      //  var selectedRouterId = node['_label'];
-      //
-      //  clear();
-      //  topo.selectedNodes().clear();
-      //  topo.selectedNodes().add(node);
-      //
-      //  if ($scope.protocol == "OSPF") {
-      //    apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
-      //        SPFdata = result.igp_ospf.data;
-      //        drawShortestPathTree(SPFdata);
-      //      }
-      //    ).error(function (error) {
-      //        console.log(error.message);
-      //      });
-      //  }
-      //  else if ($scope.protocol == "ISIS") {
-      //    apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
-      //        SPFdata = result.igp_isis.data;
-      //        drawShortestPathTree(SPFdata);
-      //      }
-      //    ).error(function (error) {
-      //        console.log(error.message);
-      //      });
-      //  }
-      //});
-
-      var polylines, cluster, paths;
-
+      var polylines, cluster, markers, paths;
 
       var routerIcon = L.icon({
         iconUrl: 'images/Router-icon.png',
@@ -128,6 +85,7 @@ angular.module('bmpUiApp')
         getLinks();
 
         var tempNodes = {};
+        markers = {};
 
         linksPromise.success(function () {
           nodesPromise.success(function () {
@@ -138,10 +96,10 @@ angular.module('bmpUiApp')
               $scope.map.removeLayer(cluster);
 
             removeLayers(polylines);
-            polylines=[];
+            polylines = [];
 
             removeLayers(paths);
-            paths=[];
+            paths = [];
 
             cluster = L.markerClusterGroup({
               maxClusterRadius: 20,
@@ -149,7 +107,7 @@ angular.module('bmpUiApp')
             });
             var markerLayer = new L.FeatureGroup().on('click', function (e) {
               removeLayers(paths);
-              paths=[];
+              paths = [];
 
               $scope.pathTraces = null;
 
@@ -191,7 +149,7 @@ angular.module('bmpUiApp')
               var marker = new L.Marker([node.latitude, node.longitude], {
                 icon: routerIcon,
                 data: node,
-                title: "IP:" + node.routerIP
+                title: "IP: " + node.routerIP
               });
               var popup = "";
               angular.forEach(node, function (value, key) {
@@ -199,6 +157,7 @@ angular.module('bmpUiApp')
               });
               marker.bindPopup(popup);
               marker.addTo(markerLayer);
+              markers[node.id] = marker;
               tempNodes[node.latitude + "," + node.longitude] = node;
             });
             angular.forEach(links, function (link) {
@@ -393,12 +352,6 @@ angular.module('bmpUiApp')
       }
 
       function drawShortestPathTree(SPFdata) {
-        var selectedLinks = getSelectedLinks(SPFdata);
-        //var linksLayer = topo.getLayer('links');
-        //var linksLayerHighlightElements = linksLayer.highlightedElements();
-        //console.log(selectedLinks);
-        //linksLayerHighlightElements.addRange(selectedLinks);
-
         for (var i = 0; i < SPFdata.length; i++) {
           SPFdata[i].prefixWithLen = SPFdata[i].prefix + "/" + SPFdata[i].prefix_len;
           SPFdata[i].neighbor_addr_adjusted = (SPFdata[i].neighbor_addr == null) ? 'local' : SPFdata[i].neighbor_addr;
@@ -406,102 +359,47 @@ angular.module('bmpUiApp')
         $scope.SPFtableOptions.data = SPFdata;
       }
 
-      function getSelectedLinks(SPFdata) {
-        var selectedLinks = [];
-        for (var i = 0; i < SPFdata.length; i++) {
-          var path_hash_ids = SPFdata[i].path_hash_ids.split(",");
-          var neighbor_addr = SPFdata[i].neighbor_addr;
-          for (var j = 0; j < path_hash_ids.length - 1; j++) {
-            var selectedLink = findLink(path_hash_ids[j], path_hash_ids[j + 1], neighbor_addr);
-            // nx.extend(linksObj, _linksObj);
-            if (selectedLinks.indexOf(selectedLink) == -1) {
-              selectedLinks.push(selectedLink);
-            }
-          }
-        }
-        return selectedLinks;
-      }
-
       //draw the path
       $scope.drawPath = function (path_hash_ids, neighbor_addr) {
         $scope.pathTraces = null;
         removeLayers(paths);
-        paths=[];
+        paths = [];
 
-        var selectedNodes = path_hash_ids.split(",");
-        var selectedLinks = [];
-        for (var j = 0; j < selectedNodes.length - 1; j++) {
-          var selectedLink = findLink(selectedNodes[j], selectedNodes[j + 1], neighbor_addr);
-          selectedLinks.push(selectedLink);
-        }
+        var selectedMarkers = [];
 
-        if (selectedLinks.length != 0 && selectedLinks.indexOf(undefined) < 0) {
-          var reverse = false;
-          if (selectedLinks.length == 1 && selectedNodes[0] > selectedNodes[1]) {
-            reverse = true;
-          }
-          angular.forEach(selectedLinks, function (polyline) {
-            var newLine = new L.polyline(reverse ? [polyline._latlngs[1], polyline._latlngs[0]] : polyline._latlngs, {color: 'purple'});
-            newLine.bindPopup(polyline._popup).addTo($scope.map);
-            paths.push(newLine);
-            var path = new L.polylineDecorator(newLine, {
-              patterns: [{
-                offset: '20%',
-                repeat: '20%',
-                symbol: L.Symbol.arrowHead({
-                  pixelSize: 7,
-                  polygon: false,
-                  pathOptions: {stroke: true}
-                })
-              }]
-            });
-            path.addTo($scope.map);
-            paths.push(path);
+        angular.forEach(path_hash_ids.split(","), function (hash) {
+          selectedMarkers.push(markers[hash]);
+        });
+        for (var j = 0; j < selectedMarkers.length - 1; j++) {
+          var newLine = new L.polyline([selectedMarkers[j]._latlng, selectedMarkers[j + 1]._latlng], {color: 'purple'});
+          angular.forEach(polylines, function (polyline) {
+            if ([polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j].options.data.id) > -1 &&
+              [polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j + 1].options.data.id) > -1)
+              newLine.bindPopup(polyline._popup);
           });
-          $scope.pathTraces = [];
-          angular.forEach(reverse ? nodes.slice().reverse() : nodes, function (node) {
-            if (selectedNodes.indexOf(node.id) > -1)
-              $scope.pathTraces.push(node);
+          newLine.addTo($scope.map);
+
+          //bindPopup(polylines[]._popup).
+          paths.push(newLine);
+          var path = new L.polylineDecorator(newLine, {
+            patterns: [{
+              offset: '20%',
+              repeat: '20%',
+              symbol: L.Symbol.arrowHead({
+                pixelSize: 7,
+                polygon: false,
+                pathOptions: {stroke: true}
+              })
+            }]
           });
+          path.addTo($scope.map);
+          paths.push(path);
         }
+        $scope.pathTraces = [];
+        angular.forEach(selectedMarkers, function (marker) {
+          $scope.pathTraces.push(marker.options.data);
+        });
       };
-
-      function findLink(nodeId1, nodeId2, neighbor_addr) {
-        //var links = nx.util.values(topo.getLinksByNode(nodeId1, nodeId2))
-        var links = [];
-        angular.forEach(polylines, function (polyline) {
-          if ([polyline.options.sourceID, polyline.options.targetID].indexOf(nodeId1) > -1 &&
-            [polyline.options.sourceID, polyline.options.targetID].indexOf(nodeId2) > -1)
-            links.push(polyline);
-        });
-
-        if (links.length == 1) {
-          return links[0];
-        }
-        else {
-          for (var i = 0; i < links.length; i++) {
-            var interfaceIP = links[i].options.data.interfaceIP;
-            var neighborIP = links[i].options.data.neighborIP;
-            if (interfaceIP == neighbor_addr || neighborIP == neighbor_addr) {
-              return links[i];
-            }
-          }
-          //console.log(links[0].id());
-          return links[0];
-        }
-      }
-
-      function clear() {
-        var linksLayer = topo.getLayer('links');
-        var linksLayerHighlightElements = linksLayer.highlightedElements();
-        linksLayerHighlightElements.clear();
-
-        var pathLayer = topo.getLayer("paths");
-        nx.each(pathLayer.paths(), function (path) {
-          path.dispose();
-        });
-        pathLayer.clear();
-      }
 
       function removeLayers(layers) {
         angular.forEach(layers, function (layer) {
@@ -509,70 +407,6 @@ angular.module('bmpUiApp')
             $scope.map.removeLayer(layer);
         });
       }
-
-      //nx.define('ExtendLink', nx.graphic.Topology.Link, {
-      //  properties: {
-      //    sourceLabel: null,
-      //    targetLabel: null
-      //  },
-      //  view: function (view) {
-      //    view.content.push({
-      //      name: 'source',
-      //      type: 'nx.graphic.Text',
-      //      props: {
-      //        'class': 'link-label',
-      //        'alignment-baseline': 'text-after-edge',
-      //        'text-anchor': 'start'
-      //      }
-      //    }, {
-      //      name: 'target',
-      //      type: 'nx.graphic.Text',
-      //      props: {
-      //        'class': 'link-label',
-      //        'alignment-baseline': 'text-after-edge',
-      //        'text-anchor': 'end'
-      //      }
-      //    });
-      //
-      //    return view;
-      //  },
-      //  methods: {
-      //    update: function () {
-      //
-      //      this.inherited();
-      //
-      //      var el, point;
-      //
-      //      var line = this.line();
-      //      var angle = line.angle();
-      //      var stageScale = this.stageScale();
-      //
-      //      // pad line
-      //      line = line.pad(18 * stageScale, 18 * stageScale);
-      //
-      //      if (this.sourceLabel()) {
-      //        el = this.view('source');
-      //        point = line.start;
-      //        el.set('x', point.x);
-      //        el.set('y', point.y);
-      //        el.set('text', this.sourceLabel());
-      //        el.set('transform', 'rotate(' + angle + ' ' + point.x + ',' + point.y + ')');
-      //        el.setStyle('font-size', 12 * stageScale);
-      //      }
-      //
-      //
-      //      if (this.targetLabel()) {
-      //        el = this.view('target');
-      //        point = line.end;
-      //        el.set('x', point.x);
-      //        el.set('y', point.y);
-      //        el.set('text', this.targetLabel());
-      //        el.set('transform', 'rotate(' + angle + ' ' + point.x + ',' + point.y + ')');
-      //        el.setStyle('font-size', 12 * stageScale);
-      //      }
-      //    }
-      //  }
-      //});
 
       $scope.tab = 'map';
       /**************** Table View ***************/
@@ -607,4 +441,5 @@ angular.module('bmpUiApp')
 
       $scope.mapHeight = $(window).height() - 220;
 
-    }]);
+    }])
+;
