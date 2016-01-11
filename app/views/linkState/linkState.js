@@ -148,7 +148,7 @@ angular.module('bmpUiApp')
 
             cluster = L.markerClusterGroup({
               maxClusterRadius: 20,
-              disableClusteringAtZoom: 6
+              disableClusteringAtZoom: 5
             });
             var markerLayer = new L.FeatureGroup().on('click', function (e) {
               $scope.selectNode(e.layer.options.data.routerId);
