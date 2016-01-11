@@ -57,8 +57,8 @@ angular.module('bmpUiApp')
           //{field: 'prefix_len', displayName: 'Prefix Length', width: '*'},
           {field: 'Type', displayName: 'Type', width: '*'},
           {field: 'metric', displayName: 'Metric', width: '*'},
-          {field: 'src_router_id', displayName: 'Source Router Id', width: '*'},
-          {field: 'nei_router_id', displayName: 'Neighbor Router Id', width: '*'},
+          {field: 'src_router_id', displayName: 'Source Node ID', width: '*'},
+          {field: 'nei_router_id', displayName: 'Neighbor Node ID', width: '*'},
           {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '*'},
         ],
         onRegisterApi: function (gridApi) {
@@ -78,9 +78,11 @@ angular.module('bmpUiApp')
         iconSize: [15, 15]
       });
 
-      $scope.selectNode = function(selectedRouterId){
+      $scope.selectNode = function (selectedRouterId) {
         removeLayers(paths);
         paths = [];
+
+        $scope.selectedRouterID = selectedRouterId;
 
         $scope.pathTraces = null;
 
@@ -120,6 +122,8 @@ angular.module('bmpUiApp')
         getNodes();
         getLinks();
 
+        $scope.selectedRouterID = null;
+
         var tempNodes = {};
         markers = {};
 
@@ -142,7 +146,7 @@ angular.module('bmpUiApp')
               disableClusteringAtZoom: 6
             });
             var markerLayer = new L.FeatureGroup().on('click', function (e) {
-              selectNode(e.layer.options.data.routerId);
+              $scope.selectNode(e.layer.options.data.routerId);
             });
             angular.forEach(nodes, function (node) {
               if (tempNodes[node.latitude + "," + node.longitude]) {
@@ -256,9 +260,12 @@ angular.module('bmpUiApp')
 
       $scope.locations = {};  //used for card
 
+      $scope.selectedRouterID = null;
+
       function getNodes() {
         nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id);
         nodesPromise.success(function (result) {
+          $scope.locations = {};
           nodes = [];
           var nodesData = result.v_ls_nodes.data;
           for (var i = 0; i < result.v_ls_nodes.size; i++) {
@@ -444,7 +451,7 @@ angular.module('bmpUiApp')
 
       $scope.changeTab = function (value) {
         $scope.tab = value;
-      }
+      };
 
       $scope.mapHeight = $(window).height() - 220;
 

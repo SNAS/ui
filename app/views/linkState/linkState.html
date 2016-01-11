@@ -1,7 +1,7 @@
 <div ng-controller="linkStateController" class="ls-container">
 
   <div class="main-page-search">
-    Select Peer
+    Select BGP LS Peer
     <select ng-model="selectedPeer"
             ng-options="(peer.PeerName != '' ? peer.PeerName : peer.PeerIP + ' (' + peer.protocol + ')' ) for peer in peerData"
             ng-change="selectChange()">
@@ -79,7 +79,7 @@
 
       <div class="main-area" style="margin-top: 15px">
         <div class="table-container">
-          <h3>Node Information</h3>
+          <h3>Topology Table {{selectedRouterID?"For "+selectedRouterID:""}}</h3>
 
           <div class="loading-section">
             <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize>
