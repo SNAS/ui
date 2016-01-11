@@ -364,7 +364,7 @@ angular.module('bmpUiApp')
       }
 
       //draw the path
-      $scope.drawPath = function (path_hash_ids, neighbor_addr) {
+      $scope.drawPath = function (path_hash_ids) {
         $scope.pathTraces = null;
         removeLayers(paths);
         paths = [];
@@ -374,35 +374,35 @@ angular.module('bmpUiApp')
         angular.forEach(path_hash_ids.split(","), function (hash) {
           selectedMarkers.push(markers[hash]);
         });
-        for (var j = 0; j < selectedMarkers.length - 1; j++) {
-          var newLine = new L.polyline([selectedMarkers[j]._latlng, selectedMarkers[j + 1]._latlng], {color: 'purple'});
-          angular.forEach(polylines, function (polyline) {
-            if ([polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j].options.data.id) > -1 &&
-              [polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j + 1].options.data.id) > -1)
-              newLine.bindPopup(polyline._popup);
+        if (selectedMarkers.length > 1) {
+          for (var j = 0; j < selectedMarkers.length - 1; j++) {
+            var newLine = new L.polyline([selectedMarkers[j]._latlng, selectedMarkers[j + 1]._latlng], {color: 'purple'});
+            angular.forEach(polylines, function (polyline) {
+              if ([polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j].options.data.id) > -1 &&
+                [polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j + 1].options.data.id) > -1)
+                newLine.bindPopup(polyline._popup);
+            });
+            newLine.addTo($scope.map);
+            paths.push(newLine);
+            var path = new L.polylineDecorator(newLine, {
+              patterns: [{
+                offset: '20%',
+                repeat: '20%',
+                symbol: L.Symbol.arrowHead({
+                  pixelSize: 7,
+                  polygon: false,
+                  pathOptions: {stroke: true}
+                })
+              }]
+            });
+            path.addTo($scope.map);
+            paths.push(path);
+          }
+          $scope.pathTraces = [];
+          angular.forEach(selectedMarkers, function (marker) {
+            $scope.pathTraces.push(marker.options.data);
           });
-          newLine.addTo($scope.map);
-
-          //bindPopup(polylines[]._popup).
-          paths.push(newLine);
-          var path = new L.polylineDecorator(newLine, {
-            patterns: [{
-              offset: '20%',
-              repeat: '20%',
-              symbol: L.Symbol.arrowHead({
-                pixelSize: 7,
-                polygon: false,
-                pathOptions: {stroke: true}
-              })
-            }]
-          });
-          path.addTo($scope.map);
-          paths.push(path);
         }
-        $scope.pathTraces = [];
-        angular.forEach(selectedMarkers, function (marker) {
-          $scope.pathTraces.push(marker.options.data);
-        });
       };
 
       function removeLayers(layers) {
