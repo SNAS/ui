@@ -60,7 +60,7 @@
                   </h3>
                   <div class="text-center">
                     <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
-                    <ul ng-if="pathTraces" ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll'}">
+                    <ul ng-if="pathTraces" ng-style="{'height': mapHeight - 117, 'overflow-y': 'scroll'}">
                       <li class="path-trace" ng-repeat="router in pathTraces"
                           tooltip="Name: {{router.NodeName||router.routerId}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
                           ng-click="goto([router.latitude,router.longitude])">
