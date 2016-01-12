@@ -154,10 +154,10 @@ angular.module('bmpUiApp')
               $scope.selectNode(e.layer.options.data.routerId);
               $scope.drawHighlightCircle(e.layer._latlng, 'red');
             });
-            markerLayer.on('mouseover', function(e) {
+            markerLayer.on('mouseover', function (e) {
               e.layer.openPopup();
             });
-            markerLayer.on('mouseout', function(e) {
+            markerLayer.on('mouseout', function (e) {
               e.layer.closePopup();
             });
             angular.forEach(nodes, function (node) {
@@ -170,10 +170,18 @@ angular.module('bmpUiApp')
                 data: node,
                 title: "NodeName: " + node.NodeName
               });
-              var popup = "";
+
+              var linksConnected = 0;
+              angular.forEach(links, function (link) {
+                if (link.source == node.id || link.target == node.id) {
+                  linksConnected++;
+                }
+              });
+              var popup = "Connected Links: " + linksConnected;
+
               angular.forEach(node, function (value, key) {
                 if (['id', '$$hashKey', 'level'].indexOf(key) < 0)
-                  popup += key + ":" + value + "<br>";
+                  popup += "<br>" + key + ": " + value;
               });
               marker.bindPopup(popup);
               marker.addTo(markerLayer);
@@ -385,7 +393,7 @@ angular.module('bmpUiApp')
         for (var i = 0; i < SPFdata.length; i++) {
           SPFdata[i].prefixWithLen = SPFdata[i].prefix + "/" + SPFdata[i].prefix_len;
           SPFdata[i].neighbor_addr_adjusted = (SPFdata[i].neighbor_addr == null) ? 'local' : SPFdata[i].neighbor_addr;
-          if (SPFdata[i].path_router_ids.split(',').length == 1 && (['0.0.0.0','::',null].indexOf(SPFdata[i].neighbor_addr)>-1)) {
+          if (SPFdata[i].path_router_ids.split(',').length == 1 && (['0.0.0.0', '::', null].indexOf(SPFdata[i].neighbor_addr) > -1)) {
             SPFdata[i].neighbor_addr_adjusted = 'local';
           }
           else {
@@ -480,8 +488,8 @@ angular.module('bmpUiApp')
       $scope.changeTab = function (value) {
         $scope.tab = value;
         if (value == 'table') {
-          $timeout(function(){
-            nodesPromise.success(function(res){
+          $timeout(function () {
+            nodesPromise.success(function (res) {
               $scope.lsTableOptions.data = res.v_ls_nodes.data;
             });
           }, 50);
