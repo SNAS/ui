@@ -394,7 +394,7 @@ angular.module('bmpUiApp')
       //draw the path
       $scope.drawPath = function (path_hash_ids) {
         $scope.pathTraces = null;
-        removeLayers(circles.slice(1, circles.length));
+        removeLayers(circles.slice(1));
         removeLayers(paths);
         paths = [];
 
@@ -466,6 +466,10 @@ angular.module('bmpUiApp')
         ],
         onRegisterApi: function (gridApi) {
           $scope.gridApi = gridApi;
+          gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+            $scope.selectNode(row.entity.RouterId);
+            $scope.drawHighlightCircle([row.entity.latitude,row.entity.longitude], 'red');
+          });
         }
       };
 

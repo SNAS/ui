@@ -63,7 +63,7 @@
                       <li class="path-trace" ng-repeat="router in pathTraces"
                           tooltip="Router IP: {{router.routerIP}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
                           ng-click="goto([router.latitude,router.longitude])">
-                        <h4><span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:30px"></span><span
+                        <h4><span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:40px"></span><span
                           class="label label-primary">Router ID:{{router.routerId}}</span>
                         </h4>
                         <span class="glyphicon glyphicon-chevron-down" ng-if="!$last"></span>
@@ -85,7 +85,7 @@
 
     <tab heading="Table View" ng-click="changeTab('table')">
       <div class="loading-section" ng-style="{'height': 'lsTableInitHeight'}">
-        <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns></div>
+        <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns ng-if="tab=='table'" ng-style="{'height':lsTableInitHeight}"></div>
       </div>
     </tab>
 
