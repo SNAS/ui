@@ -294,7 +294,7 @@ angular.module('bmpUiApp')
         nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id);
         nodesPromise.success(function (result) {
           nodes = [];
-          $scope.locations={};
+          $scope.locations = {};
           var nodesData = result.v_ls_nodes.data;
           for (var i = 0; i < result.v_ls_nodes.size; i++) {
             toolsFactory.addDefaultInfo(nodesData[i]);
