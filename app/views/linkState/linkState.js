@@ -387,6 +387,11 @@ angular.module('bmpUiApp')
         for (var i = 0; i < SPFdata.length; i++) {
           SPFdata[i].prefixWithLen = SPFdata[i].prefix + "/" + SPFdata[i].prefix_len;
           SPFdata[i].neighbor_addr_adjusted = (SPFdata[i].neighbor_addr == null) ? 'local' : SPFdata[i].neighbor_addr;
+          if (!SPFdata[i].path_router_ids.split(',').length > 1 && (SPFdata[i].src_router_id == SPFdata[i].nei_router_id)) {
+            SPFdata[i].neighbor_addr_adjusted = 'local';
+          }
+          else
+            SPFdata[i].neighbor_addr_adjusted = SPFdata[i].neighbor_addr;
         }
         $scope.SPFtableOptions.data = SPFdata;
       }
@@ -468,7 +473,7 @@ angular.module('bmpUiApp')
           $scope.gridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
             $scope.selectNode(row.entity.RouterId);
-            $scope.drawHighlightCircle([row.entity.latitude,row.entity.longitude], 'red');
+            $scope.drawHighlightCircle([row.entity.latitude, row.entity.longitude], 'red');
           });
         }
       };
