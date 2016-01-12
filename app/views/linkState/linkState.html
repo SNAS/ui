@@ -29,7 +29,8 @@
 
                   <div class="main" ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll', 'padding-bottom': 0}">
                     <ul class="locations">
-                      <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}" ng-click="toggleLocationSelection(location)">
+                      <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}"
+                          ng-click="toggleLocationSelection(location)">
                         <p class="router-list-city">
                           <span class="glyphicon glyphicon-play"></span>{{location}}
                           <span class="count">({{locaNodes.length}})</span>
@@ -58,10 +59,12 @@
                   </h3>
                   <div class="text-center">
                     <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
-                    <ul ng-if="pathTraces"  ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll'}">
-                      <li class="path-trace" ng-repeat="router in pathTraces" tooltip="Router IP: {{router.routerIP}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
-                         ng-click="goto([router.latitude,router.longitude])">
-                        <h4><img src="images/Router-icon.png"/><span class="label label-primary">Router ID:{{router.routerId}}</span></h4>
+                    <ul ng-if="pathTraces" ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll'}">
+                      <li class="path-trace" ng-repeat="router in pathTraces"
+                          tooltip="Router IP: {{router.routerIP}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
+                          ng-click="goto([router.latitude,router.longitude])">
+                        <h4><span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:30px"></span><span class="label label-primary">Router ID:{{router.routerId}}</span>
+                        </h4>
                         <span class="glyphicon glyphicon-chevron-down" ng-if="!$last"></span>
                       </li>
                     </ul>
@@ -77,17 +80,6 @@
         <div bmp-loading ng-show="topologyIsLoad"></div>
       </div>
 
-      <div class="main-area" style="margin-top: 15px">
-        <div class="table-container">
-          <h3>Topology Table {{selectedRouterID?"For "+selectedRouterID:""}}</h3>
-
-          <div class="loading-section">
-            <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize>
-              <div class="watermark" ng-show="!SPFtableOptions.data.length>0">No data available</div>
-            </div>
-          </div>
-        </div>
-      </div>
     </tab>
 
     <tab heading="Table View" ng-click="changeTab('table')">
@@ -95,6 +87,45 @@
         <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns></div>
       </div>
     </tab>
+
   </tabset>
+
+  <div class="main-area" style="margin-top: 15px">
+    <div class="table-container">
+      <h3>Topology Table {{selectedRouterID?"For "+selectedRouterID:""}}</h3>
+
+      <div class="loading-section">
+        <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize>
+          <div class="watermark" ng-show="!SPFtableOptions.data.length>0">No data available</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-area" style="margin-top: 15px" ng-show="tab=='table'">
+    <div class="table-container">
+      <h3>Path Trace</h3>
+      <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
+      <div class="as-path">
+
+
+          <div ng-repeat="router in pathTraces"
+               style="position: relative;float: left;">
+            <!--icon-->
+            <div style="display: table-cell;">
+              <div class="bmp-igp_router10-17" style="font-size: 50px;color:#55c2cc"
+                   tooltip="Name: {{router.NodeName}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"></div>
+              <div style="text-align: center">{{ router.routerId }}</div>
+            </div>
+            <!--line-->
+            <div style="display: table-cell" ng-if="!$last">
+              <div style="width: 100px;height: 2px;background-color:#000000;"></div>
+            </div>
+          </div>
+
+        </div>
+
+    </div>
+  </div>
 
 </div>
