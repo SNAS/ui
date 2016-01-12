@@ -59,7 +59,7 @@ angular.module('bmpUiApp')
           {field: 'metric', displayName: 'Metric', width: '*'},
           {field: 'src_router_id', displayName: 'Source Node ID', width: '*'},
           {field: 'nei_router_id', displayName: 'Neighbor Node ID', width: '*'},
-          {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '*'},
+          {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '*'}
         ],
         onRegisterApi: function (gridApi) {
           $scope.gridApi = gridApi;
@@ -387,11 +387,12 @@ angular.module('bmpUiApp')
         for (var i = 0; i < SPFdata.length; i++) {
           SPFdata[i].prefixWithLen = SPFdata[i].prefix + "/" + SPFdata[i].prefix_len;
           SPFdata[i].neighbor_addr_adjusted = (SPFdata[i].neighbor_addr == null) ? 'local' : SPFdata[i].neighbor_addr;
-          if (!SPFdata[i].path_router_ids.split(',').length > 1 && (SPFdata[i].src_router_id == SPFdata[i].nei_router_id)) {
+          if (SPFdata[i].path_router_ids.split(',').length == 1 && (['0.0.0.0','::',null].indexOf(SPFdata[i].neighbor_addr)>-1)) {
             SPFdata[i].neighbor_addr_adjusted = 'local';
           }
-          else
+          else {
             SPFdata[i].neighbor_addr_adjusted = SPFdata[i].neighbor_addr;
+          }
         }
         $scope.SPFtableOptions.data = SPFdata;
       }
