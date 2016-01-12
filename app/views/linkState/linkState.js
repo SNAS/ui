@@ -480,11 +480,15 @@ angular.module('bmpUiApp')
       };
 
       $scope.changeTab = function (value) {
-        $scope.tab = 'table';
+        $scope.tab = value;
         if (value == 'table') {
-          nodesPromise.success(function(res){
-            $scope.lsTableOptions.data = res.v_ls_nodes.data;
-          });
+          $timeout(function(){
+            nodesPromise.success(function(res){
+              $scope.lsTableOptions.data = res.v_ls_nodes.data;
+            });
+          }, 50);
+        } else {
+          $scope.lsTableOptions.data = null;
         }
       };
 
