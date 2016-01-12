@@ -29,14 +29,11 @@
 
                   <div class="main" ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll', 'padding-bottom': 0}">
                     <ul class="locations">
-                      <li ng-class="{expanded: selectedLocation}"
-                          ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}"
-                          ng-click="toggleLocationSelection(location)">
-                        <p class="router-list-city">
+                      <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}">
+                        <p class="router-list-city" ng-click="toggleLocationSelection(location)">
                           <span class="glyphicon glyphicon-play"></span>{{location}}
                           <span class="count">({{locaNodes.length}})</span>
                         </p>
-                        <!--<span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>-->
                         <ul class="peers locationItems" id="{{location}}nodes" hidden>
                           <li ng-repeat="node in locaNodes | filter:panelSearchKey"
                               ng-click="goto([node.latitude,node.longitude],6);selectNode(node.routerId);drawHighlightCircle([node.latitude,node.longitude],'red')">
@@ -85,7 +82,7 @@
     </tab>
 
     <tab heading="Table View" ng-click="changeTab('table')">
-      <div class="loading-section" ng-style="{'height': 'lsTableInitHeight'}">
+      <div class="loading-section" ng-style="{'height': lsTableInitHeight+20}">
         <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns ng-if="tab=='table'"
              ng-style="{'height':lsTableInitHeight}"></div>
       </div>
