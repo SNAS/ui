@@ -20,8 +20,10 @@
                   <h3 class="panel-header">
                     Link State Routers
                     <div class="panel-search">
-                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.routerId" ng-click="panelSearch(panelSearchKey)"/>
-                      <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey" ng-click="panelSearchKey = ''"></span>
+                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.routerId"
+                             ng-click="panelSearch(panelSearchKey)"/>
+                      <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey"
+                            ng-click="panelSearchKey = ''"></span>
                     </div>
                   </h3>
 
@@ -37,7 +39,8 @@
                               ng-click="goto([node.latitude,node.longitude],6);selectNode(node.routerId);drawHighlightCircle([node.latitude,node.longitude],'red')">
                             <div class="row">
                               <div class="col-xs-12" tooltip-popup-delay="1000" tooltip-append-to-body="true"
-                                   tooltip="{{node.NodeName||node.routerId}}" tooltip-placement="top">{{node.NodeName||node.routerId}}
+                                   tooltip="{{node.NodeName||node.routerId}}" tooltip-placement="top">
+                                {{node.NodeName||node.routerId}}
                               </div>
                             </div>
                           </li>
@@ -56,9 +59,10 @@
                       <li class="path-trace" ng-repeat="router in pathTraces"
                           tooltip="Name: {{router.NodeName||router.routerId}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
                           ng-click="goto([router.latitude,router.longitude])">
-                        <h4><span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:40px"></span><span
-                          class="label label-primary">{{router.NodeName||router.routerId}}</span>
-                        </h4>
+                        <h5>
+                          <span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:30px"></span>
+                          <span style="color:black;font-size:14px">{{router.NodeName||router.routerId}}</span>
+                        </h5>
                         <span class="glyphicon glyphicon-chevron-down" ng-if="!$last"></span>
                       </li>
                     </ul>
