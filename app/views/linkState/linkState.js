@@ -54,7 +54,6 @@ angular.module('bmpUiApp')
 
         columnDefs: [
           {field: 'prefixWithLen', displayName: 'Prefix', width: '*'},
-          //{field: 'prefix_len', displayName: 'Prefix Length', width: '*'},
           {field: 'Type', displayName: 'Type', width: '*'},
           {field: 'metric', displayName: 'Metric', width: '*'},
           {field: 'src_router_id', displayName: 'Source Node ID', width: '*'},
@@ -162,7 +161,7 @@ angular.module('bmpUiApp')
               var marker = new L.Marker([node.latitude, node.longitude], {
                 icon: routerIcon,
                 data: node,
-                title: "IP: " + node.routerIP
+                title: "NodeName: " + node.NodeName
               });
               var popup = "";
               angular.forEach(node, function (value, key) {
@@ -278,12 +277,9 @@ angular.module('bmpUiApp')
 
       $scope.locations = {};  //used for card
 
-      $scope.selectedRouterID = null;
-
       function getNodes() {
         nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id);
         nodesPromise.success(function (result) {
-          $scope.locations = {};
           nodes = [];
           var nodesData = result.v_ls_nodes.data;
           for (var i = 0; i < result.v_ls_nodes.size; i++) {
@@ -300,7 +296,7 @@ angular.module('bmpUiApp')
             var newNode = {
               id: nodesData[i].hash_id,
               routerId: routerId,
-              routerIP: nodesData[i].RouterIP,
+              NodeName: nodesData[i].NodeName,
               country: nodesData[i].country,
               stateprov: nodesData[i].stateprov,
               city: nodesData[i].city,
@@ -316,9 +312,6 @@ angular.module('bmpUiApp')
             }
             nodesData[i].location = [nodesData[i].city, nodesData[i].stateprov, nodesData[i].country].join(', ');
           }
-          $q.when($scope.tab == 'table', function () {
-            $scope.lsTableOptions.data = nodesData;
-          });
         }).error(function (error) {
           console.log(error.message);
         });
@@ -464,10 +457,10 @@ angular.module('bmpUiApp')
         enableVerticalScrollbar: true,
         rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
         columnDefs: [
-          {field: "IGP_RouterId", displayName: "IGP Router ID", width: '17%'},
-          {field: "RouterId", displayName: "Router ID", width: '17%'},
+          {field: "NodeName", displayName: "Node Name", width: '*'},
+          {field: "IGP_RouterId", displayName: "IGP Router ID", width: '20%'},
+          {field: "RouterId", displayName: "Router ID", width: '20%'},
           {field: "ISISAreaId", displayName: "ISIS Area ID", width: '10%'},
-          {field: "RouterName", displayName: "Hostname", width: '*'},
           {field: "location", displayName: "Location", width: '25%'}
         ],
         onRegisterApi: function (gridApi) {
@@ -480,7 +473,12 @@ angular.module('bmpUiApp')
       };
 
       $scope.changeTab = function (value) {
-        $scope.tab = value;
+        $scope.tab = 'table';
+        if (value == 'table') {
+          nodesPromise.success(function(res){
+            $scope.lsTableOptions.data = res.v_ls_nodes.data;
+          });
+        }
       };
 
       $scope.mapHeight = $(window).height() - 220;

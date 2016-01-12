@@ -20,16 +20,14 @@
                   <h3 class="panel-header">
                     Link State Routers
                     <div class="panel-search">
-                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey"
-                             ng-click="panelSearch(panelSearchKey)"/>
-                  <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey"
-                        ng-click="panelSearchKey = ''"></span>
+                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.routerId" ng-click="panelSearch(panelSearchKey)"/>
+                      <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey" ng-click="panelSearchKey = ''"></span>
                     </div>
                   </h3>
 
                   <div class="main" ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll', 'padding-bottom': 0}">
                     <ul class="locations">
-                      <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}"
+                      <li ng-class="{expanded: selectedLocation}" ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}"
                           ng-click="toggleLocationSelection(location)">
                         <p class="router-list-city">
                           <span class="glyphicon glyphicon-play"></span>{{location}}
@@ -41,10 +39,10 @@
                               ng-click="goto([node.latitude,node.longitude],6);selectNode(node.routerId);drawHighlightCircle([node.latitude,node.longitude],'red')">
                             <div class="row">
                               <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true"
-                                   tooltip="Name: {{node.routerId}}" tooltip-placement="top">{{node.routerId}}
+                                   tooltip="Name: {{node.NodeName}}" tooltip-placement="top">{{node.NodeName}}
                               </div>
                               <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true"
-                                   tooltip="IP: {{node.routerIP}}" tooltip-placement="top">{{node.routerIP}}
+                                   tooltip="IP: {{node.routerId}}" tooltip-placement="top">{{node.routerId}}
                               </div>
                             </div>
                           </li>
