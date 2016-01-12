@@ -20,14 +20,17 @@
                   <h3 class="panel-header">
                     Link State Routers
                     <div class="panel-search">
-                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.routerId" ng-click="panelSearch(panelSearchKey)"/>
-                      <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey" ng-click="panelSearchKey = ''"></span>
+                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.routerId"
+                             ng-click="panelSearch(panelSearchKey)"/>
+                      <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey"
+                            ng-click="panelSearchKey = ''"></span>
                     </div>
                   </h3>
 
                   <div class="main" ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll', 'padding-bottom': 0}">
                     <ul class="locations">
-                      <li ng-class="{expanded: selectedLocation}" ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}"
+                      <li ng-class="{expanded: selectedLocation}"
+                          ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}"
                           ng-click="toggleLocationSelection(location)">
                         <p class="router-list-city">
                           <span class="glyphicon glyphicon-play"></span>{{location}}
@@ -59,10 +62,10 @@
                     <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
                     <ul ng-if="pathTraces" ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll'}">
                       <li class="path-trace" ng-repeat="router in pathTraces"
-                          tooltip="Router IP: {{router.routerIP}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
+                          tooltip="Name: {{router.NodeName||router.routerId}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
                           ng-click="goto([router.latitude,router.longitude])">
                         <h4><span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:40px"></span><span
-                          class="label label-primary">Router ID:{{router.routerId}}</span>
+                          class="label label-primary">{{router.NodeName||router.routerId}}</span>
                         </h4>
                         <span class="glyphicon glyphicon-chevron-down" ng-if="!$last"></span>
                       </li>
@@ -83,7 +86,8 @@
 
     <tab heading="Table View" ng-click="changeTab('table')">
       <div class="loading-section" ng-style="{'height': 'lsTableInitHeight'}">
-        <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns ng-if="tab=='table'" ng-style="{'height':lsTableInitHeight}"></div>
+        <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns ng-if="tab=='table'"
+             ng-style="{'height':lsTableInitHeight}"></div>
       </div>
     </tab>
 
@@ -113,8 +117,8 @@
           <!--icon-->
           <div style="display: table-cell;">
             <div class="bmp-igp_router10-17" style="font-size: 50px;color:#55c2cc;margin-left:15px"
-                 tooltip="Name: {{router.NodeName}}, Location:{{router.city}},{{router.stateprov}},{{router.country}}"></div>
-            <div style="text-align: center">{{ router.routerId }}</div>
+                 tooltip="Name: {{router.NodeName||router.routerId}}, Location:{{router.city}},{{router.stateprov}},{{router.country}}"></div>
+            <div style="text-align: center">{{router.NodeName||router.routerId}}</div>
           </div>
           <!--line-->
           <div style="display: table-cell" ng-if="!$last">
