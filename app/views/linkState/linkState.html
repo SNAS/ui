@@ -63,7 +63,8 @@
                       <li class="path-trace" ng-repeat="router in pathTraces"
                           tooltip="Router IP: {{router.routerIP}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
                           ng-click="goto([router.latitude,router.longitude])">
-                        <h4><span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:30px"></span><span class="label label-primary">Router ID:{{router.routerId}}</span>
+                        <h4><span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:40px"></span><span
+                          class="label label-primary">Router ID:{{router.routerId}}</span>
                         </h4>
                         <span class="glyphicon glyphicon-chevron-down" ng-if="!$last"></span>
                       </li>
@@ -84,7 +85,7 @@
 
     <tab heading="Table View" ng-click="changeTab('table')">
       <div class="loading-section" ng-style="{'height': 'lsTableInitHeight'}">
-        <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns></div>
+        <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns ng-if="tab=='table'" ng-style="{'height':lsTableInitHeight}"></div>
       </div>
     </tab>
 
@@ -106,24 +107,25 @@
     <div class="table-container">
       <h3>Path Trace</h3>
       <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
+
       <div class="as-path">
 
-
-          <div ng-repeat="router in pathTraces"
-               style="position: relative;float: left;">
-            <!--icon-->
-            <div style="display: table-cell;">
-              <div class="bmp-igp_router10-17" style="font-size: 50px;color:#55c2cc"
-                   tooltip="Name: {{router.NodeName}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"></div>
-              <div style="text-align: center">{{ router.routerId }}</div>
-            </div>
-            <!--line-->
-            <div style="display: table-cell" ng-if="!$last">
-              <div style="width: 100px;height: 2px;background-color:#000000;"></div>
-            </div>
+        <div ng-repeat="router in pathTraces"
+             style="position: relative;float: left;width:170px">
+          <!--icon-->
+          <div style="display: table-cell;">
+            <div class="bmp-igp_router10-17" style="font-size: 50px;color:#55c2cc;margin-left:15px"
+                 tooltip="Name: {{router.NodeName}}, Location:{{router.city}},{{router.stateprov}},{{router.country}}"></div>
+            <div style="text-align: center">{{ router.routerId }}</div>
           </div>
-
+          <!--line-->
+          <div style="display: table-cell" ng-if="!$last">
+            <div
+              style="width: 120px;height: 2px;background-color:#dadada;position: absolute;margin-top: 25px;margin-left:-40px"></div>
+          </div>
         </div>
+
+      </div>
 
     </div>
   </div>
