@@ -79,6 +79,8 @@ angular.module('bmpUiApp')
       });
 
       $scope.selectNode = function (selectedRouterId) {
+        removeLayers(circles);
+        circles = [];
         removeLayers(paths);
         paths = [];
 
@@ -135,6 +137,9 @@ angular.module('bmpUiApp')
             if (cluster)
               $scope.map.removeLayer(cluster);
 
+            removeLayers(circles);
+            circles=[];
+
             removeLayers(polylines);
             polylines = [];
 
@@ -143,10 +148,11 @@ angular.module('bmpUiApp')
 
             cluster = L.markerClusterGroup({
               maxClusterRadius: 20,
-              disableClusteringAtZoom: 6
+              disableClusteringAtZoom: 5
             });
             var markerLayer = new L.FeatureGroup().on('click', function (e) {
               $scope.selectNode(e.layer.options.data.routerId);
+              $scope.drawHighlightCircle(e.layer._latlng, 'red');
             });
             angular.forEach(nodes, function (node) {
               if (tempNodes[node.latitude + "," + node.longitude]) {
@@ -236,6 +242,17 @@ angular.module('bmpUiApp')
           $scope.map.setView(latlng, zoom);
         else
           $scope.map.panTo(latlng, {animate: true});
+      };
+
+      var circles = [];
+
+      $scope.drawHighlightCircle = function (latlng, color) {
+        var circle = new L.CircleMarker(latlng, {
+          color: color,
+          radius: 20
+        });
+        circle.addTo($scope.map);
+        circles.push(circle);
       };
 
       $scope.toggleLocationSelection = function (location) {
@@ -376,6 +393,7 @@ angular.module('bmpUiApp')
       //draw the path
       $scope.drawPath = function (path_hash_ids) {
         $scope.pathTraces = null;
+        removeLayers(circles.slice(1, circles.length));
         removeLayers(paths);
         paths = [];
 
@@ -413,6 +431,7 @@ angular.module('bmpUiApp')
             $scope.pathTraces.push(marker.options.data);
           });
         }
+        $scope.drawHighlightCircle(selectedMarkers[selectedMarkers.length - 1]._latlng, 'purple');
       };
 
       function removeLayers(layers) {

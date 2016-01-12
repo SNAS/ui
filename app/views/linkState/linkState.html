@@ -37,7 +37,7 @@
                         <!--<span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>-->
                         <ul class="peers locationItems" id="{{location}}nodes" hidden>
                           <li ng-repeat="node in locaNodes | filter:panelSearchKey"
-                              ng-click="goto([node.latitude,node.longitude],8);selectNode(node.routerId)">
+                              ng-click="goto([node.latitude,node.longitude],6);selectNode(node.routerId);drawHighlightCircle([node.latitude,node.longitude],'red')">
                             <div class="row">
                               <div class="col-xs-6" tooltip-popup-delay="1000" tooltip-append-to-body="true"
                                    tooltip="Name: {{node.routerId}}" tooltip-placement="top">{{node.routerId}}
