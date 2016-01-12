@@ -138,7 +138,7 @@ angular.module('bmpUiApp')
               $scope.map.removeLayer(cluster);
 
             removeLayers(circles);
-            circles=[];
+            circles = [];
 
             removeLayers(polylines);
             polylines = [];
@@ -166,7 +166,8 @@ angular.module('bmpUiApp')
               });
               var popup = "";
               angular.forEach(node, function (value, key) {
-                popup += key + ":" + value + "<br>";
+                if (['id', '$$hashKey', 'level'].indexOf(key) < 0)
+                  popup += key + ":" + value + "<br>";
               });
               marker.bindPopup(popup);
               marker.addTo(markerLayer);
