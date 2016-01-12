@@ -268,11 +268,9 @@ angular.module('bmpUiApp')
           location = location.substring(0, index) + '\\' + location.substring(index, location.length);
         }
         if (!$("#" + location).hasClass("expanded")) {
-          $scope.selectedLocation = location;
           $("#" + location).addClass("expanded");
           $("#" + location + 'nodes').show();
         } else {
-          $scope.selectedLocation = undefined;
           $("#" + location).removeClass("expanded");
           $("#" + location + 'nodes').hide();
         }
