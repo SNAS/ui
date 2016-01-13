@@ -1,90 +1,85 @@
 <div>
   <h4> Router - Peer Diagram</h4>
-    <div class="peers-amount-img">
-      <div class="row" style="margin-top: 30px; padding-top: 50px" ng-style="outerBorder">
-        <div class="col-lg-4" ng-style="innerBorder">
-          <div class="row">
-            <div class="col-xs-2">
-              <div class="router-name-text">AS</div>
-            </div>
-            <div class="col-xs-10">
-              <div class="router-name-text"><span style="float:left">{{ data.RouterASN }}</span><span style="float:right">{{ RouterASName }}</span></div>
+  <div class="peers-amount-img">
+    <div class="row" style="margin-top: 30px; padding-top: 50px" ng-style="outerBorder">
+      <div class="col-lg-4" ng-style="innerBorder">
+        <div class="row">
+          <div class="col-xs-2">
+            <div class="router-name-text">AS</div>
+          </div>
+          <div class="col-xs-10">
+            <div class="router-name-text"><span style="float:left">{{ data.RouterASN }}</span><span style="float:right">{{ RouterASName }}</span>
             </div>
           </div>
-          <div class="row">
-            <div class="as-section">
-              <div class="centre">
-                <div style="position: relative;">
-                  <div class="router-name-text">Router Name: {{ data.RouterName }}</div>
-                </div>
-                <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
-                <div class="router-name-text">Router IP: {{ data.RouterIP }}</div>
-                <div class="router-name-text">BGP ID: {{ data.LocalBGPId }}</div>
+        </div>
+        <div class="row">
+          <div class="as-section">
+            <div class="centre">
+              <div style="position: relative;">
+                <div class="router-name-text">Router Name: {{ data.RouterName }}</div>
               </div>
-            </div>
-          </div>
-          <div class="row" style="margin-bottom: 10px;">
-            <div style="float:right">
+              <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
+              <div class="router-name-text">Router IP: {{ data.RouterIP }}</div>
+              <div class="router-name-text">BGP ID: {{ data.LocalBGPId }}</div>
               <div class="router-name-text">TCP Port: {{ data.LocalPort }}</div>
               <div class="router-name-text">Hold Time: {{ data.LocalHoldTime }}</div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="col-lg-4" style="padding-top: 88px">
-          <div class="row" style="margin:0">
-            <span style="float:left">Local IP</span>
-            <span style="float:right">Peer IP</span>
-          </div>
-          <div class="row">
-            <div class="router-peer-line-wide"></div>
-            <span style="float:left">{{ data.LocalIP }}</span>
-            <span style="float:right">{{ data.PeerIP }}</span>
-          </div>
-          <div class="row" style="text-align:center">
-            <div style="width: 80%;margin: auto;">
-              <div class="router-name-text">Enabled Capabilities:</div>
-              <div ng-repeat="capability in enabledCapabs">
-                <div class="router-name-text">{{capability}}</div>
-              </div>
+      <div class="col-lg-4" style="padding-top: 88px">
+        <div class="row" style="margin:0">
+          <span style="float:left">Local IP</span>
+          <span style="float:right">Peer IP</span>
+        </div>
+        <div class="row">
+          <div class="router-peer-line-wide"></div>
+          <span style="float:left">{{ data.LocalIP }}</span>
+          <span style="float:right">{{ data.PeerIP }}</span>
+        </div>
+        <div class="row" style="text-align:center">
+          <div style="width: 100%;margin: auto;">
+            <div class="router-name-text">Enabled Capabilities:</div>
+            <div ng-repeat="capability in enabledCapabs">
+              <span class="router-name-text">
+                {{capability}}
+              </span>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="col-lg-4" ng-style="innerBorder">
-          <div class="row" ng-show="data.RouterASN!=data.PeerASN">
-            <div class="col-xs-2">
-              <div class="router-name-text">AS</div>
-            </div>
-            <div class="col-xs-10">
-              <div class="router-name-text"><span style="float:left">{{ data.PeerASN }}</span><span style="float:right">{{ PeerASName }}</span></div>
+      <div class="col-lg-4" ng-style="innerBorder">
+        <div class="row" ng-show="data.RouterASN!=data.PeerASN">
+          <div class="col-xs-2">
+            <div class="router-name-text">AS</div>
+          </div>
+          <div class="col-xs-10">
+            <div class="router-name-text"><span style="float:left">{{ data.PeerASN }}</span><span style="float:right">{{ PeerASName }}</span>
             </div>
           </div>
-          <div class="row" ng-show="data.RouterASN==data.PeerASN">
-            <div class="col-xs-5 col-xs-offset-3">
-              <div class="router-name-text">Same AS</div>
-            </div>
+        </div>
+        <div class="row" ng-show="data.RouterASN==data.PeerASN">
+          <div class="col-xs-5 col-xs-offset-3">
+            <div class="router-name-text">Same AS</div>
           </div>
-          <div class="row">
-            <div class="as-section">
-              <div class="centre">
-                <div style="position: relative;">
-                  <div class="router-name-text">Peer Name: {{ data.PeerName }}</div>
-                </div>
-                <div class="{{ routerIcon }} peer bmp-outline-route" ng-style="{'color':colour}"></div>
-                <div class="router-name-text">Peer IP: {{ data.PeerIP }}</div>
-                <div class="router-name-text">BGP ID: {{ data.PeerBGPId }}</div>
+        </div>
+        <div class="row">
+          <div class="as-section">
+            <div class="centre">
+              <div style="position: relative;">
+                <div class="router-name-text">Peer Name: {{ data.PeerName }}</div>
               </div>
-            </div>
-          </div>
-          <div class="row" style="margin-bottom: 10px;">
-            <div style="float:left">
+              <div class="{{ routerIcon }} peer bmp-outline-route" ng-style="{'color':colour}"></div>
+              <div class="router-name-text">Peer IP: {{ data.PeerIP }}</div>
+              <div class="router-name-text">BGP ID: {{ data.PeerBGPId }}</div>
               <div class="router-name-text">TCP Port: {{ data.PeerPort }}</div>
               <div class="router-name-text">Hold Time: {{ data.PeerHoldTime }}</div>
             </div>
           </div>
         </div>
-
+      </div>
     </div>
   </div>
 </div>
