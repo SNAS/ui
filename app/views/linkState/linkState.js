@@ -77,6 +77,8 @@ angular.module('bmpUiApp')
         iconSize: [15, 15]
       });
 
+      var tempSPFdata;
+
       $scope.selectNode = function (selectedRouterId) {
         removeLayers(circles);
         circles = [];
@@ -327,7 +329,9 @@ angular.module('bmpUiApp')
             }
             nodesData[i].location = [nodesData[i].city, nodesData[i].stateprov, nodesData[i].country].join(', ');
           }
-          $scope.LSgridApi.selection.clearSelectedRows();
+          if ($scope.LSGridApi) {
+            $scope.LSgridApi.selection.clearSelectedRows();
+          }
           if ($scope.tab == 'table')
             $scope.lsTableOptions.data = nodesData;
         }).error(function (error) {
@@ -406,6 +410,24 @@ angular.module('bmpUiApp')
           }
         }
         $scope.SPFgridApi.selection.clearSelectedRows();
+        //if (tempSPFdata) {
+        //  var onlyInA = tempSPFdata.filter(function(current){
+        //    return SPFdata.filter(function(current_b){
+        //        return current_b.prefixWithLen == current.prefixWithLen
+        //      }).length == 0
+        //  });
+        //
+        //  var onlyInB = SPFdata.filter(function(current){
+        //    return tempSPFdata.filter(function(current_a){
+        //        return current_a.prefixWithLen == current.prefixWithLen
+        //      }).length == 0
+        //  });
+        //
+        //  result = onlyInA.concat(onlyInB);
+        //
+        //  console.log(result);
+        //}
+        //tempSPFdata = SPFdata;
         $scope.SPFtableOptions.data = SPFdata;
       }
 
