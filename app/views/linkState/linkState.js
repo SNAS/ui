@@ -61,7 +61,7 @@ angular.module('bmpUiApp')
           {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '*'}
         ],
         onRegisterApi: function (gridApi) {
-          $scope.gridApi = gridApi;
+          $scope.SPFgridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
             var path = row.entity.path_hash_ids;
             var neighbor_addr = row.entity.neighbor_addr;
@@ -310,6 +310,7 @@ angular.module('bmpUiApp')
             var newNode = {
               id: nodesData[i].hash_id,
               routerId: routerId,
+              igp_routerId: nodesData[i].IGP_RouterId,
               NodeName: nodesData[i].NodeName,
               country: nodesData[i].country,
               stateprov: nodesData[i].stateprov,
@@ -326,6 +327,8 @@ angular.module('bmpUiApp')
             }
             nodesData[i].location = [nodesData[i].city, nodesData[i].stateprov, nodesData[i].country].join(', ');
           }
+          if ($scope.tab == 'table')
+            $scope.lsTableOptions.data = nodesData;
         }).error(function (error) {
           console.log(error.message);
         });
@@ -401,6 +404,7 @@ angular.module('bmpUiApp')
             SPFdata[i].neighbor_addr_adjusted = SPFdata[i].neighbor_addr;
           }
         }
+        $scope.SPFgridApi.selection.clearSelectedRows();
         $scope.SPFtableOptions.data = SPFdata;
       }
 
@@ -478,7 +482,7 @@ angular.module('bmpUiApp')
           {field: "location", displayName: "Location", width: '25%'}
         ],
         onRegisterApi: function (gridApi) {
-          $scope.gridApi = gridApi;
+          $scope.LSgridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
             $scope.selectNode(row.entity.RouterId);
             $scope.drawHighlightCircle([row.entity.latitude, row.entity.longitude], 'red');
