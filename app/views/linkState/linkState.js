@@ -198,7 +198,7 @@ angular.module('bmpUiApp')
               });
               if (sourceNode && targetNode) {
                 var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)], {
-                  color: 'grey',
+                  color: '#AAAAAA',
                   weight: 2,
                   opacity: 0.2,
                   data: link,
@@ -327,6 +327,7 @@ angular.module('bmpUiApp')
             }
             nodesData[i].location = [nodesData[i].city, nodesData[i].stateprov, nodesData[i].country].join(', ');
           }
+          $scope.LSgridApi.selection.clearSelectedRows();
           if ($scope.tab == 'table')
             $scope.lsTableOptions.data = nodesData;
         }).error(function (error) {
@@ -471,7 +472,7 @@ angular.module('bmpUiApp')
         height: $scope.lsTableInitHeight,
         rowHeight: 25,
         gridFootHeight: 0,
-        showGridFooter: false,
+        showGridFooter: true,
         enableVerticalScrollbar: true,
         rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
         columnDefs: [
