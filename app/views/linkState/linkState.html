@@ -20,8 +20,10 @@
                   <h3 class="panel-header">
                     Link State Routers
                     <div class="panel-search">
-                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.NodeName" ng-click="panelSearch(panelSearchKey)"/>
-                      <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey" ng-click="panelSearchKey = ''"></span>
+                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.NodeName"
+                             ng-click="panelSearch(panelSearchKey)"/>
+                      <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey"
+                            ng-click="panelSearchKey = ''"></span>
                     </div>
                   </h3>
 
@@ -79,9 +81,12 @@
     </tab>
 
     <tab heading="Table View" ng-click="changeTab('table')">
-      <div class="loading-section" ng-style="{'height': lsTableInitHeight+20}">
-        <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns ng-if="tab=='table'"
-             ng-style="{'height':lsTableInitHeight}"></div>
+      <div class="table-container">
+        <h3>IGP Nodes</h3>
+        <div class="loading-section">
+          <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns ng-if="tab=='table'"
+               ng-style="{'height':lsTableInitHeight}"></div>
+        </div>
       </div>
     </tab>
 
@@ -112,7 +117,9 @@
           <div style="display: table-cell;">
             <div class="bmp-igp_router10-17" style="font-size: 50px;color:#55c2cc;margin-left:15px"
                  tooltip="Name: {{router.NodeName||router.routerId}}, Location:{{router.city}},{{router.stateprov}},{{router.country}}"></div>
-            <div style="text-align: center;width:200px;position:absolute;white-space:normal">{{router.NodeName||router.routerId}}</div>
+            <div style="text-align: center;width:200px;position:absolute;white-space:normal">
+              {{router.NodeName||router.routerId}}
+            </div>
           </div>
           <!--line-->
           <div style="display: table-cell" ng-if="!$last">
