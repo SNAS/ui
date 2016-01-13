@@ -36,8 +36,9 @@
                           <li ng-repeat="node in locaNodes | filter:panelSearchKey"
                               ng-click="goto([node.latitude,node.longitude],6);selectNode(node.routerId);drawHighlightCircle([node.latitude,node.longitude],'red')">
                             <div class="row">
-                              <div tooltip-popup-delay="1000" tooltip-append-to-body="true"
-                                   tooltip="Name: {{node.NodeName || node.routerId}}" tooltip-placement="top">{{node.NodeName || node.routerId}}
+                              <div class="col-xs-12" tooltip-popup-delay="1000" tooltip-append-to-body="true"
+                                   tooltip="{{node.routerId}} | {{node.igp_routerId}}" tooltip-placement="top">
+                                {{node.NodeName||node.routerId}}
                               </div>
                             </div>
                           </li>
@@ -56,9 +57,10 @@
                       <li class="path-trace" ng-repeat="router in pathTraces"
                           tooltip="Name: {{router.NodeName||router.routerId}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
                           ng-click="goto([router.latitude,router.longitude])">
-                        <h4><span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:40px"></span><span
-                          class="label label-primary">{{router.NodeName||router.routerId}}</span>
-                        </h4>
+                        <h5>
+                          <span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:30px"></span>
+                          <span style="color:black;font-size:14px">{{router.NodeName||router.routerId}}</span>
+                        </h5>
                         <span class="glyphicon glyphicon-chevron-down" ng-if="!$last"></span>
                       </li>
                     </ul>
@@ -102,10 +104,10 @@
       <h3>Path Trace</h3>
       <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
 
-      <div class="as-path">
+      <div class="as-path" style="white-space:nowrap">
 
         <div ng-repeat="router in pathTraces"
-             style="position: relative;float: left;width:200px">
+             style="position: relative;width:20%;display:inline-block">
           <!--icon-->
           <div style="display: table-cell;">
             <div class="bmp-igp_router10-17" style="font-size: 50px;color:#55c2cc;margin-left:15px"
@@ -115,7 +117,7 @@
           <!--line-->
           <div style="display: table-cell" ng-if="!$last">
             <div
-              style="width: 142px;height: 2px;background-color:#dadada;position: absolute;margin-top: 25px;margin-left:-50px"></div>
+              style="width: 142px;height: 2px;background-color:#dadada;position: absolute;margin-top: 25px;margin-left:-33%"></div>
           </div>
         </div>
 
