@@ -429,6 +429,9 @@ angular.module('bmpUiApp')
         //}
         //tempSPFdata = SPFdata;
         $scope.SPFtableOptions.data = SPFdata;
+        $('html, body').animate({
+          scrollTop: $("#SPFsection").offset().top - ($('.main-area').height() * 1.5)
+        }, 600);
       }
 
       //draw the path
@@ -437,6 +440,7 @@ angular.module('bmpUiApp')
         removeLayers(circles.slice(1));
         removeLayers(paths);
         paths = [];
+        var group = new L.featureGroup();
 
         var selectedMarkers = [];
 
@@ -451,7 +455,7 @@ angular.module('bmpUiApp')
                 [polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j + 1].options.data.id) > -1)
                 newLine.bindPopup(polyline._popup);
             });
-            newLine.addTo($scope.map);
+            newLine.addTo(group);
             paths.push(newLine);
             var path = new L.polylineDecorator(newLine, {
               patterns: [{
@@ -472,6 +476,8 @@ angular.module('bmpUiApp')
             $scope.pathTraces.push(marker.options.data);
           });
         }
+        group.addTo($scope.map);
+        $scope.map.fitBounds(group.getBounds());
         $scope.drawHighlightCircle(selectedMarkers[selectedMarkers.length - 1]._latlng, 'purple');
       };
 
