@@ -20,6 +20,7 @@ angular.module('bmpUiApp')
         defaults: {
           tileLayer: 'https://{s}.tiles.mapbox.com/v4/' + mapID + '/{z}/{x}/{y}.png?access_token=' + accessToken,
           minZoom: 2,
+          maxZoom: 15,
           zoomControl: false,
           scrollWheelZoom: false
         }
@@ -76,6 +77,8 @@ angular.module('bmpUiApp')
         iconUrl: 'images/Router-icon.png',
         iconSize: [15, 15]
       });
+
+      var tempSPFdata;
 
       $scope.selectNode = function (selectedRouterId) {
         removeLayers(circles);
@@ -146,8 +149,8 @@ angular.module('bmpUiApp')
             paths = [];
 
             cluster = L.markerClusterGroup({
-              maxClusterRadius: 20,
-              disableClusteringAtZoom: 5
+              maxClusterRadius: 15,
+              spiderfyDistanceMultiplier: 2
             });
             var markerLayer = new L.FeatureGroup();
             markerLayer.on('click', function (e) {
@@ -161,10 +164,10 @@ angular.module('bmpUiApp')
               e.layer.closePopup();
             });
             angular.forEach(nodes, function (node) {
-              if (tempNodes[node.latitude + "," + node.longitude]) {
-                node.latitude = parseFloat(node.latitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
-                node.longitude = parseFloat(node.longitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
-              }
+              //if (tempNodes[node.latitude + "," + node.longitude]) {
+              //  node.latitude = parseFloat(node.latitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
+              //  node.longitude = parseFloat(node.longitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
+              //}
               var marker = new L.Marker([node.latitude, node.longitude], {
                 icon: routerIcon,
                 data: node,
@@ -198,7 +201,7 @@ angular.module('bmpUiApp')
               });
               if (sourceNode && targetNode) {
                 var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)], {
-                  color: 'grey',
+                  color: '#AAAAAA',
                   weight: 2,
                   opacity: 0.2,
                   data: link,
@@ -328,6 +331,9 @@ angular.module('bmpUiApp')
             }
             nodesData[i].location = [nodesData[i].city, nodesData[i].stateprov, nodesData[i].country].join(', ');
           }
+          if ($scope.LSGridApi) {
+            $scope.LSgridApi.selection.clearSelectedRows();
+          }
           if ($scope.protocol == 'ISIS') {
             $scope.SPFtableOptions.columnDefs[1] = {field: 'Type', displayName: 'Level', width: '*'};
           }
@@ -409,7 +415,28 @@ angular.module('bmpUiApp')
           }
         }
         $scope.SPFgridApi.selection.clearSelectedRows();
+        //if (tempSPFdata) {
+        //  var onlyInA = tempSPFdata.filter(function(current){
+        //    return SPFdata.filter(function(current_b){
+        //        return current_b.prefixWithLen == current.prefixWithLen
+        //      }).length == 0
+        //  });
+        //
+        //  var onlyInB = SPFdata.filter(function(current){
+        //    return tempSPFdata.filter(function(current_a){
+        //        return current_a.prefixWithLen == current.prefixWithLen
+        //      }).length == 0
+        //  });
+        //
+        //  result = onlyInA.concat(onlyInB);
+        //
+        //  console.log(result);
+        //}
+        //tempSPFdata = SPFdata;
         $scope.SPFtableOptions.data = SPFdata;
+        $('html, body').animate({
+          scrollTop: $("#SPFsection").offset().top + $("#SPFsection").outerHeight(true) - $(window).height()
+        }, 600);
       }
 
       //draw the path
@@ -418,6 +445,7 @@ angular.module('bmpUiApp')
         removeLayers(circles.slice(1));
         removeLayers(paths);
         paths = [];
+        var group = new L.featureGroup();
 
         var selectedMarkers = [];
 
@@ -432,7 +460,7 @@ angular.module('bmpUiApp')
                 [polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j + 1].options.data.id) > -1)
                 newLine.bindPopup(polyline._popup);
             });
-            newLine.addTo($scope.map);
+            newLine.addTo(group);
             paths.push(newLine);
             var path = new L.polylineDecorator(newLine, {
               patterns: [{
@@ -453,6 +481,8 @@ angular.module('bmpUiApp')
             $scope.pathTraces.push(marker.options.data);
           });
         }
+        group.addTo($scope.map);
+        $scope.map.fitBounds(group.getBounds());
         $scope.drawHighlightCircle(selectedMarkers[selectedMarkers.length - 1]._latlng, 'purple');
       };
 
@@ -475,7 +505,7 @@ angular.module('bmpUiApp')
         height: $scope.lsTableInitHeight,
         rowHeight: 25,
         gridFootHeight: 0,
-        showGridFooter: false,
+        showGridFooter: true,
         enableVerticalScrollbar: true,
         rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
         columnDefs: [
