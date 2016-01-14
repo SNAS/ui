@@ -27,7 +27,7 @@
 
                   <div class="main" ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll', 'padding-bottom': 0}">
                     <ul class="locations">
-                      <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}">
+                      <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}" class="loca">
                         <p class="router-list-city" ng-click="toggleLocationSelection(location)">
                           <span class="glyphicon glyphicon-play"></span>{{location}}
                           <span class="count">({{locaNodes.length}})</span>

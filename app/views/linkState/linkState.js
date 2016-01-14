@@ -285,6 +285,7 @@ angular.module('bmpUiApp')
       };
 
       $scope.panelSearch = function (key) {
+        $(".loca").addClass('expanded');
         $('.locationItems').show();
       };
 
@@ -326,6 +327,9 @@ angular.module('bmpUiApp')
               $scope.locations[newNode.city] = [newNode];
             }
             nodesData[i].location = [nodesData[i].city, nodesData[i].stateprov, nodesData[i].country].join(', ');
+          }
+          if ($scope.protocol == 'ISIS') {
+            $scope.SPFtableOptions.columnDefs[1] = {field: 'Type', displayName: 'Level', width: '*'};
           }
           if ($scope.tab == 'table')
             $scope.lsTableOptions.data = nodesData;

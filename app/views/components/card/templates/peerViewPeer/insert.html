@@ -57,7 +57,9 @@
         <section style="width: 100%;margin: auto;padding: 10px;">
 
           <div class="as-path">
-
+            <div ng-if="!values.AS_Path.length" ng-style="{'text-align': 'center', 'font-size': '40px', 'color': 'grey'}">
+              No AS Path Found
+            </div>
             <div ng-style="{'width':asPath.width}">
 
               <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}"
