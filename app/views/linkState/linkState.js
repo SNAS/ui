@@ -128,7 +128,6 @@ angular.module('bmpUiApp')
 
         $scope.selectedRouterID = null;
 
-        var tempNodes = {};
         markers = {};
 
         linksPromise.success(function () {
@@ -189,11 +188,10 @@ angular.module('bmpUiApp')
               marker.bindPopup(popup);
               marker.addTo(markerLayer);
               markers[node.id] = marker;
-              tempNodes[node.latitude + "," + node.longitude] = node;
             });
             angular.forEach(links, function (link) {
               var sourceNode, targetNode;
-              angular.forEach(tempNodes, function (node) {
+              angular.forEach(nodes, function (node) {
                 if (node.id == link.source)
                   sourceNode = node;
                 if (node.id == link.target)
@@ -201,7 +199,7 @@ angular.module('bmpUiApp')
               });
               if (sourceNode && targetNode) {
                 var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)], {
-                  color: '#AAAAAA',
+                  color: 'grey',
                   weight: 2,
                   opacity: 0.2,
                   data: link,
