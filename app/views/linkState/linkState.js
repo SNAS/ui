@@ -149,7 +149,7 @@ angular.module('bmpUiApp')
             paths = [];
 
             cluster = L.markerClusterGroup({
-              maxClusterRadius: 20,
+              maxClusterRadius: 15,
               spiderfyDistanceMultiplier: 2
             });
             var markerLayer = new L.FeatureGroup();
