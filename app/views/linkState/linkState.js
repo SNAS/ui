@@ -431,7 +431,7 @@ angular.module('bmpUiApp')
         //tempSPFdata = SPFdata;
         $scope.SPFtableOptions.data = SPFdata;
         $('html, body').animate({
-          scrollTop: $("#SPFsection").offset().top - ($('.main-area').height() * 1.5)
+          scrollTop: $("#SPFsection").offset().top + $("#SPFsection").outerHeight(true) - $(window).height()
         }, 600);
       }
 
