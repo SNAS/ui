@@ -20,6 +20,7 @@ angular.module('bmpUiApp')
         defaults: {
           tileLayer: 'https://{s}.tiles.mapbox.com/v4/' + mapID + '/{z}/{x}/{y}.png?access_token=' + accessToken,
           minZoom: 2,
+          maxZoom: 15,
           zoomControl: false,
           scrollWheelZoom: false
         }
@@ -149,7 +150,7 @@ angular.module('bmpUiApp')
 
             cluster = L.markerClusterGroup({
               maxClusterRadius: 20,
-              disableClusteringAtZoom: 5
+              spiderfyDistanceMultiplier: 2
             });
             var markerLayer = new L.FeatureGroup();
             markerLayer.on('click', function (e) {
@@ -163,10 +164,10 @@ angular.module('bmpUiApp')
               e.layer.closePopup();
             });
             angular.forEach(nodes, function (node) {
-              if (tempNodes[node.latitude + "," + node.longitude]) {
-                node.latitude = parseFloat(node.latitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
-                node.longitude = parseFloat(node.longitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
-              }
+              //if (tempNodes[node.latitude + "," + node.longitude]) {
+              //  node.latitude = parseFloat(node.latitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
+              //  node.longitude = parseFloat(node.longitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
+              //}
               var marker = new L.Marker([node.latitude, node.longitude], {
                 icon: routerIcon,
                 data: node,

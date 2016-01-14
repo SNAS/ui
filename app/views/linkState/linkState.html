@@ -36,7 +36,7 @@
                         </p>
                         <ul class="peers locationItems" id="{{location}}nodes" hidden>
                           <li ng-repeat="node in locaNodes | filter:panelSearchKey"
-                              ng-click="goto([node.latitude,node.longitude],6);selectNode(node.routerId);drawHighlightCircle([node.latitude,node.longitude],'red')">
+                              ng-click="goto([node.latitude,node.longitude],map.options.maxZoom);selectNode(node.routerId);drawHighlightCircle([node.latitude,node.longitude],'red')">
                             <div class="row">
                               <div class="col-xs-12" tooltip-popup-delay="1000" tooltip-append-to-body="true"
                                    tooltip="{{node.routerId}} | {{node.igp_routerId}}" tooltip-placement="top">
