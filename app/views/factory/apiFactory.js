@@ -229,16 +229,16 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId + "/?withGeo");
     };
 
-    apiFactory.getPeerLinks = function (peerHashId){
-      return $http.get(urlBase + "linkstate/links/peer/" + peerHashId);
+    apiFactory.getPeerLinks = function (peerHashId,mt_id){
+      return $http.get(urlBase + "linkstate/links/peer/" + peerHashId + "/" + mt_id);
     };
 
-    apiFactory.getSPFospf = function (peerHashId,routerId){
-      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/ospf/" + routerId);
+    apiFactory.getSPFospf = function (peerHashId,routerId,mt_id){
+      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/ospf/" + routerId + "/" + mt_id);
     };
 
-    apiFactory.getSPFisis = function (peerHashId,routerId){
-      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/isis/" + routerId);
+    apiFactory.getSPFisis = function (peerHashId,routerId,mt_id){
+      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/isis/" + routerId + "/" + mt_id);
     };
 
     // prefix analysis

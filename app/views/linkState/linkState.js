@@ -261,7 +261,7 @@ angular.module('bmpUiApp')
               $scope.peerData = [];
               angular.forEach(result.ls_peers.data, function (peer) {
                 var existed = $scope.peerData.filter(function (current) {
-                  return current.peer_hash_id == peer.peer_hash_id
+                  return current.peer_hash_id == peer.peer_hash_id && current.protocol == peer.protocol
                 });
                 if (existed.length == 0) {
                   peer.available_mt_ids = [peer.mt_id];
