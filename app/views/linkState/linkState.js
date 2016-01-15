@@ -105,7 +105,7 @@ angular.module('bmpUiApp')
         removeLayers(paths);
         paths = [];
 
-        $scope.selectedRouterName = selectedRouter.NodeName || selectedRouter.routerId;
+        $scope.selectedRouter = selectedRouter;
 
         $scope.pathTraces = null;
 

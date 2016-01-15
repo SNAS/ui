@@ -99,7 +99,7 @@
 
   <div id="SPFsection" class="main-area" style="margin-top: 15px">
     <div class="table-container">
-      <h3>Topology Table {{selectedRouterName?"For "+selectedRouterName:""}}</h3>
+      <h3>Topology Table {{selectedRouter?"For "+selectedRouter.NodeName+"("+selectedRouter.routerId+")":""}}</h3>
 
       <div class="loading-section">
         <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize>
