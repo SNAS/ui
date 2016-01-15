@@ -175,7 +175,7 @@ angular.module('bmpUiApp')
               removeLayers(paths);
               paths = [];
 
-              var highlightLines=[];
+              var highlightLines = [];
 
               cluster = L.markerClusterGroup({
                 maxClusterRadius: 15,
@@ -188,9 +188,9 @@ angular.module('bmpUiApp')
               });
               markerLayer.on('mouseover', function (e) {
                 e.layer.openPopup();
-                angular.forEach(e.layer.options.connectedPolylines,function(polyline){
-                  var highlightLine = new L.Polyline(polyline._latlngs,{
-                    color:'red'
+                angular.forEach(e.layer.options.connectedPolylines, function (polyline) {
+                  var highlightLine = new L.Polyline(polyline._latlngs, {
+                    color: 'red'
                   }).addTo($scope.map);
                   highlightLines.push(highlightLine);
                 });
@@ -198,7 +198,7 @@ angular.module('bmpUiApp')
               markerLayer.on('mouseout', function (e) {
                 e.layer.closePopup();
                 removeLayers(highlightLines);
-                highlightLines=[];
+                highlightLines = [];
               });
               angular.forEach(nodes, function (node) {
                 //if (tempNodes[node.latitude + "," + node.longitude]) {
@@ -386,6 +386,7 @@ angular.module('bmpUiApp')
               $scope.locations[newNode.city] = [newNode];
             }
             nodesData[i].location = [nodesData[i].city, nodesData[i].stateprov, nodesData[i].country].join(', ');
+            nodesData[i].routerId = routerId;
           }
           if ($scope.LSGridApi) {
             $scope.LSgridApi.selection.clearSelectedRows();
