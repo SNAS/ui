@@ -85,21 +85,21 @@ angular.module('bmpUiApp')
         }
       };
 
-      var polylines, cluster, markers, paths;
+      var polylines, cluster, markers, markerLayer, paths;
 
       var routerIcon = L.icon({
         iconUrl: 'images/Router-icon.png',
         iconSize: [15, 15]
       });
 
-      var tempSPFdata;
-
       $scope.selectNode = function (selectedRouterId) {
         removeLayers(circles);
         circles = [];
 
-        if (pathGroup)
+        if (pathGroup) {
           $scope.map.removeLayer(pathGroup);
+          pathGroup.clearLayers();
+        }
 
         removeLayers(paths);
         paths = [];
@@ -166,8 +166,10 @@ angular.module('bmpUiApp')
               removeLayers(polylines);
               polylines = [];
 
-              if (pathGroup)
+              if (pathGroup) {
                 $scope.map.removeLayer(pathGroup);
+                pathGroup.clearLayers();
+              }
 
               removeLayers(paths);
               paths = [];
@@ -176,7 +178,7 @@ angular.module('bmpUiApp')
                 maxClusterRadius: 15,
                 spiderfyDistanceMultiplier: 2
               });
-              var markerLayer = new L.FeatureGroup();
+              markerLayer = new L.FeatureGroup();
               markerLayer.on('click', function (e) {
                 $scope.selectNode(e.layer.options.data.routerId);
                 $scope.drawHighlightCircle(e.layer._latlng, 'red');
@@ -242,7 +244,8 @@ angular.module('bmpUiApp')
               });
               $scope.map.addLayer(cluster.addLayer(markerLayer));
 
-              $scope.map.fitBounds(markerLayer.getBounds());
+              if ($scope.tab == "map")
+                $scope.map.fitBounds(markerLayer.getBounds());
 
               $scope.topologyIsLoad = false; //stop loading
 
@@ -289,7 +292,6 @@ angular.module('bmpUiApp')
         leafletData.getMap($scope.id).then(function (map) {
           $scope.map = map;
           L.control.zoomslider().addTo($scope.map);
-          $scope.map.setView([39.50, -95.35], 4);
         });
 
         $scope.selectChange();
@@ -486,8 +488,10 @@ angular.module('bmpUiApp')
         $scope.pathTraces = null;
         removeLayers(circles.slice(1));
 
-        if (pathGroup)
+        if (pathGroup) {
           $scope.map.removeLayer(pathGroup);
+          pathGroup.clearLayers();
+        }
 
         removeLayers(paths);
 
@@ -533,7 +537,8 @@ angular.module('bmpUiApp')
         }
         if (objectSize(pathGroup._layers) > 0) {
           pathGroup.addTo($scope.map);
-          $scope.map.fitBounds(pathGroup.getBounds());
+          if ($scope.tab == "map")
+            $scope.map.fitBounds(pathGroup.getBounds());
           $scope.drawHighlightCircle(selectedMarkers[selectedMarkers.length - 1]._latlng, 'purple');
         }
       };
@@ -585,6 +590,12 @@ angular.module('bmpUiApp')
             });
           }, 50);
         } else {
+          if (objectSize(pathGroup._layers) > 0)
+            setTimeout(function () {
+              $scope.map.fitBounds(pathGroup.getBounds());
+            }, 200);
+          else if (markerLayer && objectSize(markerLayer._layers) > 0)
+            $scope.map.fitBounds(markerLayer.getBounds());
           $scope.lsTableOptions.data = null;
         }
       };
