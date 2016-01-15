@@ -80,21 +80,21 @@ angular.module('bmpUiApp')
           $scope.SPFgridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
             if (row.isSelected) {
+              removeLayers(polylines);
               var path = row.entity.path_hash_ids;
               var neighbor_addr = row.entity.neighbor_addr;
               $scope.drawPath(path, neighbor_addr);
-              $scope.map.removeLayer(cluster);
-              removeLayers(polylines);
-              involvedMarkerLayer.addTo($scope.map);
+              cluster.clearLayers();
+              cluster.addLayers(involvedMarkers);
             }
             else {
-              $scope.map.removeLayer(involvedMarkerLayer);
-              involvedMarkerLayer = null;
-              cluster.addTo($scope.map);
               removeLayers(circles.slice(1));
               removeLayers(paths);
               paths = [];
+              cluster.clearLayers();
+              cluster.addLayer(markerLayer);
               angular.forEach(polylines, function (polyline) {
+                if(!$scope.map.hasLayer(polyline))
                 $scope.map.addLayer(polyline);
               });
               $scope.map.fitBounds(markerLayer.getBounds());
@@ -114,9 +114,18 @@ angular.module('bmpUiApp')
         removeLayers(circles);
         circles = [];
 
-        if (pathGroup) {
+        if (pathGroup && $scope.map.hasLayer(pathGroup)) {
           $scope.map.removeLayer(pathGroup);
           pathGroup.clearLayers();
+          angular.forEach(polylines, function (polyline) {
+            if(!$scope.map.hasLayer(polyline))
+              $scope.map.addLayer(polyline);
+          });
+        }
+
+        if(!cluster.hasLayer(markerLayer)){
+          cluster.clearLayers();
+          cluster.addLayer(markerLayer);
         }
 
         removeLayers(paths);
@@ -175,7 +184,7 @@ angular.module('bmpUiApp')
 
               $scope.pathTraces = null;
 
-              if (cluster)
+              if (cluster && $scope.map.hasLayer(cluster))
                 $scope.map.removeLayer(cluster);
 
               removeLayers(circles);
@@ -184,7 +193,7 @@ angular.module('bmpUiApp')
               removeLayers(polylines);
               polylines = [];
 
-              if (pathGroup) {
+              if (pathGroup && $scope.map.hasLayer(pathGroup)) {
                 $scope.map.removeLayer(pathGroup);
                 pathGroup.clearLayers();
               }
@@ -202,6 +211,8 @@ angular.module('bmpUiApp')
               markerLayer.on('click', function (e) {
                 $scope.selectNode(e.layer.options.data);
                 $scope.drawHighlightCircle(e.layer._latlng, 'red');
+                removeLayers(highlightLines);
+                highlightLines = [];
               });
               markerLayer.on('mouseover', function (e) {
                 e.layer.openPopup();
@@ -513,20 +524,16 @@ angular.module('bmpUiApp')
         }, 600);
       }
 
-      var pathGroup, involvedMarkerLayer;
+      var pathGroup, involvedMarkers;
 
       //draw the path
       $scope.drawPath = function (path_hash_ids) {
         $scope.pathTraces = null;
         removeLayers(circles.slice(1));
 
-        if (pathGroup) {
+        if (pathGroup && $scope.map.hasLayer(pathGroup)) {
           $scope.map.removeLayer(pathGroup);
           pathGroup.clearLayers();
-        }
-
-        if (involvedMarkerLayer) {
-          $scope.map.removeLayer(involvedMarkerLayer)
         }
 
         removeLayers(paths);
@@ -534,7 +541,7 @@ angular.module('bmpUiApp')
         paths = [];
         pathGroup = new L.featureGroup();
 
-        var involvedMarkers = [];
+        involvedMarkers = [];
 
         angular.forEach(path_hash_ids.split(","), function (hash) {
           involvedMarkers.push(markers[hash]);
@@ -577,7 +584,6 @@ angular.module('bmpUiApp')
             $scope.map.fitBounds(pathGroup.getBounds());
           $scope.drawHighlightCircle(involvedMarkers[involvedMarkers.length - 1]._latlng, 'purple');
         }
-        involvedMarkerLayer = new L.featureGroup(involvedMarkers);
       };
 
       function removeLayers(layers) {
