@@ -55,6 +55,7 @@ angular.module('bmpUiApp')
 
       //SPF Table options
       $scope.SPFtableOptions = {
+        enableFiltering: true,
         enableRowSelection: true,
         enableRowHeaderSelection: false,
         enableColumnResizing: true,
@@ -554,7 +555,7 @@ angular.module('bmpUiApp')
       /**************** Table View ***************/
       $scope.lsTableInitHeight = 300;
       $scope.lsTableOptions = {
-        enableFiltering: false,
+        enableFiltering: true,
         enableRowSelection: true,
         enableRowHeaderSelection: false,
         enableColumnResizing: true,
