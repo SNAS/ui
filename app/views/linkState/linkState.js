@@ -79,9 +79,26 @@ angular.module('bmpUiApp')
         onRegisterApi: function (gridApi) {
           $scope.SPFgridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-            var path = row.entity.path_hash_ids;
-            var neighbor_addr = row.entity.neighbor_addr;
-            $scope.drawPath(path, neighbor_addr);
+            if (row.isSelected) {
+              var path = row.entity.path_hash_ids;
+              var neighbor_addr = row.entity.neighbor_addr;
+              $scope.drawPath(path, neighbor_addr);
+              $scope.map.removeLayer(cluster);
+              removeLayers(polylines);
+              involvedMarkerLayer.addTo($scope.map);
+            }
+            else {
+              $scope.map.removeLayer(involvedMarkerLayer);
+              involvedMarkerLayer = null;
+              cluster.addTo($scope.map);
+              removeLayers(circles.slice(1));
+              removeLayers(paths);
+              paths = [];
+              angular.forEach(polylines, function (polyline) {
+                $scope.map.addLayer(polyline);
+              });
+              $scope.map.fitBounds(markerLayer.getBounds());
+            }
           });
         }
       };
@@ -188,23 +205,23 @@ angular.module('bmpUiApp')
               });
               markerLayer.on('mouseover', function (e) {
                 e.layer.openPopup();
-                angular.forEach(e.layer.options.connectedPolylines, function (polyline) {
-                  var highlightLine = new L.Polyline(polyline._latlngs, {
-                    color: 'red'
-                  }).addTo($scope.map);
-                  highlightLines.push(highlightLine);
-                });
+                if (!$scope.pathTraces) {
+                  angular.forEach(e.layer.options.connectedPolylines, function (polyline) {
+                    var highlightLine = new L.Polyline(polyline._latlngs, {
+                      color: 'red'
+                    }).addTo($scope.map);
+                    highlightLines.push(highlightLine);
+                  });
+                }
               });
               markerLayer.on('mouseout', function (e) {
                 e.layer.closePopup();
-                removeLayers(highlightLines);
-                highlightLines = [];
+                if (!$scope.pathTraces) {
+                  removeLayers(highlightLines);
+                  highlightLines = [];
+                }
               });
               angular.forEach(nodes, function (node) {
-                //if (tempNodes[node.latitude + "," + node.longitude]) {
-                //  node.latitude = parseFloat(node.latitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
-                //  node.longitude = parseFloat(node.longitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
-                //}
                 var marker = new L.Marker([node.latitude, node.longitude], {
                   icon: routerIcon,
                   data: node,
@@ -496,7 +513,7 @@ angular.module('bmpUiApp')
         }, 600);
       }
 
-      var pathGroup;
+      var pathGroup, involvedMarkerLayer;
 
       //draw the path
       $scope.drawPath = function (path_hash_ids) {
@@ -508,24 +525,28 @@ angular.module('bmpUiApp')
           pathGroup.clearLayers();
         }
 
+        if (involvedMarkerLayer) {
+          $scope.map.removeLayer(involvedMarkerLayer)
+        }
+
         removeLayers(paths);
 
         paths = [];
         pathGroup = new L.featureGroup();
 
-        var selectedMarkers = [];
+        var involvedMarkers = [];
 
         angular.forEach(path_hash_ids.split(","), function (hash) {
-          selectedMarkers.push(markers[hash]);
+          involvedMarkers.push(markers[hash]);
         });
-        if (selectedMarkers.length > 1) {
-          for (var j = 0; j < selectedMarkers.length - 1; j++) {
-            if (selectedMarkers[j]._latlng.lat != selectedMarkers[j + 1]._latlng.lat ||
-              selectedMarkers[j]._latlng.long != selectedMarkers[j + 1]._latlng.long) {
-              var newLine = new L.polyline([selectedMarkers[j]._latlng, selectedMarkers[j + 1]._latlng], {color: 'purple'});
+        if (involvedMarkers.length > 1) {
+          for (var j = 0; j < involvedMarkers.length - 1; j++) {
+            if (involvedMarkers[j]._latlng.lat != involvedMarkers[j + 1]._latlng.lat ||
+              involvedMarkers[j]._latlng.long != involvedMarkers[j + 1]._latlng.long) {
+              var newLine = new L.polyline([involvedMarkers[j]._latlng, involvedMarkers[j + 1]._latlng], {color: 'purple'});
               angular.forEach(polylines, function (polyline) {
-                if ([polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j].options.data.id) > -1 &&
-                  [polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j + 1].options.data.id) > -1)
+                if ([polyline.options.sourceID, polyline.options.targetID].indexOf(involvedMarkers[j].options.data.id) > -1 &&
+                  [polyline.options.sourceID, polyline.options.targetID].indexOf(involvedMarkers[j + 1].options.data.id) > -1)
                   newLine.bindPopup(polyline._popup);
               });
               newLine.addTo(pathGroup);
@@ -546,7 +567,7 @@ angular.module('bmpUiApp')
             }
           }
           $scope.pathTraces = [];
-          angular.forEach(selectedMarkers, function (marker) {
+          angular.forEach(involvedMarkers, function (marker) {
             $scope.pathTraces.push(marker.options.data);
           });
         }
@@ -554,8 +575,9 @@ angular.module('bmpUiApp')
           pathGroup.addTo($scope.map);
           if ($scope.tab == "map")
             $scope.map.fitBounds(pathGroup.getBounds());
-          $scope.drawHighlightCircle(selectedMarkers[selectedMarkers.length - 1]._latlng, 'purple');
+          $scope.drawHighlightCircle(involvedMarkers[involvedMarkers.length - 1]._latlng, 'purple');
         }
+        involvedMarkerLayer = new L.featureGroup(involvedMarkers);
       };
 
       function removeLayers(layers) {
