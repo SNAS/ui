@@ -93,7 +93,7 @@ angular.module('bmpUiApp')
         iconSize: [15, 15]
       });
 
-      $scope.selectNode = function (selectedRouterId) {
+      $scope.selectNode = function (selectedRouter) {
         removeLayers(circles);
         circles = [];
 
@@ -105,12 +105,12 @@ angular.module('bmpUiApp')
         removeLayers(paths);
         paths = [];
 
-        $scope.selectedRouterID = selectedRouterId;
+        $scope.selectedRouterName = selectedRouter.NodeName || selectedRouter.routerId;
 
         $scope.pathTraces = null;
 
         if ($scope.protocol == "OSPF") {
-          apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId, $scope.selected_mt_id).success(function (result) {
+          apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouter.routerId, $scope.selected_mt_id).success(function (result) {
               if (result.igp_ospf) {
                 SPFdata = result.igp_ospf.data;
                 drawShortestPathTree(SPFdata);
@@ -124,7 +124,7 @@ angular.module('bmpUiApp')
           });
         }
         else if ($scope.protocol == "ISIS") {
-          apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId, $scope.selected_mt_id).success(function (result) {
+          apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouter.routerId, $scope.selected_mt_id).success(function (result) {
               if (result.igp_isis) {
                 SPFdata = result.igp_isis.data;
                 drawShortestPathTree(SPFdata);
@@ -149,7 +149,7 @@ angular.module('bmpUiApp')
           getNodes();
           getLinks();
 
-          $scope.selectedRouterID = null;
+          $scope.selectedRouterName = null;
 
           markers = {};
 
@@ -175,20 +175,30 @@ angular.module('bmpUiApp')
               removeLayers(paths);
               paths = [];
 
+              var highlightLines=[];
+
               cluster = L.markerClusterGroup({
                 maxClusterRadius: 15,
                 spiderfyDistanceMultiplier: 2
               });
               markerLayer = new L.FeatureGroup();
               markerLayer.on('click', function (e) {
-                $scope.selectNode(e.layer.options.data.routerId);
+                $scope.selectNode(e.layer.options.data);
                 $scope.drawHighlightCircle(e.layer._latlng, 'red');
               });
               markerLayer.on('mouseover', function (e) {
                 e.layer.openPopup();
+                angular.forEach(e.layer.options.connectedPolylines,function(polyline){
+                  var highlightLine = new L.Polyline(polyline._latlngs,{
+                    color:'red'
+                  }).addTo($scope.map);
+                  highlightLines.push(highlightLine);
+                });
               });
               markerLayer.on('mouseout', function (e) {
                 e.layer.closePopup();
+                removeLayers(highlightLines);
+                highlightLines=[];
               });
               angular.forEach(nodes, function (node) {
                 //if (tempNodes[node.latitude + "," + node.longitude]) {
@@ -198,7 +208,8 @@ angular.module('bmpUiApp')
                 var marker = new L.Marker([node.latitude, node.longitude], {
                   icon: routerIcon,
                   data: node,
-                  title: "NodeName: " + node.NodeName
+                  title: "NodeName: " + node.NodeName,
+                  connectedPolylines: []
                 });
 
                 var linksConnected = 0;
@@ -241,6 +252,8 @@ angular.module('bmpUiApp')
                   polyline.bindPopup(popup);
                   polyline.addTo($scope.map);
                   polylines.push(polyline);
+                  markers[sourceNode.id].options.connectedPolylines.push(polyline);
+                  markers[targetNode.id].options.connectedPolylines.push(polyline);
                 }
               });
               $scope.map.addLayer(cluster.addLayer(markerLayer));
@@ -576,7 +589,7 @@ angular.module('bmpUiApp')
         onRegisterApi: function (gridApi) {
           $scope.LSgridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-            $scope.selectNode(row.entity.RouterId);
+            $scope.selectNode(row.entity);
             $scope.drawHighlightCircle([row.entity.latitude, row.entity.longitude], 'red');
           });
         }
