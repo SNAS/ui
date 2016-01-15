@@ -6,7 +6,12 @@
             ng-options="(peer.PeerName != '' ? peer.PeerName : peer.PeerIP + ' (' + peer.protocol + ')' ) for peer in peerData"
             ng-change="selectChange()">
     </select>
-    Protocol: {{protocol}}
+    Protocol: {{protocol}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Topology Type:
+    <select ng-model="selected_mt_id"
+            ng-options="mtID as translateMT[mtID] for mtID in selectedPeer.available_mt_ids"
+            ng-change="selectChange()">
+    </select>
   </div>
 
   <tabset>

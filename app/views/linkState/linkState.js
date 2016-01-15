@@ -26,6 +26,14 @@ angular.module('bmpUiApp')
         }
       });
 
+      objectSize = function (obj) {
+        var size = 0, key;
+        for (key in obj) {
+          if (obj.hasOwnProperty(key)) size++;
+        }
+        return size;
+      };
+
       $scope.id = "LinkState";
 
       $scope.protocol;
@@ -33,6 +41,12 @@ angular.module('bmpUiApp')
       var nodes = [];
       var links = [];
       var SPFdata;
+
+      $scope.translateMT = {
+        0: "Standard(IPv4)",
+        2: "IPv6",
+        3: "Multicast/RPF"
+      };
 
       //var latitudes = [63.391326, 47.6062, 29.7633, 41.85, 33.7861178428426, 44.98, 34.0522, 39.0997, 40.7879, 38.8951,
       //  45.5234, 42.6526, 25.7743, 32.7153, 42.3584, 36.137242513163];
@@ -83,6 +97,10 @@ angular.module('bmpUiApp')
       $scope.selectNode = function (selectedRouterId) {
         removeLayers(circles);
         circles = [];
+
+        if (pathGroup)
+          $scope.map.removeLayer(pathGroup);
+
         removeLayers(paths);
         paths = [];
 
@@ -91,7 +109,7 @@ angular.module('bmpUiApp')
         $scope.pathTraces = null;
 
         if ($scope.protocol == "OSPF") {
-          apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
+          apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouterId, $scope.selected_mt_id).success(function (result) {
               if (result.igp_ospf) {
                 SPFdata = result.igp_ospf.data;
                 drawShortestPathTree(SPFdata);
@@ -105,7 +123,7 @@ angular.module('bmpUiApp')
           });
         }
         else if ($scope.protocol == "ISIS") {
-          apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId).success(function (result) {
+          apiFactory.getSPFisis($scope.selectedPeer.peer_hash_id, selectedRouterId, $scope.selected_mt_id).success(function (result) {
               if (result.igp_isis) {
                 SPFdata = result.igp_isis.data;
                 drawShortestPathTree(SPFdata);
@@ -122,116 +140,140 @@ angular.module('bmpUiApp')
 
       $scope.selectChange = function () {
 
-        $scope.topologyIsLoad = true; //start loading
-        getNodes();
-        getLinks();
+        if ($scope.selectedPeer) {
+          if ($scope.selected_mt_id == null || $scope.selected_mt_id == undefined)
+            $scope.selected_mt_id = $scope.selectedPeer.available_mt_ids[0];
 
-        $scope.selectedRouterID = null;
+          $scope.topologyIsLoad = true; //start loading
+          getNodes();
+          getLinks();
 
-        markers = {};
+          $scope.selectedRouterID = null;
 
-        linksPromise.success(function () {
-          nodesPromise.success(function () {
+          markers = {};
 
-            $scope.pathTraces = null;
+          linksPromise.success(function () {
+            nodesPromise.success(function () {
 
-            if (cluster)
-              $scope.map.removeLayer(cluster);
+              $scope.pathTraces = null;
 
-            removeLayers(circles);
-            circles = [];
+              if (cluster)
+                $scope.map.removeLayer(cluster);
 
-            removeLayers(polylines);
-            polylines = [];
+              removeLayers(circles);
+              circles = [];
 
-            removeLayers(paths);
-            paths = [];
+              removeLayers(polylines);
+              polylines = [];
 
-            cluster = L.markerClusterGroup({
-              maxClusterRadius: 15,
-              spiderfyDistanceMultiplier: 2
-            });
-            var markerLayer = new L.FeatureGroup();
-            markerLayer.on('click', function (e) {
-              $scope.selectNode(e.layer.options.data.routerId);
-              $scope.drawHighlightCircle(e.layer._latlng, 'red');
-            });
-            markerLayer.on('mouseover', function (e) {
-              e.layer.openPopup();
-            });
-            markerLayer.on('mouseout', function (e) {
-              e.layer.closePopup();
-            });
-            angular.forEach(nodes, function (node) {
-              //if (tempNodes[node.latitude + "," + node.longitude]) {
-              //  node.latitude = parseFloat(node.latitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
-              //  node.longitude = parseFloat(node.longitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
-              //}
-              var marker = new L.Marker([node.latitude, node.longitude], {
-                icon: routerIcon,
-                data: node,
-                title: "NodeName: " + node.NodeName
+              if (pathGroup)
+                $scope.map.removeLayer(pathGroup);
+
+              removeLayers(paths);
+              paths = [];
+
+              cluster = L.markerClusterGroup({
+                maxClusterRadius: 15,
+                spiderfyDistanceMultiplier: 2
               });
+              var markerLayer = new L.FeatureGroup();
+              markerLayer.on('click', function (e) {
+                $scope.selectNode(e.layer.options.data.routerId);
+                $scope.drawHighlightCircle(e.layer._latlng, 'red');
+              });
+              markerLayer.on('mouseover', function (e) {
+                e.layer.openPopup();
+              });
+              markerLayer.on('mouseout', function (e) {
+                e.layer.closePopup();
+              });
+              angular.forEach(nodes, function (node) {
+                //if (tempNodes[node.latitude + "," + node.longitude]) {
+                //  node.latitude = parseFloat(node.latitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
+                //  node.longitude = parseFloat(node.longitude) + (Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.5;
+                //}
+                var marker = new L.Marker([node.latitude, node.longitude], {
+                  icon: routerIcon,
+                  data: node,
+                  title: "NodeName: " + node.NodeName
+                });
 
-              var linksConnected = 0;
+                var linksConnected = 0;
+                angular.forEach(links, function (link) {
+                  if (link.source == node.id || link.target == node.id) {
+                    linksConnected++;
+                  }
+                });
+                var popup = "Connected Links: " + linksConnected;
+
+                angular.forEach(node, function (value, key) {
+                  if (['id', '$$hashKey', 'level'].indexOf(key) < 0)
+                    popup += "<br>" + key + ": " + value;
+                });
+                marker.bindPopup(popup);
+                marker.addTo(markerLayer);
+                markers[node.id] = marker;
+              });
               angular.forEach(links, function (link) {
-                if (link.source == node.id || link.target == node.id) {
-                  linksConnected++;
+                var sourceNode, targetNode;
+                angular.forEach(nodes, function (node) {
+                  if (node.id == link.source)
+                    sourceNode = node;
+                  if (node.id == link.target)
+                    targetNode = node;
+                });
+                if (sourceNode && targetNode) {
+                  var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)], {
+                    color: 'grey',
+                    weight: 2,
+                    opacity: 0.2,
+                    data: link,
+                    sourceID: sourceNode.id,
+                    targetID: targetNode.id
+                  });
+                  var popup = "";
+                  angular.forEach(link, function (value, key) {
+                    popup += key + ":" + value + "<br>";
+                  });
+                  polyline.bindPopup(popup);
+                  polyline.addTo($scope.map);
+                  polylines.push(polyline);
                 }
               });
-              var popup = "Connected Links: " + linksConnected;
+              $scope.map.addLayer(cluster.addLayer(markerLayer));
 
-              angular.forEach(node, function (value, key) {
-                if (['id', '$$hashKey', 'level'].indexOf(key) < 0)
-                  popup += "<br>" + key + ": " + value;
-              });
-              marker.bindPopup(popup);
-              marker.addTo(markerLayer);
-              markers[node.id] = marker;
+              $scope.map.fitBounds(markerLayer.getBounds());
+
+              $scope.topologyIsLoad = false; //stop loading
+
+              $scope.SPFtableOptions.data = [];
             });
-            angular.forEach(links, function (link) {
-              var sourceNode, targetNode;
-              angular.forEach(nodes, function (node) {
-                if (node.id == link.source)
-                  sourceNode = node;
-                if (node.id == link.target)
-                  targetNode = node;
-              });
-              if (sourceNode && targetNode) {
-                var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)], {
-                  color: 'grey',
-                  weight: 2,
-                  opacity: 0.2,
-                  data: link,
-                  sourceID: sourceNode.id,
-                  targetID: targetNode.id
-                });
-                var popup = "";
-                angular.forEach(link, function (value, key) {
-                  popup += key + ":" + value + "<br>";
-                });
-                polyline.bindPopup(popup);
-                polyline.addTo($scope.map);
-                polylines.push(polyline);
-              }
-            });
-            $scope.map.addLayer(cluster.addLayer(markerLayer));
-
-            $scope.topologyIsLoad = false; //stop loading
-
-            $scope.SPFtableOptions.data = [];
           });
-        });
+        }
       };
 
       function getPeers() {
         apiFactory.getLinkStatePeers().success(
           function (result) {
-            $scope.peerData = result.ls_peers.data;
-            if ($scope.peerData == 0) {
+            if (result.ls_peers.data.length == 0) {
               $scope.topologyIsLoad = false;
             } else {
+              $scope.peerData = [];
+              angular.forEach(result.ls_peers.data, function (peer) {
+                var existed = $scope.peerData.filter(function (current) {
+                  return current.peer_hash_id == peer.peer_hash_id
+                });
+                if (existed.length == 0) {
+                  peer.available_mt_ids = [peer.mt_id];
+                  delete peer.mt_id;
+                  $scope.peerData.push(peer);
+                }
+                else {
+                  existed[0].available_mt_ids.push(peer.mt_id);
+                }
+              });
               $scope.selectedPeer = $scope.peerData[0];
+              $scope.selected_mt_id = $scope.peerData[0].available_mt_ids[0];
               init();
             }
           })
@@ -343,7 +385,7 @@ angular.module('bmpUiApp')
       }
 
       function getLinks() {
-        linksPromise = apiFactory.getPeerLinks($scope.selectedPeer.peer_hash_id);
+        linksPromise = apiFactory.getPeerLinks($scope.selectedPeer.peer_hash_id, $scope.selected_mt_id);
         linksPromise.success(function (result) {
           links = [];
           var linksData = result.v_ls_links.data;
@@ -437,13 +479,20 @@ angular.module('bmpUiApp')
         }, 600);
       }
 
+      var pathGroup;
+
       //draw the path
       $scope.drawPath = function (path_hash_ids) {
         $scope.pathTraces = null;
         removeLayers(circles.slice(1));
+
+        if (pathGroup)
+          $scope.map.removeLayer(pathGroup);
+
         removeLayers(paths);
+
         paths = [];
-        var group = new L.featureGroup();
+        pathGroup = new L.featureGroup();
 
         var selectedMarkers = [];
 
@@ -452,36 +501,41 @@ angular.module('bmpUiApp')
         });
         if (selectedMarkers.length > 1) {
           for (var j = 0; j < selectedMarkers.length - 1; j++) {
-            var newLine = new L.polyline([selectedMarkers[j]._latlng, selectedMarkers[j + 1]._latlng], {color: 'purple'});
-            angular.forEach(polylines, function (polyline) {
-              if ([polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j].options.data.id) > -1 &&
-                [polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j + 1].options.data.id) > -1)
-                newLine.bindPopup(polyline._popup);
-            });
-            newLine.addTo(group);
-            paths.push(newLine);
-            var path = new L.polylineDecorator(newLine, {
-              patterns: [{
-                offset: '20%',
-                repeat: '20%',
-                symbol: L.Symbol.arrowHead({
-                  pixelSize: 7,
-                  polygon: false,
-                  pathOptions: {stroke: true}
-                })
-              }]
-            });
-            path.addTo($scope.map);
-            paths.push(path);
+            if (selectedMarkers[j]._latlng.lat != selectedMarkers[j + 1]._latlng.lat ||
+              selectedMarkers[j]._latlng.long != selectedMarkers[j + 1]._latlng.long) {
+              var newLine = new L.polyline([selectedMarkers[j]._latlng, selectedMarkers[j + 1]._latlng], {color: 'purple'});
+              angular.forEach(polylines, function (polyline) {
+                if ([polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j].options.data.id) > -1 &&
+                  [polyline.options.sourceID, polyline.options.targetID].indexOf(selectedMarkers[j + 1].options.data.id) > -1)
+                  newLine.bindPopup(polyline._popup);
+              });
+              newLine.addTo(pathGroup);
+              paths.push(newLine);
+              var path = new L.polylineDecorator(newLine, {
+                patterns: [{
+                  offset: '20%',
+                  repeat: '20%',
+                  symbol: L.Symbol.arrowHead({
+                    pixelSize: 7,
+                    polygon: false,
+                    pathOptions: {stroke: true}
+                  })
+                }]
+              });
+              path.addTo($scope.map);
+              paths.push(path);
+            }
           }
           $scope.pathTraces = [];
           angular.forEach(selectedMarkers, function (marker) {
             $scope.pathTraces.push(marker.options.data);
           });
         }
-        group.addTo($scope.map);
-        $scope.map.fitBounds(group.getBounds());
-        $scope.drawHighlightCircle(selectedMarkers[selectedMarkers.length - 1]._latlng, 'purple');
+        if (objectSize(pathGroup._layers) > 0) {
+          pathGroup.addTo($scope.map);
+          $scope.map.fitBounds(pathGroup.getBounds());
+          $scope.drawHighlightCircle(selectedMarkers[selectedMarkers.length - 1]._latlng, 'purple');
+        }
       };
 
       function removeLayers(layers) {
