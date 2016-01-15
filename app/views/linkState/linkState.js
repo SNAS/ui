@@ -335,7 +335,7 @@ angular.module('bmpUiApp')
       $scope.locations = {};  //used for card
 
       function getNodes() {
-        nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id);
+        nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id, $scope.selected_mt_id);
         nodesPromise.success(function (result) {
           nodes = [];
           $scope.locations = {};

@@ -225,8 +225,8 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "linkstate/peers/?withGeo");
     };
 
-    apiFactory.getPeerNodes = function (peerHashId){
-      return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId + "/?withGeo");
+    apiFactory.getPeerNodes = function (peerHashId,mt_id){
+      return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId + "/" + mt_id + "?withGeo");
     };
 
     apiFactory.getPeerLinks = function (peerHashId,mt_id){
