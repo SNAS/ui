@@ -94,8 +94,8 @@ angular
         url: '/link-state-view',
         templateUrl: 'views/linkState/linkState.html'
       })
-      .state('app.orrView', {
-        url: '/orr-view',
+      .state('app.networkView', {
+        url: '/network-view',
         templateUrl: 'views/orrView/orrView.html'
       })
       //.state('app.peerAnalysis', {
