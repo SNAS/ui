@@ -34,7 +34,8 @@
 
                   <div class="main" ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll', 'padding-bottom': 0}">
                     <ul class="locations">
-                      <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}" class="loca">
+                      <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}"
+                          class="loca">
                         <p class="router-list-city" ng-click="toggleLocationSelection(location)">
                           <span class="glyphicon glyphicon-play"></span>{{location}}
                           <span class="count">({{locaNodes.length}})</span>
@@ -99,8 +100,10 @@
 
   <div id="SPFsection" class="main-area" style="margin-top: 15px">
     <div class="table-container">
-      <h3>Topology Table {{selectedRouter?"For "+selectedRouter.NodeName+"("+selectedRouter.routerId+")":""}}</h3>
-
+      <h3 style="text-transform:none">TOPOLOGY TABLE {{selectedRouter?"FOR "+selectedRouter.NodeName+
+        " ("+selectedRouter.routerId+")":""}}
+        <span class="btn btn-primary btn-xs pull-right" style="margin-right:2%" ng-show="pathTraces" ng-click="SPFgridApi.selection.clearSelectedRows();">Clear Selection</span>
+      </h3>
       <div class="loading-section">
         <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize>
           <div class="watermark" ng-show="!SPFtableOptions.data.length>0">No data available</div>

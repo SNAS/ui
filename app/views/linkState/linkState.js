@@ -91,14 +91,28 @@ angular.module('bmpUiApp')
               removeLayers(circles.slice(1));
               removeLayers(paths);
               paths = [];
+              $scope.pathTraces = null;
               cluster.clearLayers();
               cluster.addLayer(markerLayer);
               angular.forEach(polylines, function (polyline) {
-                if(!$scope.map.hasLayer(polyline))
-                $scope.map.addLayer(polyline);
+                if (!$scope.map.hasLayer(polyline))
+                  $scope.map.addLayer(polyline);
               });
               $scope.map.fitBounds(markerLayer.getBounds());
             }
+          });
+          gridApi.selection.on.rowSelectionChangedBatch($scope, function () {
+            removeLayers(circles.slice(1));
+            removeLayers(paths);
+            paths = [];
+            $scope.pathTraces = null;
+            cluster.clearLayers();
+            cluster.addLayer(markerLayer);
+            angular.forEach(polylines, function (polyline) {
+              if (!$scope.map.hasLayer(polyline))
+                $scope.map.addLayer(polyline);
+            });
+            $scope.map.fitBounds(markerLayer.getBounds());
           });
         }
       };
@@ -118,12 +132,12 @@ angular.module('bmpUiApp')
           $scope.map.removeLayer(pathGroup);
           pathGroup.clearLayers();
           angular.forEach(polylines, function (polyline) {
-            if(!$scope.map.hasLayer(polyline))
+            if (!$scope.map.hasLayer(polyline))
               $scope.map.addLayer(polyline);
           });
         }
 
-        if(!cluster.hasLayer(markerLayer)){
+        if (!cluster.hasLayer(markerLayer)) {
           cluster.clearLayers();
           cluster.addLayer(markerLayer);
         }
