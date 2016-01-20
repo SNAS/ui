@@ -38,11 +38,11 @@
           <span style="float:left">{{ data.LocalIP }}</span>
           <span style="float:right">{{ data.PeerIP }}</span>
         </div>
-        <div class="row" style="text-align:center">
+        <div class="row" style="text-align:center" ng-show="enabledCapabs.length>0">
           <div style="width: 100%;margin: auto;">
             <div class="router-name-text">Enabled Capabilities:</div>
             <div ng-repeat="capability in enabledCapabs">
-              <span class="router-name-text">
+              <span class="router-name-text" ng-style="{'border-bottom':$last?'':'1px solid lightgrey'}">
                 {{capability}}
               </span>
             </div>
