@@ -26,7 +26,7 @@ angular.module('bmpUiApp')
         }
       });
 
-      objectSize = function (obj) {
+      var objectSize = function (obj) {
         var size = 0, key;
         for (key in obj) {
           if (obj.hasOwnProperty(key)) size++;
@@ -376,12 +376,14 @@ angular.module('bmpUiApp')
         if (index > -1) {
           location = location.substring(0, index) + '\\' + location.substring(index, location.length);
         }
-        if (!$("#" + location).hasClass("expanded")) {
-          $("#" + location).addClass("expanded");
-          $("#" + location + 'nodes').show();
+        var selector = $("#" + location);
+        var nodesSelector = $("#" + location + 'nodes');
+        if (!selector.hasClass("expanded")) {
+          selector.addClass("expanded");
+          nodesSelector.show();
         } else {
-          $("#" + location).removeClass("expanded");
-          $("#" + location + 'nodes').hide();
+          selector.removeClass("expanded");
+          nodesSelector.hide();
         }
       };
 

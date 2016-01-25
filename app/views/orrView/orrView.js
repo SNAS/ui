@@ -92,7 +92,7 @@ angular.module('bmpUiApp')
         {field: 'metric', displayName: 'Metric', width: '6%'},
         {field: 'src_router_id', displayName: 'Source Router Id', width: '12%'},
         {field: 'nei_router_id', displayName: 'Neighbor Router Id', width: '12%'},
-        {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '12%'},
+        {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '12%'}
       ],
 
       rowTemplate: '<div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" ' +
