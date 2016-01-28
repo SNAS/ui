@@ -21,7 +21,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
     $scope.showBottomPane = false;
     $scope.selectionMade = false;
-    $scope.mapWidth = "72%"
+    $scope.mapWidth = "72%";
 
     $scope.locations = [];
     $scope.peers = [];

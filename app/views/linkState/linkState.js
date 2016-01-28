@@ -254,6 +254,17 @@ angular.module('bmpUiApp')
                   connectedPolylines: []
                 });
 
+                marker.on('move',function (e) {
+                  angular.forEach(e.target.options.connectedPolylines, function (polyline) {
+                    if (e.target.options.data.id == polyline.options.sourceID) {
+                      polyline.setLatLngs([e.target._latlng, polyline._latlngs[1]]);
+                    }
+                    else if (e.target.options.data.id == polyline.options.targetID) {
+                      polyline.setLatLngs([polyline._latlngs[0], e.target._latlng]);
+                    }
+                  });
+                });
+
                 var linksConnected = 0;
                 angular.forEach(links, function (link) {
                   if (link.source == node.id || link.target == node.id) {
@@ -280,7 +291,7 @@ angular.module('bmpUiApp')
                 });
                 if (sourceNode && targetNode) {
                   var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)], {
-                    color: 'grey',
+                    color: '#484848',
                     weight: 2,
                     opacity: 0.2,
                     data: link,
