@@ -94,6 +94,9 @@ angular.module('bmpUiApp')
               $scope.pathTraces = null;
               cluster.clearLayers();
               cluster.addLayer(markerLayer);
+              angular.forEach(involvedMarkers, function (marker) {
+                marker.options.connectedPaths = [];
+              });
               angular.forEach(polylines, function (polyline) {
                 if (!$scope.map.hasLayer(polyline))
                   $scope.map.addLayer(polyline);
@@ -108,6 +111,9 @@ angular.module('bmpUiApp')
             $scope.pathTraces = null;
             cluster.clearLayers();
             cluster.addLayer(markerLayer);
+            angular.forEach(involvedMarkers, function (marker) {
+              marker.options.connectedPaths = [];
+            });
             angular.forEach(polylines, function (polyline) {
               if (!$scope.map.hasLayer(polyline))
                 $scope.map.addLayer(polyline);
@@ -140,6 +146,9 @@ angular.module('bmpUiApp')
         if (!cluster.hasLayer(markerLayer)) {
           cluster.clearLayers();
           cluster.addLayer(markerLayer);
+          angular.forEach(involvedMarkers, function (marker) {
+            marker.options.connectedPaths = [];
+          });
         }
 
         removeLayers(paths);
@@ -251,18 +260,29 @@ angular.module('bmpUiApp')
                   icon: routerIcon,
                   data: node,
                   title: "NodeName: " + node.NodeName,
-                  connectedPolylines: []
+                  connectedPolylines: [],
+                  connectedPaths: []
                 });
 
-                marker.on('move',function (e) {
-                  angular.forEach(e.target.options.connectedPolylines, function (polyline) {
-                    if (e.target.options.data.id == polyline.options.sourceID) {
-                      polyline.setLatLngs([e.target._latlng, polyline._latlngs[1]]);
-                    }
-                    else if (e.target.options.data.id == polyline.options.targetID) {
-                      polyline.setLatLngs([polyline._latlngs[0], e.target._latlng]);
-                    }
-                  });
+                marker.on('move', function (e) {
+                  if (e.target.options.connectedPolylines.length > 0)
+                    angular.forEach(e.target.options.connectedPolylines, function (polyline) {
+                      if (e.target.options.data.id == polyline.options.sourceID) {
+                        polyline.setLatLngs([e.target._latlng, polyline._latlngs[1]]);
+                      }
+                      else if (e.target.options.data.id == polyline.options.targetID) {
+                        polyline.setLatLngs([polyline._latlngs[0], e.target._latlng]);
+                      }
+                    });
+                  if (e.target.options.connectedPaths.length > 0)
+                    angular.forEach(e.target.options.connectedPaths, function (polyline) {
+                      if (e.target.options.data.id == polyline.options.sourceID) {
+                        polyline.setLatLngs([e.target._latlng, polyline._latlngs[1]]);
+                      }
+                      else if (e.target.options.data.id == polyline.options.targetID) {
+                        polyline.setLatLngs([polyline._latlngs[0], e.target._latlng]);
+                      }
+                    });
                 });
 
                 var linksConnected = 0;
@@ -575,30 +595,38 @@ angular.module('bmpUiApp')
         });
         if (involvedMarkers.length > 1) {
           for (var j = 0; j < involvedMarkers.length - 1; j++) {
-            if (involvedMarkers[j]._latlng.lat != involvedMarkers[j + 1]._latlng.lat ||
-              involvedMarkers[j]._latlng.long != involvedMarkers[j + 1]._latlng.long) {
-              var newLine = new L.polyline([involvedMarkers[j]._latlng, involvedMarkers[j + 1]._latlng], {color: 'purple'});
-              angular.forEach(polylines, function (polyline) {
-                if ([polyline.options.sourceID, polyline.options.targetID].indexOf(involvedMarkers[j].options.data.id) > -1 &&
-                  [polyline.options.sourceID, polyline.options.targetID].indexOf(involvedMarkers[j + 1].options.data.id) > -1)
-                  newLine.bindPopup(polyline._popup);
+            var newLine = new L.polyline([involvedMarkers[j]._latlng, involvedMarkers[j + 1]._latlng],
+              {
+                color: 'purple',
+                sourceID: involvedMarkers[j].options.data.id,
+                targetID: involvedMarkers[j + 1].options.data.id
               });
-              newLine.addTo(pathGroup);
-              paths.push(newLine);
-              var path = new L.polylineDecorator(newLine, {
-                patterns: [{
-                  offset: '20%',
-                  repeat: '20%',
-                  symbol: L.Symbol.arrowHead({
-                    pixelSize: 7,
-                    polygon: false,
-                    pathOptions: {stroke: true}
-                  })
-                }]
-              });
+            angular.forEach(polylines, function (polyline) {
+              if ([polyline.options.sourceID, polyline.options.targetID].indexOf(involvedMarkers[j].options.data.id) > -1 &&
+                [polyline.options.sourceID, polyline.options.targetID].indexOf(involvedMarkers[j + 1].options.data.id) > -1)
+                newLine.bindPopup(polyline._popup);
+            });
+            involvedMarkers[j].options.connectedPaths.push(newLine);
+            involvedMarkers[j + 1].options.connectedPaths.push(newLine);
+            newLine.addTo(pathGroup);
+            paths.push(newLine);
+            var path = new L.polylineDecorator(newLine, {
+              patterns: [{
+                offset: '20%',
+                repeat: '20%',
+                symbol: L.Symbol.arrowHead({
+                  pixelSize: 7,
+                  polygon: false,
+                  pathOptions: {stroke: true}
+                })
+              }]
+            });
+
+            paths.push(path);
+
+            if (newLine._latlngs[0].lat != newLine._latlngs[1].lat || newLine._latlngs[0].long != newLine._latlngs[1].long)
               path.addTo($scope.map);
-              paths.push(path);
-            }
+
           }
           $scope.pathTraces = [];
           angular.forEach(involvedMarkers, function (marker) {
