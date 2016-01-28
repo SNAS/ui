@@ -219,7 +219,7 @@ angular.module('bmpUiApp')
 
               cluster = L.markerClusterGroup({
                 maxClusterRadius: 15,
-                spiderfyDistanceMultiplier: 2
+                spiderfyDistanceMultiplier: 3
               });
               markerLayer = new L.FeatureGroup();
               markerLayer.on('click', function (e) {
