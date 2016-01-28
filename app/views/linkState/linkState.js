@@ -340,8 +340,8 @@ angular.module('bmpUiApp')
                 if (sourceNode && targetNode) {
                   var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)], {
                     color: '#484848',
-                    weight: 2,
-                    opacity: 0.2,
+                    weight: 4,
+                    opacity: 0.3,
                     data: link,
                     sourceID: sourceNode.id,
                     targetID: targetNode.id
