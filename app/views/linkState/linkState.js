@@ -123,7 +123,7 @@ angular.module('bmpUiApp')
         }
       };
 
-      var polylines, cluster, markers, markerLayer, paths;
+      var polylines, cluster, markerLayer, paths;
 
       var routerIcon = L.icon({
         iconUrl: 'images/Router-icon.png',
@@ -200,7 +200,7 @@ angular.module('bmpUiApp')
 
           $scope.selectedRouterName = null;
 
-          markers = {};
+          $scope.markers = {};
 
           linksPromise.success(function () {
             nodesPromise.success(function () {
@@ -233,7 +233,7 @@ angular.module('bmpUiApp')
               markerLayer = new L.FeatureGroup();
               markerLayer.on('click', function (e) {
                 $scope.selectNode(e.layer.options.data);
-                $scope.drawHighlightCircle(e.layer._latlng, 'red');
+                e.layer.options.highlightCircle = $scope.drawHighlightCircle(e.layer._latlng, 'red');
                 removeLayers(highlightLines);
                 highlightLines = [];
               });
@@ -265,7 +265,9 @@ angular.module('bmpUiApp')
                 });
 
                 marker.on('move', function (e) {
-                  if (e.target.options.connectedPolylines.length > 0)
+                  if (e.target.options.connectedPolylines.length > 0) {
+                    if ($scope.map.hasLayer(e.target.options.highlightCircle))
+                      e.target.options.highlightCircle.setLatLng(e.target._latlng);
                     angular.forEach(e.target.options.connectedPolylines, function (polyline) {
                       if (e.target.options.data.id == polyline.options.sourceID) {
                         polyline.setLatLngs([e.target._latlng, polyline._latlngs[1]]);
@@ -274,7 +276,10 @@ angular.module('bmpUiApp')
                         polyline.setLatLngs([polyline._latlngs[0], e.target._latlng]);
                       }
                     });
-                  if (e.target.options.connectedPaths.length > 0)
+                  }
+                  if (e.target.options.connectedPaths.length > 0) {
+                    if ($scope.map.hasLayer(e.target.options.highlightCircle))
+                      e.target.options.highlightCircle.setLatLng(e.target._latlng);
                     angular.forEach(e.target.options.connectedPaths, function (polyline) {
                       if (e.target.options.data.id == polyline.options.sourceID) {
                         polyline.setLatLngs([e.target._latlng, polyline._latlngs[1]]);
@@ -282,7 +287,30 @@ angular.module('bmpUiApp')
                       else if (e.target.options.data.id == polyline.options.targetID) {
                         polyline.setLatLngs([polyline._latlngs[0], e.target._latlng]);
                       }
+                      if ($scope.map.hasLayer(polyline.options.decorator)) {
+                        $scope.map.removeLayer(polyline.options.decorator);
+                      }
+                      var path = new L.polylineDecorator(polyline, {
+                        patterns: [{
+                          offset: '20%',
+                          repeat: '20%',
+                          symbol: L.Symbol.arrowHead({
+                            pixelSize: 7,
+                            polygon: false,
+                            pathOptions: {stroke: true}
+                          })
+                        }]
+                      });
+
+                      polyline.options.decorator = path;
+
+                      paths.push(path);
+
+                      if (polyline._latlngs[0].lat != polyline._latlngs[1].lat || polyline._latlngs[0].long != polyline._latlngs[1].long) {
+                        path.addTo($scope.map);
+                      }
                     });
+                  }
                 });
 
                 var linksConnected = 0;
@@ -299,7 +327,7 @@ angular.module('bmpUiApp')
                 });
                 marker.bindPopup(popup);
                 marker.addTo(markerLayer);
-                markers[node.id] = marker;
+                $scope.markers[node.id] = marker;
               });
               angular.forEach(links, function (link) {
                 var sourceNode, targetNode;
@@ -325,8 +353,8 @@ angular.module('bmpUiApp')
                   polyline.bindPopup(popup);
                   polyline.addTo($scope.map);
                   polylines.push(polyline);
-                  markers[sourceNode.id].options.connectedPolylines.push(polyline);
-                  markers[targetNode.id].options.connectedPolylines.push(polyline);
+                  $scope.markers[sourceNode.id].options.connectedPolylines.push(polyline);
+                  $scope.markers[targetNode.id].options.connectedPolylines.push(polyline);
                 }
               });
               $scope.map.addLayer(cluster.addLayer(markerLayer));
@@ -400,6 +428,7 @@ angular.module('bmpUiApp')
         });
         circle.addTo($scope.map);
         circles.push(circle);
+        return circle;
       };
 
       $scope.toggleLocationSelection = function (location) {
@@ -584,14 +613,14 @@ angular.module('bmpUiApp')
         }
 
         removeLayers(paths);
-
         paths = [];
+
         pathGroup = new L.featureGroup();
 
         involvedMarkers = [];
 
         angular.forEach(path_hash_ids.split(","), function (hash) {
-          involvedMarkers.push(markers[hash]);
+          involvedMarkers.push($scope.markers[hash]);
         });
         if (involvedMarkers.length > 1) {
           for (var j = 0; j < involvedMarkers.length - 1; j++) {
@@ -622,6 +651,8 @@ angular.module('bmpUiApp')
               }]
             });
 
+            newLine.options.decorator = path;
+
             paths.push(path);
 
             if (newLine._latlngs[0].lat != newLine._latlngs[1].lat || newLine._latlngs[0].long != newLine._latlngs[1].long)
@@ -637,7 +668,7 @@ angular.module('bmpUiApp')
           pathGroup.addTo($scope.map);
           if ($scope.tab == "map")
             $scope.map.fitBounds(pathGroup.getBounds());
-          $scope.drawHighlightCircle(involvedMarkers[involvedMarkers.length - 1]._latlng, 'purple');
+          involvedMarkers[involvedMarkers.length - 1].options.highlightCircle = $scope.drawHighlightCircle(involvedMarkers[involvedMarkers.length - 1]._latlng, 'purple');
         }
       };
 
@@ -674,7 +705,7 @@ angular.module('bmpUiApp')
           $scope.LSgridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
             $scope.selectNode(row.entity);
-            $scope.drawHighlightCircle([row.entity.latitude, row.entity.longitude], 'red');
+            $scope.markers[row.entity.hash_id].options.highlightCircle = $scope.drawHighlightCircle([row.entity.latitude, row.entity.longitude], 'red');
           });
         }
       };
