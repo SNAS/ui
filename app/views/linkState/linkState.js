@@ -143,7 +143,7 @@ angular.module('bmpUiApp')
           });
         }
 
-        if (!cluster.hasLayer(markerLayer)) {
+        if (paths.length > 0) {
           cluster.clearLayers();
           cluster.addLayer(markerLayer);
           angular.forEach(involvedMarkers, function (marker) {
