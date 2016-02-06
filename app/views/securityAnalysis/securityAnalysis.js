@@ -21,11 +21,10 @@ angular.module('bmpUiApp')
       enableVerticalScrollbar: 0,
       columnDefs: [
         {name: "prefixWithLen", displayName: 'Prefix/Len', width: '*'},
-        //{name: "org_name", displayName: 'Organization', width: '*'},
-        {name: "asn1", displayName: 'Origin AS Received', width: '*'},
-        //{name: "org_name1", displayName: 'AS Name Learned', width: '*'},
-        {name: "asn2", displayName: 'Origin As Registered', width: '*'}
-        //{name: "org_name2", displayName: 'AS Name Registered', width: '*'}
+        {name: "recv_origin_as", displayName: 'Recv Origin AS', width: '*'},
+        {name: "rpki_origin_as", displayName: "RPKI Origin AS", width: "*"},
+        {name: 'irr_origin_as', displayName: 'IRR Origin AS', width: "*"},
+        {name: 'irr_source', displayName: "IRR Origin AS", width: "*"}
       ]
     };
 
