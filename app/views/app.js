@@ -22,6 +22,7 @@ angular
     'ui.grid.selection',
     'ui.grid.autoResize',
     'ui.grid.resizeColumns',
+    'ui.grid.pagination',
     'bmp.components.cardList',
     'bmp.components.card',
     'bmp.components.loading',
