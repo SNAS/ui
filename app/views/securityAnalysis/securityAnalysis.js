@@ -19,6 +19,12 @@ angular.module('bmpUiApp')
       desc: null
     };
 
+    var searchOptions = {
+      asn: null,
+      prefix: null,
+      where: null
+    };
+
     $scope.securityGridOptions = {
       rowHeight: 25,
       showGridFooter: true,
@@ -55,20 +61,12 @@ angular.module('bmpUiApp')
       }
     };
 
-    apiFactory.getTotalCount()
-      .success(function(data) {
-        if (!$.isEmptyObject(data)) {
-          $scope.securityGridOptions.totalItems = data['table']['data'][0]['total'];
-        }
-      })
-      .error(function(err) {
-        console.log(err.message);
-      });
+
 
     function getMismatchPrefix() {
       $scope.securityIsLoad = true;
       apiFactory.getMisMatchPrefix(paginationOptions.page, paginationOptions.pageSize,
-        paginationOptions.sort, paginationOptions.desc)
+        paginationOptions.sort, paginationOptions.desc, searchOptions.asn, searchOptions.prefix, searchOptions.where)
         .success(function(res) {
           var data = res.gen_prefix_validation.data;
           data.forEach(function(value){
@@ -80,8 +78,36 @@ angular.module('bmpUiApp')
         .error(function(err){
           console.log(err.message);
         });
+      apiFactory.getTotalCount(searchOptions.asn, searchOptions.prefix)
+        .success(function(data) {
+          if (!$.isEmptyObject(data)) {
+            $scope.securityGridOptions.totalItems = data['table']['data'][0]['total'];
+          }
+        })
+        .error(function(err) {
+          console.log(err.message);
+        });
     }
 
+    $scope.search = function(keyword) {
+      $timeout(function(){
+        if($.isEmptyObject(keyword)) {
+          searchOptions.asn = null;
+          searchOptions.prefix = null;
+        } else if(keyword.indexOf('.') != -1 || keyword.indexOf(':') != -1) {
+          // search for prefix
+          searchOptions.prefix = keyword;
+        } else if(keyword.toLowerCase().indexOf('where') != -1 ) {
+          // where clause
+          searchOptions.where = keyword;
+        } else if(!isNaN(keyword)) {
+          // asn
+          searchOptions.asn = keyword;
+        }
+        getMismatchPrefix();
+      }, 800);
+
+    };
 
     getMismatchPrefix();
 

@@ -4,6 +4,9 @@
       <div class="table-container">
         <h3>Origin AS IRR Report</h3>
 
+        <input type="text" placeholder="Search" ng-style="{'margin-bottom': '10px', 'margin-left': '40px'}"
+               ng-model="keyword" ng-change="search(keyword)">
+
         <div class="loading-section" ng-style="{'height':securityGridInitHeight}">
           <div ng-show="securityIsLoad" bmp-loading loading-var="securityIsLoad"></div>
           <div class="grid" ui-grid="securityGridOptions" ui-grid-pagination ui-grid-resize-columns></div>
