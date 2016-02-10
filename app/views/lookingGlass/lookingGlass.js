@@ -424,6 +424,10 @@ angular.module('bmpUiApp')
         }
       }
 
+      if ($scope.isAggregate && value.indexOf('/') != -1) {
+        value = value.split('/')[0];
+      }
+
       if (fullIpWithPreLenReg.exec(value) != null || partCompIpRegex.exec(value) != null) {
         //Full ip with prefix or partial ip
         if ($scope.isAggregate && $scope.isDistinct) {

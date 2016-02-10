@@ -34,8 +34,6 @@ angular.module('bmpUiApp')
         return size;
       };
 
-      $scope.id = "LinkState";
-
       $scope.protocol;
       var nodesPromise, linksPromise;
       var nodes = [];
@@ -404,7 +402,7 @@ angular.module('bmpUiApp')
         /****************************************
          Store map object when available
          *****************************************/
-        leafletData.getMap($scope.id).then(function (map) {
+        leafletData.getMap("LinkStateMap").then(function (map) {
           $scope.map = map;
           L.control.zoomslider().addTo($scope.map);
         });

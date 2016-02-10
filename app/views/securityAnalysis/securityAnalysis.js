@@ -31,14 +31,15 @@ angular.module('bmpUiApp')
       height: $scope.securityGridInitHeight,
       enableHorizontalScrollbar: 0,
       paginationPageSize: paginationOptions.pageSize,
+      paginationPageSizes: [1000, 2000, 3000],
       enablePaginationControls: true,
       useExternalPagination: true,
       useExternalSorting: true,
       columnDefs: [
-        {name: "prefixWithLen", displayName: 'Prefix/Len', width: '*', value: "prefix"},
-        {name: "recv_origin_as", displayName: 'Recv Origin AS', width: '*'},
-        {name: "rpki_origin_as", displayName: "RPKI Origin AS", width: "*"},
-        {name: 'irr_origin_as', displayName: 'IRR Origin AS', width: "*"},
+        {name: "prefixWithLen", displayName: 'Prefix/Len', width: '*'},
+        {name: "recv_origin_as", displayName: 'Recv Origin AS', width: '*', cellFilter: 'zeroFilter'},
+        {name: "rpki_origin_as", displayName: "RPKI Origin AS", width: "*", cellFilter: 'zeroFilter'},
+        {name: 'irr_origin_as', displayName: 'IRR Origin AS', width: "*", cellFilter: 'zeroFilter'},
         {name: 'irr_source', displayName: "IRR Origin AS", width: "*"}
       ],
       onRegisterApi: function(gridApi) {
@@ -60,8 +61,6 @@ angular.module('bmpUiApp')
         });
       }
     };
-
-
 
     function getMismatchPrefix() {
       $scope.securityIsLoad = true;
@@ -90,6 +89,9 @@ angular.module('bmpUiApp')
     }
 
     $scope.search = function(keyword) {
+      // initial clean
+      searchOptions.asn = null;
+      searchOptions.prefix = null;
       $timeout(function(){
         if($.isEmptyObject(keyword)) {
           searchOptions.asn = null;
@@ -111,4 +113,10 @@ angular.module('bmpUiApp')
 
     getMismatchPrefix();
 
-  }]);
+  }])
+  .filter('zeroFilter', function() {
+    // display '-' instead of 0
+    return function(value) {
+      return value == 0 ? '-' : value;
+    }
+  });
