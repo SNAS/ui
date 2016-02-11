@@ -323,8 +323,10 @@ angular.module('bmpUiApp')
       if (sort || desc || asn || prefix || where)
         url += "?";
       var keyval = [];
-      if (sort)
+      if (sort) {
+        if (sort == 'prefixWithLen') sort = 'prefix';  // if sort by first column, sort by prefix
         keyval.push("sort=" + sort + '&desc=' + desc);
+      }
       if (prefix)
         keyval.push("prefix=" + prefix);
       if (where)

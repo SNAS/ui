@@ -25,6 +25,25 @@ angular.module('bmpUiApp')
       where: null
     };
 
+    var rowTemplate = `
+    <div class='tableRow hover-row-highlight' ng-class="[(row.entity.rpki_origin_as != 0 &&row.entity.recv_origin_as != row.entity.rpki_origin_as)
+      || (row.entity.irr_origin_as != 0 && row.entity.recv_origin_as != row.entity.irr_origin_as) ? 'red' : '', row.entity.prefixClass]">
+      <div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell>
+      </div>
+    </div>
+    `;
+
+    $(document).on('mouseover', '.tableRow', function(){
+      var classList = $(this).attr('class').split(' ');
+      var prefix = classList[classList.length - 1];
+
+      $("."+prefix).find('.ui-grid-cell').css('background-color', '#d9d9d9 !important');
+    }).on('mouseleave', '.tableRow', function(){
+      var classList = $(this).attr('class').split(' ');
+      var prefix = classList[classList.length - 1];
+      $("."+prefix).find('.ui-grid-cell').css('background-color', '');
+    });
+
     $scope.securityGridOptions = {
       rowHeight: 25,
       showGridFooter: true,
@@ -35,6 +54,10 @@ angular.module('bmpUiApp')
       enablePaginationControls: true,
       useExternalPagination: true,
       useExternalSorting: true,
+      enableRowSelection: true,
+      enableRowHeaderSelection: false,
+      multiSelect: false,
+      rowTemplate: rowTemplate,
       columnDefs: [
         {name: "prefixWithLen", displayName: 'Prefix/Len', width: '*'},
         {name: "recv_origin_as", displayName: 'Recv Origin AS', width: '*', cellFilter: 'zeroFilter'},
@@ -50,7 +73,7 @@ angular.module('bmpUiApp')
           getMismatchPrefix();
         });
 
-        $scope.gridApi.core.on.sortChanged($scope, function(grid, sortColumns) {
+        gridApi.core.on.sortChanged($scope, function(grid, sortColumns) {
           if (sortColumns.length == 0) {
             paginationOptions.sort = null;
           } else {
@@ -70,6 +93,7 @@ angular.module('bmpUiApp')
           var data = res.gen_prefix_validation.data;
           data.forEach(function(value){
             value.prefixWithLen = value.prefix + '/' + value.prefix_len;
+            value.prefixClass = value.prefix.replace(/\./g, '-') + '-' + value.prefix_len;
           });
           $scope.securityGridOptions.data = data;
           $scope.securityIsLoad = false;
