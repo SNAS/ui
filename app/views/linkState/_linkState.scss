@@ -50,17 +50,19 @@
 }
 
 .listView {
-  width: auto;
+  min-width: 310px;
   overflow-y: auto;
+  overflow-x: hidden;
   border: 1px solid #CCCCCC;
-}
-
-.listView p {
   font-size: 12px !important;
-  margin: 4px !important;
 }
 
 .list-container {
+  max-width: 500px;
   padding: 5px;
   background-color: #FFFFFF;
+}
+
+.listView .row{
+  white-space: nowrap;
 }

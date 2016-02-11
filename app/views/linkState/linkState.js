@@ -85,13 +85,13 @@ angular.module('bmpUiApp')
               var neighbor_addr = row.entity.neighbor_addr;
               $scope.drawPath(path, neighbor_addr);
               $scope.innerHTML = '<div class=list-container>' +
-                '<p>Interface: <label class="label label-primary">' + (row.entity.interface != null ? row.entity.interface : '-') + '</label></p>' +
-                '<p>Bandwidth: <label class="label label-primary">' + (row.entity.bandwidth != null ? row.entity.bandwidth + ' Kb/s' : '-') + '</label></p>' +
-                '<p>Reliability: <label class="label label-primary">' + (row.entity.reliability != null ? row.entity.reliability : '-') + '</label></p>' +
-                '<p>Input Data Rate: <label class="label label-primary">' + (row.entity.input_data_rate != null ? row.entity.input_data_rate + ' b/s' : '-') + '</label></p>' +
-                '<p>Input Packet Rate: <label class="label label-primary">' + (row.entity.input_packet_rate != null ? row.entity.input_packet_rate : '-') + '</label></p>' +
-                '<p>Output Data Rate: <label class="label label-primary">' + (row.entity.output_data_rate != null ? row.entity.output_data_rate + ' b/s' : '-' ) + '</label></p>' +
-                '<p>Output Packet Rate: <label class="label label-primary">' + (row.entity.output_packet_rate != null ? row.entity.output_packet_rate : '-') + '</label></p>' +
+                '<div class="row"><div class="col-xs-5">Interface</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.interface != null ? row.entity.interface : '-') + '</label></div></div>' +
+                '<div class="row"><div class="col-xs-5">Bandwidth</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.bandwidth != null ? row.entity.bandwidth + ' Kb/s' : '-') + '</label></div></div>' +
+                '<div class="row"><div class="col-xs-5">Reliability</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.reliability != null ? row.entity.reliability : '-') + '</label></div></div>' +
+                '<div class="row"><div class="col-xs-5">Input Data Rate</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.input_data_rate != null ? row.entity.input_data_rate + ' b/s' : '-') + '</label></div></div>' +
+                '<div class="row"><div class="col-xs-5">Input Packet Rate</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.input_packet_rate != null ? row.entity.input_packet_rate : '-') + '</label></div></div>' +
+                '<div class="row"><div class="col-xs-5">Output Data Rate</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.output_data_rate != null ? row.entity.output_data_rate + ' b/s' : '-' ) + '</label></div></div>' +
+                '<div class="row"><div class="col-xs-5">Output Packet Rate</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.output_packet_rate != null ? row.entity.output_packet_rate : '-') + '</label></div></div>' +
                 '</div>';
               $('#list')[0].innerHTML = $scope.innerHTML;
 
