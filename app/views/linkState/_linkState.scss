@@ -52,6 +52,7 @@
 .listView {
   width: auto;
   overflow-y: auto;
+  border: 1px solid #CCCCCC;
 }
 
 .listView p {
@@ -62,5 +63,4 @@
 .list-container {
   padding: 5px;
   background-color: #FFFFFF;
-  border: 1px solid #CCCCCC;
 }

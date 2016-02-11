@@ -84,8 +84,7 @@ angular.module('bmpUiApp')
               var path = row.entity.path_hash_ids;
               var neighbor_addr = row.entity.neighbor_addr;
               $scope.drawPath(path, neighbor_addr);
-
-              $('#list')[0].innerHTML = '<div class=list-container>' +
+              $scope.innerHTML = '<div class=list-container>' +
                 '<p>Interface: <label class="label label-primary">' + (row.entity.interface != null ? row.entity.interface : '-') + '</label></p>' +
                 '<p>Bandwidth: <label class="label label-primary">' + (row.entity.bandwidth != null ? row.entity.bandwidth + ' Kb/s' : '-') + '</label></p>' +
                 '<p>Reliability: <label class="label label-primary">' + (row.entity.reliability != null ? row.entity.reliability : '-') + '</label></p>' +
@@ -94,6 +93,7 @@ angular.module('bmpUiApp')
                 '<p>Output Data Rate: <label class="label label-primary">' + (row.entity.output_data_rate != null ? row.entity.output_data_rate + ' b/s' : '-' ) + '</label></p>' +
                 '<p>Output Packet Rate: <label class="label label-primary">' + (row.entity.output_packet_rate != null ? row.entity.output_packet_rate : '-') + '</label></p>' +
                 '</div>';
+              $('#list')[0].innerHTML = $scope.innerHTML;
 
               cluster.clearLayers();
               cluster.addLayers(involvedMarkers);
@@ -557,7 +557,14 @@ angular.module('bmpUiApp')
                   target: target,
                   igp_metric: igp_metric,
                   interfaceIP: interfaceIP,
-                  neighborIP: neighborIP
+                  neighborIP: neighborIP,
+                  interface: (linksData[i].interface != null ? linksData[i].interface : '-'),
+                  bandwidth: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' Kb/s' : '-'),
+                  reliability: (linksData[i].bandwidth != null ? linksData[i].bandwidth : '-'),
+                  input_data_rate: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' b/s' : '-'),
+                  input_packet_rate: (linksData[i].bandwidth != null ? linksData[i].bandwidth : '-'),
+                  output_data_rate: (linksData[i].bandwidth != null ? linksData[i].bandwidth + 'b/s' : '-'),
+                  output_packet_rate: (linksData[i].bandwidth != null ? linksData[i].bandwidth : '-')
                 });
             }
             else {
@@ -568,7 +575,14 @@ angular.module('bmpUiApp')
                   target: target,
                   igp_metric: igp_metric,
                   interfaceIP: interfaceIP,
-                  neighborIP: neighborIP
+                  neighborIP: neighborIP,
+                  interface: linksData[i].interface,
+                  bandwidth: linksData[i].bandwidth + ' Kb/s',
+                  reliability: linksData[i].reliability,
+                  input_data_rate: linksData[i].input_data_rate + 'b/s',
+                  input_packet_rate: linksData[i].input_packet_rate,
+                  output_data_rate: linksData[i].output_data_rate + 'b/s',
+                  output_packet_rate: linksData[i].output_packet_rate
                 });
             }
           }
@@ -636,7 +650,7 @@ angular.module('bmpUiApp')
 
       //draw the path
       $scope.drawPath = function (path_hash_ids) {
-        $scope.pathTraces = null;
+        $scope.pathTraces = [];
 
         removeLayers(circles.slice(1));
 
@@ -692,7 +706,6 @@ angular.module('bmpUiApp')
               path.addTo($scope.map);
 
           }
-          $scope.pathTraces = [];
           angular.forEach(involvedMarkers, function (marker) {
             $scope.pathTraces.push(marker.options.data);
           });

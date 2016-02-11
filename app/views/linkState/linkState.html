@@ -116,6 +116,8 @@
   <div class="main-area" style="margin-top: 15px">
     <div class="table-container">
       <h3>Path Trace</h3>
+      <div ng-bind-html="innerHTML" style="border:none;margin-left:40px"></div>
+
       <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
 
       <div class="as-path" style="white-space:nowrap">
