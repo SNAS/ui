@@ -87,11 +87,11 @@ angular.module('bmpUiApp')
 
               $('#list')[0].innerHTML = '<div class=list-container>' +
                 '<p>Interface: <label class="label label-primary">' + (row.entity.interface != null ? row.entity.interface : '-') + '</label></p>' +
-                '<p>Bandwidth: <label class="label label-primary">' + (row.entity.bandwidth != null ? row.entity.bandwidth : '-') + '</label></p>' +
+                '<p>Bandwidth: <label class="label label-primary">' + (row.entity.bandwidth != null ? row.entity.bandwidth + ' Kb/s' : '-') + '</label></p>' +
                 '<p>Reliability: <label class="label label-primary">' + (row.entity.reliability != null ? row.entity.reliability : '-') + '</label></p>' +
-                '<p>Input Data Rate: <label class="label label-primary">' + (row.entity.input_data_rate != null ? row.entity.input_data_rate : '-') + '</label></p>' +
+                '<p>Input Data Rate: <label class="label label-primary">' + (row.entity.input_data_rate != null ? row.entity.input_data_rate + ' b/s' : '-') + '</label></p>' +
                 '<p>Input Packet Rate: <label class="label label-primary">' + (row.entity.input_packet_rate != null ? row.entity.input_packet_rate : '-') + '</label></p>' +
-                '<p>Output Data Rate: <label class="label label-primary">' + (row.entity.output_data_rate != null ? row.entity.output_data_rate : '-' ) + '</label></p>' +
+                '<p>Output Data Rate: <label class="label label-primary">' + (row.entity.output_data_rate != null ? row.entity.output_data_rate + ' b/s' : '-' ) + '</label></p>' +
                 '<p>Output Packet Rate: <label class="label label-primary">' + (row.entity.output_packet_rate != null ? row.entity.output_packet_rate : '-') + '</label></p>' +
                 '</div>';
 
