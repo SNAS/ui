@@ -48,3 +48,19 @@
 .map-container {
   border-top: none;
 }
+
+.listView {
+  width: auto;
+  overflow-y: auto;
+}
+
+.listView p {
+  font-size: 12px !important;
+  margin: 4px !important;
+}
+
+.list-container {
+  padding: 5px;
+  background-color: #FFFFFF;
+  border: 1px solid #CCCCCC;
+}

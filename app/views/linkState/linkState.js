@@ -84,6 +84,17 @@ angular.module('bmpUiApp')
               var path = row.entity.path_hash_ids;
               var neighbor_addr = row.entity.neighbor_addr;
               $scope.drawPath(path, neighbor_addr);
+
+              $('#list')[0].innerHTML = '<div class=list-container>' +
+                '<p>Interface: <label class="label label-primary">' + (row.entity.interface != null ? row.entity.interface : '-') + '</label></p>' +
+                '<p>Bandwidth: <label class="label label-primary">' + (row.entity.bandwidth != null ? row.entity.bandwidth : '-') + '</label></p>' +
+                '<p>Reliability: <label class="label label-primary">' + (row.entity.reliability != null ? row.entity.reliability : '-') + '</label></p>' +
+                '<p>Input Data Rate: <label class="label label-primary">' + (row.entity.input_data_rate != null ? row.entity.input_data_rate : '-') + '</label></p>' +
+                '<p>Input Packet Rate: <label class="label label-primary">' + (row.entity.input_packet_rate != null ? row.entity.input_packet_rate : '-') + '</label></p>' +
+                '<p>Output Data Rate: <label class="label label-primary">' + (row.entity.output_data_rate != null ? row.entity.output_data_rate : '-' ) + '</label></p>' +
+                '<p>Output Packet Rate: <label class="label label-primary">' + (row.entity.output_packet_rate != null ? row.entity.output_packet_rate : '-') + '</label></p>' +
+                '</div>';
+
               cluster.clearLayers();
               cluster.addLayers(involvedMarkers);
             }
@@ -92,6 +103,7 @@ angular.module('bmpUiApp')
               removeLayers(paths);
               paths = [];
               $scope.pathTraces = null;
+              $('#list')[0].innerHTML = '';
               cluster.clearLayers();
               cluster.addLayer(markerLayer);
               angular.forEach(involvedMarkers, function (marker) {
@@ -109,6 +121,7 @@ angular.module('bmpUiApp')
             removeLayers(paths);
             paths = [];
             $scope.pathTraces = null;
+            $('#list')[0].innerHTML = '';
             cluster.clearLayers();
             cluster.addLayer(markerLayer);
             angular.forEach(involvedMarkers, function (marker) {
@@ -157,6 +170,7 @@ angular.module('bmpUiApp')
         $scope.selectedRouter = selectedRouter;
 
         $scope.pathTraces = null;
+        $('#list')[0].innerHTML = '';
 
         if ($scope.protocol == "OSPF") {
           apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouter.routerId, $scope.selected_mt_id).success(function (result) {
@@ -206,6 +220,7 @@ angular.module('bmpUiApp')
             nodesPromise.success(function () {
 
               $scope.pathTraces = null;
+              $('#list')[0].innerHTML = '';
 
               if (cluster && $scope.map.hasLayer(cluster))
                 $scope.map.removeLayer(cluster);
@@ -348,7 +363,8 @@ angular.module('bmpUiApp')
                   });
                   var popup = "";
                   angular.forEach(link, function (value, key) {
-                    popup += key + ":" + value + "<br>";
+                    if (['id'].indexOf(key) < 0)
+                      popup += key + ":" + value + "<br>";
                   });
                   polyline.bindPopup(popup);
                   polyline.addTo($scope.map);
@@ -407,6 +423,22 @@ angular.module('bmpUiApp')
         leafletData.getMap($scope.id).then(function (map) {
           $scope.map = map;
           L.control.zoomslider().addTo($scope.map);
+          var MyControl = L.Control.extend({
+            options: {
+              position: 'topright'
+            },
+
+            onAdd: function (map) {
+              // create the control container with a particular class name
+              var container = L.DomUtil.create('div', 'listView');
+              container.id = 'list';
+              // ... initialize other DOM elements, add listeners, etc.
+
+              return container;
+            }
+          });
+
+          map.addControl(new MyControl());
         });
 
         $scope.selectChange();
@@ -605,6 +637,7 @@ angular.module('bmpUiApp')
       //draw the path
       $scope.drawPath = function (path_hash_ids) {
         $scope.pathTraces = null;
+
         removeLayers(circles.slice(1));
 
         if (pathGroup && $scope.map.hasLayer(pathGroup)) {

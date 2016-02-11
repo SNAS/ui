@@ -8,7 +8,7 @@
  * Factory for API calls
  */
 angular.module('bmpUiApp')
-    .factory('apiFactory', function ($http, $q, $location) {
+  .factory('apiFactory', function ($http, $q, $location) {
 
     //http://demo.openbmp.org:8001/db_rest/v1/
     //If other host and port for db_rest is desired, change below.
@@ -30,11 +30,11 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "routers/status/up");
     };
 
-    apiFactory.getRouterIpType = function(routerIp, ipType){
+    apiFactory.getRouterIpType = function (routerIp, ipType) {
       return $http.get(urlBase + "peer/router/" +
-      routerIp + //10.22.165.14
-      "/type/"+
-      ipType); //v4 | v6
+        routerIp + //10.22.165.14
+        "/type/" +
+        ipType); //v4 | v6
     };
 
     apiFactory.getPeers = function () {
@@ -71,7 +71,7 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getWhoIsWhereASNLike = function (asn, lim) {
-      if(lim != undefined) lim = "&limit=" + lim;
+      if (lim != undefined) lim = "&limit=" + lim;
       return $http.get(urlBase + "whois/asn?where=w.asn%20like%20%27" + asn + "%%27" + lim);
     };
 
@@ -84,7 +84,7 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getWhoIsName = function (name, lim) {
-      if(lim === undefined) lim = limit;
+      if (lim === undefined) lim = limit;
 
       var uri = urlBase + "whois/asn?where=w.as_name like '%" + name + "%' or w.org_name like '%" + name + "%'&limit=" + lim;
       var res = encodeURI(uri);
@@ -98,7 +98,7 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getWhoIsASNameLike = function (name, lim) {
-      if(lim === undefined) lim = limit;
+      if (lim === undefined) lim = limit;
 
       var uri = urlBase + "whois/asn?where=w.as_name like '%" + name + "%'&limit=" + lim;
       var res = encodeURI(uri);
@@ -141,104 +141,104 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "peer/prefix");
     };
 
-    apiFactory.getPeerPrefixByHashId = function (peerHashId){
+    apiFactory.getPeerPrefixByHashId = function (peerHashId) {
       return $http.get(urlBase + "peer/prefix/" + peerHashId);
     };
 
-    apiFactory.getPeerHistory = function (peerHashId, amount_of_entries){
+    apiFactory.getPeerHistory = function (peerHashId, amount_of_entries) {
       return $http.get(urlBase + "peer/prefix/" + peerHashId + '?last=' + amount_of_entries);
     };
 
-    apiFactory.getPeerDownStream = function (peer_hash_id){
+    apiFactory.getPeerDownStream = function (peer_hash_id) {
       return $http.get(urlBase + "downstream/peer/" + peer_hash_id);
     };
 
-    apiFactory.getPeerRib = function (peer_hash_id){
+    apiFactory.getPeerRib = function (peer_hash_id) {
       return $http.get(urlBase + "rib/peer/" + peer_hash_id);
     };
 
-    apiFactory.getPeerRibLookup = function (peer_hash_id,ip){
+    apiFactory.getPeerRibLookup = function (peer_hash_id, ip) {
       return $http.get(urlBase + "rib/peer/" + peer_hash_id + "/lookup/" + ip);
     };
 
-    apiFactory.getPeerRibPrefix = function (peer_hash_id,ip){
+    apiFactory.getPeerRibPrefix = function (peer_hash_id, ip) {
       return $http.get(urlBase + "rib/peer/" + peer_hash_id + "/prefix/" + ip);
     };
 
-    apiFactory.getPeerRibLookupIp = function (ip){
+    apiFactory.getPeerRibLookupIp = function (ip) {
       return $http.get(urlBase + "rib/lookup/" + ip);
     };
 
 
     //For the Graphs in Card
-    apiFactory.getUpdatesOverTimeByPeer = function (peer_hash_id){
+    apiFactory.getUpdatesOverTimeByPeer = function (peer_hash_id) {
       return $http.get(urlBase + "updates/peer/" + peer_hash_id + "/top/interval/5");
     };
 
-    apiFactory.getTopPrefixUpdatesByPeer = function (peer_hash_id){
+    apiFactory.getTopPrefixUpdatesByPeer = function (peer_hash_id) {
       return $http.get(urlBase + "updates/peer/" + peer_hash_id + "/top");
     };
 
-    apiFactory.getWithdrawsOverTimeByPeer = function (peer_hash_id){
+    apiFactory.getWithdrawsOverTimeByPeer = function (peer_hash_id) {
       return $http.get(urlBase + "withdrawns/peer/" + peer_hash_id + "/top/interval/5");
     };
 
-    apiFactory.getTopPrefixWithdrawsByPeer = function (peer_hash_id){
+    apiFactory.getTopPrefixWithdrawsByPeer = function (peer_hash_id) {
       return $http.get(urlBase + "withdrawns/peer/" + peer_hash_id + "/top");
     };
 
     //For Tops view
-    apiFactory.getTopUpdates= function(searchPeer,searchPrefix,groupBy, startTimestamp, endTimestamp, joinWhoisPrefix){
-      joinWhoisPrefix = joinWhoisPrefix||false;
+    apiFactory.getTopUpdates = function (searchPeer, searchPrefix, groupBy, startTimestamp, endTimestamp, joinWhoisPrefix) {
+      joinWhoisPrefix = joinWhoisPrefix || false;
       return $http.get(urlBase + "updates/top?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&groupBy=" + groupBy + "&joinWhoisPrefix=" + joinWhoisPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
-    apiFactory.getTopWithdraws= function(searchPeer, searchPrefix, groupBy, startTimestamp,endTimestamp, joinWhoisPrefix){
-      joinWhoisPrefix = joinWhoisPrefix||false;
+    apiFactory.getTopWithdraws = function (searchPeer, searchPrefix, groupBy, startTimestamp, endTimestamp, joinWhoisPrefix) {
+      joinWhoisPrefix = joinWhoisPrefix || false;
       return $http.get(urlBase + "withdrawns/top?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&groupBy=" + groupBy + "&joinWhoisPrefix=" + joinWhoisPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
-    apiFactory.getUpdatesOverTime= function(searchPeer, searchPrefix, seconds, startTimestamp,endTimestamp){
-      return $http.get(urlBase + "updates/trend/interval/"+seconds+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
+    apiFactory.getUpdatesOverTime = function (searchPeer, searchPrefix, seconds, startTimestamp, endTimestamp) {
+      return $http.get(urlBase + "updates/trend/interval/" + seconds + "?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
-    apiFactory.getWithdrawsOverTime= function(searchPeer, searchPrefix, seconds, startTimestamp,endTimestamp){
-      return $http.get(urlBase + "withdrawns/trend/interval/"+seconds+"?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
+    apiFactory.getWithdrawsOverTime = function (searchPeer, searchPrefix, seconds, startTimestamp, endTimestamp) {
+      return $http.get(urlBase + "withdrawns/trend/interval/" + seconds + "?searchPeer=" + searchPeer + "&searchPrefix=" + searchPrefix + "&startTs=" + startTimestamp + "&endTs=" + endTimestamp)
     };
 
 
-      //orr view
-    apiFactory.getORRospf = function (peerHashId,routerId){
+    //orr view
+    apiFactory.getORRospf = function (peerHashId, routerId) {
       return $http.get(urlBase + "orr/peer/" + peerHashId + "/ospf/" + routerId);
     };
 
-    apiFactory.getORRisis = function (peerHashId,routerId){
+    apiFactory.getORRisis = function (peerHashId, routerId) {
       return $http.get(urlBase + "orr/peer/" + peerHashId + "/isis/" + routerId);
     };
 
     //link state view
-    apiFactory.getLinkStatePeers = function (){
+    apiFactory.getLinkStatePeers = function () {
       return $http.get(urlBase + "linkstate/peers/");
     };
 
-    apiFactory.getLinkStatePeersWithGeo = function (){
+    apiFactory.getLinkStatePeersWithGeo = function () {
       return $http.get(urlBase + "linkstate/peers/?withGeo");
     };
 
-    apiFactory.getPeerNodes = function (peerHashId,mt_id){
+    apiFactory.getPeerNodes = function (peerHashId, mt_id) {
       return $http.get(urlBase + "linkstate/nodes/peer/" + peerHashId + "/" + mt_id + "?withGeo");
     };
 
-    apiFactory.getPeerLinks = function (peerHashId,mt_id){
-      return $http.get(urlBase + "linkstate/links/peer/" + peerHashId + "/" + mt_id);
+    apiFactory.getPeerLinks = function (peerHashId, mt_id) {
+      return $http.get(urlBase + "linkstate/links/peer/" + peerHashId + "/" + mt_id + "?telemetry");
     };
 
-    apiFactory.getSPFospf = function (peerHashId,routerId,mt_id){
-      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/ospf/" + routerId + "/" + mt_id);
+    apiFactory.getSPFospf = function (peerHashId, routerId, mt_id) {
+      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/ospf/" + routerId + "/" + mt_id + "?telemetry");
     };
 
-    apiFactory.getSPFisis = function (peerHashId,routerId,mt_id){
-      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/isis/" + routerId + "/" + mt_id);
+    apiFactory.getSPFisis = function (peerHashId, routerId, mt_id) {
+      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/isis/" + routerId + "/" + mt_id + "?telemetry");
     };
 
     // prefix analysis
@@ -247,17 +247,17 @@ angular.module('bmpUiApp')
     };
 
     //deprecated
-    apiFactory.getPrefixWLen = function (prefix,len) {
-      return $http.get(urlBase + "rib/prefix/" + prefix + "/" +len);
+    apiFactory.getPrefixWLen = function (prefix, len) {
+      return $http.get(urlBase + "rib/prefix/" + prefix + "/" + len);
     };
 
     apiFactory.getHistoryPrefix = function (prefix) {
       return $http.get(urlBase + "rib/history/" + prefix);
     };
 
-    apiFactory.getPeerHistoryPrefix = function (prefix,hashId) {
+    apiFactory.getPeerHistoryPrefix = function (prefix, hashId) {
       //return $http.get(urlBase + "rib/history/" + prefix);
-      return $http.get(urlBase + "rib/peer/" + hashId +"/history/" + prefix)
+      return $http.get(urlBase + "rib/peer/" + hashId + "/history/" + prefix)
     };
 
 
@@ -275,11 +275,11 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "rib/asn/" + asn + "/count");
     };
 
-    apiFactory.getAsnInfoPeer = function (asn,hashId) {
+    apiFactory.getAsnInfoPeer = function (asn, hashId) {
       return $http.get(urlBase + "rib/peer/" + hashId + "/asn/" + asn);
     };
 
-    apiFactory.getAsnInfo = function (asn,prefix_amount) {
+    apiFactory.getAsnInfo = function (asn, prefix_amount) {
       return $http.get(urlBase + "rib/asn/" + asn + "?limit=" + prefix_amount);
     };
 
@@ -318,4 +318,4 @@ angular.module('bmpUiApp')
     };
 
     return apiFactory;
-});
+  });
