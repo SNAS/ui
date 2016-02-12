@@ -109,7 +109,7 @@ angular.module('bmpUiApp')
               angular.forEach(involvedMarkers, function (marker) {
                 marker.options.connectedPaths = [];
               });
-              angular.forEach(polylines, function (polyline) {
+              angular.forEach(drawnPolylines, function (polyline) {
                 if (!$scope.map.hasLayer(polyline))
                   $scope.map.addLayer(polyline);
               });
@@ -127,7 +127,7 @@ angular.module('bmpUiApp')
             angular.forEach(involvedMarkers, function (marker) {
               marker.options.connectedPaths = [];
             });
-            angular.forEach(polylines, function (polyline) {
+            angular.forEach(drawnPolylines, function (polyline) {
               if (!$scope.map.hasLayer(polyline))
                 $scope.map.addLayer(polyline);
             });
@@ -150,7 +150,7 @@ angular.module('bmpUiApp')
         if (pathGroup && $scope.map.hasLayer(pathGroup)) {
           $scope.map.removeLayer(pathGroup);
           pathGroup.clearLayers();
-          angular.forEach(polylines, function (polyline) {
+          angular.forEach(drawnPolylines, function (polyline) {
             if (!$scope.map.hasLayer(polyline))
               $scope.map.addLayer(polyline);
           });
@@ -403,6 +403,9 @@ angular.module('bmpUiApp')
                   });
                   drawnPolyline.on('popupclose', function (e) {
                     e.popup.setContent(popup);
+                  });
+                  drawnPolyline.on('add', function (e) {
+                    e.target._popup.setContent(popup);
                   });
                 }
                 else {
@@ -723,7 +726,7 @@ angular.module('bmpUiApp')
             angular.forEach(polylines, function (polyline) {
               if ([polyline.options.sourceID, polyline.options.targetID].indexOf(involvedMarkers[j].options.data.id) > -1 &&
                 [polyline.options.sourceID, polyline.options.targetID].indexOf(involvedMarkers[j + 1].options.data.id) > -1)
-                newLine.bindPopup(polyline._popup);
+                newLine.bindPopup(polyline.options.popupContent);
             });
             involvedMarkers[j].options.connectedPaths.push(newLine);
             involvedMarkers[j + 1].options.connectedPaths.push(newLine);
