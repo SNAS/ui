@@ -560,11 +560,11 @@ angular.module('bmpUiApp')
                   neighborIP: neighborIP,
                   interface: (linksData[i].interface != null ? linksData[i].interface : '-'),
                   bandwidth: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' Kb/s' : '-'),
-                  reliability: (linksData[i].bandwidth != null ? linksData[i].bandwidth : '-'),
-                  input_data_rate: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' b/s' : '-'),
-                  input_packet_rate: (linksData[i].bandwidth != null ? linksData[i].bandwidth : '-'),
-                  output_data_rate: (linksData[i].bandwidth != null ? linksData[i].bandwidth + 'b/s' : '-'),
-                  output_packet_rate: (linksData[i].bandwidth != null ? linksData[i].bandwidth : '-')
+                  reliability: (linksData[i].reliability != null ? linksData[i].reliability : '-'),
+                  input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' b/s' : '-'),
+                  input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate : '-'),
+                  output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + 'b/s' : '-'),
+                  output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate : '-')
                 });
             }
             else {
@@ -576,13 +576,13 @@ angular.module('bmpUiApp')
                   igp_metric: igp_metric,
                   interfaceIP: interfaceIP,
                   neighborIP: neighborIP,
-                  interface: linksData[i].interface,
-                  bandwidth: linksData[i].bandwidth + ' Kb/s',
-                  reliability: linksData[i].reliability,
-                  input_data_rate: linksData[i].input_data_rate + 'b/s',
-                  input_packet_rate: linksData[i].input_packet_rate,
-                  output_data_rate: linksData[i].output_data_rate + 'b/s',
-                  output_packet_rate: linksData[i].output_packet_rate
+                  interface: (linksData[i].interface != null ? linksData[i].interface : '-'),
+                  bandwidth: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' Kb/s' : '-'),
+                  reliability: (linksData[i].reliability != null ? linksData[i].reliability : '-'),
+                  input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' b/s' : '-'),
+                  input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate : '-'),
+                  output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + 'b/s' : '-'),
+                  output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate : '-')
                 });
             }
           }
