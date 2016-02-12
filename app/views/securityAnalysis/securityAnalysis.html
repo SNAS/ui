@@ -14,4 +14,17 @@
       </div>
     </div>
   </div>
+
+  <div class="row" ng-if="showCard">
+    <div class="col-lg-12">
+      <div class="table-container">
+        <div class="loading-section" ng-style="{'height':glassGridOptions.changeHeight}">
+          <div bmp-loading ng-if="glassGridIsLoad" loading-var="glassGridIsLoad" font-width="80"></div>
+          <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.height}" ui-grid-resize-columns>
+            <div class="watermark" ng-if="!glassGridOptions.data.length">No data available</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

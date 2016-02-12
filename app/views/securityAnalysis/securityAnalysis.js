@@ -11,6 +11,8 @@ angular.module('bmpUiApp')
   .controller('SecurityAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', function ($scope, apiFactory, $http, $timeout) {
 
     $scope.securityGridInitHeight = 350;
+    $scope.showCard = false;
+    $scope.glassGridIsLoad = true;
 
     var paginationOptions = {
       page: 1,
@@ -35,8 +37,7 @@ angular.module('bmpUiApp')
 
     $(document).on('mouseover', '.tableRow', function(){
       var classList = $(this).attr('class').split(' ');
-      var prefix = classList[classList.length - 1];
-
+      var prefix = classList[classList.length - 1];   // get class 'prefixClass'
       $("."+prefix).find('.ui-grid-cell').css('background-color', '#d9d9d9 !important');
     }).on('mouseleave', '.tableRow', function(){
       var classList = $(this).attr('class').split(' ');
@@ -82,7 +83,40 @@ angular.module('bmpUiApp')
           }
           getMismatchPrefix();
         });
+
+        gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+          apiFactory.getPrefix(row.entity.prefixWithLen)
+          .success(function(res){
+            $scope.showCard = true;
+            var resultData = res.v_routes.data;
+            for(var i = 0; i < resultData.length; i++) {
+              resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
+            }
+            $scope.glassGridOptions.data = resultData;
+            $scope.glassGridIsLoad = false;
+          });
+        });
       }
+    };
+
+    $scope.glassGridOptions = {
+      height: 300,
+      showGridFooter: true,
+      enableFiltering: true,
+      enableRowSelection: true,
+      enableRowHeaderSelection: false,
+      enableVerticalScrollbar: 1,
+      enableHorizontalScrollbar: 0,
+      multiSelect: false,
+      columnDefs: [
+        {name: "wholePrefix", displayName: 'Prefix', width: "10%",
+          cellTemplate: '<div class="ui-grid-cell-contents prefix-clickable"><div bmp-prefix-model prefix="{{ COL_FIELD }}"></div></div>'
+        },
+        {name: "Origin_AS", width: "10%"},
+        {name: "RouterName", displayName: 'Router', width: "15%"},
+        {name: "PeerName", displayName: 'Peer', width: "20%"},
+        {name: "AS_Path", displayName: 'AS Path', width: "*"}
+      ]
     };
 
     function getMismatchPrefix() {
