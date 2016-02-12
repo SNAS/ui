@@ -13,6 +13,7 @@ angular.module('bmpUiApp')
     $scope.securityGridInitHeight = 350;
     $scope.showCard = false;
     $scope.glassGridIsLoad = true;
+    $scope.isViolationOn = false;
 
     var paginationOptions = {
       page: 1,
@@ -150,6 +151,7 @@ angular.module('bmpUiApp')
       // initial clean
       searchOptions.asn = null;
       searchOptions.prefix = null;
+      searchOptions.where = null;
       $timeout(function(){
         if($.isEmptyObject(keyword)) {
           searchOptions.asn = null;
@@ -170,7 +172,11 @@ angular.module('bmpUiApp')
     };
 
     $scope.getAllMismatch = function(){
-      searchOptions.where = 'WHERE (irr_origin_as IS NOT NULL and irr_origin_as != recv_origin_as) or (rpki_origin_as IS NOT null and rpki_origin_as != recv_origin_as)';
+      $scope.isViolationOn = !$scope.isViolationOn;
+      if ($scope.isViolationOn)
+        searchOptions.where = 'WHERE (irr_origin_as IS NOT NULL and irr_origin_as != recv_origin_as) or (rpki_origin_as IS NOT null and rpki_origin_as != recv_origin_as)';
+      else
+        searchOptions.where = null;
       getMismatchPrefix();
     };
 
