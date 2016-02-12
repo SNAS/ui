@@ -337,16 +337,18 @@ angular.module('bmpUiApp')
       return $http.get(url);
     };
 
-    apiFactory.getTotalCount = function (asn, prefix) {
+    apiFactory.getTotalCount = function (asn, prefix, where) {
       var url = urlBase + "security/total";
-      if (asn != null || prefix != null)
+      if (asn != null || prefix != null || where != null)
         url += "?";
-      if (asn != null)
-        url += "asn=" + asn;
-      if (prefix != null) {
-        url += asn ? "&" : '';
-        url += "prefix=" + prefix;
-      }
+      var keyval = [];
+      if (prefix)
+        keyval.push("prefix=" + prefix);
+      if (where)
+        keyval.push("where=" + where);
+      if (asn)
+        keyval.push("asn=" + asn);
+      url += keyval.join('&');
       return $http.get(url);
     };
 

@@ -135,7 +135,7 @@ angular.module('bmpUiApp')
         .error(function(err){
           console.log(err.message);
         });
-      apiFactory.getTotalCount(searchOptions.asn, searchOptions.prefix)
+      apiFactory.getTotalCount(searchOptions.asn, searchOptions.prefix, searchOptions.where)
         .success(function(data) {
           if (!$.isEmptyObject(data)) {
             $scope.securityGridOptions.totalItems = data['table']['data'][0]['total'];
@@ -167,6 +167,11 @@ angular.module('bmpUiApp')
         getMismatchPrefix();
       }, 800);
 
+    };
+
+    $scope.getAllMismatch = function(){
+      searchOptions.where = 'WHERE (irr_origin_as IS NOT NULL and irr_origin_as != recv_origin_as) or (rpki_origin_as IS NOT null and rpki_origin_as != recv_origin_as)';
+      getMismatchPrefix();
     };
 
     getMismatchPrefix();

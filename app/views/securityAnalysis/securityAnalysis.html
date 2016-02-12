@@ -6,6 +6,7 @@
 
         <input type="text" placeholder="Search" ng-style="{'margin-bottom': '10px', 'margin-left': '40px'}"
                ng-model="keyword" ng-change="search(keyword)">
+        <button class="btn btn-danger btn-sm pull-right" ng-click="getAllMismatch()" ng-style="{'margin-right':'40px'}">All Violations</button>
 
         <div class="loading-section" ng-style="{'height':securityGridInitHeight}">
           <div ng-show="securityIsLoad" bmp-loading loading-var="securityIsLoad"></div>
