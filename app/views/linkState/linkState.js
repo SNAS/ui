@@ -80,18 +80,18 @@ angular.module('bmpUiApp')
           $scope.SPFgridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
             if (row.isSelected) {
-              removeLayers(polylines);
+              removeLayers(drawnPolylines);
               var path = row.entity.path_hash_ids;
               var neighbor_addr = row.entity.neighbor_addr;
               $scope.drawPath(path, neighbor_addr);
               $scope.innerHTML = '<div class=list-container>' +
-                '<div class="row"><div class="col-xs-5">Interface</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.interface != null ? row.entity.interface : '-') + '</label></div></div>' +
-                '<div class="row"><div class="col-xs-5">Bandwidth</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.bandwidth != null ? row.entity.bandwidth + ' Kb/s' : '-') + '</label></div></div>' +
-                '<div class="row"><div class="col-xs-5">Reliability</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.reliability != null ? row.entity.reliability : '-') + '</label></div></div>' +
-                '<div class="row"><div class="col-xs-5">Input Data Rate</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.input_data_rate != null ? row.entity.input_data_rate + ' b/s' : '-') + '</label></div></div>' +
-                '<div class="row"><div class="col-xs-5">Input Packet Rate</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.input_packet_rate != null ? row.entity.input_packet_rate : '-') + '</label></div></div>' +
-                '<div class="row"><div class="col-xs-5">Output Data Rate</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.output_data_rate != null ? row.entity.output_data_rate + ' b/s' : '-' ) + '</label></div></div>' +
-                '<div class="row"><div class="col-xs-5">Output Packet Rate</div><div class="col-xs-7">: <label class="label label-primary">' + (row.entity.output_packet_rate != null ? row.entity.output_packet_rate : '-') + '</label></div></div>' +
+                '<div class="row"><div class="col-xs-5">Interface</div><div class="col-xs-7">: ' + (row.entity.interface != null ? row.entity.interface : '-') + '</div></div>' +
+                '<div class="row"><div class="col-xs-5">Bandwidth</div><div class="col-xs-7">: ' + (row.entity.bandwidth != null ? row.entity.bandwidth + ' Kb/s' : '-') + '</div></div>' +
+                '<div class="row"><div class="col-xs-5">Reliability</div><div class="col-xs-7">: ' + (row.entity.reliability != null ? row.entity.reliability : '-') + '</div></div>' +
+                '<div class="row"><div class="col-xs-5">Input Data Rate</div><div class="col-xs-7">: ' + (row.entity.input_data_rate != null ? row.entity.input_data_rate + ' b/s' : '-') + '</div></div>' +
+                '<div class="row"><div class="col-xs-5">Input Packet Rate</div><div class="col-xs-7">: ' + (row.entity.input_packet_rate != null ? row.entity.input_packet_rate : '-') + '</div></div>' +
+                '<div class="row"><div class="col-xs-5">Output Data Rate</div><div class="col-xs-7">: ' + (row.entity.output_data_rate != null ? row.entity.output_data_rate + ' b/s' : '-' ) + '</div></div>' +
+                '<div class="row"><div class="col-xs-5">Output Packet Rate</div><div class="col-xs-7">: ' + (row.entity.output_packet_rate != null ? row.entity.output_packet_rate : '-') + '</div></div>' +
                 '</div>';
               $('#list')[0].innerHTML = $scope.innerHTML;
 
@@ -136,7 +136,7 @@ angular.module('bmpUiApp')
         }
       };
 
-      var polylines, cluster, markerLayer, paths;
+      var polylines, drawnPolylines, cluster, markerLayer, paths;
 
       var routerIcon = L.icon({
         iconUrl: 'images/Router-icon.png',
@@ -228,7 +228,8 @@ angular.module('bmpUiApp')
               removeLayers(circles);
               circles = [];
 
-              removeLayers(polylines);
+              removeLayers(drawnPolylines);
+              drawnPolylines = [];
               polylines = [];
 
               if (pathGroup && $scope.map.hasLayer(pathGroup)) {
@@ -366,12 +367,49 @@ angular.module('bmpUiApp')
                     if (['id'].indexOf(key) < 0)
                       popup += key + ":" + value + "<br>";
                   });
-                  polyline.bindPopup(popup);
-                  polyline.addTo($scope.map);
+                  polyline.options.popupContent = popup;
                   polylines.push(polyline);
                   $scope.markers[sourceNode.id].options.connectedPolylines.push(polyline);
                   $scope.markers[targetNode.id].options.connectedPolylines.push(polyline);
                 }
+              });
+              angular.forEach(polylines, function (polyline) {
+                var match = false;
+                angular.forEach(drawnPolylines, function (drawnPolyline) {
+                  if ((drawnPolyline._latlngs[0].equals(polyline._latlngs[0]) && drawnPolyline._latlngs[1].equals(polyline._latlngs[1]))
+                    || (drawnPolyline._latlngs[0].equals(polyline._latlngs[1]) && drawnPolyline._latlngs[1].equals(polyline._latlngs[0]))) {
+                    match = true;
+                    drawnPolyline.containedLines.push(polyline);
+                  }
+                });
+                if (!match) {
+                  polyline.containedLines = [polyline];
+                  drawnPolylines.push(polyline);
+                }
+              });
+              angular.forEach(drawnPolylines, function (drawnPolyline) {
+                var popup = "";
+                if (drawnPolyline.containedLines.length > 1) {
+                  angular.forEach(drawnPolyline.containedLines, function (line) {
+                    popup += '<p class="btn btn-primary btn-block" id="' + line.options.data.id + '" style="padding:0 10px 0 10px" >' + line.options.data.localName +
+                      ' <span class="glyphicon glyphicon-arrow-right"></span> ' + line.options.data.remoteName + '</p>';
+                  });
+                  drawnPolyline.on('popupopen', function (e) {
+                    angular.forEach(drawnPolyline.containedLines, function (line) {
+                      $('#' + line.options.data.id).on('click', function () {
+                        e.popup.setContent(line.options.popupContent);
+                      });
+                    });
+                  });
+                  drawnPolyline.on('popupclose', function (e) {
+                    e.popup.setContent(popup);
+                  });
+                }
+                else {
+                  popup = drawnPolyline.popupContent;
+                }
+                drawnPolyline.bindPopup(popup);
+                drawnPolyline.addTo($scope.map);
               });
               $scope.map.addLayer(cluster.addLayer(markerLayer));
 
@@ -542,69 +580,74 @@ angular.module('bmpUiApp')
         linksPromise.success(function (result) {
           links = [];
           var linksData = result.v_ls_links.data;
-          var reverseLinks = [];
+          //var reverseLinks = [];
           for (var i = 0; i < result.v_ls_links.size; i++) {
             var source = linksData[i].local_node_hash_id;
             var target = linksData[i].remote_node_hash_id;
             var igp_metric = linksData[i].igp_metric;
             var interfaceIP = linksData[i].InterfaceIP;
             var neighborIP = linksData[i].NeighborIP;
-            if (source < target) {
-              links.push(
-                {
-                  id: i,
-                  source: source,
-                  target: target,
-                  igp_metric: igp_metric,
-                  interfaceIP: interfaceIP,
-                  neighborIP: neighborIP,
-                  interface: (linksData[i].interface != null ? linksData[i].interface : '-'),
-                  bandwidth: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' Kb/s' : '-'),
-                  reliability: (linksData[i].reliability != null ? linksData[i].reliability : '-'),
-                  input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' b/s' : '-'),
-                  input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate : '-'),
-                  output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + 'b/s' : '-'),
-                  output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate : '-')
-                });
-            }
-            else {
-              reverseLinks.push(
-                {
-                  id: i,
-                  source: source,
-                  target: target,
-                  igp_metric: igp_metric,
-                  interfaceIP: interfaceIP,
-                  neighborIP: neighborIP,
-                  interface: (linksData[i].interface != null ? linksData[i].interface : '-'),
-                  bandwidth: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' Kb/s' : '-'),
-                  reliability: (linksData[i].reliability != null ? linksData[i].reliability : '-'),
-                  input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' b/s' : '-'),
-                  input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate : '-'),
-                  output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + 'b/s' : '-'),
-                  output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate : '-')
-                });
-            }
+            //if (source < target) {
+            links.push({
+              id: i,
+              source: source,
+              target: target,
+              localName: linksData[i].Local_Router_Name,
+              remoteName: linksData[i].Remote_Router_Name,
+              igp_metric: igp_metric,
+              interfaceIP: interfaceIP,
+              neighborIP: neighborIP,
+              interface: (linksData[i].interface != null ? linksData[i].interface : '-'),
+              bandwidth: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' Kb/s' : '-'),
+              reliability: (linksData[i].reliability != null ? linksData[i].reliability : '-'),
+              input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' b/s' : '-'),
+              input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate : '-'),
+              output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + 'b/s' : '-'),
+              output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate : '-')
+            });
+            //}
+            //else {
+            //  reverseLinks.push(
+            //    {
+            //      id: i,
+            //      source: source,
+            //      target: target,
+            //      localName: linksData[i].Local_Router_Name,
+            //      remoteName: linksData[i].Remote_Router_Name,
+            //      igp_metric: igp_metric,
+            //      interfaceIP: interfaceIP,
+            //      neighborIP: neighborIP,
+            //      interface: (linksData[i].interface != null ? linksData[i].interface : '-'),
+            //      bandwidth: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' Kb/s' : '-'),
+            //      reliability: (linksData[i].reliability != null ? linksData[i].reliability : '-'),
+            //      input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' b/s' : '-'),
+            //      input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate : '-'),
+            //      output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + 'b/s' : '-'),
+            //      output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate : '-')
+            //    });
+            //}
           }
 
-          for (var i = 0; i < reverseLinks.length; i++) {
-            for (var j = 0; j < links.length; j++) {
-              if (reverseLinks[i].target == links[j].source && reverseLinks[i].source == links[j].target
-                && reverseLinks[i].neighborIP == links[j].interfaceIP && reverseLinks[i].igp_metric != links[j].igp_metric) {
-                links[j] =
-                {
-                  id: links[j].id,
-                  source: links[j].source,
-                  target: links[j].target,
-                  sourceLabel: links[j].igp_metric,
-                  targetLabel: reverseLinks[i].igp_metric,
-                  interfaceIP: links[j].interfaceIP,
-                  neighborIP: links[j].neighborIP
-                };
-                break;
-              }
-            }
-          }
+          //for (var i = 0; i < reverseLinks.length; i++) {
+          //  for (var j = 0; j < links.length; j++) {
+          //    if (reverseLinks[i].target == links[j].source && reverseLinks[i].source == links[j].target
+          //      && reverseLinks[i].neighborIP == links[j].interfaceIP && reverseLinks[i].igp_metric != links[j].igp_metric) {
+          //      links[j] =
+          //      {
+          //        id: links[j].id,
+          //        source: links[j].source,
+          //        target: links[j].target,
+          //        localName: links[j].Local_Router_Name,
+          //        remoteName: links[j].Remote_Router_Name,
+          //        sourceLabel: links[j].igp_metric,
+          //        targetLabel: reverseLinks[i].igp_metric,
+          //        interfaceIP: links[j].interfaceIP,
+          //        neighborIP: links[j].neighborIP
+          //      };
+          //      break;
+          //    }
+          //  }
+          //}
         }).error(function (error) {
           console.log(error.message);
         });
