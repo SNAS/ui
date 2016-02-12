@@ -405,7 +405,8 @@ angular.module('bmpUiApp')
                     e.popup.setContent(popup);
                   });
                   drawnPolyline.on('add', function (e) {
-                    e.target._popup.setContent(popup);
+                    if (e.target._popup)
+                      e.target._popup.setContent(popup);
                   });
                 }
                 else {
