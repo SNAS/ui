@@ -74,7 +74,7 @@ angular.module('bmpUiApp')
           {field: 'metric', displayName: 'Metric', width: '*'},
           {field: 'src_router_id', displayName: 'Source Node ID', width: '*'},
           {field: 'nei_router_id', displayName: 'Neighbor Node ID', width: '*'},
-          {field: 'neighbor_addr_adjusted', displayName: 'Neighbor Address', width: '*'}
+          {field: 'neighbor_addr_adjusted', displayName: 'Interface', width: '*'}
         ],
         onRegisterApi: function (gridApi) {
           $scope.SPFgridApi = gridApi;
