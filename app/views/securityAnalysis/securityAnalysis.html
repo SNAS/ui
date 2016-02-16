@@ -4,9 +4,32 @@
       <div class="table-container">
         <h3>Origin AS IRR Report</h3>
 
+        <input type="text" placeholder="Search" ng-style="{'margin-bottom': '10px', 'margin-left': '40px'}"
+               ng-model="keyword" ng-change="search(keyword)">
+        <button type="button" class="btn btn-danger btn-sm pull-right" data-toggle="button"
+                ng-model="isViolationOn"
+                ng-click="getAllMismatch()"
+                ng-style="{'margin-right': '40px'}">
+          All Violations
+        </button>
+
+
         <div class="loading-section" ng-style="{'height':securityGridInitHeight}">
           <div ng-show="securityIsLoad" bmp-loading loading-var="securityIsLoad"></div>
-          <div class="grid" ui-grid="securityGridOptions" ui-grid-resize-columns></div>
+          <div class="grid" ui-grid="securityGridOptions" ui-grid-pagination ui-grid-selection></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" ng-if="showCard">
+    <div class="col-lg-12">
+      <div class="table-container">
+        <div class="loading-section" ng-style="{'height':glassGridOptions.changeHeight}">
+          <div bmp-loading ng-if="glassGridIsLoad" loading-var="glassGridIsLoad" font-width="80"></div>
+          <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.height}" ui-grid-resize-columns>
+            <div class="watermark" ng-if="!glassGridOptions.data.length">No data available</div>
+          </div>
         </div>
       </div>
     </div>

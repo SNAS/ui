@@ -317,5 +317,40 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "community?community=" + community);
     };
 
+    // security analysis
+    apiFactory.getMisMatchPrefix = function (page, limit, sort, desc, asn, prefix, where) {
+      var url = urlBase + "security/" + page + '/' + limit;
+      if (sort || desc || asn || prefix || where)
+        url += "?";
+      var keyval = [];
+      if (sort) {
+        if (sort == 'prefixWithLen') sort = 'prefix';  // if sort by first column, sort by prefix
+        keyval.push("sort=" + sort + '&desc=' + desc);
+      }
+      if (prefix)
+        keyval.push("prefix=" + prefix);
+      if (where)
+        keyval.push("where=" + where);
+      if (asn)
+        keyval.push("asn=" + asn);
+      url += keyval.join("&");
+      return $http.get(url);
+    };
+
+    apiFactory.getTotalCount = function (asn, prefix, where) {
+      var url = urlBase + "security/total";
+      if (asn != null || prefix != null || where != null)
+        url += "?";
+      var keyval = [];
+      if (prefix)
+        keyval.push("prefix=" + prefix);
+      if (where)
+        keyval.push("where=" + where);
+      if (asn)
+        keyval.push("asn=" + asn);
+      url += keyval.join('&');
+      return $http.get(url);
+    };
+
     return apiFactory;
 });
