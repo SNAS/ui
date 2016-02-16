@@ -133,14 +133,14 @@ angular.module('bmpUiApp')
 
     var selectAS = function (as) {
       if (lastCircle != null) {
-        lastCircle.options.color = "#FFFFFF";
+        lastCircle.options.color = "#AAAAAA";
         angular.forEach(lastCircle.AS.upstreams.split(','), function (e) {
           if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "#FFFFFF";
+            ASCircles[e].options.color = "#AAAAAA";
         });
         angular.forEach(lastCircle.AS.downstreams.split(','), function (e) {
           if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "#FFFFFF";
+            ASCircles[e].options.color = "#AAAAAA";
         });
       }
 
@@ -277,6 +277,8 @@ angular.module('bmpUiApp')
 
     var ASCollection;
 
+    var markerLayer;
+
     $scope.loading = true;
 
     apiFactory.getAllASAndRelationships().success(function (result) {
@@ -286,6 +288,17 @@ angular.module('bmpUiApp')
       ASCollection = groupBy(result.ASCollection.data, function (item) {
         return [item.country ? getCode(item.country) : item.country, item.city ? item.city.toLowerCase() : item.city];
       });
+
+      markerLayer = new L.FeatureGroup()
+        .on('click', function (e) {
+          selectAS(e.layer.AS.asn);
+        }).addTo(map)
+        .on('mouseover', function (e) {
+          e.layer.openPopup();
+        })
+        .on('mouseout', function (e) {
+          e.layer.closePopup();
+        });
 
       angular.forEach(ASCollection, function (asArray) {
         var countryCode = asArray[0].country ? getCode(asArray[0].country) : asArray[0].country;
@@ -301,24 +314,18 @@ angular.module('bmpUiApp')
               lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
               long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
 
-              var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 8;
+              var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 10;
               var circle = L.circle([lat, long], radius, {
-                color: '#FFFFFF'
+                color: '#AAAAAA'
                 //fillColor: 'white',
                 //fillOpacity: 0.5
-              }).addTo(map).bindPopup("<p>" + "AS: " + as.asn + "</p>"
+              }).bindPopup("<p>" + "AS: " + as.asn + "</p>"
                 + "<p>" + "AS Name: " + as.as_name + "</p>"
                 + "<p>" + "Org Name: " + as.org_name + "</p>"
                 + (baseLatLng == [1, 1] ? ("<h4>" + "This AS has no geo location provided" + "</h4>") : "")
-              );
+              ).addTo(markerLayer);
 
               circle.AS = as;
-
-              circle.on('click', function (e) {
-
-                selectAS(circle.AS.asn);
-
-              });
 
               ASCircles[as.asn] = circle;
             });
@@ -329,31 +336,24 @@ angular.module('bmpUiApp')
             lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.025);
             long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.025);
 
-            var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 7;
+            var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 10;
             var circle = L.circle([lat, long], radius, {
-              color: 'lightgrey',
+              color: '#AAAAAA',
               fillColor: 'red',
               fillOpacity: 0.4
-            }).addTo(map).bindPopup("<p>" + "AS: " + as.asn + "</p>"
+            }).bindPopup("<p>" + "AS: " + as.asn + "</p>"
               + "<p>" + "AS Name: " + as.as_name + "</p>"
               + "<p>" + "Org Name: " + as.org_name + "</p>"
               + "<h4>" + "This AS has no geo location provided" + "</h4>"
-            );
+            ).addTo(markerLayer);
 
             circle.AS = as;
-
-            circle.on('click', function (e) {
-
-              selectAS(circle.AS.asn);
-
-            });
 
             ASCircles[as.asn] = circle;
           });
         }
       });
     });
-
   }
   ])
 ;
