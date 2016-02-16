@@ -28,23 +28,27 @@ angular.module('bmpUiApp')
       where: null
     };
 
-    var rowTemplate = `
-    <div class='tableRow hover-row-highlight' ng-class="[(row.entity.rpki_origin_as != 0 &&row.entity.recv_origin_as != row.entity.rpki_origin_as)
-      || (row.entity.irr_origin_as != 0 && row.entity.recv_origin_as != row.entity.irr_origin_as) ? 'red' : '', row.entity.prefixClass]">
-      <div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell>
-      </div>
-    </div>
-    `;
+    var rowTemplate = ' \
+    <div class="tableRow" \
+      ng-class="grid.appScope.gridRowClass(row)">  \
+      <div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell> \
+      </div> \
+    </div> \
+    ';
 
-    $(document).on('mouseover', '.tableRow', function(){
-      var classList = $(this).attr('class').split(' ');
-      var prefix = classList[classList.length - 1];   // get class 'prefixClass'
-      $("."+prefix).find('.ui-grid-cell').css('background-color', '#d9d9d9 !important');
-    }).on('mouseleave', '.tableRow', function(){
-      var classList = $(this).attr('class').split(' ');
-      var prefix = classList[classList.length - 1];
-      $("."+prefix).find('.ui-grid-cell').css('background-color', '');
-    });
+    var lastPrefix = "";
+    var isGrey = false;
+    // calculate row class, add 'red' if it's violation
+    $scope.gridRowClass = function(row) {
+      // mark violation prefix as red
+      var isViolation = '';
+      if (((row.entity.rpki_origin_as != 0 && row.entity.rpki_origin_as != null) && row.entity.recv_origin_as != row.entity.rpki_origin_as)
+        ||((row.entity.irr_origin_as !=0 && row.entity.irr_origin_as != null) && row.entity.recv_origin_as != row.entity.irr_origin_as)) {
+        isViolation = 'red';
+      }
+      return isViolation;
+    };
+
 
     $scope.securityGridOptions = {
       rowHeight: 25,
@@ -61,7 +65,15 @@ angular.module('bmpUiApp')
       multiSelect: false,
       rowTemplate: rowTemplate,
       columnDefs: [
-        {name: "prefixWithLen", displayName: 'Prefix/Len', width: '*'},
+        {name: "prefixWithLen", displayName: 'Prefix/Len', width: '*',
+          cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex){
+            if (grid.getCellValue(row, col) != lastPrefix){
+              lastPrefix = grid.getCellValue(row, col);
+              isGrey = !isGrey;
+            }
+            return isGrey ? 'grey' : '';
+          }
+        },
         {name: "recv_origin_as", displayName: 'Recv Origin AS', width: '*', cellFilter: 'zeroFilter'},
         {name: "rpki_origin_as", displayName: "RPKI Origin AS", width: "*", cellFilter: 'zeroFilter'},
         {name: 'irr_origin_as', displayName: 'IRR Origin AS', width: "*", cellFilter: 'zeroFilter'},
@@ -113,7 +125,7 @@ angular.module('bmpUiApp')
         {name: "wholePrefix", displayName: 'Prefix', width: "10%",
           cellTemplate: '<div class="ui-grid-cell-contents prefix-clickable"><div bmp-prefix-model prefix="{{ COL_FIELD }}"></div></div>'
         },
-        {name: "Origin_AS", width: "10%"},
+        {name: "Origin_AS", displayName: 'Origin AS', width: "10%"},
         {name: "RouterName", displayName: 'Router', width: "15%"},
         {name: "PeerName", displayName: 'Peer', width: "20%"},
         {name: "AS_Path", displayName: 'AS Path', width: "*"}
@@ -132,6 +144,9 @@ angular.module('bmpUiApp')
           });
           $scope.securityGridOptions.data = data;
           $scope.securityIsLoad = false;
+          // jump to first page
+          if ($scope.gridApi.pagination.getPage() > $scope.securityGridOptions.totalItems / paginationOptions.pageSize + 1)
+            $scope.gridApi.pagination.seek(1);
         })
         .error(function(err){
           console.log(err.message);
@@ -186,6 +201,9 @@ angular.module('bmpUiApp')
   .filter('zeroFilter', function() {
     // display '-' instead of 0
     return function(value) {
-      return value == 0 ? '-' : value;
+      if (value == null || value == 0)
+        return '-';
+      else
+        return value;
     }
   });
