@@ -18,36 +18,37 @@
 //=================================================================================
 // Imports
 //=================================================================================
- $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
- @font-face {
+$icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
+@font-face {
   font-family: 'CiscoSansThin';
   src: url('../fonts/CiscoSansTTThin.ttf'); /* IE9 Compat Modes */
   src: url('../fonts/CiscoSansTTThin.ttf') format('embedded-opentype'), /* IE6-IE8 */
-       url('../fonts/CiscoSansTTThin.ttf') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/CiscoSansTTThin.ttf') format('woff'), /* Pretty Modern Browsers */
-       url('../fonts/CiscoSansTTThin.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('../fonts/CiscoSansTTThin.ttf') format('svg'); /* Legacy iOS */
+  url('../fonts/CiscoSansTTThin.ttf') format('woff2'), /* Super Modern Browsers */
+  url('../fonts/CiscoSansTTThin.ttf') format('woff'), /* Pretty Modern Browsers */
+  url('../fonts/CiscoSansTTThin.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('../fonts/CiscoSansTTThin.ttf') format('svg'); /* Legacy iOS */
 }
 
 @font-face {
   font-family: 'CiscoSansExtraLight';
   src: url('../fonts/CiscoSansTTExtraLight.ttf'); /* IE9 Compat Modes */
   src: url('../fonts/CiscoSansTTExtraLight.ttf') format('embedded-opentype'), /* IE6-IE8 */
-       url('../fonts/CiscoSansTTExtraLight.ttf') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/CiscoSansTTExtraLight.ttf') format('woff'), /* Pretty Modern Browsers */
-       url('../fonts/CiscoSansTTExtraLight.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('../fonts/CiscoSansTTExtraLight.ttf') format('svg'); /* Legacy iOS */
+  url('../fonts/CiscoSansTTExtraLight.ttf') format('woff2'), /* Super Modern Browsers */
+  url('../fonts/CiscoSansTTExtraLight.ttf') format('woff'), /* Pretty Modern Browsers */
+  url('../fonts/CiscoSansTTExtraLight.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('../fonts/CiscoSansTTExtraLight.ttf') format('svg'); /* Legacy iOS */
 }
 
 @font-face {
   font-family: 'CiscoSans';
   src: url('../fonts/CiscoSansTTRegular.ttf'); /* IE9 Compat Modes */
   src: url('../fonts/CiscoSansTTRegular.ttf') format('embedded-opentype'), /* IE6-IE8 */
-       url('../fonts/CiscoSansTTRegular.ttf') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/CiscoSansTTRegular.ttf') format('woff'), /* Pretty Modern Browsers */
-       url('../fonts/CiscoSansTTRegular.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('../fonts/CiscoSansTTRegular.ttf') format('svg'); /* Legacy iOS */
+  url('../fonts/CiscoSansTTRegular.ttf') format('woff2'), /* Super Modern Browsers */
+  url('../fonts/CiscoSansTTRegular.ttf') format('woff'), /* Pretty Modern Browsers */
+  url('../fonts/CiscoSansTTRegular.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('../fonts/CiscoSansTTRegular.ttf') format('svg'); /* Legacy iOS */
 }
+
 // bower:scss
 @import "bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
 // endbower
@@ -71,12 +72,10 @@
 @import "components/card/templates/topUpdatesGraph/topUpdatesGraph";
 @import "components/card/templates/topWithdrawsGraph/topWithdrawsGraph";
 
-
 //map
 @import "components/map/map";
 @import "components/loading/loading";
 @import "components/asn-model/asn-model";
-
 
 //============================================================
 // Sections
@@ -94,9 +93,11 @@
 @import "asView/asView";
 @import "orrView/orrView";
 @import "lookingGlass/lookingGlass";
+@import "tops/tops";
+@import "atlas/atlas";
+@import "adminView/adminView";
 @import "aggregationanalysis/aggregationanalysis";
 @import "securityAnalysis/securityAnalysis";
-
 
 //test pages
 @import "cardChanges/cardChanges";
@@ -115,31 +116,30 @@
 //$navbar-default-link-color:  				#fff;
 //$navbar-default-bg:                			#3491df;
 
-
 $brand-primary: #00ccff;
 $text-light: #a6a6a6;
 
-$navbar-default-toggle-hover-bg:darken($brand-primary, 10%);
-$navbar-default-toggle-icon-bar-bg:#fff;
-$navbar-default-toggle-border-color:#fff;
-$navbar-default-color:#00ccff;
-$navbar-default-link-color:#fff;
-$navbar-default-bg:#15bdf4;
-$navbar-default-brand-color:#fff;
-$text-color:#888;
+$navbar-default-toggle-hover-bg: darken($brand-primary, 10%);
+$navbar-default-toggle-icon-bar-bg: #fff;
+$navbar-default-toggle-border-color: #fff;
+$navbar-default-color: #00ccff;
+$navbar-default-link-color: #fff;
+$navbar-default-bg: #15bdf4;
+$navbar-default-brand-color: #fff;
+$text-color: #888;
 
-a{
+a {
   cursor: pointer;
   color: #0386d2;
   transition: color 0.2s;
 
-  &:hover, &:focus, &:active{
+  &:hover, &:focus, &:active {
     color: #45A8E2;
     text-decoration: none;
   }
 }
 
-h3{
+h3 {
   font-size: 13pt;
   text-transform: uppercase;
   color: #1C2B36;
@@ -147,7 +147,7 @@ h3{
   margin-bottom: 25px;
 }
 
-body{
+body {
   font-family: 'CiscoSans';
   background-color: #f6f6f6;
   min-width: 1300px;
@@ -159,7 +159,7 @@ pre {
   //overflow-y: scroll;
 }
 
-.table-container{
+.table-container {
   background-color: #FFFFFF;
   border: solid 1px;
   border-color: #D4D4D4;
@@ -197,11 +197,12 @@ icon.bmp-down {
 .red {
   color: #c7000e;
 }
+
 .green {
   color: #7bad85;
 }
 
-.loading-section{
+.loading-section {
   width: 100%;
   position: relative;
 }
@@ -215,10 +216,10 @@ icon.bmp-down {
   margin-right: 2%;
 }
 
-.nav-tabs li a{
+.nav-tabs li a {
   color: #aaa;
 
-  &:hover{
+  &:hover {
     background-color: #fafafa;
   }
 }
@@ -235,7 +236,7 @@ icon.bmp-down {
   line-height: 19.8px;
 }
 
-.help-block{
+.help-block {
   display: inline;
   font-family: 'CiscoSansExtraLight';
   color: #aaa;
@@ -248,13 +249,13 @@ icon.bmp-down {
   outline: none;
 }
 
-.input{
-  padding-bottom:12px;
+.input {
+  padding-bottom: 12px;
 }
 
-.filter-button{
-  float:right;
-  margin-right:40px;
+.filter-button {
+  float: right;
+  margin-right: 40px;
   background-color: #F6F6F6;
 }
 
@@ -267,7 +268,7 @@ $row-select-colour: #EFF7FF;
 $grid-text-colour: #71818D;
 
 .ui-grid {
-  border:none;
+  border: none;
   color: $grid-text-colour;
   border-bottom: 1px solid #efefef;
   font-family: 'CiscoSans';
@@ -276,11 +277,12 @@ $grid-text-colour: #71818D;
 }
 
 .ui-grid-header {
-  border:none;
+  border: none;
   border-bottom: 1px solid #efefef;
 }
+
 .ui-grid-top-panel {
-  border:none;
+  border: none;
   position: relative;
   overflow: hidden;
   font-weight: bold;
@@ -308,7 +310,7 @@ $grid-text-colour: #71818D;
 }
 
 .ui-grid-header-cell {
-  border:none;
+  border: none;
 }
 
 //colour the extra scroll space on header
@@ -327,20 +329,21 @@ $grid-text-colour: #71818D;
 .ui-grid-row:nth-child(odd) .ui-grid-cell {
   background-color: $row-colour-light;
 }
+
 .ui-grid-row:last-child .ui-grid-cell {
-  border:none;
+  border: none;
 }
 
 .ui-grid-cell {
-  border:none;
+  border: none;
 }
 
 .ui-grid-row-header-cell {
-  border:none;
+  border: none;
 }
 
 .ui-grid-footer-panel {
-  border:none;
+  border: none;
 }
 
 .loading-section .ui-grid-grid-footer {
@@ -354,39 +357,40 @@ $grid-text-colour: #71818D;
 }
 
 .ui-grid-menu-button {
-  border:none;
+  border: none;
 }
 
 .ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
-  border:none;
+  border: none;
 }
 
 .ui-grid-menu .ui-grid-menu-inner {
-  border:none;
+  border: none;
 }
 
 .ui-grid-menu .ui-grid-menu-inner ul li:not(:last-child) {
-  border:none;
+  border: none;
 }
 
 .ui-grid[dir=rtl] .ui-grid-cell:last-child,
 .ui-grid[dir=rtl] .ui-grid-header-cell:last-child {
-  border:none;
+  border: none;
 }
 
 .ui-grid[dir=rtl] .ui-grid-menu-button {
-  border:none;
+  border: none;
 }
 
 div.ui-grid-cell input.ng-invalid {
-  border:none;
+  border: none;
 }
+
 div.ui-grid-cell input.ng-valid {
-  border:none;
+  border: none;
 }
 
 .movingColumn {
-  border:none;
+  border: none;
 }
 
 //.ui-grid-pager-control .first-bar {
@@ -404,33 +408,36 @@ div.ui-grid-cell input.ng-valid {
 //}
 
 .ui-grid-pinned-container.ui-grid-pinned-container-left .ui-grid-header-cell:last-child {
-  border:none;
+  border: none;
 }
+
 .ui-grid-pinned-container.ui-grid-pinned-container-left .ui-grid-cell:last-child {
-  border:none;
+  border: none;
 }
 
 .ui-grid-pinned-container.ui-grid-pinned-container-right .ui-grid-header-cell:first-child {
-  border:none;
+  border: none;
 }
+
 .ui-grid-pinned-container.ui-grid-pinned-container-right .ui-grid-cell:first-child {
-  border:none;
+  border: none;
 }
 
 .ui-grid-header-cell:last-child .ui-grid-column-resizer.right {
-  border:none;
-}
-.ui-grid[dir=rtl] .ui-grid-header-cell:last-child .ui-grid-column-resizer.left {
-  border:none;
+  border: none;
 }
 
-.ui-grid-cell-contents{
+.ui-grid[dir=rtl] .ui-grid-header-cell:last-child .ui-grid-column-resizer.left {
+  border: none;
+}
+
+.ui-grid-cell-contents {
   font-size: 9pt;
   margin-top: 3px;
   font-family: 'CiscoSansExtraLight';
 }
 
-.ui-grid-header-cell .ui-grid-cell-contents{
+.ui-grid-header-cell .ui-grid-cell-contents {
   font-size: 10pt;
   font-family: 'CiscoSans';
 }
@@ -443,24 +450,24 @@ div.ui-grid-cell input.ng-valid {
   background-color: $row-select-colour !important;
 }
 
-.asn-clickable{
+.asn-clickable {
   cursor: pointer;
-  &:hover{
+  &:hover {
     color: #43f0a2;
   }
 }
 
-.prefix-clickable{
+.prefix-clickable {
   cursor: pointer;
-  &:hover{
+  &:hover {
     color: #AA22FF;
   }
 }
 
-.hover-row-highlight{
+.hover-row-highlight {
   cursor: pointer;
-  &:hover{
-    .ui-grid-cell{
+  &:hover {
+    .ui-grid-cell {
       background-color: #d9d9d9 !important;
     }
   }
@@ -468,7 +475,7 @@ div.ui-grid-cell input.ng-valid {
 
 .watermark {
   position: absolute;
-  top : 60px;
+  top: 60px;
   opacity: 0.25;
   font-size: 3em;
   width: 100%;
@@ -476,3 +483,8 @@ div.ui-grid-cell input.ng-valid {
   //z-index: 1000;
 }
 
+.leaflet-zoom-animated {
+  display: inline;
+  width: auto;
+  height: auto;
+}

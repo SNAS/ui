@@ -100,7 +100,13 @@ angular.module('bmpUiApp')
         case "app.linkState":
         case "app.orrView":
         case "app.whoIs":
+        case "app.adminView":
           $scope.category = "Dashboards";
+          $scope.atlas = false;
+          break;
+        case "app.atlas":
+          $scope.category = "Dashboards";
+          $scope.atlas = true;
           break;
         case "app.peerAnalysis":
         case "app.asAnalysis":
@@ -108,6 +114,7 @@ angular.module('bmpUiApp')
         case "app.aggregationAnalysis":
         case "app.securityAnalysis":
           $scope.category = "Analysis";
+          $scope.atlas = false;
           break;
       }
 

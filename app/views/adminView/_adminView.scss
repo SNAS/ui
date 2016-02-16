@@ -1,0 +1,41 @@
+.update-result {
+  position: relative;
+  text-align: center;
+  margin-left: 15px;
+  display: inline;
+  height: 40px;
+  background-color: white;
+  border-radius: 2px;
+  width: 150px;
+  padding: 5px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 3px 5px;
+  border: 1px solid #0b97c4;
+}
+
+.tab-padding{
+  padding:20px;
+}
+
+.btn{
+  margin-left:10px;
+}
+
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;
+  background: white;
+  cursor: inherit;
+  display: block;
+}

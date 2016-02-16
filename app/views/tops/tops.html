@@ -42,9 +42,8 @@
         <div ng-show="filterPeerText||filterPrefixText">
           <span>Filter:</span>
 
-          <label id="filterPeer" style="margin-left:5px;font-size:15px;cursor:pointer"
+          <label id="filterPeer" class="btn btn-sm btn-info filterText"
                  ng-show="filterPeerText"
-                 class="btn btn-sm btn-info"
                  ng-mouseover='clearOneVisible=true'
                  ng-mouseleave='clearOneVisible=false;'
                  ng-click="clearFilter('peer')">
@@ -52,9 +51,8 @@
             <span ng-show="clearOneVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
           </label>
 
-          <label id="filterPrefix" style="margin-left:5px;font-size:15px;cursor:pointer"
+          <label id="filterPrefix" class="btn btn-sm btn-warning filterText"
                  ng-show="filterPrefixText"
-                 class="btn btn-sm btn-warning"
                  ng-mouseover='clearTwoVisible=true'
                  ng-mouseleave='clearTwoVisible=false'
                  ng-click="clearFilter('prefix')">

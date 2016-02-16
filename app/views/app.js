@@ -23,6 +23,7 @@ angular
     'ui.grid.autoResize',
     'ui.grid.resizeColumns',
     'ui.grid.pagination',
+    'ui.grid.edit',
     'bmp.components.cardList',
     'bmp.components.card',
     'bmp.components.loading',
@@ -103,6 +104,10 @@ angular
       //  url: '/peer-analysis',
       //  templateUrl: 'views/peeranalysis/peeranalysis.html'
       //})
+      .state('app.atlas', {
+        url: '/atlas',
+        templateUrl: 'views/atlas/atlas.html'
+      })
       .state('app.asAnalysis', {
         url: '/AS-analysis',
         templateUrl: 'views/asAnalysis/asAnalysis.html'
@@ -131,6 +136,10 @@ angular
       .state('app.securityAnalysis', {
         url: '/security-analysis?:as?',
         templateUrl: 'views/securityAnalysis/securityAnalysis.html'
+      })
+      .state('app.adminView',{
+        url: '/admin',
+        templateUrl: 'views/adminView/adminView.html'
       })
 
       //DUAL WINDOW MODE ENAGAAAGE
