@@ -1,29 +1,145 @@
-<div class="margin-small" ng-controller="linkStateController">
+<div ng-controller="linkStateController" class="ls-container">
+
   <div class="main-page-search">
-    Select Peer
+    Select BGP LS Peer
     <select ng-model="selectedPeer"
             ng-options="(peer.PeerName != '' ? peer.PeerName : peer.PeerIP + ' (' + peer.protocol + ')' ) for peer in peerData"
             ng-change="selectChange()">
     </select>
-    Protocol: {{protocol}}
-  </div>
-  <!--<nextTopology data="topologyData" options="topologyOptions" protocol="protocol" peer-hash-id="peerHashId" get-spf-table="getSPFtable" path="path"></nextTopology>-->
-  <!--<topology></topology>-->
-
-  <div class="loading-section">
-    <div id="link_state_topology">
-      <div class="watermark" ng-if="!$scope.peerData.length">No data available</div>
-    </div>
-    <div bmp-loading loading-var="topologyIsLoad"></div>
+    Protocol: {{protocol}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Topology Type:
+    <select ng-model="selected_mt_id"
+            ng-options="mtID as translateMT[mtID] for mtID in selectedPeer.available_mt_ids"
+            ng-change="selectChange()">
+    </select>
   </div>
 
-  <div class="main-area" style="margin-top: 15px" ng-show="show===true">
-    <div class="table-container">
-      <h3>Node Information</h3>
-
+  <tabset>
+    <tab heading="Map View" ng-click="changeTab('map')">
       <div class="loading-section">
-        <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize></div>
+        <div>
+          <div class="map-container relative">
+            <div class="map-control router-list expanded" ng-style="{'height': mapHeight}">
+              <tabset>
+                <tab heading="Router List" style="width:50%">
+                  <h3 class="panel-header">
+                    Link State Routers
+                    <div class="panel-search">
+                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.NodeName"
+                             ng-click="panelSearch(panelSearchKey)"/>
+                      <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey"
+                            ng-click="panelSearchKey = ''"></span>
+                    </div>
+                  </h3>
+
+                  <div class="main" ng-style="{'height': mapHeight - 53, 'overflow-y': 'scroll', 'padding-bottom': 0}">
+                    <ul class="locations">
+                      <li ng-repeat="(location, locaNodes) in locations | orderBy: 'location'" id="{{location}}"
+                          class="loca">
+                        <p class="router-list-city" ng-click="toggleLocationSelection(location)">
+                          <span class="glyphicon glyphicon-play"></span>{{location}}
+                          <span class="count">({{locaNodes.length}})</span>
+                        </p>
+                        <ul class="peers locationItems" id="{{location}}nodes" hidden>
+                          <li ng-repeat="node in locaNodes | filter:panelSearchKey"
+                              ng-click="goto([node.latitude,node.longitude],map.options.maxZoom);selectNode(node);markers[node.id].options.highlightCircle = drawHighlightCircle([node.latitude,node.longitude],'red')">
+                            <div class="row">
+                              <div class="col-xs-12" tooltip-popup-delay="1000" tooltip-append-to-body="true"
+                                   tooltip="{{node.routerId}} | {{node.igp_routerId}}" tooltip-placement="top">
+                                {{node.NodeName||node.routerId}}
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>  <!-- end of main expanded -->
+                </tab>
+                <tab heading="Path Trace" style="width:50%;">
+                  <h3 class="panel-header">
+                    Path Trace
+                  </h3>
+                  <div class="text-center">
+                    <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
+                    <ul ng-if="pathTraces" ng-style="{'height': mapHeight - 117, 'overflow-y': 'scroll'}">
+                      <li class="path-trace" ng-repeat="router in pathTraces"
+                          tooltip="Name: {{router.NodeName||router.routerId}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
+                          ng-click="goto([router.latitude,router.longitude])">
+                        <h5>
+                          <span class="bmp-igp_router10-17" style="color:#55c2cc;font-size:30px"></span>
+                          <span style="color:black;font-size:14px">{{router.NodeName||router.routerId}}</span>
+                        </h5>
+                        <span class="glyphicon glyphicon-chevron-down" ng-if="!$last"></span>
+                      </li>
+                    </ul>
+                  </div>
+                </tab>
+              </tabset>
+            </div> <!-- End of router-list -->
+            <leaflet ng-attr-id="LinkStateMap" class="map" defaults="defaults" height="{{mapHeight}}" width="71.9%"></leaflet>
+
+          </div>
+          <div class="watermark" ng-if="!peerData.length">No data available</div>
+        </div>
+        <div bmp-loading ng-show="topologyIsLoad"></div>
+      </div>
+
+    </tab>
+
+    <tab heading="Table View" ng-click="changeTab('table')">
+      <div class="table-container">
+        <h3>IGP Nodes</h3>
+        <div class="loading-section">
+          <div id="lsTable" ui-grid="lsTableOptions" ui-grid-selection ui-grid-resize-columns ng-if="tab=='table'"
+               ng-style="{'height':lsTableInitHeight}"></div>
+        </div>
+      </div>
+    </tab>
+
+  </tabset>
+
+  <div id="SPFsection" class="main-area" style="margin-top: 15px">
+    <div class="table-container">
+      <h3 style="text-transform:none">TOPOLOGY TABLE {{selectedRouter?"FOR "+selectedRouter.NodeName+
+        " ("+selectedRouter.routerId+")":""}}
+        <span class="btn btn-primary btn-xs pull-right" style="margin-right:2%" ng-show="pathTraces"
+              ng-click="SPFgridApi.selection.clearSelectedRows();">Clear Selection</span>
+      </h3>
+      <div class="loading-section">
+        <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize>
+          <div class="watermark" ng-show="!SPFtableOptions.data.length>0">No data available</div>
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="main-area" style="margin-top: 15px">
+    <div class="table-container">
+      <h3>Path Trace</h3>
+      <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
+
+      <div class="as-path" style="white-space:nowrap">
+
+        <div ng-repeat="router in pathTraces"
+             style="position: relative;width:220px;display:inline-block">
+          <!--icon-->
+          <div style="display: table-cell;">
+            <div class="bmp-igp_router10-17" style="font-size: 50px;color:#55c2cc;margin-left:15px"
+                 tooltip="Name: {{router.NodeName||router.routerId}}, Location:{{router.city}},{{router.stateprov}},{{router.country}}"></div>
+            <div style="text-align: center;width:200px;position:absolute;white-space:normal">
+              {{router.NodeName||router.routerId}}
+            </div>
+          </div>
+          <!--line-->
+          <div style="display: table-cell" ng-if="!$last">
+            <div
+              style="width: 150px;height: 2px;background-color:#dadada;position: absolute;margin-top: 25px;margin-left:5px"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
 </div>

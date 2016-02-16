@@ -65,13 +65,16 @@ angular.module('bmpUiApp')
 
     noUiSlider.create(timeSelector, sliderSettings);
 
-    $('#startDatetimePicker').datetimepicker({
+    var startDatetimePicker = $('#startDatetimePicker'),
+      endDatetimePicker = $('#endDatetimePicker');
+
+    startDatetimePicker.datetimepicker({
       sideBySide: true,
       format: 'MM/DD/YYYY HH:mm'
     });
 
-    $('#startDatetimePicker').on('dp.hide', function () {
-      var setDate = $('#startDatetimePicker').data('DateTimePicker').date();
+    startDatetimePicker.on('dp.hide', function () {
+      var setDate = startDatetimePicker.data('DateTimePicker').date();
       var originalValues = timeSelector.noUiSlider.get();
       if (setDate < moment(sliderSettings.range['min'])) {
         timeSelector.noUiSlider.destroy();
@@ -103,13 +106,13 @@ angular.module('bmpUiApp')
       }
     });
 
-    $('#endDatetimePicker').datetimepicker({
+    endDatetimePicker.datetimepicker({
       sideBySide: true,
       format: 'MM/DD/YYYY HH:mm'
     });
 
-    $('#endDatetimePicker').on('dp.hide', function () {
-      var setDate = $('#endDatetimePicker').data('DateTimePicker').date();
+    endDatetimePicker.on('dp.hide', function () {
+      var setDate = endDatetimePicker.data('DateTimePicker').date();
       var originalValues = timeSelector.noUiSlider.get();
       if (setDate <= moment(sliderSettings.range['min'])) {
         timeSelector.noUiSlider.destroy();
@@ -146,8 +149,8 @@ angular.module('bmpUiApp')
 
     function bindValues() {
       timeSelector.noUiSlider.on('update', function () {
-        $('#startDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
-        $('#endDatetimePicker').data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
+        startDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
+        endDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
         durationInMinutes = Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60));
         if (durationInMinutes > 60)
           duration = Math.floor(durationInMinutes / 60) + ' hrs ' + durationInMinutes % 60 + ' mins';
@@ -341,8 +344,8 @@ angular.module('bmpUiApp')
       ];
       $scope.trendGraphData = [];
 
-      startTimestamp = moment($('#startDatetimePicker').data("DateTimePicker").date()).tz('UTC').format(timeFormat);
-      endTimestamp = moment($('#endDatetimePicker').data("DateTimePicker").date()).tz('UTC').format(timeFormat);
+      startTimestamp = moment(startDatetimePicker.data("DateTimePicker").date()).tz('UTC').format(timeFormat);
+      endTimestamp = moment(endDatetimePicker.data("DateTimePicker").date()).tz('UTC').format(timeFormat);
 
       apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
         .success(function (result) {

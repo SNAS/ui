@@ -1,0 +1,11 @@
+button:focus {
+  outline: 0 !important;
+}
+
+.grey {
+  background-color: #e1e1e1 !important;
+}
+
+.grey ~ * {
+  background-color: #e1e1e1 !important;
+}

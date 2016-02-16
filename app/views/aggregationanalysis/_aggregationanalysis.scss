@@ -9,3 +9,18 @@
 .margin-small{
   margin: 3%;
 }
+
+.select {
+  outline: none;
+  border: none;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 3px;
+  margin: 0;
+  color: white;
+  background-color: #46b8da;
+  position: relative;
+  left: 20px;
+  height: 30px;
+}

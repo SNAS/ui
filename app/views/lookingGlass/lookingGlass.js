@@ -89,15 +89,13 @@ angular.module('bmpUiApp')
               resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
             }
             $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
+            $scope.calGridHeight($scope.glassGridOptions,$scope.glassGridApi);
           }
         } else { // empty response
           $scope.glassGridOptions.data = [];
           $scope.glassGridOptions.showGridFooter = false;
         }
-
         $scope.glassGridOptions.glassGridIsLoad = false; //stop loading
-
-        $scope.calGridHeight($scope.glassGridOptions,$scope.glassGridApi);
       }).
       error(function (error) {
         console.log(error.message);
@@ -424,6 +422,10 @@ angular.module('bmpUiApp')
             value = ipv6Arr.join(':');
           }
         }
+      }
+
+      if ($scope.isAggregate && value.indexOf('/') != -1) {
+        value = value.split('/')[0];
       }
 
       if (fullIpWithPreLenReg.exec(value) != null || partCompIpRegex.exec(value) != null) {

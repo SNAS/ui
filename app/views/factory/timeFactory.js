@@ -8,9 +8,8 @@ angular.module('bmpUiApp')
     var timeNow = Date.now();
 
     var d = new Date();
-    var offset = d.getTimezoneOffset() * 60000;
-    timeNow += offset;
 
+    timeNow += d.getTimezoneOffset() * 60000;
 
     // This will work out time in format
     // Years 2, Months, 3 Day, 1 14h32m

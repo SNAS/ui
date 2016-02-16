@@ -1,1 +1,50 @@
+.link-state-view {
+  padding: 15px;
+}
 
+.leaflet-zoom-animated {
+  display: inline;
+  width: auto;
+  height: auto;
+}
+
+.locations {
+  .expanded {
+    .glyphicon {
+      transform: rotate(90deg);
+    }
+    .locationItems {
+      visibility: visible;
+    }
+  }
+}
+
+.path-trace {
+  height: 60px;
+  margin: 7px;
+  img {
+    height: 35px;
+    width: 35px;
+  }
+  .glyphicon {
+    color: black;
+    font-size: 15px;
+  }
+  h5 {
+    margin: 4px;
+    cursor: pointer;
+  }
+}
+
+.text-center ul {
+  padding-left: 0;
+}
+
+.tab-content {
+  //height:100%;
+  border-bottom: none;
+}
+
+.map-container {
+  border-top: none;
+}

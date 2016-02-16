@@ -8,7 +8,8 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-  .controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", function ($scope, $rootScope, $timeout, apiFactory, leafletData, $compile, $window, $q) {
+  .controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", "toolsFactory",
+    function ($scope, $rootScope, $timeout, apiFactory, leafletData, $compile, $window, $q, toolsFactory) {
 
     window.SCOPEMAP = $scope;
 
@@ -20,7 +21,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
     $scope.showBottomPane = false;
     $scope.selectionMade = false;
-    $scope.mapWidth = "72%"
+    $scope.mapWidth = "72%";
 
     $scope.locations = [];
     $scope.peers = [];
@@ -74,7 +75,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
     $scope.$watch('selectionMade', function (val) {
       if ($rootScope.dualWindow.active) {
-        $scope.mapHeight = '100%';
+        $scope.mapHeight = 350;
         if (val === true) {
           $scope.panelHeight = 'calc(100% - 100px)'
         }
@@ -87,7 +88,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         return;
       }
       if (val === true) {
-        $scope.mapHeight = 400;
+        $scope.mapHeight = 400 - 50;
         $scope.panelHeight = 'calc(100% - 100px)'
       }
       else {
@@ -179,22 +180,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }
 
         for (var i = 0; i < data.length; i++) {
-          if (data[i].latitude == null && data[i].longitude == null) {
-            data[i].latitude = 37.3639;
-            data[i].longitude = -121.929;
-          }
-
-          if (data[i].country == null) {
-            data[i].country = 'US';
-          }
-
-          if (data[i].city == null) {
-            data[i].city = 'San Jose';
-          }
-
-          if (data[i].stateprov == null) {
-            data[i].stateprov = "CA";
-          }
+          toolsFactory.addDefaultInfo(data[i]);
 
           var latlng = [data[i].latitude, data[i].longitude];
 
@@ -987,7 +973,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         }, 1000);
       }
       scope.getWindowDimensions = function () {
-        return {'h': w.height()};
+        return {'h': w.height() - 50};  // for tab height
       };
       scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
         if ($rootScope.dualWindow.active) {
