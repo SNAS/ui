@@ -74,10 +74,10 @@ angular.module('bmpUiApp')
             return isGrey ? 'grey' : '';
           }
         },
-        {name: "recv_origin_as", displayName: 'Recv Origin AS', width: '*', cellFilter: 'zeroFilter'},
-        {name: "rpki_origin_as", displayName: "RPKI Origin AS", width: "*", cellFilter: 'zeroFilter'},
-        {name: 'irr_origin_as', displayName: 'IRR Origin AS', width: "*", cellFilter: 'zeroFilter'},
-        {name: 'irr_source', displayName: "IRR Origin AS", width: "*"}
+        {name: "recv_origin_as", displayName: 'Recv Origin AS', width: '*', cellFilter: 'zeroNullFilter'},
+        {name: "rpki_origin_as", displayName: "RPKI Origin AS", width: "*", cellFilter: 'zeroNullFilter'},
+        {name: 'irr_origin_as', displayName: 'IRR Origin AS', width: "*", cellFilter: 'zeroNullFilter'},
+        {name: 'irr_source', displayName: "IRR Source", width: "*", cellFilter: 'zeroNullFilter'}
       ],
       onRegisterApi: function(gridApi) {
         $scope.gridApi = gridApi;
@@ -198,7 +198,7 @@ angular.module('bmpUiApp')
     getMismatchPrefix();
 
   }])
-  .filter('zeroFilter', function() {
+  .filter('zeroNullFilter', function() {
     // display '-' instead of 0
     return function(value) {
       if (value == null || value == 0)
