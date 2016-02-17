@@ -214,6 +214,8 @@ angular.module('bmpUiApp')
 
     $scope.getRpki = function() {
       $scope.filterOptions.rpki = !$scope.filterOptions.rpki;
+      $scope.filterOptions.irr = false;
+      $scope.filterOptions.incomplete = false;
       if ($scope.filterOptions.rpki)
         searchOptions.where = 'WHERE rpki_origin_as IS NOT null';
       else
@@ -223,6 +225,8 @@ angular.module('bmpUiApp')
 
     $scope.getIrr = function() {
       $scope.filterOptions.irr = !$scope.filterOptions.irr;
+      $scope.filterOptions.rpki = false;
+      $scope.filterOptions.incomplete = false;
       if ($scope.filterOptions.irr)
         searchOptions.where = 'WHERE irr_origin_as IS NOT null';
       else
@@ -232,6 +236,8 @@ angular.module('bmpUiApp')
 
     $scope.getIncomplete = function() {
       $scope.filterOptions.incomplete = !$scope.filterOptions.incomplete;
+      $scope.filterOptions.rpki = false;
+      $scope.filterOptions.irr = false;
       if ($scope.filterOptions.incomplete)
         searchOptions.where = 'WHERE rpki_origin_as IS null or irr_origin_as IS null';
       else
