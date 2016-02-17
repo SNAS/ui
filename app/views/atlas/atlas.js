@@ -315,7 +315,7 @@ angular.module('bmpUiApp')
               long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
 
               var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 10;
-              var circle = L.circle([lat, long], radius, {
+              var circle = L.circleMarker([lat, long], {
                 color: '#AAAAAA'
                 //fillColor: 'white',
                 //fillOpacity: 0.5
@@ -337,7 +337,7 @@ angular.module('bmpUiApp')
             long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.025);
 
             var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 10;
-            var circle = L.circle([lat, long], radius, {
+            var circle = L.circleMarker([lat, long], {
               color: '#AAAAAA',
               fillColor: 'red',
               fillOpacity: 0.4
