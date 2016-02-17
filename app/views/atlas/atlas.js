@@ -16,7 +16,7 @@ angular.module('bmpUiApp')
       })
     }
 
-    var map = L.map('map').setView([39.50, -98.35], 5);
+    var map = L.map('map').setView([39.50, -98.35], 4);
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       accessToken: 'pk.eyJ1IjoicmFpbnk5MjcxIiwiYSI6ImNpaHNicmNlaDAwcWp0N2tobmxiOGRnbXgifQ.iWcbPl8TwyIX-qaX6nTx-g',
@@ -28,11 +28,11 @@ angular.module('bmpUiApp')
       var value;
       if (e.target.attributes['asn'] != undefined) {
         value = e.target.attributes['asn'].value;
-        map.panTo(ASCircles[value]._latlng, {animate: true});
+        map.setView(ASCircles[value]._latlng, map.getMaxZoom() - 1);
       }
       else {
         value = e.target.innerText;
-        map.panTo(prefixCircles[value]._latlng, {animate: true});
+        map.setView(prefixCircles[value]._latlng, map.getMaxZoom() - 1);
       }
     };
 
@@ -133,14 +133,14 @@ angular.module('bmpUiApp')
 
     var selectAS = function (as) {
       if (lastCircle != null) {
-        lastCircle.options.color = "#AAAAAA";
+        lastCircle.options.color = "black";
         angular.forEach(lastCircle.AS.upstreams.split(','), function (e) {
           if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "#AAAAAA";
+            ASCircles[e].options.color = "black";
         });
         angular.forEach(lastCircle.AS.downstreams.split(','), function (e) {
           if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "#AAAAAA";
+            ASCircles[e].options.color = "black";
         });
       }
 
@@ -277,7 +277,23 @@ angular.module('bmpUiApp')
 
     var ASCollection;
 
-    var markerLayer;
+    var cluster;
+
+    var progress = document.getElementById('progress');
+    var progressBar = document.getElementById('progress-bar');
+
+    function updateProgressBar(processed, total, elapsed, layersArray) {
+      if (elapsed > 1000) {
+        // if it takes more than a second to load, display the progress bar:
+        progress.style.display = 'block';
+        progressBar.style.width = Math.round(processed / total * 100) + '%';
+      }
+
+      if (processed === total) {
+        // all markers processed - hide the progress bar:
+        progress.style.display = 'none';
+      }
+    }
 
     $scope.loading = true;
 
@@ -289,16 +305,9 @@ angular.module('bmpUiApp')
         return [item.country ? getCode(item.country) : item.country, item.city ? item.city.toLowerCase() : item.city];
       });
 
-      markerLayer = new L.FeatureGroup()
-        .on('click', function (e) {
-          selectAS(e.layer.AS.asn);
-        }).addTo(map)
-        .on('mouseover', function (e) {
-          e.layer.openPopup();
-        })
-        .on('mouseout', function (e) {
-          e.layer.closePopup();
-        });
+      cluster = new L.MarkerClusterGroup();
+
+      cluster.addTo(map);
 
       angular.forEach(ASCollection, function (asArray) {
         var countryCode = asArray[0].country ? getCode(asArray[0].country) : asArray[0].country;
@@ -314,16 +323,21 @@ angular.module('bmpUiApp')
               lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
               long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
 
-              var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 10;
               var circle = L.circleMarker([lat, long], {
-                color: '#AAAAAA'
-                //fillColor: 'white',
-                //fillOpacity: 0.5
+                color: 'black',
+                fillColor: 'pink',
+                fillOpacity: 0.5
+              }).on('click', function (e) {
+                selectAS(e.target.AS.asn);
+              }).on('mouseover', function (e) {
+                e.target.openPopup();
+              }).on('mouseout', function (e) {
+                e.target.closePopup();
               }).bindPopup("<p>" + "AS: " + as.asn + "</p>"
                 + "<p>" + "AS Name: " + as.as_name + "</p>"
                 + "<p>" + "Org Name: " + as.org_name + "</p>"
                 + (baseLatLng == [1, 1] ? ("<h4>" + "This AS has no geo location provided" + "</h4>") : "")
-              ).addTo(markerLayer);
+              ).addTo(cluster);
 
               circle.AS = as;
 
@@ -336,16 +350,21 @@ angular.module('bmpUiApp')
             lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.025);
             long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.025);
 
-            var radius = (as.upstreams.split(',').length + as.downstreams.split(',').length) * 10;
             var circle = L.circleMarker([lat, long], {
-              color: '#AAAAAA',
-              fillColor: 'red',
+              color: 'black',
+              fillColor: 'pink',
               fillOpacity: 0.4
+            }).on('click', function (e) {
+              selectAS(e.target.AS.asn);
+            }).on('mouseover', function (e) {
+              e.target.openPopup();
+            }).on('mouseout', function (e) {
+              e.target.closePopup();
             }).bindPopup("<p>" + "AS: " + as.asn + "</p>"
               + "<p>" + "AS Name: " + as.as_name + "</p>"
               + "<p>" + "Org Name: " + as.org_name + "</p>"
               + "<h4>" + "This AS has no geo location provided" + "</h4>"
-            ).addTo(markerLayer);
+            ).addTo(cluster);
 
             circle.AS = as;
 
