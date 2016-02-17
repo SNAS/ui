@@ -74,7 +74,7 @@ angular.module('bmpUiApp')
           {field: 'metric', displayName: 'Metric', width: '*'},
           {field: 'src_router_id', displayName: 'Source Node ID', width: '*'},
           {field: 'nei_router_id', displayName: 'Neighbor Node ID', width: '*'},
-          {field: 'neighbor_addr_adjusted', displayName: 'Interface', width: '*'}
+          {field: 'interface', displayName: 'Interface', width: '*'}
         ],
         onRegisterApi: function (gridApi) {
           $scope.SPFgridApi = gridApi;
@@ -88,9 +88,9 @@ angular.module('bmpUiApp')
                 '<div class="row"><div class="col-xs-5">Interface</div><div class="col-xs-7">: ' + (row.entity.interface != null ? row.entity.interface : '-') + '</div></div>' +
                 '<div class="row"><div class="col-xs-5">Bandwidth</div><div class="col-xs-7">: ' + (row.entity.bandwidth != null ? row.entity.bandwidth + ' Kb/s' : '-') + '</div></div>' +
                 '<div class="row"><div class="col-xs-5">Reliability</div><div class="col-xs-7">: ' + (row.entity.reliability != null ? row.entity.reliability : '-') + '</div></div>' +
-                '<div class="row"><div class="col-xs-5">Input Data Rate</div><div class="col-xs-7">: ' + (row.entity.input_data_rate != null ? row.entity.input_data_rate + ' b/s' : '-') + '</div></div>' +
+                '<div class="row"><div class="col-xs-5">Input Data Rate</div><div class="col-xs-7">: ' + (row.entity.input_data_rate != null ? row.entity.input_data_rate + ' Kb/s' : '-') + '</div></div>' +
                 '<div class="row"><div class="col-xs-5">Input Packet Rate</div><div class="col-xs-7">: ' + (row.entity.input_packet_rate != null ? row.entity.input_packet_rate : '-') + '</div></div>' +
-                '<div class="row"><div class="col-xs-5">Output Data Rate</div><div class="col-xs-7">: ' + (row.entity.output_data_rate != null ? row.entity.output_data_rate + ' b/s' : '-' ) + '</div></div>' +
+                '<div class="row"><div class="col-xs-5">Output Data Rate</div><div class="col-xs-7">: ' + (row.entity.output_data_rate != null ? row.entity.output_data_rate + ' Kb/s' : '-' ) + '</div></div>' +
                 '<div class="row"><div class="col-xs-5">Output Packet Rate</div><div class="col-xs-7">: ' + (row.entity.output_packet_rate != null ? row.entity.output_packet_rate : '-') + '</div></div>' +
                 '</div>';
               $('#list')[0].innerHTML = $scope.innerHTML;
@@ -604,9 +604,9 @@ angular.module('bmpUiApp')
               interface: (linksData[i].interface != null ? linksData[i].interface : '-'),
               bandwidth: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' Kb/s' : '-'),
               reliability: (linksData[i].reliability != null ? linksData[i].reliability : '-'),
-              input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' b/s' : '-'),
+              input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' Kb/s' : '-'),
               input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate : '-'),
-              output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + 'b/s' : '-'),
+              output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + 'Kb/s' : '-'),
               output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate : '-')
             });
             //}
