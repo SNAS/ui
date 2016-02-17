@@ -204,6 +204,9 @@ angular.module('bmpUiApp')
 
       $scope.selectChange = function () {
 
+        if ($(".leaflet-popup-close-button")[0])
+          $(".leaflet-popup-close-button")[0].click();
+
         if ($scope.selectedPeer) {
           if ($scope.selected_mt_id == null || $scope.selected_mt_id == undefined)
             $scope.selected_mt_id = $scope.selectedPeer.available_mt_ids[0];
@@ -606,7 +609,7 @@ angular.module('bmpUiApp')
               reliability: (linksData[i].reliability != null ? linksData[i].reliability : '-'),
               input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' Kb/s' : '-'),
               input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate : '-'),
-              output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + 'Kb/s' : '-'),
+              output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + ' Kb/s' : '-'),
               output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate : '-')
             });
             //}

@@ -12,6 +12,7 @@
             ng-options="mtID as translateMT[mtID] for mtID in selectedPeer.available_mt_ids"
             ng-change="selectChange()">
     </select>
+    <p class="btn btn-xs btn-info" ng-click="selectChange()" style="margin-left:20px"><span class="glyphicon glyphicon-refresh"></span> Refresh Map</p>
   </div>
 
   <tabset>
