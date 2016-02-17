@@ -232,10 +232,6 @@ angular.module('bmpUiApp')
       $scope.currentSetTime = setDate;
       var searchPrefix = $scope.currentValue + '?hours=' + $scope.timeRange.range + '&ts=' + moment.utc(setDate).format("YYYY-MM-DD HH:mm:ss");
       getPrefixHisData(searchPrefix);
-      if(!$scope.$$phase) {
-        //$digest or $apply
-        $scope.$apply();
-      }
     };
 
     $scope.selectTimeRange = function() {
@@ -411,9 +407,6 @@ angular.module('bmpUiApp')
           }
           getPrefixHisDataHour();
         });
-      if(!$scope.$$phase) {
-        $scope.$apply();
-      }
     };
 
     var getPrefixHisDataHour = function () {
@@ -596,10 +589,6 @@ angular.module('bmpUiApp')
         $scope.asPathChange[2] = $scope.asPathChangeNH;
         $scope.asPathChange[3] = $scope.asPathChangeCommunites;
       }
-      if(!$scope.$$phase) {
-        //$digest or $apply
-        $scope.$apply();
-      }
       $scope.loading = false;
     };
 
@@ -625,10 +614,6 @@ angular.module('bmpUiApp')
       }
       //getPrefixHisData($scope.currentValue+"?hours=2"); //default fetch data in the past two hours
       changeTimeRange();
-      if(!$scope.$$phase) {
-        //$digest or $apply
-        $scope.$apply();
-      }
     };
 
     $scope.selectUpdates = function() {
@@ -1124,11 +1109,6 @@ angular.module('bmpUiApp')
           d3.select(g).selectAll("circle").style("display","block");
           d3.select(g).selectAll("text.value").style("display","none");
         }
-
-        if(!$scope.$$phase) {
-          //$digest or $apply
-          $scope.$apply();
-        }
       }; // end of drawCircles
 
       var removeSvg = function() {
@@ -1139,10 +1119,6 @@ angular.module('bmpUiApp')
         if (typeof(newVal) != "undefined") {
           removeSvg();
           drawCircles(newVal);
-          if (!$scope.$$phase) {
-            //$digest or $apply
-            $scope.$apply();
-          }
         }
       });
 
