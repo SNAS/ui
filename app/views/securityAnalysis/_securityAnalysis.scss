@@ -9,3 +9,15 @@ button:focus {
 .grey ~ * {
   background-color: #e1e1e1 !important;
 }
+
+.rpki-vio {
+  .rpki, .recv {
+    color: red;
+  }
+}
+
+.irr-vio {
+  .irr, .recv {
+    color: red;
+  }
+}
