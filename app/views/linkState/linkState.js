@@ -320,7 +320,7 @@ angular.module('bmpUiApp')
                 var popup = "Connected Links: " + linksConnected;
 
                 angular.forEach(node, function (value, key) {
-                  if (['id', '$$hashKey', 'level'].indexOf(key) < 0)
+                  if (['id', '$$hashKey', 'level', 'latitude', 'longitude'].indexOf(key) < 0)
                     popup += "<br>" + key + ": " + value;
                 });
                 marker.bindPopup(popup);
