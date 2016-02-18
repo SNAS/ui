@@ -340,7 +340,7 @@ angular.module('bmpUiApp')
                 var popup = "Connected Links: " + linksConnected;
 
                 angular.forEach(node, function (value, key) {
-                  if (['id', '$$hashKey', 'level'].indexOf(key) < 0)
+                  if (['id', '$$hashKey', 'level', 'latitude', 'longitude'].indexOf(key) < 0)
                     popup += "<br>" + key + ": " + value;
                 });
                 marker.bindPopup(popup);
@@ -378,8 +378,8 @@ angular.module('bmpUiApp')
               angular.forEach(polylines, function (polyline) {
                 var match = false;
                 angular.forEach(drawnPolylines, function (drawnPolyline) {
-                  if ((drawnPolyline._latlngs[0].equals(polyline._latlngs[0]) && drawnPolyline._latlngs[1].equals(polyline._latlngs[1]))
-                    || (drawnPolyline._latlngs[0].equals(polyline._latlngs[1]) && drawnPolyline._latlngs[1].equals(polyline._latlngs[0]))) {
+                  if ((drawnPolyline.options.sourceID == polyline.options.sourceID && drawnPolyline.options.targetID == polyline.options.targetID)
+                    || (drawnPolyline.options.sourceID == polyline.options.targetID && drawnPolyline.options.targetID == polyline.options.sourceID)) {
                     match = true;
                     drawnPolyline.containedLines.push(polyline);
                   }
