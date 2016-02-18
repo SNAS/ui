@@ -87,9 +87,9 @@ angular.module('bmpUiApp')
                 '<div class="row"><div class="col-xs-5">Bandwidth</div><div class="col-xs-7">: ' + (row.entity.bandwidth != null ? row.entity.bandwidth + ' Kb/s' : '-') + '</div></div>' +
                 '<div class="row"><div class="col-xs-5">Reliability</div><div class="col-xs-7">: ' + (row.entity.reliability != null ? row.entity.reliability : '-') + '</div></div>' +
                 '<div class="row"><div class="col-xs-5">Input Data Rate</div><div class="col-xs-7">: ' + (row.entity.input_data_rate != null ? row.entity.input_data_rate + ' Kb/s' : '-') + '</div></div>' +
-                '<div class="row"><div class="col-xs-5">Input Packet Rate</div><div class="col-xs-7">: ' + (row.entity.input_packet_rate != null ? row.entity.input_packet_rate : '-') + '</div></div>' +
+                '<div class="row"><div class="col-xs-5">Input Packet Rate</div><div class="col-xs-7">: ' + (row.entity.input_packet_rate != null ? row.entity.input_packet_rate + ' pkts/s' : '-') + '</div></div>' +
                 '<div class="row"><div class="col-xs-5">Output Data Rate</div><div class="col-xs-7">: ' + (row.entity.output_data_rate != null ? row.entity.output_data_rate + ' Kb/s' : '-' ) + '</div></div>' +
-                '<div class="row"><div class="col-xs-5">Output Packet Rate</div><div class="col-xs-7">: ' + (row.entity.output_packet_rate != null ? row.entity.output_packet_rate : '-') + '</div></div>' +
+                '<div class="row"><div class="col-xs-5">Output Packet Rate</div><div class="col-xs-7">: ' + (row.entity.output_packet_rate != null ? row.entity.output_packet_rate + ' pkts/s' : '-') + '</div></div>' +
                 '</div>';
               $('#list')[0].innerHTML = $scope.innerHTML;
 
@@ -605,9 +605,9 @@ angular.module('bmpUiApp')
               bandwidth: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' Kb/s' : '-'),
               reliability: (linksData[i].reliability != null ? linksData[i].reliability : '-'),
               input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' Kb/s' : '-'),
-              input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate : '-'),
+              input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate + ' pkts/s' : '-'),
               output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + ' Kb/s' : '-'),
-              output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate : '-')
+              output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate + ' pkts/s' : '-')
             });
             //}
             //else {
