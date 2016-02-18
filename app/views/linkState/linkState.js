@@ -12,7 +12,7 @@ angular.module('bmpUiApp')
   .controller('linkStateController', ['$scope', 'apiFactory', 'toolsFactory', 'leafletData', '$timeout', '$q',
     function ($scope, apiFactory, toolsFactory, leafletData, $timeout, $q) {
 
-      getPeers();
+      init();
 
       var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
       var mapID = 'pickledbadger.mbkpbek5';
@@ -390,7 +390,7 @@ angular.module('bmpUiApp')
               });
               $scope.selectedPeer = $scope.peerData[0];
               $scope.selected_mt_id = $scope.peerData[0].available_mt_ids[0];
-              init();
+              $scope.selectChange();
             }
           })
           .error(function (error) {
@@ -405,9 +405,9 @@ angular.module('bmpUiApp')
         leafletData.getMap("LinkStateMap").then(function (map) {
           $scope.map = map;
           L.control.zoomslider().addTo($scope.map);
+          getPeers();
         });
 
-        $scope.selectChange();
       }
 
       $scope.goto = function (latlng, zoom) {
@@ -729,5 +729,5 @@ angular.module('bmpUiApp')
 
       $scope.mapHeight = $(window).height() - 220;
 
-    }])
-;
+    }]
+  );
