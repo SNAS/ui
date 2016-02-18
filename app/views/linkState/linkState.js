@@ -12,7 +12,7 @@ angular.module('bmpUiApp')
   .controller('linkStateController', ['$scope', 'apiFactory', 'toolsFactory', 'leafletData', '$timeout', '$q',
     function ($scope, apiFactory, toolsFactory, leafletData, $timeout, $q) {
 
-      getPeers();
+      init();
 
       var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
       var mapID = 'pickledbadger.mbkpbek5';
@@ -33,8 +33,6 @@ angular.module('bmpUiApp')
         }
         return size;
       };
-
-      $scope.id = "LinkState";
 
       $scope.protocol;
       var nodesPromise, linksPromise;
@@ -223,6 +221,7 @@ angular.module('bmpUiApp')
             nodesPromise.success(function () {
 
               $scope.pathTraces = null;
+
               $('#list')[0].innerHTML = '';
 
               if (cluster && $scope.map.hasLayer(cluster))
@@ -453,7 +452,7 @@ angular.module('bmpUiApp')
               });
               $scope.selectedPeer = $scope.peerData[0];
               $scope.selected_mt_id = $scope.peerData[0].available_mt_ids[0];
-              init();
+              $scope.selectChange();
             }
           })
           .error(function (error) {
@@ -465,9 +464,7 @@ angular.module('bmpUiApp')
         /****************************************
          Store map object when available
          *****************************************/
-        leafletData.getMap($scope.id).then(function (map) {
-          $scope.map = map;
-          L.control.zoomslider().addTo($scope.map);
+        leafletData.getMap("LinkStateMap").then(function (map) {
           var MyControl = L.Control.extend({
             options: {
               position: 'topright'
@@ -482,11 +479,11 @@ angular.module('bmpUiApp')
               return container;
             }
           });
-
           map.addControl(new MyControl());
+          $scope.map = map;
+          L.control.zoomslider().addTo($scope.map);
+          getPeers();
         });
-
-        $scope.selectChange();
       }
 
       $scope.goto = function (latlng, zoom) {
