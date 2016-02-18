@@ -318,8 +318,12 @@ angular.module('bmpUiApp')
     };
 
     //ATLAS
-    apiFactory.getAllASAndRelationships = function () {
+    apiFactory.getAllAS = function () {
       return $http.get(urlBase + "whois/asn/all");
+    };
+
+    apiFactory.getRelatedAS = function(asn){
+      return $http.get(urlBase + "whois/asn/"+asn+"/related");
     };
 
     apiFactory.getPrefixesOriginingFrom = function (asn) {
