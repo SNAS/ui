@@ -65,6 +65,7 @@ angular.module('bmpUiApp')
       },
       onAdd: function (map) {
         var container = L.DomUtil.create('div', 'listView');
+        container.id = 'list';
         this.upstreamList = L.DomUtil.create('div', null, container);
         this.downstreamList = L.DomUtil.create('div', null, container);
         this.prefixList = L.DomUtil.create('div', null, container);
