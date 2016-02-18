@@ -233,8 +233,8 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "linkstate/links/peer/" + peerHashId + "/" + mt_id);
     };
 
-    apiFactory.getSPFospf = function (peerHashId, routerId, mt_id) {
-      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/ospf/" + routerId + "/" + mt_id);
+    apiFactory.getSPFospf = function (peerHashId, routerId) {
+      return $http.get(urlBase + "linkstate/spf/peer/" + peerHashId + "/ospf/" + routerId);
     };
 
     apiFactory.getSPFisis = function (peerHashId, routerId, mt_id) {

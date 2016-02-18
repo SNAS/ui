@@ -157,7 +157,7 @@ angular.module('bmpUiApp')
         $scope.pathTraces = null;
 
         if ($scope.protocol == "OSPF") {
-          apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouter.routerId, $scope.selected_mt_id).success(function (result) {
+          apiFactory.getSPFospf($scope.selectedPeer.peer_hash_id, selectedRouter.routerId).success(function (result) {
               if (result.igp_ospf) {
                 SPFdata = result.igp_ospf.data;
                 drawShortestPathTree(SPFdata);
