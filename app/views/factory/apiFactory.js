@@ -330,9 +330,9 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "whois/prefix/from/" + asn);
     };
 
-    apiFactory.getGeoLocation = function (countryCode, city) {
-      return $http.get(urlBase + "geolocation/" + countryCode + "/" + city);
-    };
+    //apiFactory.getGeoLocation = function (countryCode, city) {
+    //  return $http.get(urlBase + "geolocation/" + countryCode + "/" + city);
+    //};
 
     //Admin Page
     apiFactory.getGeoIPList = function (page, limit, whereClause, sort) {
