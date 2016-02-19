@@ -255,9 +255,9 @@ angular.module('bmpUiApp')
               //  formData.append("types", typeArray);
               //  formData.append("delimiter", $('#delimiter').val());
               //
-              //  $('#modal-body').append("<h4>Working... You'll get your result or exception below.</h4><h5>This could take long, so go somewhere else or go make a coffee :)</h5>");
+              //  $('#modal-body').append("<h4>Working... You'll get your result or exception below.</h4><h5>This usually takes 5-10 minutes, But you don't have to wait here.</h5>");
               //  apiFactory.importGeoIPFromFile(formData).success(function (result) {
-              //    $('#modal-body').append("<h3><span class='label "+(result.indexOf('Success')>-1?"label-success":"label-danger")+" col-sm-12' style='margin-bottom:20px'>result</span></h3>");
+              //    $('#modal-body').append("<h3><span class='label "+(result.indexOf('Success')>-1?"label-success":"label-danger")+" col-sm-12' style='margin-bottom:20px'>" + result + "</span></h3>");
               //  })
               //});
               //$('#file').on('change', function () {
@@ -426,9 +426,9 @@ angular.module('bmpUiApp')
                 formData.append("types", typeArray);
                 formData.append("delimiter", $('#delimiter').val());
 
-                $('#modal-body').append("<h4>Working... You'll get your result or exception below.</h4><h5>This could take long, so go somewhere else or go make a coffee :)</h5>");
+                $('#modal-body').append("<h4>Working... You'll get your result or exception below.</h4><h5>This usually takes 5-10 minutes, But you don't have to wait here.</h5>");
                 apiFactory.importGeoLocationFromFile(formData).success(function (result) {
-                  $('#modal-body').append("<h3><span class='label " + (result.indexOf('Success') > -1 ? "label-success" : "label-danger") + " col-sm-12' style='margin-bottom:20px'>result</span></h3>");
+                  $('#modal-body').append("<h3><span class='label " + (result.indexOf('Success') > -1 ? "label-success" : "label-danger") + " col-sm-12' style='margin-bottom:20px'>" + result + "</span></h3>");
                 })
               });
               $('#file').on('change', function () {

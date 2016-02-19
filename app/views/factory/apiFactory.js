@@ -318,8 +318,12 @@ angular.module('bmpUiApp')
     };
 
     //ATLAS
-    apiFactory.getAllAS = function () {
-      return $http.get(urlBase + "whois/asn/all");
+    apiFactory.getASPartial = function (part, limit) {
+      return $http.get(urlBase + "whois/asn/get/" + part + "/" + limit);
+    };
+
+    apiFactory.getASCount = function () {
+      return $http.get(urlBase + "whois/asn/getcount");
     };
 
     apiFactory.getRelatedAS = function(asn){
