@@ -305,7 +305,7 @@ angular.module('bmpUiApp')
         if (as.city_lat && as.city_long)
           baseLatLng = [as.city_lat, as.city_long];
         else
-          baseLatLng = [-78.870048, 12.216797];
+          baseLatLng = [14.774883, -133.945312];
         lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
         long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
 
