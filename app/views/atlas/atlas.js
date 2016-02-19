@@ -296,16 +296,19 @@ angular.module('bmpUiApp')
 
       ASCollection = result.gen_whois_asn.data;
 
-      cluster = new L.MarkerClusterGroup();
-
-      cluster.addTo(map);
+      cluster = new L.MarkerClusterGroup({
+        chunkedLoading:true,
+        chunkSize:500
+      });
 
       angular.forEach(ASCollection, function (as) {
-        var baseLatLng, lat, long;
+        var baseLatLng, lat, long, noGeo='';
         if (as.city_lat && as.city_long)
           baseLatLng = [as.city_lat, as.city_long];
-        else
+        else {
           baseLatLng = [14.774883, -133.945312];
+          noGeo='<div class="row"><span class="label label-danger col-xs-12"><h4>This AS has no geo location provided</h4></span></div>'
+        }
         lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
         long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
 
@@ -322,7 +325,7 @@ angular.module('bmpUiApp')
         }).bindPopup("<p>" + "AS: " + as.asn + "</p>"
           + "<p>" + "AS Name: " + as.as_name + "</p>"
           + "<p>" + "Org Name: " + as.org_name + "</p>"
-          + (baseLatLng == [1, 1] ? ("<h4>" + "This AS has no geo location provided" + "</h4>") : "")
+          + noGeo
         ).addTo(cluster);
 
         circle.AS = as;
@@ -330,6 +333,9 @@ angular.module('bmpUiApp')
         ASCircles[as.asn] = circle;
 
       });
+
+      cluster.addTo(map);
+
     });
   }
   ])
