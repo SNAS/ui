@@ -246,9 +246,8 @@ angular.module('bmpUiApp')
 
             var fullPrefix = row.Prefix + "/" + row.PrefixLen;
             var geoData = geo.v_geo_ip.data[0];
-            var lat = geoData.latitude;
-            var long = geoData.longitude;
-            console.log(lat, long);
+            var lat = parseFloat(geoData.latitude) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.01);
+            var long = parseFloat(geoData.longitude) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.01);
             var circle = L.circleMarker([lat, long], {
               color: "green",
               fillColor: "#CCCCCC"
@@ -300,8 +299,6 @@ angular.module('bmpUiApp')
 
     };
 
-
-
     apiFactory.getAllAS().success(function (result) {
 
       var ASCollection;
@@ -324,8 +321,8 @@ angular.module('bmpUiApp')
           baseLatLng = [14.774883, -133.945312];
           noGeo = '<div class="row"><span class="label label-danger col-xs-12"><h4>This AS has no geo location provided</h4></span></div>'
         }
-        lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
-        long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
+        lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.01);
+        long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.01);
 
         var circle = L.circleMarker([lat, long], {
           color: 'black',
