@@ -103,6 +103,16 @@ angular.module('bmpUiApp')
             map.removeLayer(line);
         }
       });
+      angular.forEach(prefixPolylines, function (line) {
+        if (showLines) {
+          if (!map.hasLayer(line))
+            line.addTo(map);
+        }
+        else {
+          if (map.hasLayer(line))
+            map.removeLayer(line);
+        }
+      });
     }
 
     $("#toggleLines")[0].addEventListener("click", toggleLines, false);
@@ -118,7 +128,7 @@ angular.module('bmpUiApp')
     $("#toggleList")[0].addEventListener("click", toggleList, false);
 
 
-    var ASPolyLines = [], ASCircles = {}, prefixCircles = {}, prefixCaches = {};
+    var ASPolyLines = [], ASCircles = {}, prefixPolylines = [], prefixCircles = {}, prefixCaches = {};
 
     var lastCircle = null;
 
@@ -173,13 +183,8 @@ angular.module('bmpUiApp')
           if (map.hasLayer(polyline))
             map.removeLayer(polyline);
         });
-        angular.forEach(prefixCircles, function (circle) {
-          if (map.hasLayer(circle))
-            map.removeLayer(circle);
-        });
 
         ASPolyLines = [];
-        prefixCircles = {};
 
 
         angular.forEach(upstreams, function (upAS) {
@@ -218,6 +223,16 @@ angular.module('bmpUiApp')
         var existedPrefixes = [];
         var nonExistedPrefixes = [];
 
+        angular.forEach(prefixCircles, function (circle) {
+          if (map.hasLayer(circle))
+            map.removeLayer(circle);
+        });
+        angular.forEach(prefixPolylines, function (polyline) {
+          if (map.hasLayer(polyline))
+            map.removeLayer(polyline);
+        });
+        prefixCircles = {};
+        prefixPolylines = [];
 
         angular.forEach(v_routes, function (row) {
           var fullPrefix = row.Prefix + "/" + row.PrefixLen;
@@ -233,6 +248,7 @@ angular.module('bmpUiApp')
             var geoData = geo.v_geo_ip.data[0];
             var lat = geoData.latitude;
             var long = geoData.longitude;
+            console.log(lat, long);
             var circle = L.circleMarker([lat, long], {
               color: "green",
               fillColor: "#CCCCCC"
@@ -253,7 +269,7 @@ angular.module('bmpUiApp')
               weight: 2,
               opacity: 0.5
             });
-            ASPolyLines.push(line);
+            prefixPolylines.push(line);
             if (showLines)
               line.addTo(map);
             $('#prefixList')[0].innerHTML += "<p class='label labelCustom' style='background-color: lightgreen;display: block;cursor: pointer'>" + fullPrefix + "</p>";
@@ -272,7 +288,7 @@ angular.module('bmpUiApp')
             weight: 2,
             opacity: 0.5
           });
-          ASPolyLines.push(line);
+          prefixPolylines.push(line);
           if (showLines)
             line.addTo(map);
           $('#prefixList')[0].innerHTML += "<p class='label labelCustom' style='background-color: lightgreen;display: block;cursor: pointer'>" + fullPrefix + "</p>";
@@ -291,7 +307,7 @@ angular.module('bmpUiApp')
     apiFactory.getAllAS().success(function (result) {
       ASCollection = result.gen_whois_asn.data;
 
-      $scope.loading=true;
+      $scope.loading = true;
 
       cluster = new L.MarkerClusterGroup({
         chunkedLoading: true
@@ -330,7 +346,7 @@ angular.module('bmpUiApp')
 
       });
 
-      $scope.loading=false;
+      $scope.loading = false;
 
       cluster.addTo(map);
     });
