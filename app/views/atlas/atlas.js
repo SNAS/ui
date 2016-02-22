@@ -132,25 +132,35 @@ angular.module('bmpUiApp')
 
     var lastCircle = null;
 
-    function waitForResetCircles(ASes) {
-      if (typeof ASes !== "undefined") {
-        angular.forEach(ASes.split(','), function (e) {
-          if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "black";
-        });
-      }
-      else {
-        setTimeout(function () {
-          waitForResetCircles(ASes);
-        }, 250);
-      }
+    //function waitForResetCircles(ASes) {
+    //  if (typeof ASes !== "undefined" && ASes != null) {
+    //    angular.forEach(ASes.split(','), function (e) {
+    //      if (ASCircles[e] != undefined)
+    //        ASCircles[e].options.color = "black";
+    //    });
+    //  }
+    //  else {
+    //    setTimeout(function () {
+    //      waitForResetCircles(ASes);
+    //    }, 250);
+    //  }
+    //}
+    function resetCircles(ASes) {
+      angular.forEach(ASes.split(','), function (e) {
+        if (ASCircles[e] != undefined)
+          ASCircles[e].options.color = "black";
+      });
     }
 
     var selectAS = function (as) {
       if (lastCircle != null) {
         lastCircle.options.color = "black";
-        waitForResetCircles(lastCircle.AS.upstreams);
-        waitForResetCircles(lastCircle.AS.downstreams);
+        //waitForResetCircles(lastCircle.AS.upstreams);
+        //waitForResetCircles(lastCircle.AS.downstreams);
+        if (lastCircle.AS.upstreams != null)
+          resetCircles(lastCircle.AS.upstreams);
+        if (lastCircle.AS.downstreams != null)
+          resetCircles(lastCircle.AS.downstreams);
       }
 
       var thisCircle = ASCircles[as];
