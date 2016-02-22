@@ -288,51 +288,50 @@ angular.module('bmpUiApp')
 
     var cluster;
 
-    apiFactory.getASCount().success(function (countResult) {
-      var dataCount = countResult.table.data[0]['COUNT'];
-      var limit = 10000;
-      var maxParts = Math.ceil(dataCount / limit);
-      cluster = new L.MarkerClusterGroup();
+    apiFactory.getAllAS().success(function (result) {
+      ASCollection = result.gen_whois_asn.data;
+
+      $scope.loading=true;
+
+      cluster = new L.MarkerClusterGroup({
+        chunkedLoading: true
+      });
+
+      angular.forEach(ASCollection, function (as) {
+        var baseLatLng, lat, long, noGeo = '';
+        if (as.city_lat && as.city_long)
+          baseLatLng = [as.city_lat, as.city_long];
+        else {
+          baseLatLng = [14.774883, -133.945312];
+          noGeo = '<div class="row"><span class="label label-danger col-xs-12"><h4>This AS has no geo location provided</h4></span></div>'
+        }
+        lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
+        long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
+
+        var circle = L.circleMarker([lat, long], {
+          color: 'black',
+          fillColor: 'pink',
+          fillOpacity: 0.5
+        }).on('click', function (e) {
+          selectAS(e.target.AS.asn);
+        }).on('mouseover', function (e) {
+          e.target.openPopup();
+        }).on('mouseout', function (e) {
+          e.target.closePopup();
+        }).bindPopup("<p>" + "AS: " + as.asn + "</p>"
+          + "<p>" + "AS Name: " + as.as_name + "</p>"
+          + "<p>" + "Org Name: " + as.org_name + "</p>"
+          + noGeo
+        ).addTo(cluster);
+
+        circle.AS = as;
+
+        ASCircles[as.asn] = circle;
+
+      });
+
+      $scope.loading=false;
+
       cluster.addTo(map);
-      for (var part = 1; part <= maxParts; part++)
-        apiFactory.getASPartial(part, limit).success(function (result) {
-
-          ASCollection = result.gen_whois_asn.data;
-
-          angular.forEach(ASCollection, function (as) {
-            var baseLatLng, lat, long, noGeo = '';
-            if (as.city_lat && as.city_long)
-              baseLatLng = [as.city_lat, as.city_long];
-            else {
-              baseLatLng = [14.774883, -133.945312];
-              noGeo = '<div class="row"><span class="label label-danger col-xs-12"><h4>This AS has no geo location provided</h4></span></div>'
-            }
-            lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
-            long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
-
-            var circle = L.circleMarker([lat, long], {
-              color: 'black',
-              fillColor: 'pink',
-              fillOpacity: 0.5
-            }).on('click', function (e) {
-              selectAS(e.target.AS.asn);
-            }).on('mouseover', function (e) {
-              e.target.openPopup();
-            }).on('mouseout', function (e) {
-              e.target.closePopup();
-            }).bindPopup("<p>" + "AS: " + as.asn + "</p>"
-              + "<p>" + "AS Name: " + as.as_name + "</p>"
-              + "<p>" + "Org Name: " + as.org_name + "</p>"
-              + noGeo
-            ).addTo(cluster);
-
-            circle.AS = as;
-
-            ASCircles[as.asn] = circle;
-
-          });
-        });
     });
-  }
-  ])
-;
+  }]);
