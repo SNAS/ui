@@ -300,11 +300,14 @@ angular.module('bmpUiApp')
 
     };
 
-    var ASCollection;
 
-    var cluster;
 
     apiFactory.getAllAS().success(function (result) {
+
+      var ASCollection;
+
+      var cluster;
+
       ASCollection = result.gen_whois_asn.data;
 
       $scope.loading = true;
