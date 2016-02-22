@@ -281,7 +281,6 @@ angular.module('bmpUiApp')
 
           circle.addTo(map);
           var fullPrefix = circle.fullPrefix;
-          prefixCircles[fullPrefix] = circle;
           var line = L.polyline([thisCircle._latlng, circle._latlng], {
             color: 'lightgreen',
             weight: 2,
