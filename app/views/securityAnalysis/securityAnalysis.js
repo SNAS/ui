@@ -304,7 +304,7 @@ angular.module('bmpUiApp')
           })
           .on('mouseover', function(d, i) {
             tip.attr('class', 'd3-tip').html('Prefixes with RPKI entries <br>Total: ' + stats.rpkiTotal
-              + "<br>Percentage: " + (100 * stats.rpkiTotal / stats.total).toFixed(2) + '%')
+              + "<br>" + (100 * stats.rpkiTotal / stats.total).toFixed(2) + '% of totals')
               .offset([-10, totalWidth * stats.rpkiTotal/ stats.total / 2]).show();
           })
           .on('mouseout', function(d, i){
@@ -331,7 +331,7 @@ angular.module('bmpUiApp')
           })
           .on('mouseover', function(d, i) {
             tip.attr('class', 'd3-tip').html('Prefixes with IRR entries<br>Total: ' + stats.irrTotal
-              + "<br>Percentage: " + (100 * stats.irrTotal / stats.total).toFixed(2) + '%').show(d, i);
+              + "<br>" + (100 * stats.irrTotal / stats.total).toFixed(2) + '% of totals').show(d, i);
           })
           .on('mouseout', function(d, i){
             tip.destroy(d, i);
@@ -357,7 +357,7 @@ angular.module('bmpUiApp')
           })
           .on('mouseover', function(d, i) {
             tip.attr('class', 'd3-tip').html('Prefixes with neither IRR nor RPKI <br/>Total: ' + stats.neitherTotal
-              + '<br/>Percentage: ' + (100*stats.neitherTotal/stats.total).toFixed(2) + '%').show(d, i);
+              + '<br/>' + (100*stats.neitherTotal/stats.total).toFixed(2) + '% of totals').show(d, i);
           })
           .on('mouseout', function(d, i){
             tip.destroy(d, i);
@@ -381,7 +381,7 @@ angular.module('bmpUiApp')
           })
           .on('mouseover', function(d, i) {
             tip.attr('class', 'd3-tip').html('Prefixes with both IRR and RPKI entries<br/>Total: '+ stats.bothTotal
-              + '<br>Percentage: '+ (100*stats.bothTotal/stats.total).toFixed(2) + '%').show(d, i);
+              + '<br>'+ (100*stats.bothTotal/stats.total).toFixed(2) + '% of totals').show(d, i);
           })
           .on('mouseout', function(d, i){
             tip.destroy(d, i);
