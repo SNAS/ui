@@ -4,39 +4,24 @@
       <div class="table-container">
         <h3>Origin AS Report</h3>
 
-        <input type="text" placeholder="Search" ng-style="{'margin-bottom': '10px', 'margin-left': '40px'}"
-               ng-model="keyword" ng-change="search(keyword)">
-        <button type="button" class="btn btn-sm pull-right"
-                ng-class="isViolationOn ? 'btn-primary' : 'btn-danger'"
-                ng-model="isViolationOn"
-                ng-click="getAllMismatch()"
-                ng-style="{'margin-right': '40px'}">
-          {{ isViolationOn ? 'Show All' : 'Show Violations'}}
-        </button>
-        <div style="display: inline; margin-left: 50px;">
-          <span>Filter Table:</span>
-          <button class="btn btn-sm" ng-click="getRpki()" ng-class="filterOptions.rpki ? 'btn-primary' : 'btn-info'">
-            {{ filterOptions.rpki ? "All" : "RPKI"}}
-          </button>
-          <button class="btn btn-sm" ng-click="getIrr()" ng-class="filterOptions.irr ? 'btn-primary' : 'btn-info'">
-            {{ filterOptions.irr ? "All" : "IRR" }}
-          </button>
-          <button class="btn btn-sm" ng-click="getIncomplete()" ng-class="filterOptions.incomplete ? 'btn-primary' : 'btn-info'">
-            {{ filterOptions.incomplete ? 'All' : "Incomplete"}}
-          </button>
+        <div ng-style="{'margin-bottom': '30px'}">
+          <input type="text" placeholder="exact prefix/ASN" name="searchBox"
+                 title="search for a prefix or asn with exact match"
+                 data-placement="right"
+                 ng-style="{'margin-bottom': '10px', 'margin-left': '40px'}"
+                 ng-model="keyword" ng-change="search(keyword)">
+          <div class="pull-right">
+            <button class="btn btn-default" ng-click="showAllPrefixes()">Show all prefixes</button>
+            <input type="checkbox" name="violationCheckbox"
+                   ng-style="{'margin-right': '40px'}"
+                   data-on-text="Violations"
+                   data-on-color="danger">
+          </div>
         </div>
-        <div style="display: inline;" ng-if="!isViolationOn">
-          <label class="btn btn-default pull-right">RPKI Violations
-            <input type="checkbox" ng-model="violationOptions.rpki"/>
-          </label>
-          <label class="btn btn-default pull-right">IRR Violations
-            <input type="checkbox" ng-model="violationOptions.irr"/>
-          </label>
-        </div>
-
+        <stats-bar-chart></stats-bar-chart>
         <div class="loading-section" ng-style="{'height':securityGridInitHeight}">
           <div ng-show="securityIsLoad" bmp-loading loading-var="securityIsLoad"></div>
-          <div class="grid" ui-grid="securityGridOptions" ui-grid-pagination ui-grid-selection></div>
+          <div class="grid" ui-grid="securityGridOptions" ui-grid-pagination ui-grid-selection ng-style="{'height':securityGridInitHeight}"></div>
         </div>
       </div>
     </div>

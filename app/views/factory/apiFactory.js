@@ -431,5 +431,9 @@ angular.module('bmpUiApp')
       return $http.get(url);
     };
 
+    apiFactory.getStats = function() {
+      return $http.get(urlBase + 'security/stats');
+    };
+
     return apiFactory;
   });

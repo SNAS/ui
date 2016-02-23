@@ -31,22 +31,22 @@ angular.module('bmp.components.prefixModel', [])
 
           $scope.noModal = false;
         }
-        else {
-          $scope.open = function (size) {
-
-            var modalInstance = $modal.open({
-              animation: $scope.animationsEnabled,
-              templateUrl: 'myModalContent.html',
-              controller: 'ModalInstanceCtrl',
-              size: size,
-              resolve: {
-                items: function () {
-                  return {"Sorry": "Didn't find whois information for this prefix!"};
-                }
-              }
-            });
-          };
-        }
+        //else {
+        //  $scope.open = function (size) {
+        //
+        //    var modalInstance = $modal.open({
+        //      animation: $scope.animationsEnabled,
+        //      templateUrl: 'myModalContent.html',
+        //      controller: 'ModalInstanceCtrl',
+        //      size: size,
+        //      resolve: {
+        //        items: function () {
+        //          return {"Sorry": "Didn't find whois information for this prefix!"};
+        //        }
+        //      }
+        //    });
+        //  };
+        //}
 
         $scope.noModal = false;
 
