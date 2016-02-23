@@ -12,6 +12,8 @@
             ng-options="mtID as translateMT[mtID] for mtID in selectedPeer.available_mt_ids"
             ng-change="selectChange()">
     </select>
+    <p class="btn btn-xs btn-info" ng-click="selectChange()" style="margin-left:20px"><span
+      class="glyphicon glyphicon-refresh"></span> Refresh Map</p>
   </div>
 
   <tabset>
@@ -60,7 +62,9 @@
                     Path Trace
                   </h3>
                   <div class="text-center">
-                    <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
+                    <h3 ng-if="!pathTraces||pathTraces.length<=1">
+                      <span class="label label-warning">No Path Found</span>
+                    </h3>
                     <ul ng-if="pathTraces" ng-style="{'height': mapHeight - 117, 'overflow-y': 'scroll'}">
                       <li class="path-trace" ng-repeat="router in pathTraces"
                           tooltip="Name: {{router.NodeName||router.routerId}} | Location:{{router.city}},{{router.stateprov}},{{router.country}}"
@@ -76,7 +80,8 @@
                 </tab>
               </tabset>
             </div> <!-- End of router-list -->
-            <leaflet ng-attr-id="LinkStateMap" class="map" defaults="defaults" height="{{mapHeight}}" width="71.9%"></leaflet>
+            <leaflet ng-attr-id="LinkStateMap" class="map" defaults="defaults" height="{{mapHeight}}"
+                     width="71.9%"></leaflet>
 
           </div>
           <div class="watermark" ng-if="!peerData.length">No data available</div>
@@ -102,7 +107,8 @@
     <div class="table-container">
       <h3 style="text-transform:none">TOPOLOGY TABLE {{selectedRouter?"FOR "+selectedRouter.NodeName+
         " ("+selectedRouter.routerId+")":""}}
-        <span class="btn btn-primary btn-xs pull-right" style="margin-right:2%" ng-show="pathTraces"
+        <span class="btn btn-primary btn-xs pull-right" style="margin-right:2%"
+              ng-show="pathTraces!=null"
               ng-click="SPFgridApi.selection.clearSelectedRows();">Clear Selection</span>
       </h3>
       <div class="loading-section">
@@ -116,7 +122,7 @@
   <div class="main-area" style="margin-top: 15px">
     <div class="table-container">
       <h3>Path Trace</h3>
-      <h3 ng-if="!pathTraces"><span class="label label-warning">No Path Found</span></h3>
+      <h3 ng-if="!pathTraces||pathTraces.length<=1"><span class="label label-warning">No Path Found</span></h3>
 
       <div class="as-path" style="white-space:nowrap">
 

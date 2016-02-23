@@ -78,7 +78,7 @@ angular.module('bmpUiApp')
           $scope.SPFgridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
             if (row.isSelected) {
-              removeLayers(polylines);
+              removeLayers(drawnPolylines);
               var path = row.entity.path_hash_ids;
               var neighbor_addr = row.entity.neighbor_addr;
               $scope.drawPath(path, neighbor_addr);
@@ -95,7 +95,7 @@ angular.module('bmpUiApp')
               angular.forEach(involvedMarkers, function (marker) {
                 marker.options.connectedPaths = [];
               });
-              angular.forEach(polylines, function (polyline) {
+              angular.forEach(drawnPolylines, function (polyline) {
                 if (!$scope.map.hasLayer(polyline))
                   $scope.map.addLayer(polyline);
               });
@@ -112,7 +112,7 @@ angular.module('bmpUiApp')
             angular.forEach(involvedMarkers, function (marker) {
               marker.options.connectedPaths = [];
             });
-            angular.forEach(polylines, function (polyline) {
+            angular.forEach(drawnPolylines, function (polyline) {
               if (!$scope.map.hasLayer(polyline))
                 $scope.map.addLayer(polyline);
             });
@@ -121,7 +121,7 @@ angular.module('bmpUiApp')
         }
       };
 
-      var polylines, cluster, markerLayer, paths;
+      var polylines, drawnPolylines, cluster, markerLayer, paths;
 
       var routerIcon = L.icon({
         iconUrl: 'images/Router-icon.png',
@@ -135,7 +135,7 @@ angular.module('bmpUiApp')
         if (pathGroup && $scope.map.hasLayer(pathGroup)) {
           $scope.map.removeLayer(pathGroup);
           pathGroup.clearLayers();
-          angular.forEach(polylines, function (polyline) {
+          angular.forEach(drawnPolylines, function (polyline) {
             if (!$scope.map.hasLayer(polyline))
               $scope.map.addLayer(polyline);
           });
@@ -188,6 +188,9 @@ angular.module('bmpUiApp')
 
       $scope.selectChange = function () {
 
+        if ($(".leaflet-popup-close-button")[0])
+          $(".leaflet-popup-close-button")[0].click();
+
         if ($scope.selectedPeer) {
           if ($scope.selected_mt_id == null || $scope.selected_mt_id == undefined)
             $scope.selected_mt_id = $scope.selectedPeer.available_mt_ids[0];
@@ -211,7 +214,8 @@ angular.module('bmpUiApp')
               removeLayers(circles);
               circles = [];
 
-              removeLayers(polylines);
+              removeLayers(drawnPolylines);
+              drawnPolylines = [];
               polylines = [];
 
               if (pathGroup && $scope.map.hasLayer(pathGroup)) {
@@ -320,7 +324,7 @@ angular.module('bmpUiApp')
                 var popup = "Connected Links: " + linksConnected;
 
                 angular.forEach(node, function (value, key) {
-                  if (['id', '$$hashKey', 'level'].indexOf(key) < 0)
+                  if (['id', '$$hashKey', 'level', 'latitude', 'longitude'].indexOf(key) < 0)
                     popup += "<br>" + key + ": " + value;
                 });
                 marker.bindPopup(popup);
@@ -346,14 +350,56 @@ angular.module('bmpUiApp')
                   });
                   var popup = "";
                   angular.forEach(link, function (value, key) {
-                    popup += key + ":" + value + "<br>";
+                    if (['id'].indexOf(key) < 0)
+                      popup += key + ":" + value + "<br>";
                   });
-                  polyline.bindPopup(popup);
-                  polyline.addTo($scope.map);
+                  polyline.options.popupContent = popup;
                   polylines.push(polyline);
                   $scope.markers[sourceNode.id].options.connectedPolylines.push(polyline);
                   $scope.markers[targetNode.id].options.connectedPolylines.push(polyline);
                 }
+              });
+              angular.forEach(polylines, function (polyline) {
+                var match = false;
+                angular.forEach(drawnPolylines, function (drawnPolyline) {
+                  if ((drawnPolyline.options.sourceID==polyline.options.sourceID && drawnPolyline.options.targetID==polyline.options.targetID)
+                    || (drawnPolyline.options.sourceID==polyline.options.targetID && drawnPolyline.options.targetID==polyline.options.sourceID)) {
+                    match = true;
+                    drawnPolyline.containedLines.push(polyline);
+                  }
+                });
+                if (!match) {
+                  polyline.containedLines = [polyline];
+                  drawnPolylines.push(polyline);
+                }
+              });
+              angular.forEach(drawnPolylines, function (drawnPolyline) {
+                var popup = "";
+                if (drawnPolyline.containedLines.length > 1) {
+                  angular.forEach(drawnPolyline.containedLines, function (line) {
+                    popup += '<p class="btn btn-primary btn-block" id="' + line.options.data.id + '" style="padding:0 10px 0 10px" >' + line.options.data.localName +
+                      ' <span class="glyphicon glyphicon-arrow-right"></span> ' + line.options.data.remoteName + '</p>';
+                  });
+                  drawnPolyline.on('popupopen', function (e) {
+                    angular.forEach(drawnPolyline.containedLines, function (line) {
+                      $('#' + line.options.data.id).on('click', function () {
+                        e.popup.setContent(line.options.popupContent);
+                      });
+                    });
+                  });
+                  drawnPolyline.on('popupclose', function (e) {
+                    e.popup.setContent(popup);
+                  });
+                  drawnPolyline.on('add', function (e) {
+                    if (e.target._popup)
+                      e.target._popup.setContent(popup);
+                  });
+                }
+                else {
+                  popup = drawnPolyline.popupContent;
+                }
+                drawnPolyline.bindPopup(popup);
+                drawnPolyline.addTo($scope.map);
               });
               $scope.map.addLayer(cluster.addLayer(markerLayer));
 
@@ -407,7 +453,6 @@ angular.module('bmpUiApp')
           L.control.zoomslider().addTo($scope.map);
           getPeers();
         });
-
       }
 
       $scope.goto = function (latlng, zoom) {
@@ -508,55 +553,67 @@ angular.module('bmpUiApp')
         linksPromise.success(function (result) {
           links = [];
           var linksData = result.v_ls_links.data;
-          var reverseLinks = [];
+          //var reverseLinks = [];
           for (var i = 0; i < result.v_ls_links.size; i++) {
             var source = linksData[i].local_node_hash_id;
             var target = linksData[i].remote_node_hash_id;
             var igp_metric = linksData[i].igp_metric;
             var interfaceIP = linksData[i].InterfaceIP;
             var neighborIP = linksData[i].NeighborIP;
-            if (source < target) {
-              links.push(
-                {
-                  id: i,
-                  source: source,
-                  target: target,
-                  igp_metric: igp_metric,
-                  interfaceIP: interfaceIP,
-                  neighborIP: neighborIP
-                });
-            }
-            else {
-              reverseLinks.push(
-                {
-                  id: i,
-                  source: source,
-                  target: target,
-                  igp_metric: igp_metric,
-                  interfaceIP: interfaceIP,
-                  neighborIP: neighborIP
-                });
-            }
+            //if (source < target) {
+            links.push({
+              id: i,
+              source: source,
+              target: target,
+              localName: linksData[i].Local_Router_Name,
+              remoteName: linksData[i].Remote_Router_Name,
+              igp_metric: igp_metric,
+              interfaceIP: interfaceIP,
+              neighborIP: neighborIP
+            });
+            //}
+            //else {
+            //  reverseLinks.push(
+            //    {
+            //      id: i,
+            //      source: source,
+            //      target: target,
+            //      localName: linksData[i].Local_Router_Name,
+            //      remoteName: linksData[i].Remote_Router_Name,
+            //      igp_metric: igp_metric,
+            //      interfaceIP: interfaceIP,
+            //      neighborIP: neighborIP,
+            //      interface: (linksData[i].interface != null ? linksData[i].interface : '-'),
+            //      bandwidth: (linksData[i].bandwidth != null ? linksData[i].bandwidth + ' Kb/s' : '-'),
+            //      reliability: (linksData[i].reliability != null ? linksData[i].reliability : '-'),
+            //      input_data_rate: (linksData[i].input_data_rate != null ? linksData[i].input_data_rate + ' b/s' : '-'),
+            //      input_packet_rate: (linksData[i].input_packet_rate != null ? linksData[i].input_packet_rate : '-'),
+            //      output_data_rate: (linksData[i].output_data_rate != null ? linksData[i].output_data_rate + 'b/s' : '-'),
+            //      output_packet_rate: (linksData[i].output_packet_rate != null ? linksData[i].output_packet_rate : '-')
+            //    });
+            //}
           }
 
-          for (var i = 0; i < reverseLinks.length; i++) {
-            for (var j = 0; j < links.length; j++) {
-              if (reverseLinks[i].target == links[j].source && reverseLinks[i].source == links[j].target
-                && reverseLinks[i].neighborIP == links[j].interfaceIP && reverseLinks[i].igp_metric != links[j].igp_metric) {
-                links[j] =
-                {
-                  id: links[j].id,
-                  source: links[j].source,
-                  target: links[j].target,
-                  sourceLabel: links[j].igp_metric,
-                  targetLabel: reverseLinks[i].igp_metric,
-                  interfaceIP: links[j].interfaceIP,
-                  neighborIP: links[j].neighborIP
-                };
-                break;
-              }
-            }
-          }
+          //for (var i = 0; i < reverseLinks.length; i++) {
+          //  for (var j = 0; j < links.length; j++) {
+          //    if (reverseLinks[i].target == links[j].source && reverseLinks[i].source == links[j].target
+          //      && reverseLinks[i].neighborIP == links[j].interfaceIP && reverseLinks[i].igp_metric != links[j].igp_metric) {
+          //      links[j] =
+          //      {
+          //        id: links[j].id,
+          //        source: links[j].source,
+          //        target: links[j].target,
+          //        localName: links[j].Local_Router_Name,
+          //        remoteName: links[j].Remote_Router_Name,
+          //        sourceLabel: links[j].igp_metric,
+          //        targetLabel: reverseLinks[i].igp_metric,
+          //        interfaceIP: links[j].interfaceIP,
+          //        neighborIP: links[j].neighborIP
+          //      };
+          //      break;
+          //    }
+          //  }
+          //}
         }).error(function (error) {
           console.log(error.message);
         });
@@ -602,7 +659,8 @@ angular.module('bmpUiApp')
 
       //draw the path
       $scope.drawPath = function (path_hash_ids) {
-        $scope.pathTraces = null;
+        $scope.pathTraces = [];
+
         removeLayers(circles.slice(1));
 
         if (pathGroup && $scope.map.hasLayer(pathGroup)) {
@@ -631,7 +689,7 @@ angular.module('bmpUiApp')
             angular.forEach(polylines, function (polyline) {
               if ([polyline.options.sourceID, polyline.options.targetID].indexOf(involvedMarkers[j].options.data.id) > -1 &&
                 [polyline.options.sourceID, polyline.options.targetID].indexOf(involvedMarkers[j + 1].options.data.id) > -1)
-                newLine.bindPopup(polyline._popup);
+                newLine.bindPopup(polyline.options.popupContent);
             });
             involvedMarkers[j].options.connectedPaths.push(newLine);
             involvedMarkers[j + 1].options.connectedPaths.push(newLine);
@@ -657,7 +715,6 @@ angular.module('bmpUiApp')
               path.addTo($scope.map);
 
           }
-          $scope.pathTraces = [];
           angular.forEach(involvedMarkers, function (marker) {
             $scope.pathTraces.push(marker.options.data);
           });
@@ -729,5 +786,5 @@ angular.module('bmpUiApp')
 
       $scope.mapHeight = $(window).height() - 220;
 
-    }]
-  );
+    }])
+;

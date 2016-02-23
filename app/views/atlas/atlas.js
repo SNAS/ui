@@ -3,19 +3,6 @@
 angular.module('bmpUiApp')
   .controller('AtlasController', ["$scope", "apiFactory", function ($scope, apiFactory) {
 
-    //group an array
-    function groupBy(array, f) {
-      var groups = {};
-      array.forEach(function (o) {
-        var group = JSON.stringify(f(o));
-        groups[group] = groups[group] || [];
-        groups[group].push(o);
-      });
-      return Object.keys(groups).map(function (group) {
-        return groups[group];
-      })
-    }
-
     var map = L.map('map').setView([39.50, -98.35], 4);
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -116,6 +103,16 @@ angular.module('bmpUiApp')
             map.removeLayer(line);
         }
       });
+      angular.forEach(prefixPolylines, function (line) {
+        if (showLines) {
+          if (!map.hasLayer(line))
+            line.addTo(map);
+        }
+        else {
+          if (map.hasLayer(line))
+            map.removeLayer(line);
+        }
+      });
     }
 
     $("#toggleLines")[0].addEventListener("click", toggleLines, false);
@@ -131,29 +128,39 @@ angular.module('bmpUiApp')
     $("#toggleList")[0].addEventListener("click", toggleList, false);
 
 
-    var ASPolyLines = [], ASCircles = {}, prefixCircles = {}, prefixCaches = {};
+    var ASPolyLines = [], ASCircles = {}, prefixPolylines = [], prefixCircles = {}, prefixCaches = {};
 
     var lastCircle = null;
 
-    function waitForResetCircles(ASes) {
-      if (typeof ASes !== "undefined") {
-        angular.forEach(ASes.split(','), function (e) {
-          if (ASCircles[e] != undefined)
-            ASCircles[e].options.color = "black";
-        });
-      }
-      else {
-        setTimeout(function () {
-          waitForResetCircles(ASes);
-        }, 250);
-      }
+    //function waitForResetCircles(ASes) {
+    //  if (typeof ASes !== "undefined" && ASes != null) {
+    //    angular.forEach(ASes.split(','), function (e) {
+    //      if (ASCircles[e] != undefined)
+    //        ASCircles[e].options.color = "black";
+    //    });
+    //  }
+    //  else {
+    //    setTimeout(function () {
+    //      waitForResetCircles(ASes);
+    //    }, 250);
+    //  }
+    //}
+    function resetCircles(ASes) {
+      angular.forEach(ASes.split(','), function (e) {
+        if (ASCircles[e] != undefined)
+          ASCircles[e].options.color = "black";
+      });
     }
 
     var selectAS = function (as) {
       if (lastCircle != null) {
         lastCircle.options.color = "black";
-        waitForResetCircles(lastCircle.AS.upstreams);
-        waitForResetCircles(lastCircle.AS.downstreams);
+        //waitForResetCircles(lastCircle.AS.upstreams);
+        //waitForResetCircles(lastCircle.AS.downstreams);
+        if (lastCircle.AS.upstreams != null)
+          resetCircles(lastCircle.AS.upstreams);
+        if (lastCircle.AS.downstreams != null)
+          resetCircles(lastCircle.AS.downstreams);
       }
 
       var thisCircle = ASCircles[as];
@@ -186,13 +193,8 @@ angular.module('bmpUiApp')
           if (map.hasLayer(polyline))
             map.removeLayer(polyline);
         });
-        angular.forEach(prefixCircles, function (circle) {
-          if (map.hasLayer(circle))
-            map.removeLayer(circle);
-        });
 
         ASPolyLines = [];
-        prefixCircles = {};
 
 
         angular.forEach(upstreams, function (upAS) {
@@ -231,6 +233,16 @@ angular.module('bmpUiApp')
         var existedPrefixes = [];
         var nonExistedPrefixes = [];
 
+        angular.forEach(prefixCircles, function (circle) {
+          if (map.hasLayer(circle))
+            map.removeLayer(circle);
+        });
+        angular.forEach(prefixPolylines, function (polyline) {
+          if (map.hasLayer(polyline))
+            map.removeLayer(polyline);
+        });
+        prefixCircles = {};
+        prefixPolylines = [];
 
         angular.forEach(v_routes, function (row) {
           var fullPrefix = row.Prefix + "/" + row.PrefixLen;
@@ -244,8 +256,8 @@ angular.module('bmpUiApp')
 
             var fullPrefix = row.Prefix + "/" + row.PrefixLen;
             var geoData = geo.v_geo_ip.data[0];
-            var lat = geoData.latitude;
-            var long = geoData.longitude;
+            var lat = parseFloat(geoData.latitude) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.01);
+            var long = parseFloat(geoData.longitude) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.01);
             var circle = L.circleMarker([lat, long], {
               color: "green",
               fillColor: "#CCCCCC"
@@ -266,7 +278,7 @@ angular.module('bmpUiApp')
               weight: 2,
               opacity: 0.5
             });
-            ASPolyLines.push(line);
+            prefixPolylines.push(line);
             if (showLines)
               line.addTo(map);
             $('#prefixList')[0].innerHTML += "<p class='label labelCustom' style='background-color: lightgreen;display: block;cursor: pointer'>" + fullPrefix + "</p>";
@@ -279,13 +291,12 @@ angular.module('bmpUiApp')
 
           circle.addTo(map);
           var fullPrefix = circle.fullPrefix;
-          prefixCircles[fullPrefix] = circle;
           var line = L.polyline([thisCircle._latlng, circle._latlng], {
             color: 'lightgreen',
             weight: 2,
             opacity: 0.5
           });
-          ASPolyLines.push(line);
+          prefixPolylines.push(line);
           if (showLines)
             line.addTo(map);
           $('#prefixList')[0].innerHTML += "<p class='label labelCustom' style='background-color: lightgreen;display: block;cursor: pointer'>" + fullPrefix + "</p>";
@@ -297,88 +308,55 @@ angular.module('bmpUiApp')
 
     };
 
-    var ASCollection;
-
-    var cluster;
-
-    $scope.loading = true;
-
     apiFactory.getAllAS().success(function (result) {
+
+      var ASCollection;
+
+      var cluster;
+
+      ASCollection = result.gen_whois_asn.data;
+
+      $scope.loading = true;
+
+      cluster = new L.MarkerClusterGroup({
+        chunkedLoading: true
+      });
+
+      angular.forEach(ASCollection, function (as) {
+        var baseLatLng, lat, long, noGeo = '';
+        if (as.city_lat && as.city_long)
+          baseLatLng = [as.city_lat, as.city_long];
+        else {
+          baseLatLng = [14.774883, -133.945312];
+          noGeo = '<div class="row"><span class="label label-danger col-xs-12"><h4>This AS has no geo location provided</h4></span></div>'
+        }
+        lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.01);
+        long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.01);
+
+        var circle = L.circleMarker([lat, long], {
+          color: 'black',
+          fillColor: 'pink',
+          fillOpacity: 0.5
+        }).on('click', function (e) {
+          selectAS(e.target.AS.asn);
+        }).on('mouseover', function (e) {
+          e.target.openPopup();
+        }).on('mouseout', function (e) {
+          e.target.closePopup();
+        }).bindPopup("<p>" + "AS: " + as.asn + "</p>"
+          + "<p>" + "AS Name: " + as.as_name + "</p>"
+          + "<p>" + "Org Name: " + as.org_name + "</p>"
+          + noGeo
+        ).addTo(cluster);
+
+        circle.AS = as;
+
+        ASCircles[as.asn] = circle;
+
+      });
 
       $scope.loading = false;
 
-      ASCollection = groupBy(result.gen_whois_asn.data, function (item) {
-        return [item.country ? getCode(item.country) : item.country, item.city ? item.city.toLowerCase() : item.city];
-      });
-
-      cluster = new L.MarkerClusterGroup();
-
       cluster.addTo(map);
-
-      angular.forEach(ASCollection, function (asArray) {
-        var countryCode = asArray[0].country ? getCode(asArray[0].country) : asArray[0].country;
-        var city = asArray[0].city ? asArray[0].city.toLowerCase() : asArray[0].city;
-        var baseLatLng, lat, long;
-        if (countryCode && city)
-          apiFactory.getGeoLocation(countryCode, city).success(function (location) {
-            if (!location.geo_location.data.length > 0)
-              baseLatLng = [-78.870048, 12.216797];
-            else
-              baseLatLng = [location.geo_location.data[0].latitude, location.geo_location.data[0].longitude];
-            angular.forEach(asArray, function (as) {
-              lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
-              long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.03);
-
-              var circle = L.circleMarker([lat, long], {
-                color: 'black',
-                fillColor: 'pink',
-                fillOpacity: 0.5
-              }).on('click', function (e) {
-                selectAS(e.target.AS.asn);
-              }).on('mouseover', function (e) {
-                e.target.openPopup();
-              }).on('mouseout', function (e) {
-                e.target.closePopup();
-              }).bindPopup("<p>" + "AS: " + as.asn + "</p>"
-                + "<p>" + "AS Name: " + as.as_name + "</p>"
-                + "<p>" + "Org Name: " + as.org_name + "</p>"
-                + (baseLatLng == [1, 1] ? ("<h4>" + "This AS has no geo location provided" + "</h4>") : "")
-              ).addTo(cluster);
-
-              circle.AS = as;
-
-              ASCircles[as.asn] = circle;
-            });
-          });
-        else {
-          baseLatLng = [-78.870048, 12.216797];
-          angular.forEach(asArray, function (as) {
-            lat = parseFloat(baseLatLng[0]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.025);
-            long = parseFloat(baseLatLng[1]) + ((Math.random() > 0.5 ? 1 : -1) * Math.random() * 0.025);
-
-            var circle = L.circleMarker([lat, long], {
-              color: 'black',
-              fillColor: 'pink',
-              fillOpacity: 0.4
-            }).on('click', function (e) {
-              selectAS(e.target.AS.asn);
-            }).on('mouseover', function (e) {
-              e.target.openPopup();
-            }).on('mouseout', function (e) {
-              e.target.closePopup();
-            }).bindPopup("<p>" + "AS: " + as.asn + "</p>"
-              + "<p>" + "AS Name: " + as.as_name + "</p>"
-              + "<p>" + "Org Name: " + as.org_name + "</p>"
-              + "<h4>" + "This AS has no geo location provided" + "</h4>"
-            ).addTo(cluster);
-
-            circle.AS = as;
-
-            ASCircles[as.asn] = circle;
-          });
-        }
-      });
     });
-  }
-  ])
-;
+  }]);

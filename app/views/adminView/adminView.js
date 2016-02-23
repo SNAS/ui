@@ -121,7 +121,7 @@ angular.module('bmpUiApp')
       rowHeight: 32,
       columnDefs: [
         {
-          name: "country", displayName: 'Country', width: '20%', enableCellEdit: false
+          name: "country_code", displayName: 'Country Code', width: '20%', enableCellEdit: false
         },
         {
           name: "city", displayName: 'City', width: '30%', enableCellEdit: false
@@ -164,7 +164,7 @@ angular.module('bmpUiApp')
           getGeoLocationPage();
         });
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef) {
-          apiFactory.updateGeoLocation(rowEntity.country, rowEntity.city, colDef.name, rowEntity[colDef.name]).success(function (affectedRows) {
+          apiFactory.updateGeoLocation(rowEntity.country_code, rowEntity.city, colDef.name, rowEntity[colDef.name]).success(function (affectedRows) {
             showResult(affectedRows, 'Location');
           });
         });
@@ -202,7 +202,7 @@ angular.module('bmpUiApp')
               //var fieldArray = [], typeArray = [];
               $('#modal-title')[0].innerText = "Import GeoIP data file";
               $('#modal-body')[0].innerHTML = "<h3><span class='label label-danger col-sm-12' style='margin-bottom:20px'>This function is coming soon!</span></h3>";
-              //  "<h3><span class='label label-danger col-sm-12' style='margin-bottom:20px'>Warning: uppon import, the original data will be erased</span></h3> \
+              //  "<h3><span class='label label-danger col-sm-12' style='margin-bottom:20px'>Warning: upon import, the original data will be erased</span></h3> \
               //<form id='ipForm' class='form-horizontal' role='form' enctype='multipart/form-data' method='post'> \
               //  <div class='form-group'> \
               //    <div class='input-group col-lg-8 col-lg-offset-2'> \
@@ -255,9 +255,9 @@ angular.module('bmpUiApp')
               //  formData.append("types", typeArray);
               //  formData.append("delimiter", $('#delimiter').val());
               //
-              //  $('#modal-body').append("<h4>Working... You'll get your result or exception below.</h4><h5>This could take long, so go somewhere else or go make a coffee :)</h5>");
+              //  $('#modal-body').append("<h4>Working... You'll get your result or exception below.</h4><h5>This usually takes 5-10 minutes, But you don't have to wait here.</h5>");
               //  apiFactory.importGeoIPFromFile(formData).success(function (result) {
-              //    $('#modal-body').append("<p>" + result + "</p>");
+              //    $('#modal-body').append("<h3><span class='label "+(result.indexOf('Success')>-1?"label-success":"label-danger")+" col-sm-12' style='margin-bottom:20px'>" + result + "</span></h3>");
               //  })
               //});
               //$('#file').on('change', function () {
@@ -375,7 +375,7 @@ angular.module('bmpUiApp')
             case 'import':
               var fieldArray = [], typeArray = [];
               $('#modal-title')[0].innerText = "Import GeoLocation data file";
-              $('#modal-body')[0].innerHTML = "<h3><span class='label label-danger col-sm-12' style='margin-bottom:20px'>Warning: uppon import, the original data will be erased</span></h3> \
+              $('#modal-body')[0].innerHTML = "<h3><span class='label label-danger col-sm-12' style='margin-bottom:20px'>Warning: upon import, the original data will be erased</span></h3> \
               <form id='ipForm' class='form-horizontal' role='form' enctype='multipart/form-data' method='post'> \
                 <div class='form-group'> \
                   <div class='input-group col-lg-8 col-lg-offset-2'> \
@@ -426,9 +426,9 @@ angular.module('bmpUiApp')
                 formData.append("types", typeArray);
                 formData.append("delimiter", $('#delimiter').val());
 
-                $('#modal-body').append("<h4>Working... You'll get your result or exception below.</h4><h5>This could take long, so go somewhere else or go make a coffee :)</h5>");
+                $('#modal-body').append("<h4>Working... You'll get your result or exception below.</h4><h5>This usually takes 5-10 minutes, But you don't have to wait here.</h5>");
                 apiFactory.importGeoLocationFromFile(formData).success(function (result) {
-                  $('#modal-body').append("<p>" + result + "</p>");
+                  $('#modal-body').append("<h3><span class='label " + (result.indexOf('Success') > -1 ? "label-success" : "label-danger") + " col-sm-12' style='margin-bottom:20px'>" + result + "</span></h3>");
                 })
               });
               $('#file').on('change', function () {
@@ -456,7 +456,7 @@ angular.module('bmpUiApp')
                 $('#save-button').show();
                 $('#save-button')[0].innerText = "Confirm";
                 $('#save-button').on('click', function () {
-                  apiFactory.deleteGeoLocation(row.country, row.city).success(function (affectedRows) {
+                  apiFactory.deleteGeoLocation(row.country_code, row.city).success(function (affectedRows) {
                     showResult(affectedRows, 'Location');
                     getGeoLocationPage();
                   });
@@ -468,9 +468,9 @@ angular.module('bmpUiApp')
               $('#modal-title')[0].innerText = "Insert Geo Location data";
               $('#modal-body')[0].innerHTML = "<form id='locationForm' class='form-horizontal' role='form'> \
                   <div class='form-group'> \
-                  <label class='control-label col-sm-4' for='country'>Country:</label> \
+                  <label class='control-label col-sm-4' for='country_code'>Country:</label> \
                 <div class='col-sm-8'> \
-                  <input type='text' class='form-control' id='country' name='country' placeholder='Country Code'> \
+                  <input type='text' class='form-control' id='country_code' name='country_code' placeholder='Country Code'> \
                   </div> \
                   </div> \
                   <div class='form-group'> \
