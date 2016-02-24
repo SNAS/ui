@@ -1,5 +1,5 @@
-angular.module('bmp.components.prefixModel', [])
-  .directive('bmpPrefixModel', ['apiFactory', function (apiFactory) {
+angular.module('bmp.components.prefixTooltip', [])
+  .directive('bmpPrefixTooltip', ['apiFactory', function (apiFactory) {
     function link($scope, element, attr) {
       element.on('mouseover', function(){
         apiFactory.getWhoisPrefix($scope.prefix.trim())
@@ -15,7 +15,7 @@ angular.module('bmp.components.prefixModel', [])
     }
 
     return {
-      templateUrl: "views/components/prefix-model/prefix-model.html",
+      templateUrl: "views/components/prefixTooltip/prefixTooltip.html",
       restrict: 'AE',
       scope: {
         prefix: "@"

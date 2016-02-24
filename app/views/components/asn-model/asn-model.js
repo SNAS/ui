@@ -52,6 +52,7 @@ angular.module('bmp.components.asnModel',[])
         success(function (result) {
 
           if (result.gen_whois_asn.data.length > 0) {
+            $scope.hoverFound = true;
 
             //build the modal
             $scope.modelData = result.gen_whois_asn.data[0];

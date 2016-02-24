@@ -154,9 +154,11 @@ angular.module('bmpUiApp')
       multiSelect: false,
       columnDefs: [
         {name: "wholePrefix", displayName: 'Prefix', width: "10%",
-          cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-model prefix="{{ COL_FIELD }}"></div>'
+          cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-tooltip prefix="{{ COL_FIELD }}"></div>'
         },
-        {name: "Origin_AS", displayName: 'Origin AS', width: "10%"},
+        {name: "Origin_AS", displayName: 'Origin AS', width: "10%",
+          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable" bmp-asn-model asn="{{COL_FIELD}}"></div>'
+        },
         {name: "PeerName", displayName: 'Peer', width: "20%"},
         {name: "RouterName", displayName: 'Router', width: "15%"},
         {name: "AS_Path", displayName: 'AS Path', width: "*"}

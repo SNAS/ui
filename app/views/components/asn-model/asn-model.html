@@ -18,5 +18,16 @@
     </div>
   </script>
 
-  <span ng-click="open()">{{ asn }}</span>
+  <!--<span ng-click="open()">{{ asn }}</span>-->
+  <span ng-if="hoverFound" ng-click="open()"
+        tooltip-append-to-body="true"
+        tooltip-html-unsafe="AS Name: {{modelData.as_name}}<br>
+        AS: {{modelData.asn}}<br>
+        Org Name: {{modelData.org_name }}<br>
+        Address: {{modelData.address}}"
+        >
+    {{asn}}
+  </span>
+  <span ng-if="!hoverFound" ng-click="open()">{{asn}}</span>
+
 </span>
