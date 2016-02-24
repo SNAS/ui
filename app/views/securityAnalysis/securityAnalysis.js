@@ -154,7 +154,7 @@ angular.module('bmpUiApp')
       multiSelect: false,
       columnDefs: [
         {name: "wholePrefix", displayName: 'Prefix', width: "10%",
-          cellTemplate: '<div class="ui-grid-cell-contents prefix-clickable" bmp-prefix-model prefix="{{ COL_FIELD }}"></div>'
+          cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-model prefix="{{ COL_FIELD }}"></div>'
         },
         {name: "Origin_AS", displayName: 'Origin AS', width: "10%"},
         {name: "PeerName", displayName: 'Peer', width: "20%"},
@@ -281,6 +281,7 @@ angular.module('bmpUiApp')
       var delay = 500;
 
       var tip = d3.tip()
+        .offset([-10, 0])
         .attr('class', 'd3-tip');
 
       function draw(stats) {

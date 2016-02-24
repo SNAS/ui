@@ -1,22 +1,7 @@
-<span>
-
-  <!--Model Template-->
-  <script type="text/ng-template" id="myModalContent.html">
-    <div class="modal-header">
-      <h3 class="modal-title">Prefix Details</h3>
-    </div>
-
-    <div class="modal-body">
-      <!--data content-->
-      <div ng-repeat="(key, value) in items">
-        {{ key }} : {{ value }}
-      </div>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-warning modal-button" ng-click="cancel()">Close</button>
-    </div>
-  </script>
-
-  <span ng-click="open()">{{ prefix }}</span>
+<span ng-if="hoverFound" tooltip-append-to-body="true"
+      tooltip-html-unsafe="descr: {{items.descr}}<br>
+      origin_as: {{items.origin_as }}<br>
+      prefix: {{items.prefix}}<br>
+      source: {{items.source}}">{{prefix}}
 </span>
+<span ng-if="!hoverFound">{{prefix}}</span>

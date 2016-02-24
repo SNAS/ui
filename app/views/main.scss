@@ -71,6 +71,7 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 @import "components/card/templates/preWithdrawsGraph/preWithdrawsGraph";
 @import "components/card/templates/topUpdatesGraph/topUpdatesGraph";
 @import "components/card/templates/topWithdrawsGraph/topWithdrawsGraph";
+@import "components/prefix-model/prefix-model";
 
 //map
 @import "components/map/map";
@@ -98,6 +99,7 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 @import "adminView/adminView";
 @import "aggregationanalysis/aggregationanalysis";
 @import "securityAnalysis/securityAnalysis";
+
 
 //test pages
 @import "cardChanges/cardChanges";
@@ -493,8 +495,8 @@ div.ui-grid-cell input.ng-valid {
   line-height: 1;
   font-weight: bold;
   padding: 6px;
-  background: #ed8e42;
-  color: #F5FFE0;
-  border-radius: 10px;
+  background: #858485;
+  color: white;
+  border-radius: 5px;
 }
 

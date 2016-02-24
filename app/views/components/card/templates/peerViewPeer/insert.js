@@ -78,7 +78,7 @@ angular.module('bmp.components.card')
 
     $scope.ribGridOptions.columnDefs = [
       {name: "wholePrefix", displayName: 'Prefix', width: "20%",
-        cellTemplate: '<div class="ui-grid-cell-contents prefix-clickable"><div bmp-prefix-model prefix="{{ COL_FIELD }}"></div></div>'
+        cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-model prefix="{{ COL_FIELD }}"></div>'
       },
       {name: "NH", displayName: 'NH', width: "15%"},
       {name: "AS_Path", displayName: 'AS Path'},
