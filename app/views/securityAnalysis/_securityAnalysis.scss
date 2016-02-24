@@ -46,3 +46,29 @@ rect:hover{
     opacity: 0.7;
   }
 }
+
+.d3-tip:after {
+  font-size:0;
+}
+
+span.rpkiTooltip,
+span.irrTooltip,
+span.bothTooltip,
+span.neitherTooltip {
+  clear:left;
+  float:left;
+  text-align:left;
+  &.rpkiTooltip {
+    width: 160px;
+  }
+  &.irrTooltip {
+    width: 150px;
+  }
+  &.bothTooltip {
+    width: 200px;
+  }
+  &.neitherTooltip {
+    width: 210px;
+  }
+}
+

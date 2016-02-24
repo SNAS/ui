@@ -128,6 +128,7 @@ angular.module('bmpUiApp')
         });
 
         gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+          $scope.selectedRow = row.entity.prefixWithLen;
           apiFactory.getPrefix(row.entity.prefixWithLen)
           .success(function(res){
             $scope.showCard = true;
@@ -153,11 +154,11 @@ angular.module('bmpUiApp')
       multiSelect: false,
       columnDefs: [
         {name: "wholePrefix", displayName: 'Prefix', width: "10%",
-          cellTemplate: '<div class="ui-grid-cell-contents prefix-clickable"><div bmp-prefix-model prefix="{{ COL_FIELD }}"></div></div>'
+          cellTemplate: '<div class="ui-grid-cell-contents prefix-clickable" bmp-prefix-model prefix="{{ COL_FIELD }}"></div>'
         },
         {name: "Origin_AS", displayName: 'Origin AS', width: "10%"},
-        {name: "RouterName", displayName: 'Router', width: "15%"},
         {name: "PeerName", displayName: 'Peer', width: "20%"},
+        {name: "RouterName", displayName: 'Router', width: "15%"},
         {name: "AS_Path", displayName: 'AS Path', width: "*"}
       ]
     };
@@ -303,13 +304,15 @@ angular.module('bmpUiApp')
             $scope.getMismatchPrefix(null, searchOptions);
           })
           .on('mouseover', function(d, i) {
-            tip.attr('class', 'd3-tip').html('Prefixes with RPKI entries <br>Total: ' + stats.rpkiTotal
-              + "<br>" + (100 * stats.rpkiTotal / stats.total).toFixed(2) + '% of totals')
-              .offset([-10, totalWidth * stats.rpkiTotal/ stats.total / 2]).show();
+            tip.attr('class', 'd3-tip').html(
+              '<span class="rpkiTooltip">Prefixes in DB</span>' + ': ' + stats.total + '<br>' +
+              '<span class="rpkiTooltip">Prefixes with RPKI Data</span>' + ': ' + stats.rpkiTotal + "<br>" +
+              '<span class="rpkiTooltip">Ratio</span>' + ': ' + (100 * stats.rpkiTotal / stats.total).toFixed(2) + '%'
+            ).show();
           })
-          .on('mouseout', function(d, i){
-            tip.destroy();
-          })
+          //.on('mouseout', function(d, i){
+          //  tip.destroy();
+          //})
           .transition()
           .attr("width", totalWidth * stats.rpkiTotal/ stats.total)
           .duration(duration)
@@ -330,8 +333,11 @@ angular.module('bmpUiApp')
             $scope.getMismatchPrefix(null, searchOptions);
           })
           .on('mouseover', function(d, i) {
-            tip.attr('class', 'd3-tip').html('Prefixes with IRR entries<br>Total: ' + stats.irrTotal
-              + "<br>" + (100 * stats.irrTotal / stats.total).toFixed(2) + '% of totals').show(d, i);
+            tip.attr('class', 'd3-tip').html(
+              '<span class="irrTooltip">Prefixes in DB</span>' + ': ' + stats.total + '<br>' +
+              '<span class="irrTooltip">Prefixes with IRR Data</span>' + ': ' + stats.irrTotal + "<br>" +
+              '<span class="irrTooltip">Ratio</span>' + ': ' + (100 * stats.irrTotal / stats.total).toFixed(2) + '%'
+            ).show();
           })
           .on('mouseout', function(d, i){
             tip.destroy(d, i);
@@ -356,8 +362,11 @@ angular.module('bmpUiApp')
             $scope.getMismatchPrefix(null, searchOptions);
           })
           .on('mouseover', function(d, i) {
-            tip.attr('class', 'd3-tip').html('Prefixes with neither IRR nor RPKI <br/>Total: ' + stats.neitherTotal
-              + '<br/>' + (100*stats.neitherTotal/stats.total).toFixed(2) + '% of totals').show(d, i);
+            tip.attr('class', 'd3-tip').html(
+              '<span class="neitherTooltip">Prefixes in DB</span>' + ': ' + stats.total + '<br>' +
+              '<span class="neitherTooltip">Prefixes with no IRR/RPKI Data</span>' + ': ' + stats.neitherTotal + "<br>" +
+              '<span class="neitherTooltip">Ratio</span>' + ': ' + (100 * stats.neitherTotal / stats.total).toFixed(2) + '%'
+            ).show();
           })
           .on('mouseout', function(d, i){
             tip.destroy(d, i);
@@ -380,8 +389,11 @@ angular.module('bmpUiApp')
             $scope.getMismatchPrefix(null, searchOptions);
           })
           .on('mouseover', function(d, i) {
-            tip.attr('class', 'd3-tip').html('Prefixes with both IRR and RPKI entries<br/>Total: '+ stats.bothTotal
-              + '<br>'+ (100*stats.bothTotal/stats.total).toFixed(2) + '% of totals').show(d, i);
+            tip.attr('class', 'd3-tip').html(
+              '<span class="bothTooltip">Prefixes in DB</span>' + ': ' + stats.total + '<br>' +
+              '<span class="bothTooltip">Prefixes with IRR+RPKI Data</span>' + ': ' + stats.bothTotal + "<br>" +
+              '<span class="bothTooltip">Ratio</span>' + ': ' + (100 * stats.bothTotal / stats.total).toFixed(2) + '%'
+            ).show();
           })
           .on('mouseout', function(d, i){
             tip.destroy(d, i);
