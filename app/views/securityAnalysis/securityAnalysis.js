@@ -81,8 +81,10 @@ angular.module('bmpUiApp')
             return $scope.isGrey ? 'grey' : '';
           }
         },
-        {name: "recv_origin_as", displayName: 'Recv Origin AS', width: '*', cellFilter: 'zeroNullFilter', cellClass: 'recv'},
-        {name: "rpki_origin_as", displayName: "RPKI Origin AS", width: "*", cellFilter: 'zeroNullFilter', cellClass: 'rpki',
+        {name: "recv_origin_as", displayName: 'Recv Origin AS', width: '*', cellClass: 'recv',
+          cellTemplate: '<div class="ui-grid-cell-contents" bmp-asn-model asn="{{COL_FIELD}}"></div>'
+        },
+        {name: "rpki_origin_as", displayName: "RPKI Origin AS", width: "*",  cellClass: 'rpki',
           headerCellClass: function(grid, row, col){
             if ($scope.violationOptions.rpki && $scope.violationOptions.irr) {
               return 'both-header';
@@ -91,9 +93,10 @@ angular.module('bmpUiApp')
             } else {
               return '';
             }
-          }
+          },
+          cellTemplate: '<div class="ui-grid-cell-contents" bmp-asn-model asn="{{COL_FIELD}}"></div>'
         },
-        {name: 'irr_origin_as', displayName: 'IRR Origin AS', width: "*", cellFilter: 'zeroNullFilter', cellClass: 'irr',
+        {name: 'irr_origin_as', displayName: 'IRR Origin AS', width: "*", cellClass: 'irr',
           headerCellClass: function(grid, row, col) {
             if ($scope.violationOptions.rpki && $scope.violationOptions.irr) {
               return 'both-header';
@@ -102,7 +105,8 @@ angular.module('bmpUiApp')
             } else {
               return '';
             }
-          }
+          },
+          cellTemplate: '<div class="ui-grid-cell-contents" bmp-asn-model asn="{{COL_FIELD}}"></div>'
         },
         {name: 'irr_source', displayName: "IRR Source", width: "*", cellFilter: 'zeroNullFilter', cellClass: 'irr'}
       ],
@@ -157,7 +161,7 @@ angular.module('bmpUiApp')
           cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-tooltip prefix="{{ COL_FIELD }}"></div>'
         },
         {name: "Origin_AS", displayName: 'Origin AS', width: "10%",
-          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable" bmp-asn-model asn="{{COL_FIELD}}"></div>'
+          cellTemplate: '<div class="ui-grid-cell-contents" bmp-asn-model asn="{{COL_FIELD}}"></div>'
         },
         {name: "PeerName", displayName: 'Peer', width: "20%"},
         {name: "RouterName", displayName: 'Router', width: "15%"},

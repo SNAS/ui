@@ -17,6 +17,7 @@ angular.module('bmpUiApp')
     var urlBase = 'http://' + host + ':' + port + '/db_rest/v1/';
     var limit = 1000;
     var apiFactory = {};
+    $http.defaults.cache = true;
 
     apiFactory.getRouters = function () {
       return $http.get(urlBase + 'routers');
