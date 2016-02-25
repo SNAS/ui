@@ -79,7 +79,8 @@ angular.module('bmpUiApp')
               $scope.isGrey = !$scope.isGrey;
             }
             return $scope.isGrey ? 'grey' : '';
-          }
+          },
+          cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-tooltip prefix="{{COL_FIELD}}"></div>'
         },
         {name: "recv_origin_as", displayName: 'Recv Origin AS', width: '*', cellClass: 'recv',
           cellTemplate: '<div class="ui-grid-cell-contents" bmp-asn-model asn="{{COL_FIELD}}"></div>'
