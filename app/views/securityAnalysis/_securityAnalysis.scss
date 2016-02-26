@@ -21,3 +21,54 @@ button:focus {
     color: red;
   }
 }
+
+rect:hover{
+  cursor: pointer;
+}
+
+.rpki-header {
+  .ui-grid-cell-contents{
+    background-color: #36DBD4;
+    opacity: 0.7;
+  }
+}
+
+.irr-header {
+  .ui-grid-cell-contents {
+    background-color: #ffe845;
+    opacity: 0.7;
+  }
+}
+
+.both-header {
+  .ui-grid-cell-contents {
+    background-color: #a9d669;
+    opacity: 0.7;
+  }
+}
+
+.d3-tip:after {
+  font-size:0;
+}
+
+span.rpkiTooltip,
+span.irrTooltip,
+span.bothTooltip,
+span.neitherTooltip {
+  clear:left;
+  float:left;
+  text-align:left;
+  &.rpkiTooltip {
+    width: 160px;
+  }
+  &.irrTooltip {
+    width: 150px;
+  }
+  &.bothTooltip {
+    width: 200px;
+  }
+  &.neitherTooltip {
+    width: 210px;
+  }
+}
+

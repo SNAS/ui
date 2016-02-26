@@ -1,0 +1,7 @@
+<span ng-if="hoverFound" tooltip-append-to-body="true"
+      tooltip-html-unsafe="descr: {{items.descr}}<br>
+      origin_as: {{items.origin_as }}<br>
+      prefix: {{items.prefix}}<br>
+      source: {{items.source}}">{{prefix}}
+</span>
+<span ng-if="!hoverFound">{{prefix}}</span>

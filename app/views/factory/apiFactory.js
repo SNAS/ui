@@ -17,6 +17,7 @@ angular.module('bmpUiApp')
     var urlBase = 'http://' + host + ':' + port + '/db_rest/v1/';
     var limit = 1000;
     var apiFactory = {};
+    $http.defaults.cache = true;
 
     apiFactory.getRouters = function () {
       return $http.get(urlBase + 'routers');
@@ -429,6 +430,10 @@ angular.module('bmpUiApp')
         keyval.push("asn=" + asn);
       url += keyval.join('&');
       return $http.get(url);
+    };
+
+    apiFactory.getStats = function() {
+      return $http.get(urlBase + 'security/stats');
     };
 
     return apiFactory;

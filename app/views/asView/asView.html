@@ -31,12 +31,9 @@
     <div ng-show="!nodata">
         <div class="main-area row">
             <div class="col-lg-6">
-                <div class="table-container">
+                <div class="table-container whois" scrollable>
                     <h3>Whois Information for AS {{asn}}</h3>
-
-                    <div class="detailspanel">
-                        <pre class="preStyle" ng-bind-html="details"></pre>
-                    </div>
+                    <pre class="preStyle" ng-bind-html="details"></pre>
                 </div>
             </div>
             <div class="col-lg-6">

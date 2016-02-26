@@ -24,14 +24,14 @@ angular.module('bmpUiApp')
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
-      rowHeight: 32,
+      rowHeight: 25,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
 
     $scope.ShowPrefixsOptions.columnDefs = [
       {name: "router_name", displayName: 'RouterName', width: '*'},
       {name: "peer_name", displayName: 'PeerName', width: '*'},
-      {name: "prefix", displayName: 'Prefix', width: '*'},
+      {name: "prefix", displayName: 'Prefix', width: '*'}
     ];
 
     $scope.getsShowPrefixInfo = function(){
@@ -76,13 +76,11 @@ angular.module('bmpUiApp')
     var filterUnique = function(input, key) {
       var unique = {};
       var uniqueList = [];
-      console.log("unique:" + unique);
 
       for(var i = 0; i < input.length; i++){
         if(typeof unique[input[i][key]] == "undefined"){
           unique[input[i][key]] = "";
           uniqueList.push(input[i]);
-          console.log("uniqueList:" + uniqueList);
         }
       }
       return uniqueList;
@@ -156,10 +154,6 @@ angular.module('bmpUiApp')
             $scope.aggregated_prefixes.push(element);
           }
           $scope.auxiliary_array[j] = true;
-
-          console.log(ipToBinary(a.Prefix) + " and " + ipToBinary(b.Prefix));
-          console.log(element);
-          console.log($scope.reduced_prefix_amount);
         }
       }
     }
