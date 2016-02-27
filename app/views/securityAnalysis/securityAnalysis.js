@@ -281,17 +281,27 @@ angular.module('bmpUiApp')
   })
   .directive('statsBarChart', ['apiFactory', 'uiGridConstants', function(apiFactory, uiGridConstants){
     function link($scope, element) {
-      var svgWidth = $(".table-container").width();
-      var totalWidth = svgWidth * 0.8;
-      var margin = svgWidth * 0.1 ;
+      var margin = 40 ;
       var duration = 500;
       var delay = 500;
+      var svgWidth = $(".table-container").width();
+      var totalWidth = svgWidth - 2 * margin;
 
       var tip = d3.tip()
         .offset([-10, 0])
         .attr('class', 'd3-tip');
 
       function draw(stats) {
+        var rpkiInitX = margin;
+        var rpkiWidth = totalWidth * stats.rpkiTotal/ stats.total;
+        var irrInitX = margin + totalWidth * (1 - stats.neitherTotal / stats.total);
+        var irrX = margin + totalWidth * (stats.rpkiTotal - stats.bothTotal) / stats.total;
+        var irrWidth = totalWidth * stats.irrTotal / stats.total;
+        var neitherInitX = irrInitX;
+        var neitherWidth = totalWidth * stats.neitherTotal / stats.total;
+        var bothInitX = irrX;
+        var bothWidth = totalWidth * ((stats.neitherTotal + stats.irrTotal + stats.rpkiTotal) / stats.total - 1);
+
         var svg = d3.select(element[0])
           .append("svg")
           .attr('height', 85)
@@ -301,7 +311,7 @@ angular.module('bmpUiApp')
           .append("rect")
           .style("fill", "36DBD4")
           .style("opacity", "0.7")
-          .attr("x", margin)
+          .attr("x", rpkiInitX)
           .attr("y", 0)
           .attr("width", 0)
           .attr("height", 60)
@@ -318,19 +328,28 @@ angular.module('bmpUiApp')
               '<span class="rpkiTooltip">Ratio</span>' + ': ' + (100 * stats.rpkiTotal / stats.total).toFixed(2) + '%'
             ).show();
           })
-          //.on('mouseout', function(d, i){
-          //  tip.destroy();
-          //})
+          .on('mouseout', function(d, i){
+            tip.destroy();
+          })
           .transition()
-          .attr("width", totalWidth * stats.rpkiTotal/ stats.total)
+          .attr("width", rpkiWidth)
           .duration(duration)
           .delay(delay);
 
+        if (rpkiWidth - bothWidth > 180) {
+          svg
+            .append('text')
+            .attr('x', rpkiInitX + (rpkiWidth - bothWidth) / 2 - 90)
+            .attr('y', 35)
+            .transition()
+            .text('Prefixes with RPKI data: ' + stats.rpkiTotal)
+            .delay(delay + duration);
+        }
 
         var irrRec = svg.append('rect')
           .style('fill', 'ffe845')
           .style('opacity', '0.7')
-          .attr('x', margin + totalWidth * (1 - stats.neitherTotal / stats.total))
+          .attr('x', irrInitX)
           .attr('y', 0)
           .attr('width', 0)
           .attr('height', 60)
@@ -351,42 +370,24 @@ angular.module('bmpUiApp')
             tip.destroy(d, i);
           })
           .transition()
-          .attr('x', margin + totalWidth * (stats.rpkiTotal - stats.bothTotal) / stats.total)
-          .attr('width', totalWidth * stats.irrTotal / stats.total)
+          .attr('x', irrX)
+          .attr('width', irrWidth)
           .duration(duration)
           .delay(delay + duration);
 
-        var neitherRec = svg.append('rect')
-          .style('fill', '3F9183')
-          .style('opacity', '0.7')
-          .attr('x', margin + totalWidth * (1 - stats.neitherTotal / stats.total))
-          .attr('y', 0)
-          .attr('width', 0)
-          .attr('height', 60)
-          .on('click', function(d, i) {
-            var searchOptions = {where: 'WHERE rpki_origin_as IS null AND irr_origin_as IS null'};
-            $scope.violationOptions = {rpki: false, irr: false};
-            $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-            $scope.getMismatchPrefix(null, searchOptions);
-          })
-          .on('mouseover', function(d, i) {
-            tip.attr('class', 'd3-tip').html(
-              '<span class="neitherTooltip">Prefixes in DB</span>' + ': ' + stats.total + '<br>' +
-              '<span class="neitherTooltip">Prefixes with no IRR/RPKI Data</span>' + ': ' + stats.neitherTotal + "<br>" +
-              '<span class="neitherTooltip">Ratio</span>' + ': ' + (100 * stats.neitherTotal / stats.total).toFixed(2) + '%'
-            ).show();
-          })
-          .on('mouseout', function(d, i){
-            tip.destroy(d, i);
-          })
-          .transition()
-          .attr('width', totalWidth * stats.neitherTotal / stats.total)
-          .duration(duration)
-          .delay(delay + duration * 3);
+        if (irrWidth - bothWidth > 170) {
+          svg
+            .append('text')
+            .attr('x', bothInitX + bothWidth + (irrWidth - bothWidth) / 2 - 85)
+            .attr('y', 35)
+            .transition()
+            .text('Prefixes with IRR data: ' + stats.irrTotal)
+            .delay(delay + duration*2);
+        }
 
         var bothRec = svg.append('rect')
           .style('fill', 'a9d669')
-          .attr('x', margin + totalWidth * (1- (stats.irrTotal + stats.neitherTotal)/ stats.total))
+          .attr('x', bothInitX)
           .attr('y', 0)
           .attr('width', 0)
           .attr('height', 60)
@@ -407,9 +408,57 @@ angular.module('bmpUiApp')
             tip.destroy(d, i);
           })
           .transition()
-          .attr('width', totalWidth * ((stats.neitherTotal + stats.irrTotal + stats.rpkiTotal) / stats.total - 1))
+          .attr('width', bothWidth)
           .delay(delay+duration*2)
           .duration(duration);
+
+        if (bothWidth > 220) {
+          svg
+            .append('text')
+            .attr('x', bothInitX + bothWidth / 2 - 110)
+            .attr('y', 35)
+            .transition()
+            .text('Prefixes with IRR and RPKI data: ' + stats.bothTotal)
+            .delay(delay + duration*3);
+        }
+
+        var neitherRec = svg.append('rect')
+          .style('fill', '3F9183')
+          .style('opacity', '0.7')
+          .attr('x', neitherInitX)
+          .attr('y', 0)
+          .attr('width', 0)
+          .attr('height', 60)
+          .on('click', function(d, i) {
+            var searchOptions = {where: 'WHERE rpki_origin_as IS null AND irr_origin_as IS null'};
+            $scope.violationOptions = {rpki: false, irr: false};
+            $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+            $scope.getMismatchPrefix(null, searchOptions);
+          })
+          .on('mouseover', function(d, i) {
+            tip.attr('class', 'd3-tip').html(
+              '<span class="neitherTooltip">Prefixes in DB</span>' + ': ' + stats.total + '<br>' +
+              '<span class="neitherTooltip">Prefixes with no IRR/RPKI Data</span>' + ': ' + stats.neitherTotal + "<br>" +
+              '<span class="neitherTooltip">Ratio</span>' + ': ' + (100 * stats.neitherTotal / stats.total).toFixed(2) + '%'
+            ).show();
+          })
+          .on('mouseout', function(d, i){
+            tip.destroy(d, i);
+          })
+          .transition()
+          .attr('width', neitherWidth)
+          .duration(duration)
+          .delay(delay + duration * 3);
+
+        if (neitherWidth > 230) {
+          svg
+            .append('text')
+            .attr('x', neitherInitX + neitherWidth / 2 - 115)
+            .attr('y', 35)
+            .transition()
+            .text('Prefixes with no IRR/RPKI data: ' + stats.neitherTotal)
+            .delay(delay + duration*4);
+        }
 
       }
 
