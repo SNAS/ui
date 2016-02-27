@@ -468,7 +468,7 @@ angular.module('bmpUiApp')
               $('#modal-title')[0].innerText = "Insert Geo Location data";
               $('#modal-body')[0].innerHTML = "<form id='locationForm' class='form-horizontal' role='form'> \
                   <div class='form-group'> \
-                  <label class='control-label col-sm-4' for='country_code'>Country:</label> \
+                  <label class='control-label col-sm-4' for='country_code'>Country Code:</label> \
                 <div class='col-sm-8'> \
                   <input type='text' class='form-control' id='country_code' name='country_code' placeholder='Country Code'> \
                   </div> \

@@ -204,18 +204,38 @@ angular.module('bmpUiApp')
     function loadPreview() {
       $scope.previewGraphData = [];
 
+      var timeInterval = 60;
+
       //Load previewGraph updates
-      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, 60, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, timeInterval, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
           var gData = [];
-          for (var i = len - 1; i >= 0; i--) {
-            var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
-            gData.push([
-              timestmp, parseInt(data[i].Count)
-            ]);
+          if (len > 0) {
+
+            var dataStart = moment.utc(data[data.length - 1].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+            var dataEnd = moment.utc(data[0].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+
+            while (dataStart > moment(sliderSettings.range['min']).startOf('minute').toDate().getTime()) {
+              dataStart -= timeInterval * 1000;
+              gData.push([dataStart, 0]);
+            }
+
+            for (var i = len - 1; i >= 0; i--) {
+              var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+
+              gData.push([
+                timestmp, parseInt(data[i].Count)
+              ]);
+            }
+
+            while (dataEnd < moment(sliderSettings.range['max']).startOf('minute').toDate().getTime() - timeInterval * 1000) {
+              dataEnd += timeInterval * 1000;
+              gData.push([dataEnd, 0]);
+            }
+
           }
           $scope.previewGraphData[0] = {
             key: "Updates",
@@ -227,17 +247,35 @@ angular.module('bmpUiApp')
         });
 
       //Load previewGraph withdraws
-      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, 60, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, timeInterval, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
           var gData = [];
-          for (var i = len - 1; i >= 0; i--) {
-            var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
-            gData.push([
-              timestmp, parseInt(data[i].Count)
-            ]);
+          if (len > 0) {
+
+            var dataStart = moment.utc(data[data.length - 1].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+            var dataEnd = moment.utc(data[0].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+
+            while (dataStart > moment(sliderSettings.range['min']).startOf('minute').toDate().getTime()) {
+              dataStart -= timeInterval * 1000;
+              gData.push([dataStart, 0]);
+            }
+
+            for (var i = len - 1; i >= 0; i--) {
+              var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+
+              gData.push([
+                timestmp, parseInt(data[i].Count)
+              ]);
+            }
+
+            while (dataEnd < moment(sliderSettings.range['max']).startOf('minute').toDate().getTime() - timeInterval * 1000) {
+              dataEnd += timeInterval * 1000;
+              gData.push([dataEnd, 0]);
+            }
+
           }
           $scope.previewGraphData[1] = {
             key: "Withdraws",
