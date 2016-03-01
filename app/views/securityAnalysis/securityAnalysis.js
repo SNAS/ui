@@ -464,7 +464,18 @@ angular.module('bmpUiApp')
 
       apiFactory.getStats()
         .success(function(res){
-          var data = res.data;
+          var data = res.table.data;
+          var data = {
+            total: data[0].total,
+            rpkiTotal: data[1].total,
+            irrTotal: data[2].total,
+            neitherTotal: data[3].total,
+            bothTotal: data[4].total,
+            totalVio: data[5].total,
+            rpkiVio: data[6].total,
+            irrVio: data[7].total,
+            bothVio: data[8].total
+          };
           draw(data);
         });
 
