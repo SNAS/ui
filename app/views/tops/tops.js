@@ -85,7 +85,7 @@ angular.module('bmpUiApp')
         loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
         noUiSlider.create(timeSelector, sliderSettings);
-        bindValues();
+        bindEvents();
       }
       else if (setDate > moment(sliderSettings.range['max']) && setDate <= moment()) {
         timeSelector.noUiSlider.destroy();
@@ -96,7 +96,7 @@ angular.module('bmpUiApp')
         loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
         noUiSlider.create(timeSelector, sliderSettings);
-        bindValues();
+        bindEvents();
       }
       else if (setDate > moment()) {
         alert("You can't go to the future! But you can try to go to your past :)");
@@ -123,7 +123,7 @@ angular.module('bmpUiApp')
         loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
         noUiSlider.create(timeSelector, sliderSettings);
-        bindValues();
+        bindEvents();
       }
       else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(4, 'hours') <= moment()) {
         timeSelector.noUiSlider.destroy();
@@ -134,7 +134,7 @@ angular.module('bmpUiApp')
         loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
         noUiSlider.create(timeSelector, sliderSettings);
-        bindValues();
+        bindEvents();
       }
       else if (moment(setDate).subtract(4, 'hours') > moment()) {
         alert("You can't go to the future! But you can try to go to your past :)");
@@ -145,9 +145,7 @@ angular.module('bmpUiApp')
       }
     });
 
-    bindValues();
-
-    function bindValues() {
+    function bindEvents() {
       timeSelector.noUiSlider.on('update', function () {
         startDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
         endDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
@@ -158,6 +156,10 @@ angular.module('bmpUiApp')
           duration = durationInMinutes + ' Minutes';
         $('#duration').text(duration);
       });
+      timeSelector.noUiSlider.on('set', function () {
+        loadAll();
+      });
+      loadAll();
     }
 
     $scope.leftArrow = function () {
@@ -171,7 +173,7 @@ angular.module('bmpUiApp')
       loadPreview();
       sliderSettings.start = [sliderSettings.range['max'] - (originalValues[1] - originalValues[0]), sliderSettings.range['max']];
       noUiSlider.create(timeSelector, sliderSettings);
-      bindValues();
+      bindEvents();
     };
 
     $scope.rightArrow = function () {
@@ -185,7 +187,7 @@ angular.module('bmpUiApp')
       loadPreview();
       sliderSettings.start = [sliderSettings.range['min'], sliderSettings.range['min'] + (originalValues[1] - originalValues[0])];
       noUiSlider.create(timeSelector, sliderSettings);
-      bindValues();
+      bindEvents();
     };
 
     $scope.setToNow = function () {
@@ -198,7 +200,7 @@ angular.module('bmpUiApp')
       loadPreview();
       sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
       noUiSlider.create(timeSelector, sliderSettings);
-      bindValues();
+      bindEvents();
     };
 
     function loadPreview() {
@@ -1051,8 +1053,7 @@ angular.module('bmpUiApp')
 
     /*Trend Graph END*/
 
-    loadAll();
-
+    bindEvents();
 
   }
 
