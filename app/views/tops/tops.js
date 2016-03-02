@@ -213,29 +213,23 @@ angular.module('bmpUiApp')
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
+          var tempData = {};
+          angular.forEach(data, function (record) {
+            tempData[moment.utc(record.IntervalTime,'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')] = record.Count;
+          });
           var gData = [];
 
           if (len > 0) {
 
-            var dataStart = moment.utc(data[data.length - 1].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
-            var dataEnd = moment.utc(data[0].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+            var timePointer = moment(sliderSettings.range['min']).startOf('minute');
 
-            while (dataStart > moment(sliderSettings.range['min']).startOf('minute').toDate().getTime()) {
-              dataStart -= timeInterval * 1000;
-              gData.push([dataStart, 0]);
-            }
-
-            for (var i = len - 1; i >= 0; i--) {
-              var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
-
-              gData.push([
-                timestmp, parseInt(data[i].Count)
-              ]);
-            }
-
-            while (dataEnd < moment(sliderSettings.range['max']).startOf('minute').toDate().getTime() - timeInterval * 1000) {
-              dataEnd += timeInterval * 1000;
-              gData.push([dataEnd, 0]);
+            while (timePointer.isBefore(moment(sliderSettings.range['max']).startOf('minute'))) {
+              var temp = tempData[timePointer.format('YYYY-MM-DD HH:mm:ss')];
+              if (temp != undefined)
+                gData.push([timePointer.toDate().getTime(), temp]);
+              else
+                gData.push([timePointer.toDate().getTime(), 0]);
+              timePointer.add(timeInterval, 'seconds');
             }
 
           }
@@ -253,29 +247,23 @@ angular.module('bmpUiApp')
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
+          var tempData = {};
+          angular.forEach(data, function (record) {
+            tempData[moment.utc(record.IntervalTime,'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')] = record.Count;
+          });
           var gData = [];
 
           if (len > 0) {
 
-            var dataStart = moment.utc(data[data.length - 1].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
-            var dataEnd = moment.utc(data[0].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+            var timePointer = moment(sliderSettings.range['min']).startOf('minute');
 
-            while (dataStart > moment(sliderSettings.range['min']).startOf('minute').toDate().getTime()) {
-              dataStart -= timeInterval * 1000;
-              gData.push([dataStart, 0]);
-            }
-
-            for (var i = len - 1; i >= 0; i--) {
-              var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
-
-              gData.push([
-                timestmp, parseInt(data[i].Count)
-              ]);
-            }
-
-            while (dataEnd < moment(sliderSettings.range['max']).startOf('minute').toDate().getTime() - timeInterval * 1000) {
-              dataEnd += timeInterval * 1000;
-              gData.push([dataEnd, 0]);
+            while (timePointer.isBefore(moment(sliderSettings.range['max']).startOf('minute'))) {
+              var temp = tempData[timePointer.format('YYYY-MM-DD HH:mm:ss')];
+              if (temp != undefined)
+                gData.push([timePointer.toDate().getTime(), temp]);
+              else
+                gData.push([timePointer.toDate().getTime(), 0]);
+              timePointer.add(timeInterval, 'seconds');
             }
 
           }
