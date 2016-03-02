@@ -222,7 +222,7 @@ angular.module('bmpUiApp')
             if (showLines)
               line.addTo(map);
             $('#downstreamList')[0].innerHTML += "<p class='label labelCustom' style='background-color: #5CC5EF;display: block;cursor: pointer' asn='" + downAS + "'>" + (ASCircles[downAS].AS.as_name ? ASCircles[downAS].AS.as_name : downAS) + "</p>";
-            bounds.push(ASCircles[upAS].getLatLng());
+            bounds.push(ASCircles[downAS].getLatLng());
           }
         });
 
