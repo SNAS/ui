@@ -22,6 +22,21 @@ angular.module('bmpUiApp')
       }
     };
 
+    L.Control.Indicator = L.Control.extend({
+      options: {
+        position: 'bottomleft'
+      },
+      onAdd: function (map) {
+        var container = L.DomUtil.create('div', 'map-control-group');
+
+        this.label = L.DomUtil.create('p', 'control-indicator', container);
+        this.label.innerText = "Selected : None";
+        this.label.id = "indicator";
+
+        return container;
+      }
+    });
+
     L.Control.Locator = L.Control.extend({
       options: {
         position: 'topright',
@@ -67,6 +82,7 @@ angular.module('bmpUiApp')
       }
     });
 
+    map.addControl(new L.Control.Indicator());
     map.addControl(new L.Control.Locator());
     map.addControl(new L.Control.ListView());
 
@@ -166,6 +182,15 @@ angular.module('bmpUiApp')
       $('#downstreamList')[0].innerHTML = "";
       $('#prefixList')[0].innerHTML = "";
 
+      console.log(thisCircle);
+
+      $('#indicator')[0].innerText = "Selected : AS" + as + " | "
+        + (thisCircle.AS.as_name ? thisCircle.AS.as_name + " | " : "")
+        + (thisCircle.AS.org_name ? thisCircle.AS.org_name + " | " : "")
+        + (thisCircle.AS.state_prov ? thisCircle.AS.state_prov + " | " : "")
+        + (thisCircle.AS.city ? thisCircle.AS.city + " | " : "")
+        + (thisCircle.AS.country ? thisCircle.AS.country + " | " : "");
+
       apiFactory.getRelatedAS(as).success(function (result) {
         thisCircle.AS.upstreams = result.table.data[0].upstreams;
         thisCircle.AS.downstreams = result.table.data[0].downstreams;
@@ -226,7 +251,7 @@ angular.module('bmpUiApp')
           }
         });
 
-        map.fitBounds(L.latLngBounds(bounds),{paddingBottomRight:[0,200]});
+        map.fitBounds(L.latLngBounds(bounds), {paddingBottomRight: [0, 200]});
       });
 
 
