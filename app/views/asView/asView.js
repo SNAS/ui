@@ -473,7 +473,7 @@ angular.module('bmpUiApp')
         var downColor = "#5CC5EF";
 
         var tip = d3.tip()
-          .attr('class', 'd3-tip')
+          .attr('class', 'd3-tip-original')
           .offset([-10, 0])
           .html(function () {
             switch (tipas.dataType) {
