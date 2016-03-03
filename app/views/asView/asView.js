@@ -272,6 +272,7 @@ angular.module('bmpUiApp')
             $scope.calGridHeight($scope.upstreamGridOptions, $scope.upstreamGridApi);
             $scope.upstreamIsLoad = false; //stop loading
             $scope.upstreamNodata = false;
+            $scope.upstreamGridOptions.showGridFooter = true;
           }
         }).error(function (error) {
 
@@ -300,6 +301,7 @@ angular.module('bmpUiApp')
             $scope.calGridHeight($scope.downstreamGridOptions, $scope.downstreamGridApi);
             $scope.downstreamIsLoad = false; //stop loading
             $scope.downstreamNodata = false;
+            $scope.downstreamGridOptions.showGridFooter = true;
           }
         }).error(function (error) {
 
