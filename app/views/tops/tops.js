@@ -215,7 +215,7 @@ angular.module('bmpUiApp')
           var data = result.table.data;
           var tempData = {};
           angular.forEach(data, function (record) {
-            tempData[moment.utc(record.IntervalTime,'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')] = record.Count;
+            tempData[moment.utc(record.IntervalTime, 'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')] = record.Count;
           });
           var gData = [];
 
@@ -249,7 +249,7 @@ angular.module('bmpUiApp')
           var data = result.table.data;
           var tempData = {};
           angular.forEach(data, function (record) {
-            tempData[moment.utc(record.IntervalTime,'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')] = record.Count;
+            tempData[moment.utc(record.IntervalTime, 'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')] = record.Count;
           });
           var gData = [];
 
@@ -591,6 +591,7 @@ angular.module('bmpUiApp')
       // For Trend Graph, avoid the bug of the areas stacked together
       function setTrendData() {
         if (trendGraphUpdates != null && trendGraphWithdraws != null) {
+          $scope.trendGraphData = [];
           var withdrawsLength = trendGraphWithdraws.values.length;
           var updatesLength = trendGraphUpdates.values.length;
           var match = false, index;
