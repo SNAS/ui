@@ -548,7 +548,7 @@ angular.module('bmpUiApp')
           var len = result.table.data.length;
           var data = result.table.data;
           var gData = [];
-          for (var i = len - 1; i >= 0; i--) {
+          for (var i = 0; i < len; i++) {
             var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
             gData.push([
@@ -570,7 +570,7 @@ angular.module('bmpUiApp')
           var len = result.table.data.length;
           var data = result.table.data;
           var gData = [];
-          for (var i = len - 1; i >= 0; i--) {
+          for (var i = 0; i < len; i++) {
             var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
             gData.push([

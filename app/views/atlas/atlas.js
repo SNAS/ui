@@ -189,7 +189,7 @@ angular.module('bmpUiApp')
         + (thisCircle.AS.org_name ? thisCircle.AS.org_name + " | " : "")
         + (thisCircle.AS.state_prov ? thisCircle.AS.state_prov + " | " : "")
         + (thisCircle.AS.city ? thisCircle.AS.city + " | " : "")
-        + (thisCircle.AS.country ? thisCircle.AS.country + " | " : "");
+        + (thisCircle.AS.country ? thisCircle.AS.country : "");
 
       apiFactory.getRelatedAS(as).success(function (result) {
         thisCircle.AS.upstreams = result.table.data[0].upstreams;
