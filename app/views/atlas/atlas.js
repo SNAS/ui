@@ -182,8 +182,6 @@ angular.module('bmpUiApp')
       $('#downstreamList')[0].innerHTML = "";
       $('#prefixList')[0].innerHTML = "";
 
-      console.log(thisCircle);
-
       $('#indicator')[0].innerText = "Selected : AS" + as + " | "
         + (thisCircle.AS.as_name ? thisCircle.AS.as_name + " | " : "")
         + (thisCircle.AS.org_name ? thisCircle.AS.org_name + " | " : "")
