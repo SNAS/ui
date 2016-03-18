@@ -7,21 +7,35 @@ angular.module('bmpUiApp')
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       accessToken: 'pk.eyJ1IjoicmFpbnk5MjcxIiwiYSI6ImNpaHNicmNlaDAwcWp0N2tobmxiOGRnbXgifQ.iWcbPl8TwyIX-qaX6nTx-g',
-      id: 'rainy9271.obcfe84n',
-      minZoom: 4
+      id: 'rainy9271.obcfe84n'
     }).addTo(map);
 
     var panMap = function (e) {
       var value;
       if (e.target.attributes['asn'] != undefined) {
         value = e.target.attributes['asn'].value;
-        map.setView(ASCircles[value]._latlng, map.getMaxZoom() - 1);
+        map.setView(ASCircles[value].getLatLng(), map.getMaxZoom() - 1);
       }
       else {
         value = e.target.innerText;
-        map.setView(prefixCircles[value]._latlng, map.getMaxZoom() - 1);
+        map.setView(prefixCircles[value].getLatLng(), map.getMaxZoom() - 1);
       }
     };
+
+    L.Control.Indicator = L.Control.extend({
+      options: {
+        position: 'bottomleft'
+      },
+      onAdd: function (map) {
+        var container = L.DomUtil.create('div', 'map-control-group');
+
+        this.label = L.DomUtil.create('p', 'control-indicator', container);
+        this.label.innerText = "Selected : None";
+        this.label.id = "indicator";
+
+        return container;
+      }
+    });
 
     L.Control.Locator = L.Control.extend({
       options: {
@@ -68,6 +82,7 @@ angular.module('bmpUiApp')
       }
     });
 
+    map.addControl(new L.Control.Indicator());
     map.addControl(new L.Control.Locator());
     map.addControl(new L.Control.ListView());
 
@@ -75,12 +90,10 @@ angular.module('bmpUiApp')
       if (e.keyCode == 13) {
         var searchValue = this.value;
         if (searchValue.indexOf("/") < 0) {
-          map.panTo(ASCircles[searchValue]._latlng, {animate: true});
           selectAS(searchValue);
         }
         else {
           apiFactory.getWhoisPrefix(searchValue).success(function (result) {
-            map.panTo(ASCircles[result.gen_whois_route.data[0].origin_as]._latlng, {animate: true});
             selectAS(result.gen_whois_route.data[0].origin_as);
           });
         }
@@ -169,6 +182,13 @@ angular.module('bmpUiApp')
       $('#downstreamList')[0].innerHTML = "";
       $('#prefixList')[0].innerHTML = "";
 
+      $('#indicator')[0].innerText = "Selected : AS" + as + " | "
+        + (thisCircle.AS.as_name ? thisCircle.AS.as_name + " | " : "")
+        + (thisCircle.AS.org_name ? thisCircle.AS.org_name + " | " : "")
+        + (thisCircle.AS.state_prov ? thisCircle.AS.state_prov + " | " : "")
+        + (thisCircle.AS.city ? thisCircle.AS.city + " | " : "")
+        + (thisCircle.AS.country ? thisCircle.AS.country : "");
+
       apiFactory.getRelatedAS(as).success(function (result) {
         thisCircle.AS.upstreams = result.table.data[0].upstreams;
         thisCircle.AS.downstreams = result.table.data[0].downstreams;
@@ -177,6 +197,8 @@ angular.module('bmpUiApp')
 
         var upstreams = thisCircle.AS.upstreams.split(',');
         var downstreams = thisCircle.AS.downstreams.split(',');
+
+        var bounds = [thisCircle.getLatLng()];
 
         thisCircle.options.color = "#FF00CC";
 
@@ -199,7 +221,7 @@ angular.module('bmpUiApp')
 
         angular.forEach(upstreams, function (upAS) {
           if (ASCircles[upAS] != undefined) {
-            var line = L.polyline([thisCircle._latlng, ASCircles[upAS]._latlng], {
+            var line = L.polyline([thisCircle.getLatLng(), ASCircles[upAS].getLatLng()], {
               color: '#FF4448',
               weight: 2,
               opacity: 0.5
@@ -208,12 +230,13 @@ angular.module('bmpUiApp')
             if (showLines)
               line.addTo(map);
             $('#upstreamList')[0].innerHTML += "<p class='label labelCustom' style='background-color: #FF4448;display: block;cursor: pointer' asn='" + upAS + "'>" + (ASCircles[upAS].AS.as_name ? ASCircles[upAS].AS.as_name : upAS) + "</p>";
+            bounds.push(ASCircles[upAS].getLatLng());
           }
         });
 
         angular.forEach(downstreams, function (downAS) {
           if (ASCircles[downAS] != undefined) {
-            var line = L.polyline([thisCircle._latlng, ASCircles[downAS]._latlng], {
+            var line = L.polyline([thisCircle.getLatLng(), ASCircles[downAS].getLatLng()], {
               color: '#5CC5EF',
               weight: 2,
               opacity: 0.5
@@ -222,8 +245,11 @@ angular.module('bmpUiApp')
             if (showLines)
               line.addTo(map);
             $('#downstreamList')[0].innerHTML += "<p class='label labelCustom' style='background-color: #5CC5EF;display: block;cursor: pointer' asn='" + downAS + "'>" + (ASCircles[downAS].AS.as_name ? ASCircles[downAS].AS.as_name : downAS) + "</p>";
+            bounds.push(ASCircles[downAS].getLatLng());
           }
         });
+
+        map.fitBounds(L.latLngBounds(bounds), {paddingBottomRight: [0, 200]});
       });
 
 
@@ -273,7 +299,7 @@ angular.module('bmpUiApp')
             circle.prefix = row;
             circle.fullPrefix = fullPrefix;
             prefixCircles[fullPrefix] = circle;
-            var line = L.polyline([thisCircle._latlng, L.latLng(lat, long)], {
+            var line = L.polyline([thisCircle.getLatLng(), L.latLng(lat, long)], {
               color: 'lightgreen',
               weight: 2,
               opacity: 0.5
@@ -291,7 +317,7 @@ angular.module('bmpUiApp')
 
           circle.addTo(map);
           var fullPrefix = circle.fullPrefix;
-          var line = L.polyline([thisCircle._latlng, circle._latlng], {
+          var line = L.polyline([thisCircle.getLatLng(), circle.getLatLng()], {
             color: 'lightgreen',
             weight: 2,
             opacity: 0.5

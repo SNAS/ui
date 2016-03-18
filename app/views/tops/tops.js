@@ -85,7 +85,7 @@ angular.module('bmpUiApp')
         loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
         noUiSlider.create(timeSelector, sliderSettings);
-        bindValues();
+        bindEvents();
       }
       else if (setDate > moment(sliderSettings.range['max']) && setDate <= moment()) {
         timeSelector.noUiSlider.destroy();
@@ -96,7 +96,7 @@ angular.module('bmpUiApp')
         loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
         noUiSlider.create(timeSelector, sliderSettings);
-        bindValues();
+        bindEvents();
       }
       else if (setDate > moment()) {
         alert("You can't go to the future! But you can try to go to your past :)");
@@ -123,7 +123,7 @@ angular.module('bmpUiApp')
         loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
         noUiSlider.create(timeSelector, sliderSettings);
-        bindValues();
+        bindEvents();
       }
       else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(4, 'hours') <= moment()) {
         timeSelector.noUiSlider.destroy();
@@ -134,7 +134,7 @@ angular.module('bmpUiApp')
         loadPreview();
         sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
         noUiSlider.create(timeSelector, sliderSettings);
-        bindValues();
+        bindEvents();
       }
       else if (moment(setDate).subtract(4, 'hours') > moment()) {
         alert("You can't go to the future! But you can try to go to your past :)");
@@ -145,9 +145,7 @@ angular.module('bmpUiApp')
       }
     });
 
-    bindValues();
-
-    function bindValues() {
+    function bindEvents() {
       timeSelector.noUiSlider.on('update', function () {
         startDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
         endDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
@@ -158,6 +156,10 @@ angular.module('bmpUiApp')
           duration = durationInMinutes + ' Minutes';
         $('#duration').text(duration);
       });
+      timeSelector.noUiSlider.on('set', function () {
+        loadAll();
+      });
+      loadAll();
     }
 
     $scope.leftArrow = function () {
@@ -171,7 +173,7 @@ angular.module('bmpUiApp')
       loadPreview();
       sliderSettings.start = [sliderSettings.range['max'] - (originalValues[1] - originalValues[0]), sliderSettings.range['max']];
       noUiSlider.create(timeSelector, sliderSettings);
-      bindValues();
+      bindEvents();
     };
 
     $scope.rightArrow = function () {
@@ -185,7 +187,7 @@ angular.module('bmpUiApp')
       loadPreview();
       sliderSettings.start = [sliderSettings.range['min'], sliderSettings.range['min'] + (originalValues[1] - originalValues[0])];
       noUiSlider.create(timeSelector, sliderSettings);
-      bindValues();
+      bindEvents();
     };
 
     $scope.setToNow = function () {
@@ -198,7 +200,7 @@ angular.module('bmpUiApp')
       loadPreview();
       sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
       noUiSlider.create(timeSelector, sliderSettings);
-      bindValues();
+      bindEvents();
     };
 
     function loadPreview() {
@@ -211,29 +213,23 @@ angular.module('bmpUiApp')
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
+          var tempData = {};
+          angular.forEach(data, function (record) {
+            tempData[moment.utc(record.IntervalTime, 'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')] = record.Count;
+          });
           var gData = [];
 
           if (len > 0) {
 
-            var dataStart = moment.utc(data[data.length - 1].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
-            var dataEnd = moment.utc(data[0].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+            var timePointer = moment(sliderSettings.range['min']).startOf('minute');
 
-            while (dataStart > moment(sliderSettings.range['min']).startOf('minute').toDate().getTime()) {
-              dataStart -= timeInterval * 1000;
-              gData.push([dataStart, 0]);
-            }
-
-            for (var i = len - 1; i >= 0; i--) {
-              var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
-
-              gData.push([
-                timestmp, parseInt(data[i].Count)
-              ]);
-            }
-
-            while (dataEnd < moment(sliderSettings.range['max']).startOf('minute').toDate().getTime() - timeInterval * 1000) {
-              dataEnd += timeInterval * 1000;
-              gData.push([dataEnd, 0]);
+            while (timePointer.isBefore(moment(sliderSettings.range['max']).startOf('minute'))) {
+              var temp = tempData[timePointer.format('YYYY-MM-DD HH:mm:ss')];
+              if (temp != undefined)
+                gData.push([timePointer.toDate().getTime(), temp]);
+              else
+                gData.push([timePointer.toDate().getTime(), 0]);
+              timePointer.add(timeInterval, 'seconds');
             }
 
           }
@@ -251,29 +247,23 @@ angular.module('bmpUiApp')
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
+          var tempData = {};
+          angular.forEach(data, function (record) {
+            tempData[moment.utc(record.IntervalTime, 'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')] = record.Count;
+          });
           var gData = [];
 
           if (len > 0) {
 
-            var dataStart = moment.utc(data[data.length - 1].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
-            var dataEnd = moment.utc(data[0].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
+            var timePointer = moment(sliderSettings.range['min']).startOf('minute');
 
-            while (dataStart > moment(sliderSettings.range['min']).startOf('minute').toDate().getTime()) {
-              dataStart -= timeInterval * 1000;
-              gData.push([dataStart, 0]);
-            }
-
-            for (var i = len - 1; i >= 0; i--) {
-              var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
-
-              gData.push([
-                timestmp, parseInt(data[i].Count)
-              ]);
-            }
-
-            while (dataEnd < moment(sliderSettings.range['max']).startOf('minute').toDate().getTime() - timeInterval * 1000) {
-              dataEnd += timeInterval * 1000;
-              gData.push([dataEnd, 0]);
+            while (timePointer.isBefore(moment(sliderSettings.range['max']).startOf('minute'))) {
+              var temp = tempData[timePointer.format('YYYY-MM-DD HH:mm:ss')];
+              if (temp != undefined)
+                gData.push([timePointer.toDate().getTime(), temp]);
+              else
+                gData.push([timePointer.toDate().getTime(), 0]);
+              timePointer.add(timeInterval, 'seconds');
             }
 
           }
@@ -558,7 +548,7 @@ angular.module('bmpUiApp')
           var len = result.table.data.length;
           var data = result.table.data;
           var gData = [];
-          for (var i = len - 1; i >= 0; i--) {
+          for (var i = 0; i < len; i++) {
             var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
             gData.push([
@@ -580,7 +570,7 @@ angular.module('bmpUiApp')
           var len = result.table.data.length;
           var data = result.table.data;
           var gData = [];
-          for (var i = len - 1; i >= 0; i--) {
+          for (var i = 0; i < len; i++) {
             var timestmp = moment.utc(data[i].IntervalTime, "YYYY-MM-DD HH:mm:ss").local().toDate().getTime();
 
             gData.push([
@@ -601,6 +591,7 @@ angular.module('bmpUiApp')
       // For Trend Graph, avoid the bug of the areas stacked together
       function setTrendData() {
         if (trendGraphUpdates != null && trendGraphWithdraws != null) {
+          $scope.trendGraphData = [];
           var withdrawsLength = trendGraphWithdraws.values.length;
           var updatesLength = trendGraphUpdates.values.length;
           var match = false, index;
@@ -1051,8 +1042,7 @@ angular.module('bmpUiApp')
 
     /*Trend Graph END*/
 
-    loadAll();
-
+    bindEvents();
 
   }
 

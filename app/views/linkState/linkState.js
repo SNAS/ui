@@ -377,7 +377,7 @@ angular.module('bmpUiApp')
                 var popup = "";
                 if (drawnPolyline.containedLines.length > 1) {
                   angular.forEach(drawnPolyline.containedLines, function (line) {
-                    popup += '<p class="btn btn-primary btn-block" id="' + line.options.data.id + '" style="padding:0 10px 0 10px" >' + line.options.data.localName +
+                    popup += '<p class="btn btn-info" id="' + line.options.data.id + '" style="white-space: pre-line" >' + line.options.data.localName +
                       ' <span class="glyphicon glyphicon-arrow-right"></span> ' + line.options.data.remoteName + '</p>';
                   });
                   drawnPolyline.on('popupopen', function (e) {
