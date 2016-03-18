@@ -28,22 +28,55 @@ rect:hover{
 
 .rpki-header {
   .ui-grid-cell-contents{
-    background-color: #36DBD4;
-    opacity: 0.7;
+    background-color: #058DC7;
+  }
+}
+
+.rpki-con-header {
+  .ui-grid-cell-contents{
+    background-color: #24CBE5;
+  }
+}
+
+.rpki-vio-header {
+  .ui-grid-cell-contents{
+    background-color: #c42525;
   }
 }
 
 .irr-header {
   .ui-grid-cell-contents {
-    background-color: #ffe845;
-    opacity: 0.7;
+    background-color: #50B432;
+  }
+}
+
+.irr-con-header {
+  .ui-grid-cell-contents {
+    background-color: #64E572;
+  }
+}
+
+.irr-vio-header {
+  .ui-grid-cell-contents {
+    background-color: #c42525;
   }
 }
 
 .both-header {
   .ui-grid-cell-contents {
-    background-color: #a9d669;
-    opacity: 0.7;
+    background-color: #ED561B;
+  }
+}
+
+.both-con-header {
+  .ui-grid-cell-contents {
+    background-color: #FF9655;
+  }
+}
+
+.both-vio-header {
+  .ui-grid-cell-contents {
+    background-color: #c42525;
   }
 }
 
@@ -51,29 +84,9 @@ rect:hover{
   font-size:0;
 }
 
-span.rpkiTooltip,
-span.irrTooltip,
-span.bothTooltip,
-span.neitherTooltip {
-  clear:left;
-  float:left;
-  text-align:left;
-  &.rpkiTooltip {
-    width: 160px;
-  }
-  &.irrTooltip {
-    width: 150px;
-  }
-  &.bothTooltip {
-    width: 200px;
-  }
-  &.neitherTooltip {
-    width: 210px;
-  }
+.d3-tip > span {
+  clear: left;
+  float: left;
+  text-align: left;
+  width: 220px;
 }
-
-svg > text {
-  fill: rgb(113, 129, 141);
-  font-size: 16px;
-}
-

@@ -13,8 +13,6 @@ angular.module('bmpUiApp')
     $scope.securityGridInitHeight = 425;
     $scope.showCard = false;
     $scope.glassGridIsLoad = true;
-    $scope.isViolationOn = false;
-    $scope.violationOptions = {rpki: null, irr: null};
 
     var paginationOptions = {
       page: 1,
@@ -86,27 +84,9 @@ angular.module('bmpUiApp')
           cellTemplate: '<div class="ui-grid-cell-contents" bmp-asn-model asn="{{COL_FIELD}}"></div>'
         },
         {name: "rpki_origin_as", displayName: "RPKI Origin AS", width: "*",  cellClass: 'rpki',
-          headerCellClass: function(grid, row, col){
-            if ($scope.violationOptions.rpki && $scope.violationOptions.irr) {
-              return 'both-header';
-            } else if ($scope.violationOptions.rpki) {
-              return 'rpki-header';
-            } else {
-              return '';
-            }
-          },
           cellTemplate: '<div class="ui-grid-cell-contents" bmp-asn-model asn="{{COL_FIELD}}"></div>'
         },
         {name: 'irr_origin_as', displayName: 'IRR Origin AS', width: "*", cellClass: 'irr',
-          headerCellClass: function(grid, row, col) {
-            if ($scope.violationOptions.rpki && $scope.violationOptions.irr) {
-              return 'both-header';
-            } else if ($scope.violationOptions.irr) {
-              return 'irr-header';
-            } else {
-              return '';
-            }
-          },
           cellTemplate: '<div class="ui-grid-cell-contents" bmp-asn-model asn="{{COL_FIELD}}"></div>'
         },
         {name: 'irr_source', displayName: "IRR Source", width: "*", cellFilter: 'zeroNullFilter', cellClass: 'irr'}
@@ -174,13 +154,16 @@ angular.module('bmpUiApp')
       if (paginationOptions == undefined || paginationOptions == null) {
         paginationOptions = {page: 1, pageSize: 1000};
       }
+      if (!paginationOptions.page) {
+        paginationOptions.page = 1;
+        paginationOptions.pageSize = 1000;
+      }
       if (searchOptions == undefined || searchOptions == null) {
         searchOptions = {asn: null, prefix: null, where: null}
       }
       $scope.lastPrefix = ""; // initialize
       $scope.isGrey = true;
       $scope.securityIsLoad = true;
-      $scope.showViolations(searchOptions);
       apiFactory.getMisMatchPrefix(paginationOptions.page, paginationOptions.pageSize,
         paginationOptions.sort, paginationOptions.desc, searchOptions.asn, searchOptions.prefix, searchOptions.where)
         .success(function(res) {
@@ -230,43 +213,6 @@ angular.module('bmpUiApp')
 
     $("[name='searchBox']").tooltip();
 
-    $("[name='violationCheckbox']").bootstrapSwitch().on("switchChange.bootstrapSwitch", function(){
-      $scope.toggleViolation();
-    });
-
-    $scope.toggleViolation = function(){
-      $scope.isViolationOn = !$scope.isViolationOn;
-      $scope.getMismatchPrefix();
-    };
-
-    $scope.showViolations = function(searchOptions) {
-      if ($scope.violationOptions.rpki == null || $scope.violationOptions.irr == null) {
-        searchOptions.where = $scope.isViolationOn ?
-          'WHERE (rpki_origin_as IS NOT NULL and recv_origin_as != rpki_origin_as) OR (irr_origin_as IS NOT NULL and irr_origin_as != recv_origin_as)'
-          : null;
-      } else if ($scope.violationOptions.rpki && $scope.violationOptions.irr) {
-        searchOptions.where = $scope.isViolationOn
-          ? 'WHERE rpki_origin_as IS NOT null AND irr_origin_as IS NOT NULL AND (rpki_origin_as != recv_origin_as OR recv_origin_as != irr_origin_as)'
-          : 'WHERE rpki_origin_as IS NOT null AND irr_origin_as IS NOT NULL';
-      } else if ($scope.violationOptions.rpki) {
-        searchOptions.where = $scope.isViolationOn
-          ? 'WHERE rpki_origin_as IS NOT NULL AND rpki_origin_as != recv_origin_as'
-          : 'WHERE rpki_origin_as IS NOT NULL';
-      } else if ($scope.violationOptions.irr) {
-        searchOptions.where = $scope.isViolationOn
-          ? 'WHERE irr_origin_as IS NOT NULL AND irr_origin_as != recv_origin_as'
-          : 'WHERE irr_origin_as IS NOT NULL';
-      } else {
-        searchOptions.where = 'WHERE irr_origin_as IS NULL and rpki_origin_as IS NULL';
-      }
-    };
-
-    $scope.showAllPrefixes = function() {
-      $scope.violationOptions = {rpki: null, irr: null};
-      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-      $scope.getMismatchPrefix();
-    };
-
     $scope.getMismatchPrefix(paginationOptions, searchOptions);
 
   }])
@@ -280,192 +226,19 @@ angular.module('bmpUiApp')
     }
   })
   .directive('statsBarChart', ['apiFactory', 'uiGridConstants', function(apiFactory, uiGridConstants){
+
     function link($scope, element) {
-      var margin = 40 ;
-      var duration = 500;
-      var delay = 500;
-      var svgWidth = $(".table-container").width();
-      var totalWidth = svgWidth - 2 * margin;
 
-      var tip = d3.tip()
-        .offset([-10, 0])
-        .attr('class', 'd3-tip');
-
-      function draw(stats) {
-        var rpkiInitX = margin;
-        var rpkiWidth = totalWidth * stats.rpkiTotal/ stats.total;
-        var irrInitX = margin + totalWidth * (1 - stats.neitherTotal / stats.total);
-        var irrX = margin + totalWidth * (stats.rpkiTotal - stats.bothTotal) / stats.total;
-        var irrWidth = totalWidth * stats.irrTotal / stats.total;
-        var neitherInitX = irrInitX;
-        var neitherWidth = totalWidth * stats.neitherTotal / stats.total;
-        var bothInitX = irrX;
-        var bothWidth = totalWidth * ((stats.neitherTotal + stats.irrTotal + stats.rpkiTotal) / stats.total - 1);
-
-        var svg = d3.select(element[0])
-          .append("svg")
-          .attr('height', 85)
-          .call(tip);  // svg height 100
-
-        var rpkiRec = svg
-          .append("rect")
-          .style("fill", "36DBD4")
-          .style("opacity", "0.7")
-          .attr("x", rpkiInitX)
-          .attr("y", 0)
-          .attr("width", 0)
-          .attr("height", 60)
-          .on('click', function(d, i) {
-            var searchOptions = {where: 'WHERE rpki_origin_as IS NOT null AND irr_origin_as IS NULL'};
-            $scope.violationOptions = {rpki: true, irr: false};
-            $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-            $scope.getMismatchPrefix(null, searchOptions);
-          })
-          .on('mouseover', function(d, i) {
-            tip.attr('class', 'd3-tip').html(
-              '<span class="rpkiTooltip">Prefixes in DB</span>' + ': ' + stats.total + '<br>' +
-              '<span class="rpkiTooltip">Prefixes with RPKI Data</span>' + ': ' + stats.rpkiTotal + "<br>" +
-              '<span class="rpkiTooltip">Ratio</span>' + ': ' + (100 * stats.rpkiTotal / stats.total).toFixed(2) + '%'
-            ).show();
-          })
-          .on('mouseout', function(d, i){
-            tip.destroy();
-          })
-          .transition()
-          .attr("width", rpkiWidth)
-          .duration(duration)
-          .delay(delay);
-
-        if (rpkiWidth - bothWidth > 180) {
-          svg
-            .append('text')
-            .attr('x', rpkiInitX + (rpkiWidth - bothWidth) / 2 - 90)
-            .attr('y', 35)
-            .transition()
-            .text('Prefixes with RPKI data: ' + stats.rpkiTotal)
-            .delay(delay + duration);
-        }
-
-        var irrRec = svg.append('rect')
-          .style('fill', 'ffe845')
-          .style('opacity', '0.7')
-          .attr('x', irrInitX)
-          .attr('y', 0)
-          .attr('width', 0)
-          .attr('height', 60)
-          .on('click', function(d, i) {
-            var searchOptions = {where: 'WHERE irr_origin_as IS NOT null AND rpki_origin_as IS NULL'};
-            $scope.violationOptions = {irr: true, rpki: false};
-            $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-            $scope.getMismatchPrefix(null, searchOptions);
-          })
-          .on('mouseover', function(d, i) {
-            tip.attr('class', 'd3-tip').html(
-              '<span class="irrTooltip">Prefixes in DB</span>' + ': ' + stats.total + '<br>' +
-              '<span class="irrTooltip">Prefixes with IRR Data</span>' + ': ' + stats.irrTotal + "<br>" +
-              '<span class="irrTooltip">Ratio</span>' + ': ' + (100 * stats.irrTotal / stats.total).toFixed(2) + '%'
-            ).show();
-          })
-          .on('mouseout', function(d, i){
-            tip.destroy(d, i);
-          })
-          .transition()
-          .attr('x', irrX)
-          .attr('width', irrWidth)
-          .duration(duration)
-          .delay(delay + duration);
-
-        if (irrWidth - bothWidth > 170) {
-          svg
-            .append('text')
-            .attr('x', bothInitX + bothWidth + (irrWidth - bothWidth) / 2 - 85)
-            .attr('y', 35)
-            .transition()
-            .text('Prefixes with IRR data: ' + stats.irrTotal)
-            .delay(delay + duration*2);
-        }
-
-        var bothRec = svg.append('rect')
-          .style('fill', 'a9d669')
-          .attr('x', bothInitX)
-          .attr('y', 0)
-          .attr('width', 0)
-          .attr('height', 60)
-          .on('click', function () {
-            var searchOptions = {where: 'WHERE rpki_origin_as IS NOT null AND irr_origin_as IS NOT null'};
-            $scope.violationOptions = {rpki: true, irr: true};
-            $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-            $scope.getMismatchPrefix(null, searchOptions);
-          })
-          .on('mouseover', function(d, i) {
-            tip.attr('class', 'd3-tip').html(
-              '<span class="bothTooltip">Prefixes in DB</span>' + ': ' + stats.total + '<br>' +
-              '<span class="bothTooltip">Prefixes with IRR+RPKI Data</span>' + ': ' + stats.bothTotal + "<br>" +
-              '<span class="bothTooltip">Ratio</span>' + ': ' + (100 * stats.bothTotal / stats.total).toFixed(2) + '%'
-            ).show();
-          })
-          .on('mouseout', function(d, i){
-            tip.destroy(d, i);
-          })
-          .transition()
-          .attr('width', bothWidth)
-          .delay(delay+duration*2)
-          .duration(duration);
-
-        if (bothWidth > 220) {
-          svg
-            .append('text')
-            .attr('x', bothInitX + bothWidth / 2 - 110)
-            .attr('y', 35)
-            .transition()
-            .text('Prefixes with IRR and RPKI data: ' + stats.bothTotal)
-            .delay(delay + duration*3);
-        }
-
-        var neitherRec = svg.append('rect')
-          .style('fill', '3F9183')
-          .style('opacity', '0.7')
-          .attr('x', neitherInitX)
-          .attr('y', 0)
-          .attr('width', 0)
-          .attr('height', 60)
-          .on('click', function(d, i) {
-            var searchOptions = {where: 'WHERE rpki_origin_as IS null AND irr_origin_as IS null'};
-            $scope.violationOptions = {rpki: false, irr: false};
-            $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-            $scope.getMismatchPrefix(null, searchOptions);
-          })
-          .on('mouseover', function(d, i) {
-            tip.attr('class', 'd3-tip').html(
-              '<span class="neitherTooltip">Prefixes in DB</span>' + ': ' + stats.total + '<br>' +
-              '<span class="neitherTooltip">Prefixes with no IRR/RPKI Data</span>' + ': ' + stats.neitherTotal + "<br>" +
-              '<span class="neitherTooltip">Ratio</span>' + ': ' + (100 * stats.neitherTotal / stats.total).toFixed(2) + '%'
-            ).show();
-          })
-          .on('mouseout', function(d, i){
-            tip.destroy(d, i);
-          })
-          .transition()
-          .attr('width', neitherWidth)
-          .duration(duration)
-          .delay(delay + duration * 3);
-
-        if (neitherWidth > 230) {
-          svg
-            .append('text')
-            .attr('x', neitherInitX + neitherWidth / 2 - 115)
-            .attr('y', 35)
-            .transition()
-            .text('Prefixes with no IRR/RPKI data: ' + stats.neitherTotal)
-            .delay(delay + duration*4);
-        }
-
-      }
+      var div = d3.select(element[0])
+        .append("div")
+        .attr('id', 'highchart')
+        .style('position', 'relative')
+        .style('margin', '0 40px');
 
       apiFactory.getStats()
-        .success(function(res){
+        .success(function(res) {
           var data = res.table.data;
-          var data = {
+          var data_dict = {
             total: data[0].total,
             rpkiTotal: data[1].total,
             irrTotal: data[2].total,
@@ -476,11 +249,197 @@ angular.module('bmpUiApp')
             irrVio: data[7].total,
             bothVio: data[8].total
           };
-          draw(data);
-        });
+
+          $('#highchart').highcharts({
+            chart: {
+              type: 'pie',
+              events: {
+                drillup: function() {
+                  $scope.securityGridOptions.columnDefs[2].headerCellClass = '';
+                  $scope.securityGridOptions.columnDefs[3].headerCellClass = '';
+                  $scope.getMismatchPrefix(null, {where: ''});
+                  $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+                }
+              }
+            },
+            exporting: {
+              enabled: false
+            },
+            title: {
+              text: 'Prefixes Distribution'
+            },
+            subtitle: {
+              text: 'Click the slices to view violations.'
+            },
+            plotOptions: {
+              series: {
+                dataLabels: {
+                  enabled: true,
+                  format: '{point.name}: {point.y} ({point.ratio:.2f}%)'
+                },
+                cursor: 'pointer',
+                events: {
+                  click: function (event) {
+                    switch (event.point.id) {
+                      case 'rpki':
+                        $scope.securityGridOptions.columnDefs[3].headerCellClass = '';
+                        $scope.securityGridOptions.columnDefs[2].headerCellClass =
+                          'rpki-header';
+                        break;
+                      case 'rpki-con':
+                        $scope.securityGridOptions.columnDefs[3].headerCellClass = '';
+                        $scope.securityGridOptions.columnDefs[2].headerCellClass =
+                          'rpki-con-header';
+                        break;
+                      case 'rpki-vio':
+                        $scope.securityGridOptions.columnDefs[3].headerCellClass = '';
+                        $scope.securityGridOptions.columnDefs[2].headerCellClass =
+                          'rpki-vio-header';
+                        break;
+                      case 'irr':
+                        $scope.securityGridOptions.columnDefs[2].headerCellClass = '';
+                        $scope.securityGridOptions.columnDefs[3].headerCellClass =
+                          'irr-header';
+                        break;
+                      case 'irr-con':
+                        $scope.securityGridOptions.columnDefs[2].headerCellClass = '';
+                        $scope.securityGridOptions.columnDefs[3].headerCellClass =
+                          'irr-con-header';
+                        break;
+                      case 'irr-vio':
+                        $scope.securityGridOptions.columnDefs[2].headerCellClass = '';
+                        $scope.securityGridOptions.columnDefs[3].headerCellClass =
+                          'irr-vio-header';
+                        break;
+                      case 'both':
+                        $scope.securityGridOptions.columnDefs[2].headerCellClass =
+                          'both-header';
+                        $scope.securityGridOptions.columnDefs[3].headerCellClass =
+                          'both-header';
+                        break;
+                      case 'both-con':
+                        $scope.securityGridOptions.columnDefs[2].headerCellClass =
+                          'both-con-header';
+                        $scope.securityGridOptions.columnDefs[3].headerCellClass =
+                          'both-con-header';
+                        break;
+                      case 'both-vio':
+                        $scope.securityGridOptions.columnDefs[2].headerCellClass =
+                          'both-vio-header';
+                        $scope.securityGridOptions.columnDefs[3].headerCellClass =
+                          'both-vio-header';
+                        break;
+                    }
+                    var searchOptions = {
+                      where: event.point.searchOption
+                    };
+                    $scope.getMismatchPrefix(null, searchOptions);
+                    $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+                  }
+                }
+              }
+            },
+            tooltip: {
+              headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+              pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y} ({point.ratio:.2f}%)</b> <br/>'
+            },
+            colors: ["#058DC7", "#ED561B", "#50B432", "#492970"],
+            series: [{
+              name: 'Prefixes in database: ' + data_dict.total,
+              colorByPoint: true,
+              data: [{
+                name: 'Prefixes with RPKI data',
+                id: 'rpki',
+                y: data_dict.rpkiTotal,
+                ratio: 100 * data_dict.rpkiTotal / data_dict.total,
+                drilldown: 'RPKI',
+                searchOption: 'WHERE rpki_origin_as IS NOT null AND irr_origin_as IS NULL'
+              }, {
+                name: 'Prefixes with both RPKI and IRR data',
+                id: 'both',
+                y: data_dict.bothTotal,
+                ratio: 100 * data_dict.bothTotal / data_dict.total,
+                drilldown: 'BOTH',
+                searchOption: 'WHERE rpki_origin_as IS NOT null AND irr_origin_as IS NOT NULL'
+              }, {
+                name: 'Prefixes with IRR data',
+                id: 'irr',
+                y: data_dict.irrTotal,
+                ratio: 100 * data_dict.irrTotal / data_dict.total,
+                drilldown: 'IRR',
+                searchOption: 'WHERE rpki_origin_as IS null AND irr_origin_as IS NOT NULL'
+              }, {
+                name: 'Prefixes with no PRKI/IRR data',
+                id: 'neither',
+                y: data_dict.neitherTotal,
+                ratio: 100 * data_dict.neitherTotal / data_dict.total,
+                drilldown: null,
+                searchOption: 'WHERE rpki_origin_as IS null AND irr_origin_as IS NULL'
+              }]
+            }],
+            drilldown: {
+              series: [{
+                name: 'Prefixes with RPKI data: ' + data_dict.rpkiTotal,
+                id: 'RPKI',
+                data: [{
+                  name: 'Violations',
+                  id: 'rpki-vio',
+                  y: data_dict.rpkiVio,
+                  ratio: 100 * data_dict.rpkiVio / data_dict.rpkiTotal,
+                  searchOption: 'WHERE rpki_origin_as IS NOT NULL and irr_origin_as IS NULL and recv_origin_as != rpki_origin_as',
+                  color: '#c42525'
+                }, {
+                  name: 'Consistent',
+                  id: 'rpki-con',
+                  y: data_dict.rpkiTotal - data_dict.rpkiVio,
+                  ratio: 100 * (data_dict.rpkiTotal - data_dict.rpkiVio) / data_dict.rpkiTotal,
+                  searchOption: 'WHERE rpki_origin_as IS NOT NULL and irr_origin_as IS NULL and recv_origin_as = rpki_origin_as',
+                  color: "#24CBE5"
+                }]
+              }, {
+                name: 'Prefixes with both RPKI and IRR data: ' + data_dict.bothTotal,
+                id: 'BOTH',
+                data: [
+                  {
+                    name: 'Violations',
+                    id: 'both-vio',
+                    y: data_dict.bothVio,
+                    ratio: 100 * data_dict.bothVio / data_dict.bothTotal,
+                    searchOption: 'WHERE rpki_origin_as IS NOT NULL and irr_origin_as IS NOT NULL and (recv_origin_as != rpki_origin_as OR recv_origin_as != irr_origin_as)',
+                    color: '#c42525'
+                  }, {
+                    name: 'Consistent',
+                    id: 'both-con',
+                    y: data_dict.bothTotal - data_dict.bothVio,
+                    ratio: 100 * (data_dict.bothTotal - data_dict.bothVio) / data_dict.bothTotal,
+                    searchOption: 'WHERE rpki_origin_as IS NOT NULL and irr_origin_as IS NOT NULL and (recv_origin_as = rpki_origin_as OR recv_origin_as = irr_origin_as)',
+                    color: "#FF9655"
+                  }
+                ]
+              }, {
+                name: 'Prefixes with IRR data: ' + data_dict.irrTotal,
+                id: 'IRR',
+                data: [{
+                  name: 'Violations',
+                  id: 'irr-vio',
+                  y: data_dict.irrVio,
+                  ratio: 100 * data_dict.irrVio / data_dict.irrTotal,
+                  searchOption: 'WHERE rpki_origin_as IS NULL and irr_origin_as IS NOT NULL and irr_origin_as != recv_origin_as',
+                  color: '#c42525'
+                }, {
+                  name: 'Consistent',
+                  id: 'irr-con',
+                  y: data_dict.irrTotal - data_dict.irrVio,
+                  ratio: 100 * (data_dict.irrTotal - data_dict.irrVio) / data_dict.irrTotal,
+                  searchOption: 'WHERE rpki_origin_as IS NULL and irr_origin_as IS NOT NULL and irr_origin_as = recv_origin_as',
+                  color: "#64E572"
+                }]
+              }]
+            }
+          });
+        });  // end of apiFactory
 
     }
-
     return {
       restrict: 'E',
       link: link
