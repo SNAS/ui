@@ -1,13 +1,17 @@
 'use strict';
 
 angular.module('bmpUiApp')
-  .controller('AdminViewController', ['$scope', 'apiFactory', function ($scope, apiFactory) {
+  .controller('AdminViewController', ['$scope', 'apiFactory', '$cookies', '$http', function ($scope, apiFactory, $cookies, $http) {
 
-    var timer, searchTimer, resultDisappearTime = 2500;
+    $scope.usertype = $cookies.usertype;
 
-    function showResult(affectedRows, type) {
-      $("#" + type + "Result")[0].innerHTML = affectedRows > 0 ? "Commit Successful. " : "Commit Failed. ";
-      $("#" + type + "Result").css('color', affectedRows > 0 ? "green" : "red");
+    $http.defaults.cache = false;
+
+    var timer, searchTimer, resultDisappearTime = 5000;
+
+    function showResult(result, type) {
+      $("#" + type + "Result")[0].innerHTML = result > 0 ? "Commit Successful. " : ("Commit Failed. " + result);
+      $("#" + type + "Result").css('color', result > 0 ? "green" : "red");
       $("#" + type + "Result").show();
       clearTimeout(timer);
       timer = setTimeout(function () {
@@ -80,8 +84,8 @@ angular.module('bmpUiApp')
           getGeoIPPage();
         });
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef) {
-          apiFactory.updateGeoIP(rowEntity.ip_start, colDef.name, rowEntity[colDef.name]).success(function (affectedRows) {
-            showResult(affectedRows, 'IP');
+          apiFactory.updateGeoIP(rowEntity.ip_start, colDef.name, rowEntity[colDef.name]).success(function (result) {
+            showResult(result, 'IP');
           });
         });
       }
@@ -164,8 +168,8 @@ angular.module('bmpUiApp')
           getGeoLocationPage();
         });
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef) {
-          apiFactory.updateGeoLocation(rowEntity.country_code, rowEntity.city, colDef.name, rowEntity[colDef.name]).success(function (affectedRows) {
-            showResult(affectedRows, 'Location');
+          apiFactory.updateGeoLocation(rowEntity.country_code, rowEntity.city, colDef.name, rowEntity[colDef.name]).success(function (result) {
+            showResult(result, 'Location');
           });
         });
       }
@@ -192,6 +196,64 @@ angular.module('bmpUiApp')
     $scope.showGeoLocation = function () {
       getGeoLocationPagination();
       getGeoLocationPage();
+    };
+
+    $scope.userGridOptions = {
+      enableColumnResizing: true,
+      enableRowSelection: true,
+      enableRowHeaderSelection: false,
+      multiSelect: false,
+      rowHeight: 32,
+      columnDefs: [
+        {
+          name: "username", displayName: 'USERNAME', width: '30%', enableCellEdit: false
+        },
+        {
+          name: "password", displayName: 'PASSWORD', width: '40%', enableCellEdit: true
+        },
+        {
+          name: "type", displayName: 'USER TYPE', width: '20%'
+        }
+      ],
+      onRegisterApi: function (gridApi) {
+        $scope.userGridApi = gridApi;
+        gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef) {
+          var formData = new FormData();
+          formData.append("username", rowEntity.username);
+          formData.append("column", colDef.name);
+          formData.append("value", rowEntity[colDef.name]);
+          apiFactory.updateUser(formData).success(function (result) {
+            showResult(result, 'User');
+            if (parseInt(result) > 0 && rowEntity.username === $cookies.username)
+              $scope.logout();
+            else
+              getUserList();
+          });
+        });
+      }
+    };
+
+    var getUserList = function () {
+      apiFactory.getAllUsers().success(function (result) {
+        $scope.userGridOptions.data = result.users.data;
+      });
+    };
+
+    $scope.showUsers = function () {
+      if ($scope.usertype === 'admin')
+        getUserList();
+      else {
+        $('#changePwdForm').submit(function () {
+          var formData = new FormData();
+          formData.append("username", $cookies.username);
+          formData.append("column", "password");
+          formData.append("value", $('#newPwd').val());
+          apiFactory.updateUser(formData).success(function (result) {
+            if (parseInt(result) > 0)
+              $scope.logout();
+          });
+        });
+      }
     };
 
     $scope.readyModal = function (type, action) {
@@ -285,8 +347,8 @@ angular.module('bmpUiApp')
                 $('#save-button').show();
                 $('#save-button')[0].innerText = "Confirm";
                 $('#save-button').on('click', function () {
-                  apiFactory.deleteGeoIP(row.ip_start).success(function (affectedRows) {
-                    showResult(affectedRows, 'IP');
+                  apiFactory.deleteGeoIP(row.ip_start).success(function (result) {
+                    showResult(result, 'IP');
                     getGeoIPPage();
                   })
                 });
@@ -456,8 +518,8 @@ angular.module('bmpUiApp')
                 $('#save-button').show();
                 $('#save-button')[0].innerText = "Confirm";
                 $('#save-button').on('click', function () {
-                  apiFactory.deleteGeoLocation(row.country_code, row.city).success(function (affectedRows) {
-                    showResult(affectedRows, 'Location');
+                  apiFactory.deleteGeoLocation(row.country_code, row.city).success(function (result) {
+                    showResult(result, 'Location');
                     getGeoLocationPage();
                   });
                   $('#myModal').modal('hide');
@@ -504,12 +566,81 @@ angular.module('bmpUiApp')
               break;
           }
           break;
+        case 'user':
+          switch (action) {
+            case 'insert':
+              $('#modal-title')[0].innerText = "Insert User";
+              $('#modal-body')[0].innerHTML = "<form id='userForm' class='form-horizontal' role='form'> \
+                  <div class='form-group'> \
+                  <label class='control-label col-sm-4' for='username'>User Name:</label> \
+                <div class='col-sm-8'> \
+                  <input type='text' class='form-control' id='username' name='username' placeholder='A Nice Name'> \
+                  </div> \
+                  </div> \
+                  <div class='form-group'> \
+                  <label class='control-label col-sm-4' for='password'>Password:</label> \
+                <div class='col-sm-8'> \
+                  <input type='text' class='form-control' id='password' name='password' placeholder='A Nice Password'> \
+                  </div> \
+                  </div> \
+                  <div class='form-group'> \
+                  <label class='control-label col-sm-4' for='usertype'>User Type:</label> \
+                <div class='col-sm-8'> \
+                  <select class='form-control' id='usertype' name='usertype'> \
+                  <option value='admin'>admin</option> \
+                  <option value='user'>user</option> \
+                  </select> \
+                  </div> \
+                  </div> \
+              </form>";
+              $('#save-button')[0].innerText = "Save Changes";
+              $('#save-button').on('click', function () {
+                var suffix = $('#userForm').serialize();
+                apiFactory.insertUser(suffix).success(function (result) {
+                  showResult(result, 'User');
+                  getUserList();
+                });
+                $('#myModal').modal('hide');
+              });
+              break;
+            case 'delete':
+              var row = $scope.userGridApi.selection.getSelectedRows()[0];
+              $('#modal-title')[0].innerText = row ? "Delete Geo Location row" : "No row selected";
+              $('#modal-body')[0].innerHTML = row ? "<p>Are you sure?</p>" : "Please select a row first";
+              if (!row)
+                $('#save-button').hide();
+              else {
+                $('#save-button').show();
+                $('#save-button')[0].innerText = "Confirm";
+                $('#save-button').on('click', function () {
+                  apiFactory.deleteUser(row.username).success(function (result) {
+                    showResult(result, 'User');
+                    if (parseInt(result) > 0 && row.username === $cookies.username)
+                      $scope.logout();
+                    else
+                      getUserList();
+                  });
+                  $('#myModal').modal('hide');
+                });
+              }
+              break;
+          }
+          break;
       }
       $('#myModal').modal('show');
-    }
-
-
-  }]);
+    };
+  }])
+  .directive('wjValidationError', function () {
+    return {
+      require: 'ngModel',
+      link: function (scope, elm, attrs, ctl) {
+        scope.$watch(attrs['wjValidationError'], function (errorMsg) {
+          elm[0].setCustomValidity(errorMsg);
+          ctl.$setValidity('wjValidationError', errorMsg ? false : true);
+        });
+      }
+    };
+  });
 
 
 

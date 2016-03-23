@@ -39,3 +39,7 @@
   cursor: inherit;
   display: block;
 }
+
+input:invalid {
+  border: 1px solid red;
+}

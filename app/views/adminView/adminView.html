@@ -46,6 +46,58 @@
         </div>
       </div>
     </tab>
+    <tab heading="User Management" select="showUsers()">
+      <div class="tab-padding">
+        <div ng-if="usertype==='admin'">
+          <div class="row">
+            <div class="col-lg-7">
+              <h3 style="display:inline-block">User List</h3>
+              <div id="UserResult" class="update-result">For editing, just double click then type in.</div>
+            </div>
+            <div class="col-lg-5" style="margin-top:17px;padding-right:3%">
+              <span class="btn btn-success pull-right" ng-click="readyModal('user','insert')"><span
+                class="glyphicon glyphicon-plus"></span></span>
+              <span class="btn btn-danger pull-right" ng-click="readyModal('user','delete')"><span
+                class="glyphicon glyphicon-trash"></span></span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="grid" ui-grid="userGridOptions" ui-grid-edit ui-grid-selection
+                 style="height: 650px" ng-if="userGridOptions.data.length">
+            </div>
+          </div>
+        </div>
+        <div ng-if="usertype!=='admin'">
+          <h3 style="display:inline-block">Change password</h3>
+          <form id="changePwdForm">
+            <div class="row">
+              <div class="col-sm-4">
+                <input class="form-control col-xs-3" id="newPwd"
+                       placeholder="Password"
+                       name="pwd" ng-model="thePwd"
+                       type="password" pattern=".{2,}" required/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <input class="form-control"
+                       placeholder="Check Password"
+                       name="chk" ng-model="chkPwd"
+                       type="password"
+                       wj-validation-error="chkPwd != thePwd ? 'Passwords don\'t match' : ''"/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <button class="btn btn-md btn-success pull-right"
+                        type="submit"> SUBMIT
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </tab>
   </tabset>
 
   <!-- Modal -->

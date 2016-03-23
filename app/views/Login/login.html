@@ -24,6 +24,7 @@
           <h3 class="login-panel-title" align="middle">CISCO BMP ANALYTICS</h3>
         </div>
         <div class="panel-body input-section">
+          <p ng-show="error" style="color:red;text-align: center">{{error}}</p>
           <!--<p>Your username and password didn't match. Please try again.</p>-->
           <form role="form" style="width: 70%; margin-left: 15%" ng-submit="login()">
             <fieldset>

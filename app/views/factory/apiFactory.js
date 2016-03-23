@@ -8,7 +8,7 @@
  * Factory for API calls
  */
 angular.module('bmpUiApp')
-  .factory('apiFactory', function ($http, $q, $location) {
+  .factory('apiFactory', function ($http, $q, $location, $cookies) {
 
     //http://demo.openbmp.org:8001/db_rest/v1/
     //If other host and port for db_rest is desired, change below.
@@ -17,7 +17,16 @@ angular.module('bmpUiApp')
     var urlBase = 'http://' + host + ':' + port + '/db_rest/v1/';
     var limit = 1000;
     var apiFactory = {};
+
     $http.defaults.cache = true;
+    $http.defaults.headers.common['Authorization'] = $cookies.authToken; // jshint ignore:line
+
+    apiFactory.login = function (formData) {
+      return $http.post(urlBase + 'auth/login', formData, {
+        headers: {'Content-Type': undefined},
+        transformRequest: angular.identity
+      });
+    };
 
     apiFactory.getRouters = function () {
       return $http.get(urlBase + 'routers');
@@ -323,8 +332,8 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "whois/asn/all");
     };
 
-    apiFactory.getRelatedAS = function(asn){
-      return $http.get(urlBase + "whois/asn/"+asn+"/related");
+    apiFactory.getRelatedAS = function (asn) {
+      return $http.get(urlBase + "whois/asn/" + asn + "/related");
     };
 
     apiFactory.getPrefixesOriginingFrom = function (asn) {
@@ -432,8 +441,29 @@ angular.module('bmpUiApp')
       return $http.get(url);
     };
 
-    apiFactory.getStats = function() {
+    apiFactory.getStats = function () {
       return $http.get(urlBase + 'security/stats');
+    };
+
+    //User Auth
+
+    apiFactory.getAllUsers = function () {
+      return $http.get(urlBase + 'auth/getAllUsers')
+    };
+
+    apiFactory.updateUser = function (formData) {
+      return $http.post(urlBase + "auth/update", formData, {
+        headers: {'Content-Type': undefined},
+        transformRequest: angular.identity
+      });
+    };
+
+    apiFactory.insertUser = function (suffix) {
+      return $http.post(urlBase + "auth/insert?" + suffix);
+    };
+
+    apiFactory.deleteUser = function (username) {
+      return $http.get(urlBase + "auth/delete/" + username);
     };
 
     return apiFactory;

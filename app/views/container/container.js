@@ -8,91 +8,97 @@
  * Simple user login
  */
 angular.module('bmpUiApp')
-  .controller('MainController', function ($rootScope, $scope, $cookies, $state, $location, $timeout, $window) {
-      $scope.username = $cookies.username;
+  .controller('MainController', function ($rootScope, $scope, AuthenticationService, $cookies, $state, $location, $timeout, $window) {
+    $scope.username = $cookies.username;
 
-      $scope.logout = function (){
-          delete $cookies.username;
-          $state.transitionTo('login');
-      };
+    $scope.logout = function () {
+      AuthenticationService.clearCredentials();
+      $state.transitionTo('login');
+    };
 
-      $scope.dualState = "Activate";
+    $scope.dualState = "Activate";
 
-      $scope.toggleMenu = function(){
-          $("#wrapper").toggleClass("toggled");
-          $("#menu-toggle").toggleClass("menu-close");
-          $rootScope.$broadcast('menu-toggle');
+    $scope.toggleMenu = function () {
+      $("#wrapper").toggleClass("toggled");
+      $("#menu-toggle").toggleClass("menu-close");
+      $rootScope.$broadcast('menu-toggle');
+    };
+
+    $scope.submit = function () {
+      if ($scope.iiaa) {
+        $state.transitionTo('app.aggregationAnalysis', {'as': $scope.iiaa});
+        $scope.iiaa = '';
       }
-
-      $scope.submit = function(){
-        if($scope.iiaa){
-          $state.transitionTo('app.aggregationAnalysis', {'as': $scope.iiaa});
-          $scope.iiaa = '';
-        }
-        else if($scope.iipa){
-          $state.transitionTo('app.prefixAnalysis', {'prefix': $scope.iipa});
-          $scope.iipa = '';
-        }
-        else if($scope.iiwi){
-          $state.transitionTo('app.whoIs', {'as': $scope.iiwi});
-          $scope.iiwi = '';
-        }
-        else if($scope.iias){
-          $state.transitionTo('app.asView', {'as': $scope.iias});
-          $scope.iias = '';
-        }
+      else if ($scope.iipa) {
+        $state.transitionTo('app.prefixAnalysis', {'prefix': $scope.iipa});
+        $scope.iipa = '';
       }
-
-      $scope.toggleDualWindows = function(){
-        if($rootScope.dualWindow.active){
-          $scope.dualState = "Activate";
-          $state.transitionTo('app.' + $rootScope.dualWindow.a);
-          $rootScope.dualWindow = {'active': false, 'a': undefined, 'b': undefined, 'map-top': false, 'map-bottom': false};
-          $('body').css("overflow","auto");
-        }
-        else{
-          $scope.dualState = "Deactivate";
-          var curr = $state.current.name.substr($state.current.name.indexOf(".") + 1);
-          $rootScope.dualWindow = {'active': true, 'a': curr, 'b': 'globalView', 'map-top': false, 'map-bottom': false};
-          $state.transitionTo('app.dualWindow.contents', {a: curr, b: 'globalView'});
-          $('body').css("overflow","hidden");
-        }
+      else if ($scope.iiwi) {
+        $state.transitionTo('app.whoIs', {'as': $scope.iiwi});
+        $scope.iiwi = '';
       }
-
-      $scope.setTopWindow = function(page){
-        $rootScope.dualWindow.a = page;
-        $state.transitionTo('app.dualWindow.contents', {a: $rootScope.dualWindow.a, b: $rootScope.dualWindow.b});
+      else if ($scope.iias) {
+        $state.transitionTo('app.asView', {'as': $scope.iias});
+        $scope.iias = '';
       }
+    }
 
-      $scope.setBottomWindow = function(page){
-        $rootScope.dualWindow.b = page;
-        $state.transitionTo('app.dualWindow.contents', {a: $rootScope.dualWindow.a, b: $rootScope.dualWindow.b});
+    $scope.toggleDualWindows = function () {
+      if ($rootScope.dualWindow.active) {
+        $scope.dualState = "Activate";
+        $state.transitionTo('app.' + $rootScope.dualWindow.a);
+        $rootScope.dualWindow = {
+          'active': false,
+          'a': undefined,
+          'b': undefined,
+          'map-top': false,
+          'map-bottom': false
+        };
+        $('body').css("overflow", "auto");
       }
+      else {
+        $scope.dualState = "Deactivate";
+        var curr = $state.current.name.substr($state.current.name.indexOf(".") + 1);
+        $rootScope.dualWindow = {'active': true, 'a': curr, 'b': 'globalView', 'map-top': false, 'map-bottom': false};
+        $state.transitionTo('app.dualWindow.contents', {a: curr, b: 'globalView'});
+        $('body').css("overflow", "hidden");
+      }
+    }
 
-      $rootScope.dualWindow = {'active': false, 'a': undefined, 'b': undefined, 'map-top': false, 'map-bottom': false};
+    $scope.setTopWindow = function (page) {
+      $rootScope.dualWindow.a = page;
+      $state.transitionTo('app.dualWindow.contents', {a: $rootScope.dualWindow.a, b: $rootScope.dualWindow.b});
+    }
 
-      // $scope.location = $location;
-      // $scope.$watch('location.path()', function(newPath) {
-      //   if($state.current.name === "app.dualWindow.contents" && !$rootScope.dualWindow.active){
-      //     $state.transitionTo('app.globalView');
-      //     console.log('relaod');
-      //     $window.location.reload();
-      //     return;
-      //   }
+    $scope.setBottomWindow = function (page) {
+      $rootScope.dualWindow.b = page;
+      $state.transitionTo('app.dualWindow.contents', {a: $rootScope.dualWindow.a, b: $rootScope.dualWindow.b});
+    }
 
-      //   var path = newPath.substr(1);
-      //   if(path.indexOf('/') > -1 && !$rootScope.dualWindow.active){
-      //     $state.transitionTo('app.globalView');
-      //     $timeout(function(){
-      //       $state.reload();
-      //     }, 100);
-      //   }
-      // });
+    $rootScope.dualWindow = {'active': false, 'a': undefined, 'b': undefined, 'map-top': false, 'map-bottom': false};
+
+    // $scope.location = $location;
+    // $scope.$watch('location.path()', function(newPath) {
+    //   if($state.current.name === "app.dualWindow.contents" && !$rootScope.dualWindow.active){
+    //     $state.transitionTo('app.globalView');
+    //     console.log('relaod');
+    //     $window.location.reload();
+    //     return;
+    //   }
+
+    //   var path = newPath.substr(1);
+    //   if(path.indexOf('/') > -1 && !$rootScope.dualWindow.active){
+    //     $state.transitionTo('app.globalView');
+    //     $timeout(function(){
+    //       $state.reload();
+    //     }, 100);
+    //   }
+    // });
 
     $scope.location = $location;
-    $scope.$watch('location.path()', function(newPath) {
+    $scope.$watch('location.path()', function (newPath) {
 
-      switch($state.current.name){
+      switch ($state.current.name) {
         case "app.globalView":
         case "app.peerView":
         case "app.tops":
@@ -118,63 +124,69 @@ angular.module('bmpUiApp')
           break;
       }
 
-      if($state.current.name != "app.dualWindow.contents" && $rootScope.dualWindow.active){
+      if ($state.current.name != "app.dualWindow.contents" && $rootScope.dualWindow.active) {
         $state.transitionTo('app.' + $rootScope.dualWindow.a);
         $window.location.reload();
         return;
       }
-      else if($state.current.name === "app.dualWindow.contents" && !$rootScope.dualWindow.active){
-        $rootScope.dualWindow = {'active': true, a: $state.params.a, b: $state.params.b, 'map-top': false, 'map-bottom': false};
+      else if ($state.current.name === "app.dualWindow.contents" && !$rootScope.dualWindow.active) {
+        $rootScope.dualWindow = {
+          'active': true,
+          a: $state.params.a,
+          b: $state.params.b,
+          'map-top': false,
+          'map-bottom': false
+        };
       }
     });
   })
-.directive('activeItem', function ($location) {
-  return {
-    restrict: 'A',
-    link: function($scope, element, attrs, controller) {
-      var path = element.context.children[0].href;
-      if(path === '')
-        return;
-      path = path.match('\#(.*)')[1]; //lose everything up to the hash
+  .directive('activeItem', function ($location) {
+    return {
+      restrict: 'A',
+      link: function ($scope, element, attrs, controller) {
+        var path = element.context.children[0].href;
+        if (path === '')
+          return;
+        path = path.match('\#(.*)')[1]; //lose everything up to the hash
 
-      $scope.location = $location;
-      $scope.$watch('location.path()', function(newPath) {
-        //console.log('mug', newPath);
-        $scope.page = newPath.substring(1);
-        $scope.title = $scope.page.replace(/-/g, ' ');
+        $scope.location = $location;
+        $scope.$watch('location.path()', function (newPath) {
+          //console.log('mug', newPath);
+          $scope.page = newPath.substring(1);
+          $scope.title = $scope.page.replace(/-/g, ' ');
 
-        if (path === newPath) {
-          element.addClass('active');
-        } else {
-          element.removeClass('active');
-        }
-      });
+          if (path === newPath) {
+            element.addClass('active');
+          } else {
+            element.removeClass('active');
+          }
+        });
+      }
+    };
+  })
+  .controller('DualControlController', function ($scope, $rootScope, $state) {
+    $scope.setTopWindow = function (page) {
+      $rootScope.dualWindow.a = page;
+      $rootScope.dualWindow['map-top'] = false;
+      $rootScope.dualWindow['map-bottom'] = false;
+      $state.transitionTo('app.dualWindow.contents', {a: $rootScope.dualWindow.a, b: $rootScope.dualWindow.b});
     }
-  };
-})
-.controller('DualControlController', function ($scope, $rootScope, $state){
-  $scope.setTopWindow = function(page){
-    $rootScope.dualWindow.a = page;
-    $rootScope.dualWindow['map-top'] = false;
-    $rootScope.dualWindow['map-bottom'] = false;
-    $state.transitionTo('app.dualWindow.contents', {a: $rootScope.dualWindow.a, b: $rootScope.dualWindow.b});
-  }
 
-  $scope.setBottomWindow = function(page){
-    $rootScope.dualWindow.b = page;
-    $rootScope.dualWindow['map-top'] = false;
-    $rootScope.dualWindow['map-bottom'] = false;
-    $state.transitionTo('app.dualWindow.contents', {a: $rootScope.dualWindow.a, b: $rootScope.dualWindow.b});
-  }
-})
-.directive('dualControl', function(){
-  return{
-    restrict: 'AE',
-    scope: {
-      l: "@",
-      d: "="
-    },
-    controller: 'DualControlController',
-    templateUrl: 'views/container/dualControl.html'
-  }
-});
+    $scope.setBottomWindow = function (page) {
+      $rootScope.dualWindow.b = page;
+      $rootScope.dualWindow['map-top'] = false;
+      $rootScope.dualWindow['map-bottom'] = false;
+      $state.transitionTo('app.dualWindow.contents', {a: $rootScope.dualWindow.a, b: $rootScope.dualWindow.b});
+    }
+  })
+  .directive('dualControl', function () {
+    return {
+      restrict: 'AE',
+      scope: {
+        l: "@",
+        d: "="
+      },
+      controller: 'DualControlController',
+      templateUrl: 'views/container/dualControl.html'
+    }
+  });

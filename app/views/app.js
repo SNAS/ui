@@ -24,6 +24,7 @@ angular
     'ui.grid.resizeColumns',
     'ui.grid.pagination',
     'ui.grid.edit',
+    'bmp.components.authentication',
     'bmp.components.cardList',
     'bmp.components.card',
     'bmp.components.loading',
