@@ -18,7 +18,7 @@ angular.module('bmp.components.authentication', [])
 
           $cookies.username = username;
           $cookies.authToken = 'Basic ' + authdata;
-          $cookies.usertype = usertype
+          $cookies.usertype = usertype;
           $http.defaults.headers.common['Authorization'] = $cookies.authToken; // jshint ignore:line
 
         };
