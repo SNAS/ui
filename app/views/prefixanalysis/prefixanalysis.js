@@ -203,6 +203,8 @@ angular.module('bmpUiApp')
         }
         else {
           $scope.showValues = '</table>there are not enough information</table>';
+          $('.long').removeClass('long');
+          $('.down-arrow').remove();
         }
       } else {
         $scope.nodata = true;  // nodata
