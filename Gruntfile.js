@@ -7,7 +7,7 @@
 // use this if you want to recursively match all subfolders:
 // 'test/spec/**/*.js'
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
   // Load grunt tasks automatically
   require('load-grunt-tasks')(grunt);
@@ -30,32 +30,29 @@ module.exports = function (grunt) {
     // Project settings
     yeoman: appConfig,
 
-      /*
-       * Build a WAR (web archive) without Maven or the JVM installed.
-       */
-      war: {
-        target: {
-          options: {
-            war_dist_folder: '<%= yeoman.war_dist %>',
-            war_name: 'bmpUI',
-            webxml_welcome: 'index.html',
-            webxml_display_name: 'BMP UI',
-            webxml_mime_mapping: [ 
-                      { 
-                          extension: 'woff', 
-                          mime_type: 'application/font-woff' 
-                      } ]
-          },
-          files: [
-            {
-              expand: true,
-              cwd: '<%= yeoman.dist %>',
-              src: ['**'],
-              dest: ''
-            }
-          ]
-        }
-      },
+    /*
+     * Build a WAR (web archive) without Maven or the JVM installed.
+     */
+    war: {
+      target: {
+        options: {
+          war_dist_folder: '<%= yeoman.war_dist %>',
+          war_name: 'bmpUI',
+          webxml_welcome: 'index.html',
+          webxml_display_name: 'BMP UI',
+          webxml_mime_mapping: [{
+            extension: 'woff',
+            mime_type: 'application/font-woff'
+          }]
+        },
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.dist %>',
+          src: ['**'],
+          dest: ''
+        }]
+      }
+    },
 
     // Watches files for changes and runs tasks based on the changed files
     watch: {
@@ -103,7 +100,7 @@ module.exports = function (grunt) {
       livereload: {
         options: {
           open: false,
-          middleware: function (connect) {
+          middleware: function(connect) {
             return [
               connect.static('.tmp'),
               connect().use(
@@ -118,7 +115,7 @@ module.exports = function (grunt) {
       test: {
         options: {
           port: 9001,
-          middleware: function (connect) {
+          middleware: function(connect) {
             return [
               connect.static('.tmp'),
               connect.static('test'),
@@ -172,11 +169,10 @@ module.exports = function (grunt) {
 
     // Automatically inject Bower components into the app
     wiredep: {
-      options: {
-      },
+      options: {},
       app: {
         src: ['<%= yeoman.app %>/index.html'],
-        ignorePath:  /\.\.\//
+        ignorePath: /\.\.\//
       },
       sass: {
         src: ['<%= yeoman.app %>/views/{,*/}*.{scss,sass}'],
@@ -246,15 +242,19 @@ module.exports = function (grunt) {
 
     // Performs rewrites based on filerev and the useminPrepare configuration
     usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}/*.html', '<%= yeoman.dist %>/**/*.html'],
+      html: ['<%= yeoman.dist %>/{,*/}/*.html',
+        '<%= yeoman.dist %>/**/*.html'
+      ],
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
       js: ['<%= yeoman.dist %>/{,*/}/*.js', '<%= yeoman.dist %>/**/*.js'],
       options: {
-        assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/images'],
+        assetsDirs: ['<%= yeoman.dist %>', '<%= yeoman.dist %>/images'],
         patterns: {
-            js: [
-                [/(images\/.*?\.(?:gif|jpeg|jpg|png|webp))/gm, 'Update the JS to reference our revved images']
+          js: [
+            [/(images\/.*?\.(?:gif|jpeg|jpg|png|webp))/gm,
+              'Update the JS to reference our revved images'
             ]
+          ]
         }
       }
     },
@@ -340,11 +340,11 @@ module.exports = function (grunt) {
     },
 
     // Replace Google CDN references
-    cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/*.html']
-      }
-    },
+    // cdnify: {
+    //   dist: {
+    //     html: ['<%= yeoman.dist %>/*.html']
+    //   }
+    // },
 
     // Copies remaining files to places other tasks can use
     copy: {
@@ -409,25 +409,30 @@ module.exports = function (grunt) {
   });
 
 
-  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
-    }
+  grunt.registerTask('serve', 'Compile then start a connect web server',
+    function(target) {
+      if (target === 'dist') {
+        return grunt.task.run(['build', 'connect:dist:keepalive']);
+      }
 
-    grunt.task.run([
-      'clean:server',
-      'wiredep',
-      'concurrent:server',
-      'autoprefixer',
-      'connect:livereload',
-      'watch'
-    ]);
-  });
+      grunt.task.run([
+        'clean:server',
+        'wiredep',
+        'concurrent:server',
+        'autoprefixer',
+        'connect:livereload',
+        'watch'
+      ]);
+    });
 
-  grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function (target) {
-    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
-    grunt.task.run(['serve:' + target]);
-  });
+  grunt.registerTask('server',
+    'DEPRECATED TASK. Use the "serve" task instead',
+    function(target) {
+      grunt.log.warn(
+        'The `server` task has been deprecated. Use `grunt serve` to start a server.'
+      );
+      grunt.task.run(['serve:' + target]);
+    });
 
   grunt.registerTask('test', [
     'clean:server',
@@ -446,7 +451,7 @@ module.exports = function (grunt) {
     'concat',
     'ngmin',
     'copy:dist',
-    'cdnify',
+    // 'cdnify',
     'cssmin',
     'uglify',
     'filerev',

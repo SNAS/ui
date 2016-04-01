@@ -16,13 +16,17 @@
           <div ng-show="securityIsLoad" bmp-loading loading-var="securityIsLoad"></div>
           <div class="grid" ui-grid="securityGridOptions" ui-grid-pagination ui-grid-selection ng-style="{'height':securityGridInitHeight}"></div>
         </div>
+
+        <div class="more-button" id="more-button">
+          <button type="button" name="button" class="btn btn-default">More</button>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="row" ng-if="showCard">
     <div class="col-lg-12">
-      <div class="table-container">
+      <div class="table-container" id="prefix-ad">
         <h3>Prefix {{selectedRow}} advertisements</h3>
         <div class="loading-section" ng-style="{'height':glassGridOptions.changeHeight}">
           <div bmp-loading ng-if="glassGridIsLoad" loading-var="glassGridIsLoad" font-width="80"></div>
