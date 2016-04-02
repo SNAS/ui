@@ -25,7 +25,8 @@ angular.module('bmpUiApp')
             $scope.error = 'Incorrect username or password';
         })
         .error(function (err) {
-          $scope.error = 'Something went wrong. ' + err;
+          // $scope.error = 'Something went wrong ' +
+          $scope.error = 'Authentication service is unreachable'
         });
     };
   }]);
