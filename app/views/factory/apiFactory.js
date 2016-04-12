@@ -18,7 +18,6 @@ angular.module('bmpUiApp')
     var limit = 1000;
     var apiFactory = {};
 
-    $http.defaults.cache = true;
     $http.defaults.headers.common['Authorization'] = $cookies.authToken; // jshint ignore:line
 
     apiFactory.login = function (formData) {
@@ -72,7 +71,7 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getWhoIsASN = function (asn) {
-      return $http.get(urlBase + "whois/asn/" + asn);
+      return $http.get(urlBase + "whois/asn/" + asn, {cache: true});
     };
 
     apiFactory.getWhoIsWhereASN = function (asn) {
@@ -277,7 +276,7 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getWhoisPrefix = function (prefix) {
-      return $http.get(urlBase + "whois/prefix/" + prefix);
+      return $http.get(urlBase + "whois/prefix/" + prefix, {cache: true});
     };
 
     // Aggregation analysis

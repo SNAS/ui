@@ -57,12 +57,12 @@
                                                                           ng-model="iipa" class="instant-input"/></form>
             <dual-control d="dualWindow" l="prefixAnalysis"></dual-control>
           </li>
-          <li active-item><a ui-sref="app.aggregationAnalysis">Aggregation Analysis</a>
+          <li active-item><a ui-sref="app.aggregationAnalysis" ui-sref-opts="{reload: true}">Aggregation Analysis</a>
             <form ng-hide="dualWindow.active" ng-submit="submit()"><input placeholder="AS..." type="text"
                                                                           ng-model="iiaa" class="instant-input"/></form>
             <dual-control d="dualWindow" l="aggregationAnalysis"></dual-control>
           </li>
-          <li active-item><a ui-sref="app.securityAnalysis">Security Analysis</a>
+          <li active-item><a ui-sref="app.securityAnalysis" ui-sref-opts="{reload: true}">Security Analysis</a>
             <form ng-hide="dualWindow.active" ng-submit="submit()"></form>
             <dual-control d="dualWindow" l="securityAnalysis"></dual-control>
           </li>

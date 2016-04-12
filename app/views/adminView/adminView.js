@@ -4,9 +4,7 @@ angular.module('bmpUiApp')
   .controller('AdminViewController', ['$scope', 'apiFactory', '$cookies', '$http', function ($scope, apiFactory, $cookies, $http) {
 
     $scope.usertype = $cookies.usertype;
-
-    $http.defaults.cache = false;
-
+    
     var timer, searchTimer, resultDisappearTime = 5000;
 
     function showResult(result, type) {
@@ -641,8 +639,3 @@ angular.module('bmpUiApp')
       }
     };
   });
-
-
-
-
-
