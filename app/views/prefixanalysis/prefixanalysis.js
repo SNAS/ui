@@ -211,6 +211,12 @@ angular.module('bmpUiApp')
       }
     };
 
+    $scope.findLastUpdates = function() {
+      $scope.loading = true;
+      var searchPrefix = $scope.currentValue + '?hours=' + $scope.timeRange.range + '&ts=lastupdate';
+      getPrefixHisData(searchPrefix);
+    };
+
     /******************** Following is for updates button *****************/
     var NUMBER_OF_RECTS = 30;
 
@@ -291,7 +297,6 @@ angular.module('bmpUiApp')
 
       gridApi.selection.on.rowSelectionChanged($scope,function(row){
         $scope.itemValue = row.entity; //how can i get data from one row before
-        console.log($scope.itemValue);
         $scope.showModal();
         //$scope.$apply()
       });
@@ -394,18 +399,16 @@ angular.module('bmpUiApp')
       apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId)
         .success(function (data) {
           $scope.originHisData = data.v_routes_history.data;
-
           angular.forEach($scope.originHisData, function(item){
             item['LastModified'] = moment.utc(item['LastModified'], 'YYYY-MM-DD HH:mm:ss.SSSSSS').local().format('YYYY-MM-DD HH:mm:ss.SSSSSS');
           });
 
-          if($scope.originHisData.length == 0)
-          {
+          if($scope.originHisData.length == 0) {
             $scope.showTip = "true";
-          }
-          else
-          {
+          } else {
             $scope.showTip = "false";
+            $scope.currentSetTime = moment($scope.originHisData[0].LastModified);
+            $("#endTimePicker").data("DateTimePicker").date($scope.currentSetTime);
           }
           getPrefixHisDataHour();
         });
@@ -448,7 +451,7 @@ angular.module('bmpUiApp')
           allHisData[i].preData = allHisData[i-1];
         }
 
-        var offsetInMin = ($scope.currentSetTime - moment(allHisData[i].LastModified))/1000/60;
+        var offsetInMin = ($scope.currentSetTime - moment(allHisData[i].LastModified))/1000/60 || 0.1;
 
         // ********* the following code is to create two field to record the As Path changing
         if(typeof(allHisData[i].AS_Path) == "string") {
@@ -597,7 +600,7 @@ angular.module('bmpUiApp')
     //should be put into init()
     var init = function() {
       $scope.showTip = "false";
-      $scope.value = "209.212.8.0/24";
+      $scope.value = "67.229.97.0/24";
       getPrefixDataGrid($scope.value);
     };
 
@@ -1159,8 +1162,3 @@ angular.module('bmpUiApp')
     return modal;
   };
 }]);
-
-
-
-
-
