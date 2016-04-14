@@ -8,7 +8,8 @@
  * Controller of the Whois page
  */
 angular.module('bmpUiApp')
-  .controller('WhoIsController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$stateParams', function ($scope, apiFactory, $http, $timeout, $interval, $stateParams) {
+  .controller('WhoIsController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$stateParams', 'uiGridFactory', 
+    function ($scope, apiFactory, $http, $timeout, $interval, $stateParams, uiGridFactory) {
 
     //DEBUG
     window.SCOPE = $scope;
@@ -36,7 +37,6 @@ angular.module('bmpUiApp')
         $scope.whoIsGridApi.selection.on.rowSelectionChanged($scope,function(row) {
           changeSelected();
         });
-        $scope.whoIsGridOptions.changeHeight = 200;
       },
 
     columnDefs : [
@@ -82,21 +82,6 @@ angular.module('bmpUiApp')
     ]
     };
 
-
-    $scope.calGridHeight = function(grid, gridapi){
-      gridapi.core.handleWindowResize();
-
-      var height;
-      var dataLength = 10;
-      if(grid.data.length > dataLength){
-        height = (dataLength * 30);
-      }else{
-        height = ((grid.data.length * 30) + 50);
-      }
-      grid.changeHeight = height;
-      gridapi.grid.gridHeight = grid.changeHeight;
-    };
-
     //Loop through data selecting and altering relevant data.
     var searchValue = function (value) {
       if (value == "" || value == " ")
@@ -132,7 +117,7 @@ angular.module('bmpUiApp')
         $scope.whoIsGridOptions.data = data;
         initSelect();
         setTimeout(function(){
-          $scope.calGridHeight($scope.whoIsGridOptions, $scope.whoIsGridApi);
+          uiGridFactory.calGridHeight($scope.whoIsGridOptions, $scope.whoIsGridApi);
         },10);
         $scope.whoIsLoad=false;
         $scope.nodata = false;

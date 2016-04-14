@@ -12,7 +12,7 @@
                  ng-model="keyword" ng-change="search(keyword)">
         </div>
         <stats-bar-chart></stats-bar-chart>
-        <div class="loading-section" ng-style="{'height':securityGridInitHeight}">
+        <div class="loading-section">
           <div ng-show="securityIsLoad" bmp-loading loading-var="securityIsLoad"></div>
           <div class="grid" ui-grid="securityGridOptions" ui-grid-pagination ui-grid-selection ng-style="{'height':securityGridInitHeight}"></div>
         </div>
@@ -28,9 +28,9 @@
     <div class="col-lg-12">
       <div class="table-container" id="prefix-ad">
         <h3>Prefix {{selectedRow}} advertisements</h3>
-        <div class="loading-section" ng-style="{'height':glassGridOptions.changeHeight}">
+        <div class="loading-section" ng-style="{'height':glassGridOptions.height}">
           <div bmp-loading ng-if="glassGridIsLoad" loading-var="glassGridIsLoad" font-width="80"></div>
-          <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.height}" ui-grid-resize-columns>
+          <div ui-grid-selection ui-grid-auto-resize ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.height}" ui-grid-resize-columns>
             <div class="watermark" ng-if="!glassGridOptions.data.length">No data available</div>
           </div>
         </div>

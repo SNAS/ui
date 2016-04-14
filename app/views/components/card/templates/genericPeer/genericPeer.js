@@ -2,7 +2,8 @@
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardPeerController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
+  .controller('BmpCardPeerController', ["$scope", "apiFactory", "timeFactory", "cardFactory", "uiGridFactory",
+    function ($scope, apiFactory, timeFactory, cardFactory, uiGridFactory) {
 
     //  PEER DATA
     //  {
@@ -87,28 +88,6 @@ angular.module('bmp.components.card')
 
     $scope.summaryPeerOptions.gridIsLoading = true;
 
-    $scope.calGridHeight = function (grid, gridapi) {
-      gridapi.core.handleWindowResize();
-
-      var height;
-      if (grid.data.length > 10) {
-        height = ((10 * 30));
-      } else {
-        // add additional 60 for header and footer
-        height = ((grid.data.length * 30) + 50);
-      }
-      grid.changeHeight = height;
-      gridapi.grid.gridHeight = grid.changeHeight;
-    };
-
-    //$scope.$watch('cardExpand', function(val) {
-    //  if($scope.cardExpand == true){
-    //    setTimeout(function(){
-    //      $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
-    //    },10)
-    //  }
-    //});
-
     //DownstreamAS, as_name, and org_name (working)
     $scope.loadDownStream = function () {
       $scope.summaryPeerOptions.summaryGridIsLoad = true;
@@ -118,11 +97,10 @@ angular.module('bmp.components.card')
           if (result.downstreamASN.size == 0) {
             $scope.summaryPeerOptions.data = [];
             $scope.summaryPeerOptions.showGridFooter = false;
-            $scope.summaryPeerOptions.changeHeight = 150;
-            $scope.summaryPeerOptionsApi.grid.gridHeight = 150;
           } else {
             $scope.summaryPeerOptions.data = result.downstreamASN.data;
-            $scope.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
+            uiGridFactory.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
+            $scope.summaryPeerOptions.showGridFooter = true;
           }
           $scope.summaryPeerOptions.summaryGridIsLoad = false; //stop loading
 

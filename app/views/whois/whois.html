@@ -16,9 +16,9 @@
       <div class="table-container">
         <h3>Whois Information</h3>
 
-        <div class="loading-section" ng-style="{'height':whoIsGridOptions.changeHeight}">
+        <div class="loading-section">
           <div ng-show="whoIsLoad" bmp-loading loading-var="whoIsLoad"></div>
-          <div ui-grid-selection ui-grid="whoIsGridOptions" ng-style="{'height':whoIsGridOptions.changeHeight}" class="headeroverflow"></div>
+          <div ui-grid-selection ui-grid-auto-resize ui-grid="whoIsGridOptions" ng-style="{'height':whoIsGridOptions.height}" class="headeroverflow"></div>
         </div>
       </div>
     </div>

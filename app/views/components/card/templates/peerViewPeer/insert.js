@@ -22,7 +22,8 @@ angular.module("template/popover/popover.html", []).run(["$templateCache", funct
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardPeerPeerInsertController', ["$scope", "apiFactory", "$timeout", "$element", "$document", function ($scope, apiFactory, $timeout, $element, $document) {
+  .controller('BmpCardPeerPeerInsertController', ["$scope", "apiFactory", "$timeout", "$element", "$document", "uiGridFactory",
+    function ($scope, apiFactory, $timeout, $element, $document, uiGridFactory) {
     window.SCOPEZ = $scope;
 
     //  "RouterName": "csr1.openbmp.org",
@@ -123,12 +124,11 @@ angular.module('bmp.components.card')
               resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
             }
             $scope.ribGridOptions.data = $scope.initalRibdata = resultData;
-            $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+            uiGridFactory.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+            $scope.ribGridOptions.showGridFooter = true;
           } else {
             $scope.ribGridOptions.data = [];
             $scope.ribGridOptions.showGridFooter = false;
-            $scope.ribGridOptions.changeHeight = 150;
-            $scope.ribGridApi.grid.gridHeight = 150;
           }
           $scope.ribGridIsLoad = false; //stop loading
 
@@ -287,7 +287,7 @@ angular.module('bmp.components.card')
       if (value == "" || value == " ") {
         //when clear search populates origninal data.
         $scope.ribGridOptions.data = $scope.initalRibdata;
-        $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+        uiGridFactory.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
         return;
       }
       //used to determine which regex's to use ipv4 || ipv6
@@ -358,12 +358,11 @@ angular.module('bmp.components.card')
                 resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
               }
               $scope.ribGridOptions.data = resultData;
-              $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+              uiGridFactory.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+              $scope.ribGridOptions.showGridFooter = true;
             } else {
               $scope.ribGridOptions.data = [];
               $scope.ribGridOptions.showGridFooter = false;
-              $scope.ribGridOptions.changeHeight = 150;
-              $scope.ribGridApi.grid.gridHeight = 150;
             }
 
           }).
@@ -381,12 +380,11 @@ angular.module('bmp.components.card')
                 resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
               }
               $scope.ribGridOptions.data = resultData;
-              $scope.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+              uiGridFactory.calGridHeight($scope.ribGridOptions, $scope.ribGridApi);
+              $scope.ribGridOptions.showGridFooter = true;
             } else {
               $scope.ribGridOptions.data = [];
               $scope.ribGridOptions.showGridFooter = false;
-              $scope.ribGridOptions.changeHeight = 150;
-              $scope.ribGridApi.grid.gridHeight = 150;
             }
 
           }).

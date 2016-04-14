@@ -31,12 +31,12 @@ angular.module('bmpUiApp')
 
       var rowTemplate =
         ' \
-    <div class="tableRow" \
-      ng-class="grid.appScope.gridRowClass(row)">  \
-      <div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell> \
-      </div> \
-    </div> \
-    ';
+        <div class="tableRow" \
+          ng-class="grid.appScope.gridRowClass(row)">  \
+          <div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell> \
+          </div> \
+        </div> \
+        ';
 
       $scope.lastPrefix = "";
       $scope.isGrey = true;
@@ -148,10 +148,8 @@ angular.module('bmpUiApp')
                 .click(function(e) {
                   $scope.noMoreBTN = true;
                   $('html, body').animate({
-                    scrollTop: $('#prefix-ad').offset().top + $(
-                        "#prefix-ad").outerHeight() - $(window)
-                      .height()
-                  }, '500')
+                    scrollTop: $('#prefix-ad').offset().top + $("#prefix-ad").outerHeight() - $(window).height()
+                  }, '500');
                   $(this).hide();
                 })
             }

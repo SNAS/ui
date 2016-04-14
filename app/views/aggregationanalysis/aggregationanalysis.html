@@ -2,18 +2,18 @@
 <div ng-controller="aggregationanalysisController">
   <div class="main-page-search">
     AS Number:
-    <input type="text" ng-model="searchPrefix" placeholder="Search ..."/>
-    <button ng-click="getsShowPrefixInfo()" class="btn btn-sm btn-info">Search</button>
+    <input type="text" ng-model="searchASN" placeholder="Search ..."/>
+    <button ng-click="getASNInfo()" class="btn btn-sm btn-info">Search</button>
   </div>
 
   <div class="main-area row">
     <div class="col-lg-12">
       <div class="table-container">
         <h3>Prefix Information</h3>
-        <div class="loading-section" ng-style="{'height':peerGridInitHeight}">
+        <div class="loading-section">
           <div ng-show="PrefixTableIsLoad" bmp-loading loading-var="PrefixTableIsLoad"></div>
-          <div ui-grid-selection ui-grid="ShowPrefixsOptions" ui-grid-resize-columns>
-            <div class="watermark" ng-if="!ShowPrefixsOptions.data.length">No data available</div>
+          <div ui-grid-selection ui-grid-auto-resize ui-grid="ShowPrefixesOptions" ui-grid-resize-columns>
+            <div class="watermark" ng-if="!ShowPrefixesOptions.data.length">No data available</div>
           </div>
         </div>
       </div>
@@ -25,7 +25,7 @@
     <div class="col-lg-12">
       <div class="table-container">
         <h3>
-          Aggregate prefixes, originated by {{searchPrefix}}
+          Aggregate prefixes, originated by {{searchASN}}
         </h3>
         <!--Selects BGP Peer please:-->
         <!--<select ng-model="peerData.selectPeer" ng-options="peer.PeerName as peer.title for peer in peerData" ng-change="selectChange()">-->
@@ -47,7 +47,7 @@
           <nvd3 options="chartOptions" data="data"></nvd3>
 
           <!--show redundant options-->
-          <div ui-grid-selection ui-grid="ShowRedundantOptions" ui-grid-resize-columns ng-if="showGrid"></div>
+          <div ui-grid-selection ui-grid-auto-resize ui-grid="ShowRedundantOptions" ui-grid-resize-columns ng-if="showGrid" ng-style="{'height': ShowRedundantOptions.height}"></div>
         </div>
       </div>
     </div>

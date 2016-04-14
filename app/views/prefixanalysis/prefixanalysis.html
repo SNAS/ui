@@ -37,7 +37,7 @@
           <!--<button ng-click="toggleFiltering()">Search</button>-->
           <div class="loading-section">
             <div ng-show="allPreLoad" bmp-loading loading-var="allPreLoad"></div>
-            <div ui-grid="AllPrefixOptions" ui-grid-selection ui-grid-resize-columns></div>
+            <div ui-grid="AllPrefixOptions" ui-grid-selection ui-grid-auto-resize ui-grid-resize-columns></div>
             <div ng-show="oneRowSelected" style="padding: 20px 40px 0px">
               <button id="updatesBtn" class="btn btn-sm btn-default" ng-click="selectUpdates()">Updates</button>
               <button id="withdrawsBtn" class="btn btn-sm btn-default" ng-click="selectWithdraws()">Withdraws</button>
@@ -106,7 +106,7 @@
                     </div>
                   </div>
 
-                  <div ui-grid="HistoryPrefixOptions" ui-grid-selection ui-grid-resize-columns
+                  <div ui-grid="HistoryPrefixOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns
                        ng-style="{height:HistoryPrefixOptions.height}" ng-if="HistoryPrefixOptions.data.length && showGrid">
                     <div class="watermark" ng-if="!HistoryPrefixOptions.data.length">Please select BGP Peer</div>
                   </div>
@@ -131,7 +131,7 @@
         <div class="col-lg-12">
           <div class="table-container">
             <div class="loading-section">
-              <div ui-grid="WithdrawsOptions" ui-grid-selection ui-grid-resize-columns
+              <div ui-grid="WithdrawsOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns
                    ng-style="{height:WithdrawsOptions.height}" ng-if="WithdrawsOptions.data.length">
                 <div class="watermark" ng-if="!WithdrawsOptions.data.length">Please select BGP Peer</div>
               </div>

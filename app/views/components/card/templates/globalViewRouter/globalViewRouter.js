@@ -2,7 +2,7 @@
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardGlobalRouterController', ["$scope", "apiFactory", "timeFactory", "cardFactory", function ($scope, apiFactory, timeFactory, cardFactory) {
+  .controller('BmpCardGlobalRouterController', ["$scope", "apiFactory", "timeFactory", "cardFactory", "uiGridFactory", function ($scope, apiFactory, timeFactory, cardFactory, uiGridFactory) {
 
       //ROUTER DATA
       //{
@@ -204,7 +204,7 @@ angular.module('bmp.components.card')
           $scope.globalViewGridIsLoad = false; //stop loading
           $scope.peerIconIsLoad = false; //stop loading
 
-          $scope.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
+          uiGridFactory.calGridHeight($scope.globalViewPeerOptions, $scope.globalViewPeerApi);
         }).
         error(function (error){
           console.log(error.message);
@@ -215,18 +215,6 @@ angular.module('bmp.components.card')
         $scope.globalViewPeerApi= gridApi;
       };
 
-      $scope.calGridHeight = function(grid, gridapi){
-        gridapi.core.handleWindowResize();
-
-        var height;
-        if(grid.data.length > 4){
-          height = ((4 * 30) + 30);
-        }else{
-          height = ((grid.data.length * 30) + 50);
-        }
-        grid.changeHeight = height;
-        gridapi.grid.gridHeight = grid.changeHeight;
-      };
 
       if($scope.cardExpand){
         $scope.upTimeConfig.visible = true;

@@ -134,21 +134,13 @@
 
           <h4>Downstream ASes of Router {{ data.RouterName }}</h4>
           <!--R/Peers info table-->
-          <div
-            class="loading-section"
-            ng-style="{'height':globalViewPeerGridInitHeight}" ui-grid-resize-columns>
+          <div class="loading-section">
 
-            <div
-              ng-show="globalViewGridIsLoad"
-              bmp-loading
-              loading-var="globalViewGridIsLoad" ui-grid-resize-columns>
+            <div ng-show="globalViewGridIsLoad" bmp-loading loading-var="globalViewGridIsLoad">
             </div>
 
-            <div
-              class="gridStyle"
-              ui-grid="globalViewPeerOptions"
-              ui-grid-selection
-              ng-style="{'height':globalViewPeerOptions.changeHeight}" ui-grid-resize-columns>
+            <div class="gridStyle" ui-grid="globalViewPeerOptions" ui-grid-selection
+              ui-grid-auto-resize ng-style="{'height':globalViewPeerOptions.height}" ui-grid-resize-columns>
               <div class="watermark" ng-if="!globalViewPeerOptions.data.length">No data available</div>
             </div>
 

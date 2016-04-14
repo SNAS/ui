@@ -2,8 +2,7 @@
 
   <!--Peer info table-->
   <h4>Downstream ASes of Peer {{ data.PeerName }}</h4>
-  <div class="loading-section"
-    ng-style="{'height':summaryPeerOptions.changeHeight}">
+  <div class="loading-section">
 
     <div
       ng-show="summaryPeerOptions.summaryGridIsLoad"
@@ -13,7 +12,8 @@
     <div
       ui-grid="summaryPeerOptions"
       ui-grid-selection
-      ng-style="{'height':summaryPeerOptions.changeHeight}">
+      ui-grid-auto-resize
+      ng-style="{'height':summaryPeerOptions.height}">
       <div class="watermark" ng-if="!summaryPeerOptions.data.length">No data available</div>
     </div>
 

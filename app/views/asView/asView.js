@@ -8,8 +8,8 @@
  * Controller of the AS View page
  */
 angular.module('bmpUiApp')
-  .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', '$stateParams', 'uiGridConstants',
-    function ($scope, apiFactory, $timeout, $stateParams, uiGridConstants) {
+  .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', '$stateParams', 'uiGridConstants', 'uiGridFactory',
+    function ($scope, apiFactory, $timeout, $stateParams, uiGridConstants, uiGridFactory) {
 
       //var suggestions = [];
       var upstreamData, downstreamData;
@@ -36,7 +36,6 @@ angular.module('bmpUiApp')
         showGridFooter: true,
         enableFiltering: true,
         height: $scope.prefixGridInitHeight,
-        changeHeight: $scope.prefixGridInitHeight,
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 1,
         columnDefs: [
@@ -59,7 +58,6 @@ angular.module('bmpUiApp')
         gridFooterHeight: 0,
         showGridFooter: true,
         height: $scope.upstreamGridInitHeight,
-        changeHeight: $scope.upstreamGridInitHeight,
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 1,
         columnDefs: [
@@ -81,7 +79,6 @@ angular.module('bmpUiApp')
         gridFooterHeight: 0,
         showGridFooter: true,
         height: $scope.downstreamGridInitHeight,
-        changeHeight: $scope.downstreamGridInitHeight,
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 1,
         columnDefs: [
@@ -96,21 +93,6 @@ angular.module('bmpUiApp')
         onRegisterApi: function (gridApi) {
           $scope.downstreamGridApi = gridApi;
         }
-      };
-
-
-      $scope.calGridHeight = function (grid, gridapi) {
-        gridapi.core.handleWindowResize();
-
-        var height;
-        var dataLength = 15;
-        if (grid.data.length > dataLength) {
-          height = (dataLength * 30);
-        } else {
-          height = ((grid.data.length * grid.rowHeight) + 50);
-        }
-        grid.changeHeight = height;
-        gridapi.grid.gridHeight = grid.changeHeight;
       };
 
       $scope.keypress = function (keyEvent) {
@@ -244,7 +226,7 @@ angular.module('bmpUiApp')
           }
           $scope.prefixGridOptions.data = data;
           $scope.prefixIsLoad = false; //stop loading
-          $scope.calGridHeight($scope.prefixGridOptions, $scope.prefixGridApi);
+          uiGridFactory.calGridHeight($scope.prefixGridOptions, $scope.prefixGridApi);
         }).error(function (error) {
 
           console.log(error.message);
@@ -263,13 +245,11 @@ angular.module('bmpUiApp')
             $scope.upstreamNodata = true;
             $scope.upstreamIsLoad = false; //stop loading
             $scope.upstreamGridOptions.data = [];
-            $scope.upstreamGridOptions.changeHeight = 150;
-            $scope.upstreamGridApi.grid.gridHeight = 150;
             $scope.upstreamGridOptions.showGridFooter = false;
           }
           else {
             $scope.upstreamGridOptions.data = upstreamData;
-            $scope.calGridHeight($scope.upstreamGridOptions, $scope.upstreamGridApi);
+            uiGridFactory.calGridHeight($scope.upstreamGridOptions, $scope.upstreamGridApi);
             $scope.upstreamIsLoad = false; //stop loading
             $scope.upstreamNodata = false;
             $scope.upstreamGridOptions.showGridFooter = true;
@@ -292,13 +272,11 @@ angular.module('bmpUiApp')
             $scope.downstreamNodata = true;
             $scope.downstreamIsLoad = false; //stop loading
             $scope.downstreamGridOptions.data = [];
-            $scope.downstreamGridOptions.changeHeight = 150;
-            $scope.downstreamGridApi.grid.gridHeight = 150;
             $scope.downstreamGridOptions.showGridFooter = false;
           }
           else {
             $scope.downstreamGridOptions.data = downstreamData;
-            $scope.calGridHeight($scope.downstreamGridOptions, $scope.downstreamGridApi);
+            uiGridFactory.calGridHeight($scope.downstreamGridOptions, $scope.downstreamGridApi);
             $scope.downstreamIsLoad = false; //stop loading
             $scope.downstreamNodata = false;
             $scope.downstreamGridOptions.showGridFooter = true;

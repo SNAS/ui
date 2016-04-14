@@ -20,14 +20,11 @@
       </div>
     </tab>
     <tab heading="Downstream ASes of Peer" select="loadDownStream()">
-      <div class="loading-section" ng-style="{'height':summaryPeerOptions.changeHeight}">
-        <!--<div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading-->
-        <!--loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>-->
-        <!--<div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"-->
-        <!--style="margin-top: 27px;">-->
+      <div class="loading-section">
         <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading
              loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>
-        <div ui-grid="summaryPeerOptions" ui-grid-selection ng-style="{'height':summaryPeerOptions.changeHeight}"
+        <div ui-grid="summaryPeerOptions" ui-grid-selection ui-grid-auto-resize
+             ng-style="{'height':summaryPeerOptions.height}"
              style="margin-top: 27px;" ui-grid-resize-columns>
           <div class="watermark" ng-if="!summaryPeerOptions.data.length">No data available</div>
         </div>
@@ -38,9 +35,9 @@
       <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Search ..."/>
 
       <!--Angular Table added here-->
-      <div class="loading-section" ng-style="{'height':ribGridOptions.changeHeight}">
+      <div class="loading-section">
         <div ng-show="ribGridIsLoad" bmp-loading loading-var="ribGridIsLoad" font-width="80"></div>
-        <div ui-grid-selection ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.changeHeight}"
+        <div ui-grid-selection ui-grid-auto-resize ui-grid="ribGridOptions" ng-style="{'height':ribGridOptions.height}"
              ui-grid-resize-columns>
           <div class="watermark" ng-if="!ribGridOptions.data.length">No data available</div>
         </div>

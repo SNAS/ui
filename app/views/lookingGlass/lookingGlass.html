@@ -59,12 +59,6 @@
                   ng-style="{'margin-right': '30px', 'margin-top': '10px'}"
                   ng-if="searchOption == 'Hostname'"
           >{{ip}}</button>
-          <!--<button type="button" class="btn btn-default"-->
-                  <!--ng-repeat="p2 in p2 | orderBy: 'count'"-->
-                  <!--ng-click="searchCommunity(p2.community)"-->
-                  <!--ng-style="{'margin-right': '30px', 'margin-top': '10px', 'width': '15%'}"-->
-                  <!--ng-if="searchOption == 'Community'"-->
-          <!--&gt;{{p2.community}} (count: {{p2.count}})</button>-->
         </div>
       </div>
 
@@ -73,15 +67,12 @@
         <div class="col-lg-12">
           <div class="table-container">
             <h3>Looking Glass Information
-              <!--<span ng-if="displayPrefix.length == 1"> Found {{displayPrefix.length}} Prefix: </span>-->
-              <!--<span ng-if="displayPrefix.length > 1"> Found {{displayPrefix.length}} Prefixes: </span>-->
-              <!--<span ng-repeat="p in displayPrefix">{{p}} </span>-->
               <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
             </h3>
             <!--Angular Table added here-->
-            <div class="loading-section" ng-style="{'height':glassGridOptions.changeHeight}">
+            <div class="loading-section">
               <div ng-show="glassGridOptions.glassGridIsLoad" bmp-loading loading-var="glassGridOptions.glassGridIsLoad" font-width="80"></div>
-              <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.changeHeight}" ui-grid-resize-columns>
+              <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.height}" ui-grid-auto-resize ui-grid-resize-columns>
                 <div class="watermark" ng-if="!glassGridOptions.data.length">No data available</div>
               </div>
             </div>

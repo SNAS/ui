@@ -9,8 +9,8 @@
  */
 angular.module('bmpUiApp')
   .controller('lookingGlassController', ['$scope', '$http', 'apiFactory',
-    'uiGridConstants',
-    function($scope, $http, apiFactory, uiGridConstants) {
+    'uiGridConstants', 'uiGridFactory',
+    function($scope, $http, apiFactory, uiGridConstants, uiGridFactory) {
 
       //DEBUG
       window.SCOPE = $scope;
@@ -77,22 +77,6 @@ angular.module('bmpUiApp')
           .COLUMN);
       };
 
-      $scope.calGridHeight = function(grid, gridapi) {
-        gridapi.core.handleWindowResize();
-        var height;
-        if (grid.data.length > 10) {
-          height = ((10 * 30));
-        } else {
-          height = ((grid.data.length * 30) + 90);
-        }
-        grid.changeHeight = height;
-        gridapi.grid.gridHeight = grid.changeHeight;
-      };
-
-
-      // var glassGridOptionsDefaultData = [{"RouterName": "-", "PeerName": "-", "wholePrefix": '-', 'NH': '-', 'AS_Path': '-', 'MED': '-', "LocalPref": '-'}];
-      //   $scope.glassGridApi.core.handleWindowResize();
-      // apiFactory.getPeerRib('195.128.159.0').
       // use another API to look for a default value, which is displayed on the page
       apiFactory.getPeerRibLookupIp('190.0.103.0').
       success(function(result) {
@@ -105,12 +89,10 @@ angular.module('bmpUiApp')
             $scope.glassGridOptions.showGridFooter = false;
           } else {
             for (var i = 0; i < resultData.length; i++) {
-              resultData[i].wholePrefix = resultData[i].Prefix + "/" +
-                resultData[i].PrefixLen;
+              resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
             }
-            $scope.glassGridOptions.data = $scope.initalRibdata =
-              resultData;
-            $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
+            $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
+            uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
           }
         } else { // empty response
           $scope.glassGridOptions.data = [];
@@ -316,7 +298,7 @@ angular.module('bmpUiApp')
               $scope.glassGridOptions.showGridFooter = false;
             } else {
               $scope.glassGridOptions.data = resultData;
-              $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
+              uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
             }
             $scope.glassGridOptions.glassGridIsLoad = false;
           });
@@ -386,12 +368,6 @@ angular.module('bmpUiApp')
 
       //Loop through data selecting and altering relevant data.
       $scope.search = function(value) {
-        if (value == "" || value == " ") {
-          //when clear search populates original data.
-          $scope.glassGridOptions.data = $scope.initalRibdata;
-          $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
-          return;
-        }
         //used to determine which regex's to use ipv4 || ipv6
         var isIPv6;
         if (ipv4Regex.exec(value) != null) {
@@ -403,6 +379,7 @@ angular.module('bmpUiApp')
         } else {
           //Entered Alphanumerics
           console.log('invalid search');
+          $scope.glassGridOptions.glassGridIsLoad = false;
           $scope.glassGridOptions.data = [];
           $scope.glassGridOptions.showGridFooter = false;
           return;
@@ -459,9 +436,9 @@ angular.module('bmpUiApp')
                 $scope.glassGridOptions.data = [];
                 $scope.glassGridOptions.showGridFooter = false;
               } else {
+                $scope.glassGridOptions.showGridFooter = true;
                 $scope.glassGridOptions.data = resultData;
-                $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
-
+                uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
               }
 
             } else {
@@ -495,8 +472,9 @@ angular.module('bmpUiApp')
                 $scope.glassGridOptions.data = [];
                 $scope.glassGridOptions.showGridFooter = false;
               } else {
+                $scope.glassGridOptions.showGridFooter = true;
                 $scope.glassGridOptions.data = resultData;
-                $scope.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
+                uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
               }
             } else {
               $scope.glassGridOptions.data = [];
@@ -508,9 +486,8 @@ angular.module('bmpUiApp')
             console.log(error.message);
           });
         } else {
-          //Entered Alphanumerics
+          console.log('invalid input');
         }
-
       };
     }
   ]);

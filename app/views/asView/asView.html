@@ -40,9 +40,9 @@
                 <div class="table-container">
                     <h3>Prefixes Originated by AS {{asn}}</h3>
 
-                    <div class="loading-section" ng-style="{'height':prefixGridOptions.changeHeight}">
+                    <div class="loading-section">
                         <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
-                        <div ui-grid="prefixGridOptions" ng-style="{'height': prefixGridOptions.changeHeight}"></div>
+                        <div ui-grid="prefixGridOptions" ui-grid-auto-resize ng-style="{'height': prefixGridOptions.height}"></div>
                     </div>
                 </div>
             </div>
@@ -53,10 +53,10 @@
                 <div class="table-container">
                     <h3>Upstream ASes of AS {{asn}}</h3>
 
-                    <div class="loading-section" ng-style="{'height':upstreamGridOptions.changeHeight}">
+                    <div class="loading-section">
                         <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
-                        <div class="grid" ui-grid="upstreamGridOptions"
-                             ng-style="{'height': upstreamGridOptions.changeHeight}">
+                        <div class="grid" ui-grid-auto-resize ui-grid="upstreamGridOptions"
+                             ng-style="{'height': upstreamGridOptions.height}">
                             <div class="watermark" ng-if="!upstreamGridOptions.data.length">No data available</div>
                         </div>
                     </div>
@@ -66,9 +66,9 @@
                 <div class="table-container">
                     <h3>Downstream ASes of AS {{asn}}</h3>
 
-                    <div class="loading-section" ng-style="{'height':downstreamGridOptions.changeHeight}">
+                    <div class="loading-section">
                         <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
-                        <div ui-grid="downstreamGridOptions" ng-style="{'height': downstreamGridOptions.changeHeight}">
+                        <div ui-grid="downstreamGridOptions" ui-grid-auto-resize ng-style="{'height': downstreamGridOptions.height}">
                             <div class="watermark" ng-if="!downstreamGridOptions.data.length">No data available</div>
                         </div>
                     </div>

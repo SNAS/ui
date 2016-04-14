@@ -8,16 +8,15 @@
  * Controller of the Login page
  */
 angular.module('bmpUiApp')
-  .controller('aggregationanalysisController',['$scope', 'apiFactory', '$http', '$timeout', "$stateParams", function ($scope, apiFactory, $http, $timeout, $stateParams) {
+  .controller('aggregationanalysisController', ['$scope', 'apiFactory', '$http', '$timeout', "$stateParams", function ($scope, apiFactory, $http, $timeout, $stateParams) {
     //DEBUG
     window.SCOPE = $scope;
 
     $scope.showGraphTable = false;
     $scope.showGrid = false;
 
-
-    //populate prefix data into ShowPrefixsOptions Grid
-    $scope.ShowPrefixsOptions = {
+    //populate prefix data into ShowPrefixesOptions Grid
+    $scope.ShowPrefixesOptions = {
       showGridFooter: true,
       gridFooterHeight: 0,
       enableRowSelection: true,
@@ -28,57 +27,49 @@ angular.module('bmpUiApp')
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
 
-    $scope.ShowPrefixsOptions.columnDefs = [
+    $scope.ShowPrefixesOptions.columnDefs = [
       {name: "router_name", displayName: 'RouterName', width: '*'},
       {name: "peer_name", displayName: 'PeerName', width: '*'},
       {name: "prefix", displayName: 'Prefix', width: '*'}
     ];
 
-    $scope.getsShowPrefixInfo = function(){
-
-      apiFactory.getAsnCount($scope.searchPrefix)
-        .success(function(data) {
-        $scope.prefix_amount= data.table.data[0].PrefixCount;
-          apiFactory.getAsnInfo(109,$scope.prefix_amount)
-            .success(function(result) {
-              if (!$.isEmptyObject(result) && result.v_routes.data.length != 0 ) {
-                $scope.ShowPrefixsOptions.data = $scope.PrefixData = result.v_routes.data;
-                $scope.PrefixTableIsLoad = false; //stop loading
-
-                var peerDataOriginal = result.v_routes.data;
-                $scope.peerData =  filterUnique(peerDataOriginal,"PeerName");
-                createShowPrefixsOptions();
-                $scope.allPrefixLoad=false;
-              } else {
-                $scope.ShowPrefixsOptions.data = [];
-                $scope.PrefixTableIsLoad = false; //stop loading
-                $scope.ShowPrefixsOptions.showGridFooter = false;
-              }
-            });
-      });
+    $scope.getASNInfo = function () {
+      apiFactory.getAsnInfo($scope.searchASN)
+        .success(function (result) {
+          if (!$.isEmptyObject(result) && result.v_routes.data.length != 0) {
+            $scope.ShowPrefixesOptions.data = $scope.PrefixData = result.v_routes.data;
+            $scope.PrefixTableIsLoad = false; //stop loading
+            $scope.ShowPrefixesOptions.showGridFooter = true;
+            var peerDataOriginal = result.v_routes.data;
+            $scope.peerData = filterUnique(peerDataOriginal, "PeerName");
+            createShowPrefixesOptions();
+          } else {
+            $scope.ShowPrefixesOptions.data = [];
+            $scope.PrefixTableIsLoad = false; //stop loading
+            $scope.ShowPrefixesOptions.showGridFooter = false;
+          }
+        });
     };
 
-    if($stateParams.as){
-      $scope.searchPrefix = $stateParams.as;
-      $scope.getsShowPrefixInfo();
+    if ($stateParams.as) {
+      $scope.searchASN = $stateParams.as;
+      $scope.getASNInfo();
     }
 
-    var createShowPrefixsOptions = function () {
+    var createShowPrefixesOptions = function () {
       for (var i = 0; i < $scope.PrefixData.length; i++) {
         $scope.PrefixData[i].router_name = $scope.PrefixData[i].RouterName + "/" + $scope.PrefixData[i].PrefixLen;
         $scope.PrefixData[i].peer_name = $scope.PrefixData[i].PeerName;
         $scope.PrefixData[i].prefix = $scope.PrefixData[i].Prefix;
       }
-      // $scope.$apply();
     };
 
-
-    var filterUnique = function(input, key) {
+    var filterUnique = function (input, key) {
       var unique = {};
       var uniqueList = [];
 
-      for(var i = 0; i < input.length; i++){
-        if(typeof unique[input[i][key]] == "undefined"){
+      for (var i = 0; i < input.length; i++) {
+        if (typeof unique[input[i][key]] == "undefined") {
           unique[input[i][key]] = "";
           uniqueList.push(input[i]);
         }
@@ -86,39 +77,27 @@ angular.module('bmpUiApp')
       return uniqueList;
     };
 
-    //  this function is for getting peer information and return a drop-down list
-    //var getPeers = function(){
-    //  apiFactory.getPeers()
-    //    .success(function(result) {
-    //      $scope.peerData = result.v_peers.data;
-    //
-    //    });
-    //}
-    //
-    //getPeers();
-
-    $scope.selectChange = function(){
-      if($scope.peerData.selectPeer != null){
+    $scope.selectChange = function () {
+      if ($scope.peerData.selectPeer != null) {
         $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
-        showaggregatePrefixes();
-      }else{
+        showAggregatePrefixes();
+      } else {
         $scope.showGraphTable = false;
         $scope.showGrid = false;
       }
-    }
+    };
 
     //calculate redundant route information.
-    var  aggregatePrefixes = function(data) {
+    var aggregatePrefixes = function (data) {
       $scope.aggregated_prefixes = [];
-      $scope.auxiliary_array = [];
+      $scope.auxiliary_array = new Array(data.length).fill(false);
       $scope.reduced_prefix_amount = 0;
 
-      for (var i = 0; i < data.length; i++) $scope.auxiliary_array[i] = false; // init auxiliary_array,make it all false
+      // for (var i = 0; i < data.length; i++) $scope.auxiliary_array[i] = false; // init auxiliary_array,make it all false
 
       data.sort(function (a, b) {
         return a.PrefixLen - b.PrefixLen
       });
-
 
       for (var i = 0; i < data.length - 1; i++) {
         if ((!$scope.auxiliary_array[i]) && (data[i].isPeerIPv4 == 1)) {
@@ -129,7 +108,7 @@ angular.module('bmpUiApp')
           }
         }
       }
-    }
+    };
 
     function compare(a, b, j) {
       var element;
@@ -150,7 +129,7 @@ angular.module('bmpUiApp')
             element = {
               "Prefix": key,
               "Covers": value
-            }
+            };
             $scope.aggregated_prefixes.push(element);
           }
           $scope.auxiliary_array[j] = true;
@@ -158,7 +137,7 @@ angular.module('bmpUiApp')
       }
     }
 
-    //Transform string ip adress to binary view
+    //Transform string ip address to binary view
     function ipToBinary(ip) {
       var d = ip.split('.');
       return toBinaryStr(d[0]) + toBinaryStr(d[1]) + toBinaryStr(d[2]) + toBinaryStr(d[3]);
@@ -172,38 +151,36 @@ angular.module('bmpUiApp')
       return y;
     }
 
-    var showaggregatePrefixes = function()
-    {
-      apiFactory.getAsnInfoPeer($scope.searchPrefix,$scope.peerHashId)
-        .success(function(data) {
+    var showAggregatePrefixes = function () {
+      apiFactory.getAsnInfoPeer($scope.searchASN, $scope.peerHashId)
+        .success(function (data) {
           var prefixes_of_as_and_peer = data.v_routes.data;
           $scope.prefix_amount = data.v_routes.size; // for calculating, store the length of prefixes
           aggregatePrefixes(prefixes_of_as_and_peer);
-          createShowRedundantOptions();
+          $scope.ShowRedundantOptions.data = $scope.aggregated_prefixes;
+          // createShowRedundantOptions();
           //createChartOptions();
-          if ("" != prefixes_of_as_and_peer)
-          {
+          if ("" != prefixes_of_as_and_peer) {
             createChartOptions();
-            $scope.efficiency = Math.round(($scope.reduced_prefix_amount/$scope.prefix_amount)*10000)/100 + "%"
+            $scope.efficiency = Math.round(($scope.reduced_prefix_amount / $scope.prefix_amount) * 10000) / 100 + "%"
           }
-          else
-          {
-            $scope.efficiency = "No data avalible"
+          else {
+            $scope.efficiency = "No data available"
           }
           $scope.showGraphTable = true;
           $scope.showGrid = true;
         });
-    }
-
+    };
 
     // show redundant prefix
     $scope.ShowRedundantOptions = {
-      //showGridFooter: true,
+      showGridFooter: true,
       enableRowSelection: false,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
       rowHeight: 25,
+      height: 300,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
     $scope.ShowRedundantOptions.columnDefs = [
@@ -211,31 +188,31 @@ angular.module('bmpUiApp')
       {name: "Covers", displayName: 'Covered Prefix', width: '*'}
     ];
 
-    var createShowRedundantOptions = function () {
-        $scope.ShowRedundantOptions.data = $scope.aggregated_prefixes;
-    };
-
-  //get data for the efficiency chart
-    var createChartOptions = function()
-    {    $scope.chartOptions = {
-      chart: {
-        type: 'pieChart',
-        height: 500,
-        x: function(d){return d.key;},
-        y: function(d){return d.y;},
-        showLabels: true,
-        transitionDuration: 500,
-        labelThreshold: 0.01,
-        legend: {
-          margin: {
-            top: 5,
-            right: 35,
-            bottom: 5,
-            left: 0
+    //get data for the efficiency chart
+    var createChartOptions = function () {
+      $scope.chartOptions = {
+        chart: {
+          type: 'pieChart',
+          height: 500,
+          x: function (d) {
+            return d.key;
+          },
+          y: function (d) {
+            return d.y;
+          },
+          showLabels: true,
+          transitionDuration: 500,
+          labelThreshold: 0.01,
+          legend: {
+            margin: {
+              top: 5,
+              right: 35,
+              bottom: 5,
+              left: 0
+            }
           }
         }
-      }
-    };
+      };
       $scope.data = [
         {
           key: "Aggregatable Prefixes",
@@ -246,11 +223,11 @@ angular.module('bmpUiApp')
           y: $scope.prefix_amount - $scope.reduced_prefix_amount
         }
       ];
-    }
+    };
 
-    //initalize the first view
-    $scope.searchPrefix = "109";
-    $scope.getsShowPrefixInfo();
+    //initialize the first view
+    $scope.searchASN = "109";
+    $scope.getASNInfo();
   }]);
 
 

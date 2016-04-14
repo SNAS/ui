@@ -9,7 +9,7 @@
     <span class="label label-danger" ng-click="clickIpv6Down()">{{$root.ips[1][3]}} IPv6 Down</span>
     <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
   </h3>
-  <div class="loading-section" ng-style="{'height':routerGridInitHeight}">
+  <div class="loading-section">
     <div ng-show="routerTableIsLoad" bmp-loading loading-var="routerTaleIsLoad"></div>
     <div id="routerTable" ui-grid="routerTableOptions" ui-grid-tree-view ui-grid-selection ui-grid-auto-resize></div>
   </div>
