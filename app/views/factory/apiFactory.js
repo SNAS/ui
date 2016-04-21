@@ -288,8 +288,8 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "rib/peer/" + hashId + "/asn/" + asn);
     };
 
-    apiFactory.getAsnInfo = function (asn, prefix_amount) {
-      return $http.get(urlBase + "rib/asn/" + asn + "?limit=" + prefix_amount);
+    apiFactory.getAsnInfo = function (asn) {
+      return $http.get(urlBase + "rib/asn/" + asn);
     };
 
     //AS View
