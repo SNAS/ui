@@ -72,11 +72,11 @@ angular.module('bmp.components.cardList',[])
 
             //check card doesnt exist
             if (arr[pIndex].indexOf(card) == -1) {
-              scope.cApi[card.$$hashKey]={functions:null};
+              scope.cApi[card.router_hash_id + card.peer_hash_id]={functions:null};
               //remove oldest of the begining if list becomes to long.
               if (arr[pIndex].length + 1 > scope.length[pIndex]) {
                 var reCard = arr[pIndex].shift();
-                delete scope.cApi[reCard.$$hashKey];
+                delete scope.cApi[reCard.router_hash_id + reCard.peer_hash_id];
                 //if empty then empty childs
                 if(arr[pIndex][0] == null){
                   for(var i = pIndex; i >= 0; i--){
@@ -90,7 +90,7 @@ angular.module('bmp.components.cardList',[])
             //close parent cards
             for(var i = pIndex+1; i < arr.length; i++){
               for(var j =0; j < arr[i].length; j++){
-                var api = scope.cApi[arr[i][j].$$hashKey].functions;
+                var api = scope.cApi[arr[i][j].router_hash_id + arr[i][j].peer_hash_id].functions;
                 if(api.getCardState()){ //check open
                   api.changeCardState(); //close it
                 }

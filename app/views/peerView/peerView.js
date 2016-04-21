@@ -58,18 +58,18 @@ angular.module('bmpUiApp')
             }
           }
         },
-        {field: 'RouterName', displayName: 'Router Name', width: '15%'},
-        {field: 'PeerName', displayName: 'Peer Name', width: '22%'},
-        {field: 'PeerIP', displayName: 'Peer IP', width: '18%'},
+        {field: 'RouterName', displayName: 'Router Name', width: '15%', type: 'string'},
+        {field: 'PeerName', displayName: 'Peer Name', width: '22%', type: 'string'},
+        {field: 'PeerIP', displayName: 'Peer IP', width: '18%', type: 'string'},
         {
-          field: 'LocalASN', displayName: 'Local ASN', width: '9%',
+          field: 'LocalASN', displayName: 'Local ASN', width: '9%', type: 'string',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
         },
         {
-          field: 'PeerASN', displayName: 'Peer ASN', width: '8%',
+          field: 'PeerASN', displayName: 'Peer ASN', width: '8%', type: 'string',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
         },
-        {field: 'IPv', displayName: 'IPv', width: '5%'},
+        {field: 'IPv', displayName: 'IPv', width: '5%', type: 'string'},
         {field: 'Pre_RIB', displayName: 'Pre RIB', width: '10%', type: 'number'},
         {field: 'Post_RIB', displayName: 'Post RIB', width: '10%', type: 'number'}
       ],

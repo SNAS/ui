@@ -78,13 +78,13 @@ angular.module('bmp.components.card')
     };
 
     $scope.ribGridOptions.columnDefs = [
-      {name: "wholePrefix", displayName: 'Prefix', width: "20%",
+      {name: "wholePrefix", displayName: 'Prefix', width: "20%", type: 'string',
         cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-tooltip prefix="{{ COL_FIELD }}"></div>'
       },
-      {name: "NH", displayName: 'NH', width: "15%"},
-      {name: "AS_Path", displayName: 'AS Path'},
-      {name: "MED", displayName: 'MED', width: "10%"},
-      {name: "LocalPref", displayName: 'Local Pref', width: "15%"}
+      {name: "NH", displayName: 'NH', width: "15%", type: 'string'},
+      {name: "AS_Path", displayName: 'AS Path', type: 'string'},
+      {name: "MED", displayName: 'MED', width: "10%", type: 'string'},
+      {name: "LocalPref", displayName: 'Local Pref', width: "15%", type: 'string'}
     ];
 
     $scope.ribGridOptions.onRegisterApi = function (gridApi) {

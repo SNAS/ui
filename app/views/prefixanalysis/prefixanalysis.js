@@ -288,51 +288,45 @@ angular.module('bmpUiApp')
       rowHeight: 25,
       height:300,
       gridFooterHeight: 0,
-      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
-    };
-
-    // here to get the intemValue , use this  to create table
-    $scope.HistoryPrefixOptions.onRegisterApi = function( gridApi ) {
-      $scope.HistoryPrefixGridApi = gridApi;
-
-      gridApi.selection.on.rowSelectionChanged($scope,function(row){
-        $scope.itemValue = row.entity; //how can i get data from one row before
-        $scope.showModal();
-        //$scope.$apply()
-      });
-      // test for the sort change
-      $scope.HistoryPrefixGridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
-    };
-    //define the history gird columns
-
-    $scope.HistoryPrefixOptions.columnDefs = [
-      {name: "RouterName", displayName: 'RouterName', width: 110, cellClass:'background'},
-      {name: "NH", displayName: 'NH', width: 100,cellClass:'background'},
-      {name: "AS_Path_list", displayName: 'AS_Path', cellClass:'background',cellTemplate: '<div ng-class="{ \'green greenbar\': !AS_Path_list.flag, whitebar: AS_Path_list.flag,}" ng-repeat="AS_Path_list in row.entity.AS_Path_list">{{AS_Path_list.path}}</div>'},
-      {name: "PeerASN", displayName: 'Peer_ASN', width: 130,cellClass:'background'},
-      {name: "MED", displayName: 'MED', width: 60,cellClass:'background'},
-      {name: "Communities", displayName: 'Communities',cellClass:'background',cellTemplate: '<div ng-class="{\'green greenbarCommunities\': !Communities_list.flag, whitebarCommunities: Communities_list.flag,}" ng-repeat="Communities_list in row.entity.Communities_list">{{Communities_list.path}}</div>'},
-      {name: "LastModified", displayName: 'Last_Modified', width: 180,cellClass:'background',
-
-        sort: {
-          direction: uiGridConstants.DESC,
-          priority: 1
-        }
-
-      }
-    ];
-
-    var bindTooltipsForAS = function(ASArray){
-      angular.forEach(ASArray,function(value){
-        apiFactory.getWhoIsASN(value).then(function (result) {
-          if (result.data.gen_whois_asn.data.length > 0) {
-            var temp = result.data.gen_whois_asn.data[0];
-            var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
-            $('[name=AS' + value + ']').attr('title', title);
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
+      columnDefs: [
+        {name: "RouterName", displayName: 'RouterName', width: 110, cellClass:'background'},
+        {name: "NH", displayName: 'NH', width: 100,cellClass:'background'},
+        {name: "AS_Path_list", displayName: 'AS_Path', cellClass:'background',cellTemplate: '<div ng-class="{ \'green greenbar\': !AS_Path_list.flag, whitebar: AS_Path_list.flag,}" ng-repeat="AS_Path_list in row.entity.AS_Path_list">{{AS_Path_list.path}}</div>'},
+        {name: "PeerASN", displayName: 'Peer_ASN', width: 130,cellClass:'background'},
+        {name: "MED", displayName: 'MED', width: 60,cellClass:'background'},
+        {name: "Communities", displayName: 'Communities',cellClass:'background',cellTemplate: '<div ng-class="{\'green greenbarCommunities\': !Communities_list.flag, whitebarCommunities: Communities_list.flag,}" ng-repeat="Communities_list in row.entity.Communities_list">{{Communities_list.path}}</div>'},
+        {name: "LastModified", displayName: 'Last_Modified', width: 180,cellClass:'background',
+          sort: {
+            direction: uiGridConstants.DESC,
+            priority: 1
           }
+        }
+      ],
+      onRegisterApi: function( gridApi ) {
+        $scope.HistoryPrefixGridApi = gridApi;
+
+        gridApi.selection.on.rowSelectionChanged($scope,function(row){
+          $scope.itemValue = row.entity; //how can i get data from one row before
+          $scope.showModal();
+          //$scope.$apply()
         });
-      });
+        // test for the sort change
+        $scope.HistoryPrefixGridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
+      }
     };
+
+    // var bindTooltipsForAS = function(ASArray){
+    //   angular.forEach(ASArray,function(value){
+    //     apiFactory.getWhoIsASN(value).then(function (result) {
+    //       if (result.data.gen_whois_asn.data.length > 0) {
+    //         var temp = result.data.gen_whois_asn.data[0];
+    //         var title = (temp.as_name) + (temp.org_name ? (" | " + temp.org_name) : "") + (temp.city ? (" | " + temp.city) : "");
+    //         $('[name=AS' + value + ']').attr('title', title);
+    //       }
+    //     });
+    //   });
+    // };
 
     // the only Function is creating a history prefix gird , inject data should be $scope.HisData
     $scope.createPrefixHisGrid = function (i) {
@@ -408,7 +402,8 @@ angular.module('bmpUiApp')
           } else {
             $scope.showTip = "false";
             $scope.currentSetTime = moment($scope.originHisData[0].LastModified);
-            $("#endTimePicker").data("DateTimePicker").date($scope.currentSetTime);
+            if (searchPrefix.indexOf('lastupdate') > -1)
+              $("#endTimePicker").data("DateTimePicker").date($scope.currentSetTime);
           }
           getPrefixHisDataHour();
         });
@@ -683,184 +678,117 @@ angular.module('bmpUiApp')
       var keys = [
         'RouterName', 'PeerName', 'Prefix', 'Origin_AS', 'Current_AS_Path', 'Previous_AS_Path', 'ASPath_Count', 'Current_Communities',
         'ExtCommunities', 'ClusterList', 'Aggregator', 'PeerAddress', 'PeerASN', 'IsPeerIPv4', 'IsPeerVPN', 'Id', 'LastModified'
-      ]
+      ];
 
       angular.forEach($scope.itemValue, function (value,key) {
 
-        if(key == "Prefix")
-        {
-          $scope.showItems += (
-          '<tr>' +
-          '<td>' +
-          'Prefix: ' +
-          '</td>' +
-
-          '<td>'  + $scope.itemValue.Prefix  + '/' + $scope.itemValue.PrefixLen +
-          '</td>' +
-          '</tr>'
+        if(key == "Prefix") {
+          $scope.showItems += ('<tr><td/>Prefix: </td><td>'
+            + $scope.itemValue.Prefix  + '/' + $scope.itemValue.PrefixLen
+            + '</td></tr>'
           );
         }
-        else if (key == "Origin")
-        {
-            if((typeof($scope.itemValueLast.Origin)!= "undefined")&&(!angular.equals($scope.itemValueLast.Origin, $scope.itemValue.Origin)))
-            {
-              $scope.showItems += (
-              '<tr>' +
-              '<td>' +
-              'Current_Origin: ' +
-              '</td>' +
+        else if (key == "Origin") {
+          if((typeof($scope.itemValueLast.Origin)!= "undefined")
+            &&(!angular.equals($scope.itemValueLast.Origin, $scope.itemValue.Origin))) {
+            $scope.showItems += (
+              '<tr><td>Current_Origin: </td><td>' +
+              "<span class='green'>" + $scope.itemValue.Origin  + "</span>" +
+              '</td></tr>'
+            );
 
-              '<td>' + "<span class='green'>" + $scope.itemValue.Origin  + "</span>" +
-              '</td>' +
-              '</tr>'
-              );
-
-              $scope.showItems += (
-              '<tr>' +
-              '<td>' +
-              'Previous_Origin: ' +
-              '</td>' +
-
-              '<td>' + "<span class='red'>" +
-              $scope.itemValueLast.Origin + "</span>" +
-              '</td>' +
-              '</tr>'
-              );
-            }
+            $scope.showItems += (
+              '<tr><td>Previous_Origin: </td><td>' + "<span class='red'>" +
+              $scope.itemValueLast.Origin + "</span></td></tr>"
+            );
+          }
         }
-        else if (key == "AS_Path")
-        {
+        else if (key == "AS_Path") {
 
           var valueAs = "";
           var valusAsLast = "";
           var ASArray = [];
 
-          angular.forEach($scope.itemValue.AS_Path,function(value,key)
-          {
+          angular.forEach($scope.itemValue.AS_Path,function(value,key) {
             if($scope.itemValue.AS_Path_list[key].flag){
-              valueAs += "<span tooltip name='AS" + value+ "'>" + value + " " + "</span>";
+              valueAs += "<span name='AS" + value+ "'>" + value + " " + "</span>";
               if(!ASArray.indexOf(value)>-1) {
                 ASArray.push(value);
               }
             }
             else{
-              valueAs += "<span tooltip class='green' name='AS" + value+ "'>" + value + " " + "</span>";
+              valueAs += "<span class='green' name='AS" + value+ "'>" + value + " " + "</span>";
               if(!ASArray.indexOf(value)>-1) {
                 ASArray.push(value);
               }
             }
           });
 
-
-
           $scope.showItems += (
-          '<tr>' +
-          '<td>' +
-          'Current_AS_Path: ' +
-          '</td>' +
-
-          '<td>' +
-          valueAs +
-          '</td>' +
-          '</tr>'
+            '<tr><td>Current_AS_Path: </td><td>'
+            + valueAs
+            + '</td></tr>'
           );
 
           // this part to insert last path as , the same .
-          if(!angular.equals($scope.itemValueLast.AS_Path, $scope.itemValue.AS_Path))
-          {
-
-              angular.forEach($scope.itemValueLast.AS_Path,function(value,key)
-              {
-
-                if($scope.itemValueLast.AS_Path_list[key].last_flag)
-                {
-                  valusAsLast += "<span tooltip name='AS" + value+ "'>" + value + " " + "</span>";
-                  if(!ASArray.indexOf(value)>-1) {
-                    ASArray.push(value);
-                  }
+          if(!angular.equals($scope.itemValueLast.AS_Path, $scope.itemValue.AS_Path)) {
+            angular.forEach($scope.itemValueLast.AS_Path,function(value,key) {
+              if($scope.itemValueLast.AS_Path_list[key].last_flag) {
+                valusAsLast += "<span tooltip name='AS" + value+ "'>" + value + " " + "</span>";
+                if(!ASArray.indexOf(value)>-1) {
+                  ASArray.push(value);
                 }
-                else
-                {
-                  valusAsLast += "<span tooltip class='red' name='AS" + value+ "'>" + value + " " +"</span>";
-                  if(!ASArray.indexOf(value)>-1) {
-                    ASArray.push(value);
-                  }
+              }
+              else {
+                valusAsLast += "<span tooltip class='red' name='AS" + value+ "'>" + value + " " +"</span>";
+                if(!ASArray.indexOf(value)>-1) {
+                  ASArray.push(value);
                 }
-              });
-
+              }
+            });
 
             $scope.showItems += (
-            '<tr>' +
-            '<td>' +
-            'Previous_AS_Path: ' +
-            '</td>' +
-
-            '<td>' +
-            valusAsLast +
-            '</td>' +
-            '</tr>'
+              '<tr><td>Previous_AS_Path: </td><td>'
+              + valusAsLast +
+              '</td></tr>'
             );
           }
 
-          bindTooltipsForAS(ASArray);
+          // bindTooltipsForAS(ASArray);
 
         }
-        else if (key == "MED")
-        {
-            if((typeof($scope.itemValueLast.MED)!= "undefined")&&(!angular.equals($scope.itemValueLast.MED, $scope.itemValue.MED)))
-            {
-              $scope.showItems += (
-              '<tr>' +
-              '<td>' +
-              'Current_MED: ' +
-              '</td>' +
-
-              '<td>' + "<span class='green'>" +
-              $scope.itemValue.MED + "</span>" +
-              '</td>' +
-              '</tr>'
-              );
-
-              $scope.showItems += (
-              '<tr>' +
-              '<td>' +
-              'Previous_MED: ' +
-              '</td>' +
-
-              '<td>' +  "<span class='red'>" +
-              $scope.itemValueLast.MED + "</span>" +
-              '</td>' +
-              '</tr>'
-              );
-            }
-
-        }
-        else if (key == "NH")
-        {
-          if((typeof($scope.itemValueLast.NH)!= "undefined")&&(!angular.equals($scope.itemValueLast.NH, $scope.itemValue.NH)))
-          {
+        else if (key == "MED") {
+          if((typeof($scope.itemValueLast.MED)!= "undefined")&&(!angular.equals($scope.itemValueLast.MED, $scope.itemValue.MED))) {
             $scope.showItems += (
-            '<tr>' +
-            '<td>' +
-            'Current_NH: ' +
-            '</td>' +
-
-            '<td>' + "<span class='green'>" +
-            $scope.itemValue.NH + "</span>" +
-            '</td>' +
-            '</tr>'
+              '<tr><td>Current_MED: </td><td>'
+              + "<span class='green'>"
+              + $scope.itemValue.MED
+              + "</span></td></tr>"
             );
 
             $scope.showItems += (
-            '<tr>' +
-            '<td>' +
-            'Previous_NH: ' +
-            '</td>' +
+              '<tr><td>Previous_MED: </td><td>'
+              +  "<span class='red'>"
+              + $scope.itemValueLast.MED
+              + "</span></td></tr>"
+            );
+          }
 
-            '<td>' +  "<span class='red'>" +
-            $scope.itemValueLast.NH + "</span>" +
-            '</td>' +
-            '</tr>'
+        }
+        else if (key == "NH") {
+          if((typeof($scope.itemValueLast.NH)!= "undefined")&&(!angular.equals($scope.itemValueLast.NH, $scope.itemValue.NH))) {
+            $scope.showItems += (
+              '<tr><td>Current_NH: </td><td>'
+              + "<span class='green'>"
+              + $scope.itemValue.NH
+              + "</span></td></tr>"
+            );
+
+            $scope.showItems += (
+              '<tr><td>Previous_NH: </td><td>'
+              +  "<span class='red'>"
+              + $scope.itemValueLast.NH
+              + "</span></td></tr>"
             );
           }
         }

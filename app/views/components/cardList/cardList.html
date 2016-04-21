@@ -3,6 +3,6 @@
        template="card.template"
        data="card"
        removeCard="api.removeCard(card)"
-       api="cApi[card.$$hashKey].functions">
+       api="cApi[card.router_hash_id + card.peer_hash_id].functions">
   </div>
 </div>

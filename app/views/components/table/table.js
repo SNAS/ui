@@ -42,17 +42,17 @@ angular.module('bmp.components.table', ['ui.grid.treeView'])
             }
           }
         },
-        {field: 'RouterName', displayName: 'Router Name'},
-        {field: 'RouterIP', displayName: 'Router IP'},
-        {field: 'PeerName', displayName: 'Peer Name'},
-        {field: 'PeerIP', displayName: 'Peer IP', width: '18%'},
-        {field: 'isPeerIPv4', displayName: 'isIPv4', width: '4%', visible: false},
+        {field: 'RouterName', displayName: 'Router Name', type: 'string'},
+        {field: 'RouterIP', displayName: 'Router IP', type: 'string'},
+        {field: 'PeerName', displayName: 'Peer Name', type: 'string'},
+        {field: 'PeerIP', displayName: 'Peer IP', width: '18%', type: 'string'},
+        {field: 'isPeerIPv4', displayName: 'isIPv4', width: '4%', visible: false, type: 'string'},
         {
-          field: 'LocalASN', displayName: 'Local ASN', width: '9%',
+          field: 'LocalASN', displayName: 'Local ASN', width: '9%', type: 'string',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
         },
         {
-          field: 'PeerASN', displayName: 'Peer ASN', width: '8%',
+          field: 'PeerASN', displayName: 'Peer ASN', width: '8%', type: 'string',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
         }
       ],
