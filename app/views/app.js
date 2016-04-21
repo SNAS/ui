@@ -37,8 +37,9 @@ angular
     'angular-loading-bar',
     'bmp.components.table'
   ])
-  .config(function ($stateProvider, $urlRouterProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $logProvider) {
     $urlRouterProvider.otherwise("/login");
+    $logProvider.debugEnabled(false);
     $stateProvider
       .state('login', {
         url: '/login',
