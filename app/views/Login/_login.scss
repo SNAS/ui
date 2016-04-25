@@ -3,14 +3,15 @@
   width: 100vw;
   height: 100vh;
   //background-color: #0066bb;
-  background: linear-gradient(left top, #000000, #434343);
+  background-color: #1E2021;
   background-size:cover;
+  opacity: 0.9;
 }
 
 .login-panel-container {
 //  #1c2b36
 //  background-color: white;
-  width:418px;
+  width:800px;
   margin-top: 10%;
   margin-left: auto;
   margin-right: auto;
@@ -20,13 +21,15 @@
 .login-panel-title {
   color: white;
   margin-top: 10%;
-  font-size: 17pt;
-//  font-weight: 100;
-  margin-left:0;
+  font-size: 40pt;
+  margin-left: -5px;
 
 }
 
 .input-section {
+  position: absolute;
+  left: 45%;
+  border-left: 1px solid white;
   input {
     box-shadow: none;
     border: none;

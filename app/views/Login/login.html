@@ -1,27 +1,31 @@
 <div class="login-background">
   <!--<div class="row">-->
     <!--<div class="col-md-6 col-md-offset-3" style="opacity: 1;">-->
-      <div class="login-panel-container">
+      <div class="login-panel-container row">
         <div>
-          <div><img src="images/logo.png" style="display: block; margin-left: auto;  margin-right: auto; height: 150px"></div>
           <h3 class="login-panel-title" align="middle">OPENBMP ANALYTICS</h3>
-        </div>
-        <div class="panel-body input-section">
           <p ng-show="error" style="color:red;text-align: center">{{error}}</p>
-          <!--<p>Your username and password didn't match. Please try again.</p>-->
-          <form role="form" style="width: 70%; margin-left: 15%" ng-submit="login()">
-            <fieldset>
-              <div class="form-group">
-                <input class="form-control" placeholder="Username" name="username" type="username" ng-model="username" autofocus>
-              </div>
-              <!--<hr style="margin: 0 10px">-->
-              <div class="form-group">
-                <input class="form-control" placeholder="Password" name="password" type="password" value="" ng-model="password">
-              </div>
-              <input type="submit" value="Submit" id="submit" class="btn btn-lg btn-block" style="margin-left:0"/>
-            </fieldset>
-          </form>
         </div>
+        <div class="row relative">
+          <div class="col-md-6">
+            <img src="images/logo.png" style="display: block; margin-left: auto;  margin-right: auto; margin-top: 8px; height: 97px">
+          </div>
+          <div class="panel-body input-section col-md-6">
+            <form role="form" style="width: 70%; margin-left: 15%" ng-keyup="$event.keyCode == 13 && login()">
+              <fieldset>
+                <div class="form-group">
+                  <input class="form-control" placeholder="Username" name="username" type="username" ng-model="username" autofocus>
+                </div>
+                <!--<hr style="margin: 0 10px">-->
+                <div class="form-group">
+                  <input class="form-control" placeholder="Password" name="password" type="password" value="" ng-model="password">
+                </div>
+                <!-- <input type="submit" value="Submit" id="submit" class="btn btn-lg btn-block" style="margin-left:0"/> -->
+              </fieldset>
+            </form>
+          </div>
+        </div>
+        
       </div>
     <!--</div>-->
   <!--</div>-->
