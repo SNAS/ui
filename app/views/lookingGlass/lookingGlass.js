@@ -12,7 +12,7 @@ angular.module('bmpUiApp')
     'uiGridConstants', 'uiGridFactory', 'leafletData',
     function ($scope, $http, apiFactory, uiGridConstants, uiGridFactory, leafletData) {
 
-      $scope.mapHeight = 300;
+      $scope.mapHeight = $(window).height() - 220;
 
       var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
       var mapID = 'pickledbadger.mbkpbek5';
@@ -22,8 +22,7 @@ angular.module('bmpUiApp')
           minZoom: 2,
           maxZoom: 15,
           zoomControl: false,
-          scrollWheelZoom: false,
-          height: $scope.mapHeight
+          scrollWheelZoom: false
         }
       });
 
