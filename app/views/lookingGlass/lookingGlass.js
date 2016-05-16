@@ -9,8 +9,99 @@
  */
 angular.module('bmpUiApp')
   .controller('lookingGlassController', ['$scope', '$http', 'apiFactory',
-    'uiGridConstants', 'uiGridFactory',
-    function($scope, $http, apiFactory, uiGridConstants, uiGridFactory) {
+    'uiGridConstants', 'uiGridFactory', 'leafletData',
+    function ($scope, $http, apiFactory, uiGridConstants, uiGridFactory, leafletData) {
+
+      $scope.mapHeight = 300;
+
+      var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
+      var mapID = 'pickledbadger.mbkpbek5';
+      angular.extend($scope, {
+        defaults: {
+          tileLayer: 'https://{s}.tiles.mapbox.com/v4/' + mapID + '/{z}/{x}/{y}.png?access_token=' + accessToken,
+          minZoom: 2,
+          maxZoom: 15,
+          zoomControl: false,
+          scrollWheelZoom: false,
+          height: $scope.mapHeight
+        }
+      });
+
+      leafletData.getMap("LookingGlassMap").then(function (map) {
+        $scope.map = map;
+        L.control.zoomslider().addTo($scope.map);
+      });
+
+      var peers;
+      var cluster, markerLayer;
+
+      var routerIcon = L.icon({
+        iconUrl: 'images/Router-icon.png',
+        iconSize: [15, 15]
+      });
+
+      $scope.renderMapDisplay = function (ribData) {
+
+        if (peers == null) {
+          apiFactory.getPeersAndLocationsByIp("").success(
+            function (result) {
+              peers = {};
+              angular.forEach(result.v_peers.data, function (peer) {
+                peers[peer.peer_hash_id] = peer;
+              });
+              $scope.renderMapDisplay(ribData);
+            }).error(function (error) {
+            console.log(error.message);
+          });
+        } else {
+          if (cluster && $scope.map.hasLayer(cluster))
+            $scope.map.removeLayer(cluster);
+          cluster = L.markerClusterGroup({
+            maxClusterRadius: 15,
+            spiderfyDistanceMultiplier: 1.5
+          });
+          markerLayer = new L.FeatureGroup();
+          markerLayer.on('click', function (e) {
+            $scope.values = e.layer.options.data;
+            createASpath($scope.values.AS_Path);
+            $('html, body').animate({
+              scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
+            }, 600);
+          });
+          markerLayer.on('mouseover', function (e) {
+            e.layer.openPopup();
+          });
+          markerLayer.on('mouseout', function (e) {
+            e.layer.closePopup();
+          });
+
+          angular.forEach(ribData, function (rib) {
+
+            var peer = peers[rib.peer_hash_id];
+
+            var marker = new L.Marker([peer.latitude, peer.longitude], {
+              icon: routerIcon,
+              data: rib,
+              title: "Peer Name: " + peer.PeerName
+            });
+
+            var popup = "";
+
+            angular.forEach(rib, function (value, key) {
+              if (['RouterName', 'PeerName', 'Prefix', 'PrefixLen', 'AS_Path'].indexOf(key) > 0)
+                popup += key + ": " + value + "<br>";
+            });
+
+            marker.bindPopup(popup);
+            marker.addTo(markerLayer);
+          });
+
+          $scope.map.addLayer(cluster.addLayer(markerLayer));
+
+          if ($scope.tab == "map")
+            $scope.map.fitBounds(markerLayer.getBounds());
+        }
+      };
 
       //DEBUG
       window.SCOPE = $scope;
@@ -20,7 +111,7 @@ angular.module('bmpUiApp')
       $scope.isDistinct = false;
       $scope.isLongestMatch = true;
 
-      $scope.turnOnDistinct = function() {
+      $scope.turnOnDistinct = function () {
         if (!$scope.isDistinct)
           $scope.isAggregate = true;
       };
@@ -67,19 +158,18 @@ angular.module('bmpUiApp')
       $scope.glassGridOptions.modifierKeysToMultiSelect = false;
       $scope.glassGridOptions.rowTemplate =
         '<div class="hover-row-highlight"><div ng-click="grid.appScope.glassGridSelection();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>';
-      $scope.glassGridOptions.onRegisterApi = function(gridApi) {
+      $scope.glassGridOptions.onRegisterApi = function (gridApi) {
         $scope.glassGridApi = gridApi;
       };
       $scope.glassGridOptions.enableFiltering = false;
-      $scope.toggleFiltering = function() {
+      $scope.toggleFiltering = function () {
         $scope.glassGridOptions.enableFiltering = !$scope.glassGridOptions.enableFiltering;
         $scope.glassGridApi.core.notifyDataChange(uiGridConstants.dataChange
           .COLUMN);
       };
 
       // use another API to look for a default value, which is displayed on the page
-      apiFactory.getPeerRibLookupIp('190.0.103.0').
-      success(function(result) {
+      apiFactory.getPeerRibLookupIp('190.0.103.0').success(function (result) {
         // got response
         if (!$.isEmptyObject(result)) {
           var resultData = result.v_routes.data;
@@ -92,6 +182,7 @@ angular.module('bmpUiApp')
               resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
             }
             $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
+            $scope.renderMapDisplay(resultData);
             uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
           }
         } else { // empty response
@@ -99,17 +190,19 @@ angular.module('bmpUiApp')
           $scope.glassGridOptions.showGridFooter = false;
         }
         $scope.glassGridOptions.glassGridIsLoad = false; //stop loading
-      }).
-      error(function(error) {
+      }).error(function (error) {
         console.log(error.message);
       });
 
-      $scope.glassGridSelection = function() {
+      $scope.glassGridSelection = function () {
         $scope.values = $scope.glassGridApi.selection.getSelectedRows()[0];
         createASpath($scope.values.AS_Path);
+        $('html, body').animate({
+          scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
+        }, 600);
       };
 
-      var createASpath = function(path) {
+      var createASpath = function (path) {
         //e.g. " 64543 1221 4637 852 852 29810 29810 29810 29810 29810"
         $scope.asPath = {};
         var iconWidth = 50;
@@ -151,8 +244,7 @@ angular.module('bmpUiApp')
 
         var asname;
         $scope.as_path = [];
-        apiFactory.getWhoIsASNameList($scope.norepeat).
-        success(function(result) {
+        apiFactory.getWhoIsASNameList($scope.norepeat).success(function (result) {
 
           $scope.as_path = as_path;
 
@@ -214,13 +306,12 @@ angular.module('bmpUiApp')
           //len + 1 for router     + 80 stop wrapping and padding
           $scope.asPath.width = nodeWidth * $scope.as_path.length + 80 +
             "px";
-        }).
-        error(function(error) {
+        }).error(function (error) {
           console.log(error);
         });
 
         var originalLeave = $.fn.popover.Constructor.prototype.leave;
-        $.fn.popover.Constructor.prototype.leave = function(obj) {
+        $.fn.popover.Constructor.prototype.leave = function (obj) {
           var self = obj instanceof this.constructor ?
             obj : $(obj.currentTarget)[this.type](this.getDelegateOptions())
             .data('bs.' + this.type)
@@ -231,11 +322,11 @@ angular.module('bmpUiApp')
           if (obj.currentTarget) {
             container = $(obj.currentTarget).siblings('.popover')
             timeout = self.timeout;
-            container.one('mouseenter', function() {
+            container.one('mouseenter', function () {
               //We entered the actual popover – call off the dogs
               clearTimeout(timeout);
               //Let's monitor popover content instead
-              container.one('mouseleave', function() {
+              container.one('mouseleave', function () {
                 $.fn.popover.Constructor.prototype.leave.call(
                   self, self);
               });
@@ -245,7 +336,7 @@ angular.module('bmpUiApp')
         //$('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 20}});
 
         //for the tooltip
-        $scope.wordCheck = function(word) {
+        $scope.wordCheck = function (word) {
           if (word.length > 6) {
             return word.slice(0, 4) + " ...";
           } else {
@@ -265,7 +356,7 @@ angular.module('bmpUiApp')
       ];
       $scope.searchOption = 'Prefix/IP';
 
-      $scope.preSearch = function() {
+      $scope.preSearch = function () {
         $scope.glassGridOptions.glassGridIsLoad = true;
         $scope.p2 = [];
         $scope.ipAddr = [];
@@ -283,11 +374,11 @@ angular.module('bmpUiApp')
         }
       };
 
-      $scope.searchCommunity = function(keywords) {
+      $scope.searchCommunity = function (keywords) {
         $scope.glassGridOptions.glassGridIsLoad = true;
         $scope.glassGridOptions.data = [];
         apiFactory.getPrefixByCommunity(keywords)
-          .success(function(data) {
+          .success(function (data) {
             var resultData = data.Community.data.data;
             for (var i = 0; i < resultData.length; i++) {
               resultData[i].wholePrefix = resultData[i].Prefix + "/" +
@@ -298,31 +389,31 @@ angular.module('bmpUiApp')
               $scope.glassGridOptions.showGridFooter = false;
             } else {
               $scope.glassGridOptions.data = resultData;
+              $scope.renderMapDisplay(resultData);
               uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
             }
             $scope.glassGridOptions.glassGridIsLoad = false;
           });
       };
 
-      $scope.part1Lookup = function(value) {
+      $scope.part1Lookup = function (value) {
         if (value.indexOf(":") == -1) {
-          return apiFactory.getCommP1Suggestions(value).then(function(
-            response) {
-            return response.data.Community.data.data.map(function(item,
-              key) {
+          return apiFactory.getCommP1Suggestions(value).then(function (response) {
+            return response.data.Community.data.data.map(function (item,
+                                                                   key) {
               return item['part1'];
             })
           })
         }
       };
 
-      $scope.onSelectPart1 = function($item, $model, $label) {
+      $scope.onSelectPart1 = function ($item, $model, $label) {
         $scope.p2 = [];
         $scope.selectedPart1 = $label;
         apiFactory.getCommP2ByP1($label)
-          .success(function(data) {
+          .success(function (data) {
             data = data.Community.data.data;
-            $scope.p2 = data.sort(function(a, b) {
+            $scope.p2 = data.sort(function (a, b) {
               if (a.count > b.count) {
                 return 1;
               }
@@ -334,12 +425,12 @@ angular.module('bmpUiApp')
           })
       };
 
-      $scope.onSelectPart2 = function($item, $model, $label) {
+      $scope.onSelectPart2 = function ($item, $model, $label) {
         var community = $scope.selectedPart1 + ":" + $label;
         $scope.searchCommunity(community);
       };
 
-      $scope.compareP2 = function(actual, expected) {
+      $scope.compareP2 = function (actual, expected) {
         return actual.toString().indexOf(expected, 0) === 0;
       };
 
@@ -348,11 +439,11 @@ angular.module('bmpUiApp')
       //TODO - also XXXX::XXXX: is accepted for some reason
       var ipv4Regex = /\d{1,3}\./;
       var ipv6Regex = /([0-9a-fA-F]{1,4}\:)|(\:\:([0-9a-fA-F]{1,4})?)/;
-      $scope.dnsLookup = function(value) {
+      $scope.dnsLookup = function (value) {
         $scope.ipAddr = [];
         if (ipv4Regex.exec(value) == null && ipv6Regex.exec(value) == null) {
-          return apiFactory.lookupDNS(value).then(function(response) {
-            return response.data.data.map(function(item, key) {
+          return apiFactory.lookupDNS(value).then(function (response) {
+            return response.data.data.map(function (item, key) {
               $scope.ipAddr.push(item["IPAddr" + key]);
               return item["IPAddr" + key];
             })
@@ -362,12 +453,12 @@ angular.module('bmpUiApp')
         }
       };
 
-      $scope.onSelectHostname = function($item, $model, $label) {
+      $scope.onSelectHostname = function ($item, $model, $label) {
         $scope.search($label);
       };
 
       //Loop through data selecting and altering relevant data.
-      $scope.search = function(value) {
+      $scope.search = function (value) {
         //used to determine which regex's to use ipv4 || ipv6
         var isIPv6;
         if (ipv4Regex.exec(value) != null) {
@@ -424,8 +515,7 @@ angular.module('bmpUiApp')
           } else if ($scope.isDistinct) {
             value += "?distinct";
           }
-          apiFactory.getPrefix(value).
-          success(function(result) {
+          apiFactory.getPrefix(value).success(function (result) {
             if (!$.isEmptyObject(result)) {
               var resultData = result.v_routes.data;
               for (var i = 0; i < resultData.length; i++) {
@@ -438,6 +528,7 @@ angular.module('bmpUiApp')
               } else {
                 $scope.glassGridOptions.showGridFooter = true;
                 $scope.glassGridOptions.data = resultData;
+                $scope.renderMapDisplay(resultData);
                 uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
               }
 
@@ -446,8 +537,7 @@ angular.module('bmpUiApp')
               $scope.glassGridOptions.showGridFooter = false;
             }
             $scope.glassGridOptions.glassGridIsLoad = false;
-          }).
-          error(function(error) {
+          }).error(function (error) {
             console.log(error.message);
           });
         } else if (fullIpRegex.exec(value) != null) {
@@ -460,8 +550,7 @@ angular.module('bmpUiApp')
           } else if ($scope.isDistinct) {
             value += "?distinct";
           }
-          apiFactory.getPeerRibLookupIp(value).
-          success(function(result) {
+          apiFactory.getPeerRibLookupIp(value).success(function (result) {
             if (!$.isEmptyObject(result)) {
               var resultData = result.v_routes.data;
               for (var i = 0; i < resultData.length; i++) {
@@ -474,6 +563,7 @@ angular.module('bmpUiApp')
               } else {
                 $scope.glassGridOptions.showGridFooter = true;
                 $scope.glassGridOptions.data = resultData;
+                $scope.renderMapDisplay(resultData);
                 uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
               }
             } else {
@@ -481,13 +571,23 @@ angular.module('bmpUiApp')
               $scope.glassGridOptions.showGridFooter = false;
             }
             $scope.glassGridOptions.glassGridIsLoad = false;
-          }).
-          error(function(error) {
+          }).error(function (error) {
             console.log(error.message);
           });
         } else {
           console.log('invalid input');
         }
       };
+
+      $scope.changeTab = function (value) {
+        $scope.tab = value;
+        if (value == 'map') {
+          $scope.map.invalidateSize(false);
+          $scope.map.fitBounds(markerLayer.getBounds());
+
+
+        }
+      }
+
     }
   ]);
