@@ -34,10 +34,10 @@ angular.module('bmpUiApp')
       var peers;
       var cluster, markerLayer;
 
-      var routerIcon = L.icon({
-        iconUrl: 'images/Router-icon.png',
-        iconSize: [15, 15]
-      });
+      // var routerIcon = L.icon({
+      //   iconUrl: 'images/Router-icon.png',
+      //   iconSize: [15, 15]
+      // });
 
       $scope.renderMapDisplay = function (ribData) {
 
@@ -79,17 +79,16 @@ angular.module('bmpUiApp')
             var peer = peers[rib.peer_hash_id];
 
             var marker = new L.Marker([peer.latitude, peer.longitude], {
-              icon: routerIcon,
+              // icon: routerIcon,
               data: rib,
               title: "Peer Name: " + peer.PeerName
             });
 
-            var popup = "";
-
-            angular.forEach(rib, function (value, key) {
-              if (['RouterName', 'PeerName', 'Prefix', 'PrefixLen', 'AS_Path'].indexOf(key) > 0)
-                popup += key + ": " + value + "<br>";
-            });
+            var popup = 'RouterName: ' + rib.RouterName + '<br>' +
+              'PeerName: ' + rib.PeerName + '<br>' +
+              'Prefix: ' + rib.Prefix + '<br>' +
+              'PrefixLen: ' + rib.PrefixLen + '<br>' +
+              'AS_Path: ' + rib.AS_Path;
 
             marker.bindPopup(popup);
             marker.addTo(markerLayer);
