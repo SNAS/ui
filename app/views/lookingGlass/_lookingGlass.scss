@@ -7,3 +7,13 @@
   max-height: 200px;
   overflow-y: auto;
 }
+
+#colorList {
+  background-color: white;
+  width: 150px;
+  border: 1px solid lightgrey;
+  p {
+    margin:0;
+    color:#FFFFFF;
+  }
+}

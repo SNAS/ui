@@ -14,6 +14,8 @@ angular.module('bmpUiApp')
 
       $scope.mapHeight = $(window).height() - 220;
 
+      $scope.tab = 'map';
+
       var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
       var mapID = 'pickledbadger.mbkpbek5';
       angular.extend($scope, {
@@ -26,21 +28,66 @@ angular.module('bmpUiApp')
         }
       });
 
+      L.Control.Legend = L.Control.extend({
+        options: {
+          position: 'topright'
+        },
+        onAdd: function (map) {
+          var container = L.DomUtil.create('div', null);
+          container.id = 'list';
+          this.colorList = L.DomUtil.create('div', null, container);
+          this.colorList.id = 'colorList';
+          L.DomEvent.addListener(container, 'click', filter, this);
+          L.DomEvent.disableClickPropagation(container);
+          L.DomEvent.addListener(container, 'mousewheel', function (e) {
+            L.DomEvent.stopPropagation(e);
+          });
+          return container;
+        }
+      });
+
+      function getRandomColor() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        if (color != '#FFFFFF')
+          return color;
+        else
+          return getRandomColor()
+      }
+
       leafletData.getMap("LookingGlassMap").then(function (map) {
         $scope.map = map;
         L.control.zoomslider().addTo($scope.map);
+        $scope.map.addControl(new L.Control.Legend());
       });
 
+
+
       var peers;
-      var cluster, markerLayer;
+      var cluster, markerLayer, markers;
 
       // var routerIcon = L.icon({
       //   iconUrl: 'images/Router-icon.png',
       //   iconSize: [15, 15]
       // });
 
-      $scope.renderMapDisplay = function (ribData) {
+      var colorDict;
 
+      var filter = function (e) {
+        var filteredPrefix = e.target.innerText;
+        markerLayer.clearLayers();
+        cluster.clearLayers();
+        angular.forEach(markers,function(marker){
+          if(filteredPrefix == 'ALL' || marker.options.data.wholePrefix == filteredPrefix)
+            marker.addTo(markerLayer);
+        });
+        cluster.addLayer(markerLayer);
+      };
+
+      $scope.renderMapDisplay = function (ribData) {
         if (peers == null) {
           apiFactory.getPeersAndLocationsByIp("").success(
             function (result) {
@@ -55,6 +102,11 @@ angular.module('bmpUiApp')
         } else {
           if (cluster && $scope.map.hasLayer(cluster))
             $scope.map.removeLayer(cluster);
+
+          colorDict = {};
+
+          markers = [];
+
           cluster = L.markerClusterGroup({
             maxClusterRadius: 15,
             spiderfyDistanceMultiplier: 1.5
@@ -77,9 +129,23 @@ angular.module('bmpUiApp')
           angular.forEach(ribData, function (rib) {
 
             var peer = peers[rib.peer_hash_id];
+            var color;
+            if (colorDict[rib.wholePrefix] != null) {
+              color = colorDict[rib.wholePrefix];
+            }
+            else {
+              color = getRandomColor();
+              colorDict[rib.wholePrefix] = color;
+            }
+            var coloredMarker = L.VectorMarkers.icon({
+              prefix: 'glyphicon',
+              icon: 'glyphicon-flash',
+              markerColor: color
+            });
+
 
             var marker = new L.Marker([peer.latitude, peer.longitude], {
-              // icon: routerIcon,
+              icon: coloredMarker,
               data: rib,
               title: "Peer Name: " + peer.PeerName
             });
@@ -92,6 +158,15 @@ angular.module('bmpUiApp')
 
             marker.bindPopup(popup);
             marker.addTo(markerLayer);
+            markers.push(marker);
+          });
+
+          $('#colorList')[0].innerHTML = '<p class="btn btn-block btn-sm" style="background-color:white;color:black;">ALL</p>';
+
+          angular.forEach(colorDict, function (value, key) {
+
+            $('#colorList')[0].innerHTML += '<p class="btn btn-block btn-sm" style="background-color:' + value + '"><span class="glyphicon glyphicon-flash"></span>' + key + '</p>';
+
           });
 
           $scope.map.addLayer(cluster.addLayer(markerLayer));
