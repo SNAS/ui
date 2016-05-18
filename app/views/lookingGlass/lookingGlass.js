@@ -37,7 +37,7 @@ angular.module('bmpUiApp')
           container.id = 'list';
           this.colorList = L.DomUtil.create('div', null, container);
           this.colorList.id = 'colorList';
-          L.DomEvent.addListener(container, 'click', filter, this);
+          L.DomEvent.addListener(container, 'click', filterMap, this);
           L.DomEvent.disableClickPropagation(container);
           L.DomEvent.addListener(container, 'mousewheel', function (e) {
             L.DomEvent.stopPropagation(e);
@@ -68,16 +68,35 @@ angular.module('bmpUiApp')
       var cluster, markerLayer, markers;
       var colorDict;
 
-      var filter = function (e) {
+      var filterMap = function (e) {
         var filteredPrefix = e.target.innerText;
         markerLayer.clearLayers();
         cluster.clearLayers();
-        angular.forEach(markers,function(marker){
-          if(filteredPrefix == 'ALL' || marker.options.data.wholePrefix == filteredPrefix)
+        angular.forEach(markers, function (marker) {
+          if (filteredPrefix == 'ALL' || marker.options.data.wholePrefix == filteredPrefix)
             marker.addTo(markerLayer);
         });
         cluster.addLayer(markerLayer);
         $scope.map.fitBounds(markerLayer.getBounds());
+      };
+
+      $scope.peerListRibClicked = function (rib) {
+        var keepGoing = true;
+        angular.forEach(markers, function (marker) {
+          if (keepGoing)
+            if (marker.options.data.rib_hash_id == rib.rib_hash_id) {
+              $scope.map.fitBounds([marker.getLatLng()]);
+              keepGoing = false;
+            }
+        });
+
+        $scope.values = rib;
+        createASpath($scope.values.AS_Path);
+
+        if ($("#detailView")[0] != null)
+          $('html, body').animate({
+            scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
+          }, 600);
       };
 
       $scope.renderMapDisplay = function (ribData) {
@@ -100,6 +119,8 @@ angular.module('bmpUiApp')
 
           markers = [];
 
+          $scope.cardPeers = {};
+
           cluster = L.markerClusterGroup({
             maxClusterRadius: 15,
             spiderfyDistanceMultiplier: 1.5
@@ -108,9 +129,10 @@ angular.module('bmpUiApp')
           markerLayer.on('click', function (e) {
             $scope.values = e.layer.options.data;
             createASpath($scope.values.AS_Path);
-            $('html, body').animate({
-              scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
-            }, 600);
+            if ($("#detailView")[0] != null)
+              $('html, body').animate({
+                scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
+              }, 600);
           });
           markerLayer.on('mouseover', function (e) {
             e.layer.openPopup();
@@ -136,11 +158,11 @@ angular.module('bmpUiApp')
               markerColor: color
             });
 
-            if(peer.latitude == null || peer.longitude == null){
+            if (peer.latitude == null || peer.longitude == null) {
               peer.latitude = 37.3382;
               peer.longitude = -121.886;
             }
-            
+
             var marker = new L.Marker([peer.latitude, peer.longitude], {
               icon: coloredMarker,
               data: rib,
@@ -152,6 +174,12 @@ angular.module('bmpUiApp')
               'Prefix: ' + rib.Prefix + '<br>' +
               'PrefixLen: ' + rib.PrefixLen + '<br>' +
               'AS_Path: ' + rib.AS_Path;
+
+            if ((peer.peer_hash_id + '@' + peer.PeerName) in $scope.cardPeers) {
+              $scope.cardPeers[peer.peer_hash_id + '@' + peer.PeerName].push(rib);
+            } else {
+              $scope.cardPeers[peer.peer_hash_id + '@' + peer.PeerName] = [rib];
+            }
 
             marker.bindPopup(popup);
             marker.addTo(markerLayer);
@@ -185,6 +213,20 @@ angular.module('bmpUiApp')
         if (!$scope.isDistinct)
           $scope.isAggregate = true;
       };
+
+      $scope.togglePeerSelection = function (peerHash) {
+        var selector = $("#" + peerHash);
+        var nodesSelector = $("#" + peerHash + 'nodes');
+        if (!selector.hasClass("expanded")) {
+          selector.addClass("expanded");
+          nodesSelector.show();
+        } else {
+          selector.removeClass("expanded");
+          nodesSelector.hide();
+        }
+      };
+
+      $scope.cardPeers = {};  //used for card
 
       $scope.glassGridOptions = {
         height: $scope.glassGridInitHeight,
@@ -267,9 +309,10 @@ angular.module('bmpUiApp')
       $scope.glassGridSelection = function () {
         $scope.values = $scope.glassGridApi.selection.getSelectedRows()[0];
         createASpath($scope.values.AS_Path);
-        $('html, body').animate({
-          scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
-        }, 600);
+        if ($("#detailView")[0] != null)
+          $('html, body').animate({
+            scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
+          }, 600);
       };
 
       var createASpath = function (path) {
