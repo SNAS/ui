@@ -64,16 +64,8 @@ angular.module('bmpUiApp')
         $scope.map.addControl(new L.Control.Legend());
       });
 
-
-
       var peers;
       var cluster, markerLayer, markers;
-
-      // var routerIcon = L.icon({
-      //   iconUrl: 'images/Router-icon.png',
-      //   iconSize: [15, 15]
-      // });
-
       var colorDict;
 
       var filter = function (e) {
