@@ -73,17 +73,17 @@
                 <div class="map-control router-list expanded" ng-style="{'height': mapHeight}">
                   <h3 class="panel-header">
                     Peer List
-                    <div class="panel-search">
-                      <input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.NodeName"
-                             ng-click="panelSearch(panelSearchKey)"/>
-                      <span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey"
-                            ng-click="panelSearchKey = ''"></span>
-                    </div>
+                    <!--<div class="panel-search">-->
+                    <!--<input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.NodeName"-->
+                    <!--ng-click="panelSearch(panelSearchKey)"/>-->
+                    <!--<span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey"-->
+                    <!--ng-click="panelSearchKey = ''"></span>-->
+                    <!--</div>-->
                   </h3>
 
-                  <div class="main" ng-style="{'height': mapHeight, 'overflow-y': 'hidden', 'padding-bottom': 0}">
+                  <div class="main" ng-style="{'height': mapHeight - 55, 'padding-bottom': 0}">
                     <ul class="locations">
-                      <li ng-repeat="(peer, peerRibs) in cardPeers | orderBy: 'location'" id="{{peer.substring(0,peer.indexOf('@'))}}"
+                      <li ng-repeat="(peer, peerRibs) in cardPeers" id="{{peer.substring(0,peer.indexOf('@'))}}"
                           class="loca">
                         <p class="router-list-city" ng-click="togglePeerSelection(peer.substring(0,peer.indexOf('@')))">
                           <span class="glyphicon glyphicon-play"></span>{{peer.substring(peer.indexOf('@') + 1)}}
@@ -94,8 +94,8 @@
                               ng-click="peerListRibClicked(rib)">
                             <div class="row">
                               <div class="col-xs-12">
-                                   <!--tooltip-popup-delay="1000" tooltip-append-to-body="true"-->
-                                   <!--tooltip="{{rib.PeerName}} | {{rib.wholePrefix}}" tooltip-placement="top"-->
+                                <!--tooltip-popup-delay="1000" tooltip-append-to-body="true"-->
+                                <!--tooltip="{{rib.PeerName}} | {{rib.wholePrefix}}" tooltip-placement="top"-->
                                 {{rib.wholePrefix}}
                               </div>
                             </div>
