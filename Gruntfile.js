@@ -361,6 +361,7 @@ module.exports = function(grunt) {
             'views/**/*.html',
             'images/{,*/}*.{webp}',
             'views/components/NeXt*/**',
+            'views/components/leaflet-*/**',
             'fonts/*'
           ]
         }, {
