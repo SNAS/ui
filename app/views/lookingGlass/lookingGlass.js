@@ -85,6 +85,7 @@ angular.module('bmpUiApp')
             marker.addTo(markerLayer);
         });
         cluster.addLayer(markerLayer);
+        $scope.map.fitBounds(markerLayer.getBounds());
       };
 
       $scope.renderMapDisplay = function (ribData) {
