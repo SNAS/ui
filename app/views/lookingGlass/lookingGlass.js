@@ -136,7 +136,11 @@ angular.module('bmpUiApp')
               markerColor: color
             });
 
-
+            if(peer.latitude == null || peer.longitude == null){
+              peer.latitude = 37.3382;
+              peer.longitude = -121.886;
+            }
+            
             var marker = new L.Marker([peer.latitude, peer.longitude], {
               icon: coloredMarker,
               data: rib,
