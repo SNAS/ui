@@ -1,67 +1,71 @@
 <div ng-controller="lookingGlassController">
   <!--tabset-->
-  <div>
+    <div>
 
-    <div class="main-page-search">
-      <form>
-        <select class="btn btn-default"
-                ng-model="searchOption"
-                ng-options="option for option in searchOptions"
-        ></select>
-        <input id="prefixSearchBox" ng-if="searchOption == 'Prefix/IP'"
-               type="text" ng-model="prefxiKeywords" class="input-large search-query" placeholder="190.0.103.0"
-        />
-        <input id="hostnameSearchBox" ng-if="searchOption == 'Hostname'"
-               type="text" ng-model="hostnameKeywords" class="input-large search-query" placeholder="cisco.com"
-               typeahead="ipAddr for ipAddr in dnsLookup($viewValue)"
-               typeahead-loading="loadingLocations"
-               typeahead-no-results="noResults"
-               typeahead-wait-ms="300"
-               typeahead-on-select="onSelectHostname($item, $model, $label)"
-               typeahead-min-length="4"
-        />
-        <input id="part1SearchBox" ng-if="searchOption == 'Community'"
-               type="text" ng-model="part1Keywords" class="input-large search-query" placeholder="3257"
-               typeahead="part1 for part1 in part1Lookup($viewValue)"
-               typeahead-loading="loadingLocations"
-               typeahead-no-results="noResults"
-               typeahead-wait-ms="300"
-               typeahead-on-select="onSelectPart1($item, $model, $label)"
-               typeahead-min-length="2"
-        />
-        <span ng-if="searchOption == 'Community'"> : </span>
-        <input id="part2SearchBox" ng-if="searchOption == 'Community'"
-               type="text" ng-model="part2Keywords" class="input-large search-query" placeholder="8012"
-               typeahead="p2.part2 for p2 in p2 | filter: {part2: $viewValue} : compareP2"
-               typeahead-on-select="onSelectPart2($item, $model, $label)"
-               typeahead-min-length="1"
-        />
-        <button type="submit" class="btn btn-sm btn-info" ng-click="preSearch()">Search</button>
-        <label class="btn btn-default btn-xs"
-               ng-style="{'margin-left': '20px', 'width': '120px'}"
-               ng-if="searchOption == 'Prefix/IP'">Longest Match
-          <input type="checkbox" ng-model="isLongestMatch"/>
-        </label>
-        <label class="btn btn-default btn-xs" ng-style="{'margin-left': '10px', 'width': '120px'}">Aggregates
-          <input type="checkbox" ng-model="isAggregate"/>
-        </label>
-        <label class="btn btn-default btn-xs" ng-style="{'margin-left': '10px', 'width': '120px'}">Distinct
-          <input type="checkbox" ng-model="isDistinct" ng-click="turnOnDistinct()"/>
-        </label>
-      </form>
-    </div>
-
-    <div class="main-area row">
-      <div class="col-lg-12">
-        <button type="button" class="btn btn-default"
-                ng-repeat="ip in ipAddr"
-                ng-click="search(ip)"
-                ng-style="{'margin-right': '30px', 'margin-top': '10px'}"
-                ng-if="searchOption == 'Hostname'"
-        >{{ip}}
-        </button>
+      <div class="main-page-search">
+        <form >
+          <select class="btn btn-default"
+                  ng-model="searchOption"
+                  ng-options="option for option in searchOptions"
+          ></select>
+          <input id="prefixSearchBox" ng-if="searchOption == 'Prefix/IP'"
+                 type="text" ng-model="searchKeywords.prefix" class="input-large search-query" placeholder="190.0.103.0"
+          />
+          <input id="hostnameSearchBox" ng-if="searchOption == 'Hostname'"
+                 type="text" ng-model="searchKeywords.hostname" class="input-large search-query" placeholder="cisco.com"
+                 typeahead="ipAddr for ipAddr in dnsLookup($viewValue)"
+                 typeahead-loading="loadingLocations"
+                 typeahead-no-results="noResults"
+                 typeahead-wait-ms="300"
+                 typeahead-on-select="onSelectHostname($item, $model, $label)"
+                 typeahead-min-length="4"
+          />
+          <input id="part1SearchBox" ng-if="searchOption == 'Community'"
+                 type="text" ng-model="searchKeywords.part1" class="input-large search-query" placeholder="3257"
+                 typeahead="part1 for part1 in part1Lookup($viewValue)"
+                 typeahead-loading="loadingLocations"
+                 typeahead-no-results="noResults"
+                 typeahead-wait-ms="300"
+                 typeahead-on-select="onSelectPart1($item, $model, $label)"
+                 typeahead-min-length="2"
+          />
+          <span ng-if="searchOption == 'Community'"> : </span>
+          <input id="part2SearchBox" ng-if="searchOption == 'Community'"
+                 type="text" ng-model="searchKeywords.part2" class="input-large search-query" placeholder="8012"
+                 typeahead="p2.part2 for p2 in p2 | filter: {part2: $viewValue} : compareP2"
+                 typeahead-on-select="onSelectPart2($item, $model, $label)"
+                 typeahead-min-length="1"
+          />
+          <button type="submit" class="btn btn-sm btn-info" ng-click="preSearch()">Search</button>
+          <!--<label class=""-->
+                 <!--ng-style="{'margin-left': '20px', 'width': '120px'}"-->
+                 <!--ng-if="searchOption == 'Prefix/IP'">Longest Match-->
+            <!--<input type="checkbox"-->
+                   <!--ng-model="isLongestMatch"-->
+                   <!--ng-disabled="searchKeywords.prefix.indexOf('/') > -1"-->
+                   <!--ng-checked="searchKeywords.prefix.indexOf('/') == -1"/>-->
+          <!--</label>-->
+          <label class="btn btn-default btn-xs" ng-style="{'margin-left': '10px', 'width': '120px'}">Aggregates
+            <input type="checkbox" ng-model="searchParams.isAggregate"/>
+          </label>
+          <label class="btn btn-default btn-xs" ng-style="{'margin-left': '10px', 'width': '120px'}" ng-show="searchKeywords.prefix.indexOf('/') > -1">Specific
+            <input type="checkbox" ng-model="searchParams.isSpecific"/>
+          </label>
+          <label class="btn btn-default btn-xs" ng-style="{'margin-left': '10px', 'width': '120px'}">Distinct
+            <input type="checkbox" ng-model="searchParams.isDistinct"/>
+          </label>
+        </form>
       </div>
-    </div>
+
+      <div class="main-area row" ng-if="searchOption == 'Hostname'">
+        <div class="col-lg-12">
+          <button type="button" class="btn btn-default"
+                  ng-repeat="ip in ipAddr"
+                  ng-click="search(ip)"
+                  ng-style="{'margin-right': '30px', 'margin-top': '10px'}"
+          >{{ip}}</button>
+        </div>
+      </div>
 
 
     <div class="main-area row">

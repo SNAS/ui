@@ -265,10 +265,12 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getPeerHistoryPrefix = function (prefix, hashId) {
-      //return $http.get(urlBase + "rib/history/" + prefix);
       return $http.get(urlBase + "rib/peer/" + hashId + "/history/" + prefix)
     };
 
+    apiFactory.getPeerWithdrawPrefix = function (prefix, hashId) {
+      return $http.get(urlBase + "rib/peer/" + hashId + "/withdraws/" + prefix)
+    };
 
     apiFactory.getWhoIsWhereASNSync = function (asn) {
       //fix it later . now this is a Sync API
@@ -277,6 +279,10 @@ angular.module('bmpUiApp')
 
     apiFactory.getWhoisPrefix = function (prefix) {
       return $http.get(urlBase + "whois/prefix/" + prefix, {cache: true});
+    };
+
+    apiFactory.getPrefixWithdrawn = function(prefixWithLen, hours, ts) {
+      return $http.get(urlBase + "rib/withdraws/" + prefixWithLen)
     };
 
     // Aggregation analysis
@@ -466,4 +472,12 @@ angular.module('bmpUiApp')
     };
 
     return apiFactory;
+  })
+  .filter('statusFilter', function() {
+    return function(val) {
+      if (val == 'true')
+        return 'Active';
+      else
+        return 'Inactive';
+    }
   });
