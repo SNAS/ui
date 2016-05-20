@@ -29,7 +29,10 @@ angular.module('bmpUiApp')
         $scope.AllPrefixGridApi = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.peerData.selectPeer = row.entity;
+          getPrefixHistory($scope.value, $scope.peerData.selectPeer.peer_hash_id);
           $scope.selectUpdates();
+          $scope.fromPeer = 'FROM ' + $scope.peerData.selectPeer.PeerName;
+          $scope.selectedPeerCaption = $scope.peerData.selectPeer.PeerName + ' selected';
         });
       },
       columnDefs: [
@@ -39,8 +42,7 @@ angular.module('bmpUiApp')
         {
           name: "PeerASN", displayName: 'Peer_ASN',
           cellTemplate: '<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
-        },
-        {name: "isWithdrawn", displayName: 'Status', cellFilter: 'statusFilter'}
+        }
       ]
     };
 
@@ -129,6 +131,41 @@ angular.module('bmpUiApp')
       ]
     };
 
+    $scope.allHistoryOptions = {
+      showGridFooter: true,
+      enableFiltering: false,
+      enableRowSelection: true,
+      enableRowHeaderSelection: false,
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      multiSelect: false,
+      rowHeight: 25,
+      gridFooterHeight: 0,
+      rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
+      onRegisterApi: function (gridApi) {
+        $scope.AllPrefixGridApi = gridApi;
+        gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+          $scope.peerData.selectPeer = row.entity;
+          // if ($scope.peerData.selectPeer.isWithdrawn) {
+          //   $scope.selectWithdraws();
+          // } else {
+          //   $scope.selectUpdates();
+          // }
+        });
+      },
+      columnDefs: [
+        {name: "RouterName", displayName: 'RouterName'},
+        {name: "PeerName", displayName: 'PeerName'},
+        {name: "PeerAddress", displayName: 'PeerAddress'},
+        {
+          name: "PeerASN", displayName: 'Peer_ASN',
+          cellTemplate: '<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+        },
+        {name: "Status", displayName: 'Status'},
+        {name: "LastModified", displayName: "Timestamp", sort: {priority: 0, direction: uiGridConstants.DESC}}
+      ]
+    };
+
     $scope.toggleFiltering = function () {
       $scope.AllPrefixOptions.enableFiltering = !$scope.AllPrefixOptions.enableFiltering;
       $scope.AllPrefixGridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
@@ -161,8 +198,7 @@ angular.module('bmpUiApp')
 
     // get the prefix grid and table data ,call createPrefixGridTable() to create a table
     var getPrefixDataGrid = function (value) {
-      var prefix = value;
-      apiFactory.getPrefix(prefix)
+      apiFactory.getPrefix(value)
         .success(function (data) {
           // execute the function and get data successfully.
           $scope.PrefixData = data.v_all_routes.data;
@@ -312,6 +348,91 @@ angular.module('bmpUiApp')
       $scope.loading = true;
       var searchPrefix = $scope.currentValue + '?ts=lastupdate';
       getPrefixHisData(searchPrefix);
+    };
+
+    var getPrefixHistory = function(prefix, peerHashID) {
+      prefix += '?ts=lastupdate';
+      var prefixHistoryData = [];
+      var historyRequest, withdrawnRequest;
+
+      if (!peerHashID) {
+        historyRequest = apiFactory.getHistoryPrefix(prefix);
+        withdrawnRequest = apiFactory.getWithdrawnPrefix(prefix)
+      } else {
+        historyRequest = apiFactory.getPeerHistoryPrefix(prefix, peerHashID);
+        withdrawnRequest = apiFactory.getPeerWithdrawPrefix(prefix, peerHashID);
+      }
+
+      historyRequest
+        .success(function(data1) {
+          if (data1.hasOwnProperty('v_routes_history') && data1.v_routes_history.data.length != 0) {
+            data1.v_routes_history.data.forEach(function(value) {
+              value.Status = 'update';
+            });
+            prefixHistoryData = prefixHistoryData.concat(data1.v_routes_history.data);
+          }
+          withdrawnRequest
+            .success(function(data) {
+              if (data.hasOwnProperty('v_routes_withdraws') && data.v_routes_withdraws.data.length != 0) {
+                data.v_routes_withdraws.data.forEach(function(value) {
+                  value.Status = 'withdrawn';
+                });
+                prefixHistoryData = prefixHistoryData.concat(data.v_routes_withdraws.data);
+              }
+
+              $scope.allHistoryOptions.data = prefixHistoryData;
+              $scope.allPreLoad = false;
+              $scope.PrefixData = prefixHistoryData;
+              var peerDataOriginal = prefixHistoryData;
+              $scope.peerData = filterUnique(peerDataOriginal, "PeerName");
+              createPrefixGridTable();
+              createOriginASGridTable();
+              $timeout(function () {
+                if ($stateParams.p != 'defaultPrefix') {
+                  for (var i = 0, len = $scope.AllPrefixOptions.data.length; i < len; i++) {
+                    if ($stateParams.peer == $scope.AllPrefixOptions.data[i].peer_hash_id) {
+                      $scope.AllPrefixGridApi.selection.selectRow($scope.AllPrefixOptions.data[i]);
+                      // if ($stateParams.type == "updates")
+                      //   $('#updatesBtn').click();
+                      // else
+                      //   $('#withdrawsBtn').click();
+                      // break;
+                    }
+                  }
+                }
+              });
+              $scope.originHisData = data1.v_routes_history.data;
+              angular.forEach($scope.originHisData, function (item) {
+                item['LastModified'] = moment.utc(item['LastModified'], 'YYYY-MM-DD HH:mm:ss.SSSSSS').local().format('YYYY-MM-DD HH:mm:ss.SSSSSS');
+              });
+
+              if ($scope.originHisData.length == 0) {
+                $scope.showTip = "true";
+              } else {
+                $scope.showTip = "false";
+                $scope.currentSetTime = moment($scope.originHisData[0].LastModified);
+                if (prefix.indexOf('lastupdate') > -1) {
+                  $("#endTimePicker").data("DateTimePicker").date($scope.currentSetTime);
+                  var oldestTime = moment($scope.originHisData[$scope.originHisData.length - 1].LastModified);
+                  var interval_hour = Math.ceil(moment.duration($scope.currentSetTime.diff(oldestTime)).asHours());
+                  var newRange = {
+                    label: interval_hour + ' hours',
+                    range: interval_hour,
+                    value: interval_hour * 60 / NUMBER_OF_RECTS
+                  };
+                  $scope.timeranges.push(newRange);
+                  $scope.timeRange = newRange;
+                }
+              }
+              getPrefixHisDataHour();
+            })
+            .error(function(error) {
+              console.log('error when fetching history data');
+            });
+        })
+        .error(function(error) {
+          console.log('error when fetching history data');
+        });
     };
 
     /******************** Following is for updates button *****************/
@@ -654,7 +775,10 @@ angular.module('bmpUiApp')
       $scope.showTip = "false";
       $scope.value = "93.181.192.0/19";
       $scope.isCardExpand = false;
+      $scope.isAllPeersExpanded = false;
       getPrefixDataGrid($scope.value);
+      getPrefixHistory($scope.value);
+      $scope.selectedPeerCaption = '';
     };
 
     if ($stateParams.p != 'defaultPrefix') {
@@ -685,7 +809,7 @@ angular.module('bmpUiApp')
 
     $scope.selectWithdraws = function () {
       $scope.selectedType = 'withdraws';
-      apiFactory.getPrefixWithdrawn($scope.value)
+      apiFactory.getWithdrawnPrefix($scope.value)
         .success(function (data) {
           var records = data.v_routes_withdraws.data;
           $scope.WithdrawsOptions.data = records;
@@ -1042,6 +1166,7 @@ angular.module('bmpUiApp')
             .style("stroke", function (d) {
               return strokePicker(j, d);
             })
+            .style("cursor", "pointer")
             .style("opacity", .8)
             .call(tip)
             .on("click", function (d, i) {

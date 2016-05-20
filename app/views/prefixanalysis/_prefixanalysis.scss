@@ -197,11 +197,14 @@ $btn-colour: #314a5d;
 }
 
 .info-card {
-  .table-container {
+  .table-container, .all-peers {
     height: 60px;
     overflow: hidden;
     &.expanded {
       height: 206px;
+    }
+    .col-xs-1 {
+      width: auto;
     }
     .col-xs-11 {
       padding: 0;
@@ -219,6 +222,11 @@ $btn-colour: #314a5d;
     }
     .preStyle {
       max-height: 100px;
+    }
+  }
+  .all-peers {
+    &.expanded {
+      height: auto;
     }
   }
   .down-arrow {

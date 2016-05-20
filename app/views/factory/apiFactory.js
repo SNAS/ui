@@ -260,8 +260,8 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "rib/prefix/" + prefix + "/" + len);
     };
 
-    apiFactory.getHistoryPrefix = function (prefix) {
-      return $http.get(urlBase + "rib/history/" + prefix);
+    apiFactory.getHistoryPrefix = function (prefixWithLen) {
+      return $http.get(urlBase + "rib/history/" + prefixWithLen);
     };
 
     apiFactory.getPeerHistoryPrefix = function (prefix, hashId) {
@@ -281,7 +281,7 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "whois/prefix/" + prefix, {cache: true});
     };
 
-    apiFactory.getPrefixWithdrawn = function(prefixWithLen, hours, ts) {
+    apiFactory.getWithdrawnPrefix = function(prefixWithLen) {
       return $http.get(urlBase + "rib/withdraws/" + prefixWithLen)
     };
 
