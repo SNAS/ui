@@ -47,15 +47,12 @@ angular.module('bmpUiApp')
       });
 
       function getRandomColor() {
-        var letters = '0123456789ABCDEF'.split('');
+        var letters = '012345678'.split('');
         var color = '#';
         for (var i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
+          color += letters[Math.floor(Math.random() * 9)];
         }
-        if (color != '#FFFFFF')
-          return color;
-        else
-          return getRandomColor()
+        return color
       }
 
       leafletData.getMap("LookingGlassMap").then(function (map) {
@@ -70,6 +67,8 @@ angular.module('bmpUiApp')
 
       var filterMap = function (e) {
         var filteredPrefix = e.target.innerText;
+        $('[id^=legend]').removeClass('legendActive');
+        $('[id="legend' + filteredPrefix + '"]').addClass('legendActive');
         markerLayer.clearLayers();
         cluster.clearLayers();
         angular.forEach(markers, function (marker) {
@@ -153,8 +152,8 @@ angular.module('bmpUiApp')
               colorDict[rib.wholePrefix] = color;
             }
             var coloredMarker = L.VectorMarkers.icon({
-              prefix: 'glyphicon',
-              icon: 'glyphicon-flash',
+              // prefix: 'glyphicon',
+              // icon: 'glyphicon-flash',
               markerColor: color
             });
 
@@ -186,11 +185,11 @@ angular.module('bmpUiApp')
             markers.push(marker);
           });
 
-          $('#colorList')[0].innerHTML = '<p class="btn btn-block btn-sm" style="background-color:white;color:black;">ALL</p>';
+          $('#colorList')[0].innerHTML = '<p id="legendALL" class="btn btn-block btn-sm legendActive" style="background-color:white;color:black;">ALL</p>';
 
           angular.forEach(colorDict, function (value, key) {
 
-            $('#colorList')[0].innerHTML += '<p class="btn btn-block btn-sm" style="background-color:' + value + '"><span class="glyphicon glyphicon-flash"></span>' + key + '</p>';
+            $('#colorList')[0].innerHTML += '<p id="legend' + key + '" class="btn btn-block btn-sm" style="background-color:' + value + '">' + key + '</p>';
 
           });
 
