@@ -122,7 +122,20 @@ angular.module('bmpUiApp')
             maxClusterRadius: 15,
             spiderfyDistanceMultiplier: 1.5
           }).on('clusterclick', function (a) {
-            console.log(a);
+            var markers = a.layer.getAllChildMarkers();
+            angular.forEach($scope.cardPeers, function (value, key) {
+              var peerHash = key.substring(0, key.indexOf('@'));
+              var selector = $("#" + peerHash);
+              var nodesSelector = $("#" + peerHash + 'nodes');
+              selector.removeClass("expanded");
+              nodesSelector.hide();
+            });
+            angular.forEach(markers, function (marker) {
+              var selector = $("#" + marker.options.data.peer_hash_id);
+              var nodesSelector = $("#" + marker.options.data.peer_hash_id + 'nodes');
+              selector.addClass("expanded");
+              nodesSelector.show();
+            });
           });
           markerLayer = new L.FeatureGroup();
           markerLayer.on('click', function (e) {
