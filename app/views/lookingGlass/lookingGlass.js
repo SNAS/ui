@@ -92,10 +92,8 @@ angular.module('bmpUiApp')
         $scope.values = rib;
         createASpath($scope.values.AS_Path);
 
-        if ($("#detailView")[0] != null)
-          $('html, body').animate({
-            scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
-          }, 600);
+        scrollToDetail();
+
       };
 
       $scope.renderMapDisplay = function (ribData) {
@@ -123,15 +121,14 @@ angular.module('bmpUiApp')
           cluster = L.markerClusterGroup({
             maxClusterRadius: 15,
             spiderfyDistanceMultiplier: 1.5
+          }).on('clusterclick', function (a) {
+            console.log(a);
           });
           markerLayer = new L.FeatureGroup();
           markerLayer.on('click', function (e) {
             $scope.values = e.layer.options.data;
             createASpath($scope.values.AS_Path);
-            if ($("#detailView")[0] != null)
-              $('html, body').animate({
-                scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
-              }, 600);
+            scrollToDetail();
           });
           markerLayer.on('mouseover', function (e) {
             e.layer.openPopup();
@@ -299,11 +296,20 @@ angular.module('bmpUiApp')
       $scope.glassGridSelection = function () {
         $scope.values = $scope.glassGridApi.selection.getSelectedRows()[0];
         createASpath($scope.values.AS_Path);
+        scrollToDetail();
+      };
+
+      function scrollToDetail() {
         if ($("#detailView")[0] != null)
           $('html, body').animate({
             scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
           }, 600);
-      };
+        else
+          setTimeout(function () {
+            scrollToDetail();
+          }, 250);
+      }
+
 
       var createASpath = function (path) {
         //e.g. " 64543 1221 4637 852 852 29810 29810 29810 29810 29810"
