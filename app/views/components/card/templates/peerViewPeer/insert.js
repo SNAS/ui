@@ -91,8 +91,10 @@ angular.module('bmp.components.card')
       $scope.ribGridApi = gridApi;
       gridApi.selection.on.rowSelectionChanged($scope, function (row) {
         $scope.values = row.entity;
+        $scope.values.AS_Path = $scope.values.AS_Path.trim();
 
         $scope.hint = " - " + $scope.values.wholePrefix;
+        createASpath($scope.values.AS_Path);
 
         apiFactory.getPeerGeo($scope.values.Prefix).
           success(function (result) {
@@ -101,8 +103,6 @@ angular.module('bmp.components.card')
               latitude: $scope.values.geo.latitude,
               longitude: $scope.values.geo.longitude
             };
-
-            createASpath($scope.values.AS_Path);
           }).
           error(function (error) {
             console.log(error.message);

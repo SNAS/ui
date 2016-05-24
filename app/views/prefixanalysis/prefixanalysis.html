@@ -56,7 +56,7 @@
               </span>
             </div>
             <div class="col-xs-11">
-              <h3>{{ selectedPeerCaption.length == 0 ? "All entries for prefix " + value + " stored in DB, " + Prefixdata.length + ' Peers in total': selectedPeerCaption  }}
+              <h3>{{ selectedPeerCaption ? selectedPeerCaption : "All entries for prefix " + value + " stored in DB, " + peerData.length + ' Peers in total' }}
                 <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
               </h3>
               <!--Angular Grid added here-->
@@ -78,7 +78,7 @@
             <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
           </h3>
           <div class="loading-section">
-            <div ng-show="allPreLoad" bmp-loading loading-var="allPreLoad"></div>
+            <div ng-show="allHisLoad" bmp-loading loading-var="allHisLoad"></div>
             <div ui-grid="allHistoryOptions" ui-grid-selection ui-grid-auto-resize ui-grid-resize-columns></div>
           </div>
           <hr style="margin: 30px;">
@@ -115,9 +115,9 @@
                   ,  each circle is {{timeRange.value}} minutes
                 </span>
             </div>
-            <div class="form-group">
-              <button class="btn btn-default" ng-click="findLastUpdates()">Find Last 100 Updates</button>
-            </div>
+            <!--<div class="form-group">-->
+              <!--<button class="btn btn-default" ng-click="findLastUpdates()">Find Last 100 Updates</button>-->
+            <!--</div>-->
           </div>
           <div class="row loading-section">
               <div ng-show="loading" bmp-loading loading-var="loading" font-width="80"></div>
@@ -135,7 +135,7 @@
                 </div>
 
                 <div ui-grid="HistoryPrefixOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns
-                     ng-style="{height:HistoryPrefixOptions.height}" ng-if="HistoryPrefixOptions.data.length && showGrid">
+                     ng-style="{height:HistoryPrefixOptions.height}" ng-if="HistoryPrefixOptions.data.length">
                   <div class="watermark" ng-if="!HistoryPrefixOptions.data.length">Please select BGP Peer</div>
                 </div>
                 <br><br>

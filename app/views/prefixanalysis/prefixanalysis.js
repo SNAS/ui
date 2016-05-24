@@ -30,7 +30,7 @@ angular.module('bmpUiApp')
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.peerData.selectPeer = row.entity;
           getPrefixHistory($scope.value, $scope.peerData.selectPeer.peer_hash_id);
-          $scope.selectUpdates();
+          // $scope.selectUpdates();
           $scope.fromPeer = 'FROM ' + $scope.peerData.selectPeer.PeerName;
           $scope.selectedPeerCaption = $scope.peerData.selectPeer.PeerName + ' selected';
         });
@@ -196,8 +196,9 @@ angular.module('bmpUiApp')
       return uniqueList;
     };
 
-    // get the prefix grid and table data ,call createPrefixGridTable() to create a table
+    // get all entries for prefix, populate allPrefixOptions
     var getPrefixDataGrid = function (value) {
+      $scope.allPreLoad = true;
       apiFactory.getPrefix(value)
         .success(function (data) {
           // execute the function and get data successfully.
@@ -344,13 +345,16 @@ angular.module('bmpUiApp')
       }
     };
 
-    $scope.findLastUpdates = function () {
-      $scope.loading = true;
-      var searchPrefix = $scope.currentValue + '?ts=lastupdate';
-      getPrefixHisData(searchPrefix);
-    };
+    // $scope.findLastUpdates = function () {
+    //   var searchPrefix = $scope.currentValue + '?ts=lastupdate';
+    //   // getPrefixHisData(searchPrefix);
+    //   getPrefixHistory($scope.currentValue);
+    // };
 
+    // get last 100 records of updates and withdrawns, populate allHistoryOptions
     var getPrefixHistory = function(prefix, peerHashID) {
+      $scope.allHisLoad = true;
+      $scope.loading = true;
       prefix += '?ts=lastupdate';
       var prefixHistoryData = [];
       var historyRequest, withdrawnRequest;
@@ -381,26 +385,21 @@ angular.module('bmpUiApp')
               }
 
               $scope.allHistoryOptions.data = prefixHistoryData;
-              $scope.allPreLoad = false;
+              $scope.allHisLoad = false;
               $scope.PrefixData = prefixHistoryData;
               var peerDataOriginal = prefixHistoryData;
               $scope.peerData = filterUnique(peerDataOriginal, "PeerName");
-              createPrefixGridTable();
-              createOriginASGridTable();
-              $timeout(function () {
-                if ($stateParams.p != 'defaultPrefix') {
-                  for (var i = 0, len = $scope.AllPrefixOptions.data.length; i < len; i++) {
-                    if ($stateParams.peer == $scope.AllPrefixOptions.data[i].peer_hash_id) {
-                      $scope.AllPrefixGridApi.selection.selectRow($scope.AllPrefixOptions.data[i]);
-                      // if ($stateParams.type == "updates")
-                      //   $('#updatesBtn').click();
-                      // else
-                      //   $('#withdrawsBtn').click();
-                      // break;
-                    }
-                  }
-                }
-              });
+              // createPrefixGridTable();
+              // createOriginASGridTable();
+              // $timeout(function () {
+              //   if ($stateParams.p != 'defaultPrefix') {
+              //     for (var i = 0, len = $scope.AllPrefixOptions.data.length; i < len; i++) {
+              //       if ($stateParams.peer == $scope.AllPrefixOptions.data[i].peer_hash_id) {
+              //         $scope.AllPrefixGridApi.selection.selectRow($scope.AllPrefixOptions.data[i]);
+              //       }
+              //     }
+              //   }
+              // });
               $scope.originHisData = data1.v_routes_history.data;
               angular.forEach($scope.originHisData, function (item) {
                 item['LastModified'] = moment.utc(item['LastModified'], 'YYYY-MM-DD HH:mm:ss.SSSSSS').local().format('YYYY-MM-DD HH:mm:ss.SSSSSS');
@@ -425,6 +424,7 @@ angular.module('bmpUiApp')
                 }
               }
               getPrefixHisDataHour();
+              $scope.loading = false;
             })
             .error(function(error) {
               console.log('error when fetching history data');
@@ -454,11 +454,11 @@ angular.module('bmpUiApp')
 
     var changeTimeRange = function () {
       $scope.timeranges = $scope.timeranges.slice(0, 4);
-      $scope.loading = true;
       var setDate = $('#endTimePicker').data('DateTimePicker').date();
       $scope.currentSetTime = setDate;
       var searchPrefix = $scope.currentValue + '?hours=' + $scope.timeRange.range + '&ts=' + moment.utc(setDate).format("YYYY-MM-DD HH:mm:ss");
       getPrefixHisData(searchPrefix);
+      // getPrefixHistory(searchPrefix);
     };
 
     $scope.selectTimeRange = function () {
@@ -555,14 +555,15 @@ angular.module('bmpUiApp')
       }
     };
 
+    // for history graph
     var getPrefixHisData = function (searchPrefix) {
       $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
-      var req;
-      if ($scope.selectedType == 'update') {
-        req = apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId);
-      } else if ($scope.selectedType == 'withdraw') {
-        req = apiFactory.getPeerWithdrawPrefix(searchPrefix, $scope.peerHashId);
-      }
+      var req = apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId);
+      // if ($scope.selectedType == 'update') {
+      //   req =
+      // } else if ($scope.selectedType == 'withdraw') {
+      //   req = apiFactory.getPeerWithdrawPrefix(searchPrefix, $scope.peerHashId);
+      // }
       req.success(function (data) {
         $scope.originHisData = data.v_routes_history.data;
         angular.forEach($scope.originHisData, function (item) {
@@ -579,7 +580,7 @@ angular.module('bmpUiApp')
             var oldestTime = moment($scope.originHisData[$scope.originHisData.length - 1].LastModified);
             var interval_hour = Math.ceil(moment.duration($scope.currentSetTime.diff(oldestTime)).asHours());
             var newRange = {
-              label: interval_hour + ' hours',
+              label: interval_hour + interval_hour == 1 ? ' hour' : ' hours',
               range: interval_hour,
               value: interval_hour * 60 / NUMBER_OF_RECTS
             };
@@ -592,6 +593,7 @@ angular.module('bmpUiApp')
     };
 
     var getPrefixHisDataHour = function () {
+      $scope.loading = true;
 
       var allHisData = $scope.originHisData.reverse();
       $scope.asPathList = new Array();
@@ -784,6 +786,7 @@ angular.module('bmpUiApp')
     if ($stateParams.p != 'defaultPrefix') {
       $scope.value = $stateParams.p;
       getPrefixDataGrid($scope.value);
+      getPrefixHistory($scope.value);
     } else {
       init();
     }
@@ -797,8 +800,6 @@ angular.module('bmpUiApp')
 
     // following two select* methods are for two buttons
     $scope.selectUpdates = function () {
-      $scope.loading = true;
-      $scope.showGrid = false;
       $scope.timelineHtml = "";
       $scope.selectedType = 'update';
       if ($scope.currentSetTime == null) {
