@@ -558,12 +558,12 @@ angular.module('bmpUiApp')
     // for history graph
     var getPrefixHisData = function (searchPrefix) {
       $scope.peerHashId = $scope.peerData.selectPeer.peer_hash_id;
-      var req;
-      if ($scope.selectedType == 'update') {
-        req = apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId);
-      } else if ($scope.selectedType == 'withdraw') {
-        req = apiFactory.getPeerWithdrawPrefix(searchPrefix, $scope.peerHashId);
-      }
+      var req = apiFactory.getPeerHistoryPrefix(searchPrefix, $scope.peerHashId);
+      // if ($scope.selectedType == 'update') {
+      //   req =
+      // } else if ($scope.selectedType == 'withdraw') {
+      //   req = apiFactory.getPeerWithdrawPrefix(searchPrefix, $scope.peerHashId);
+      // }
       req.success(function (data) {
         $scope.originHisData = data.v_routes_history.data;
         angular.forEach($scope.originHisData, function (item) {
@@ -580,7 +580,7 @@ angular.module('bmpUiApp')
             var oldestTime = moment($scope.originHisData[$scope.originHisData.length - 1].LastModified);
             var interval_hour = Math.ceil(moment.duration($scope.currentSetTime.diff(oldestTime)).asHours());
             var newRange = {
-              label: interval_hour + ' hours',
+              label: interval_hour + interval_hour == 1 ? ' hour' : ' hours',
               range: interval_hour,
               value: interval_hour * 60 / NUMBER_OF_RECTS
             };

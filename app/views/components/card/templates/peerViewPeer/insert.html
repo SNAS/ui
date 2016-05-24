@@ -45,7 +45,7 @@
 
 
       <!--like the more details section.-->
-      <div ng-if="values !== undefined">
+      <div ng-if="values">
         <!--{{ values }}-->
         <br>
 
@@ -139,7 +139,7 @@
                   <tr>
                     <td>AS Path:</td>
                     <td>
-                      <span ng-repeat="item in values.AS_Path.split(' ')">
+                      <span ng-repeat="item in values.AS_Path.split(' ') track by $index">
                         <span bmp-asn-model asn="{{ item }}"></span>
                       </span>
                       <!--{{values.AS_Path}}-->
