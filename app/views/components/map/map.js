@@ -558,8 +558,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       }
       angular.element('.main').scrollTop(0);
       location.options.expandPeers = true;
-      $scope.panelSearch = location.options.city;
-    }
+      // $scope.panelSearch = location.options.city;
+    };
 
 
     /****************************************
