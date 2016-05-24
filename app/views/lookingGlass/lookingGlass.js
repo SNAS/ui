@@ -152,8 +152,6 @@ angular.module('bmpUiApp')
               colorDict[rib.wholePrefix] = color;
             }
             var coloredMarker = L.VectorMarkers.icon({
-              // prefix: 'glyphicon',
-              // icon: 'glyphicon-flash',
               markerColor: color
             });
 
