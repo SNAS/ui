@@ -415,7 +415,7 @@ angular.module('bmpUiApp')
                   var oldestTime = moment($scope.originHisData[$scope.originHisData.length - 1].LastModified);
                   var interval_hour = Math.ceil(moment.duration($scope.currentSetTime.diff(oldestTime)).asHours());
                   var newRange = {
-                    label: interval_hour + ' hours',
+                    label: interval_hour + (interval_hour == 1 ? ' hour' : ' hours'),
                     range: interval_hour,
                     value: interval_hour * 60 / NUMBER_OF_RECTS
                   };
@@ -580,7 +580,7 @@ angular.module('bmpUiApp')
             var oldestTime = moment($scope.originHisData[$scope.originHisData.length - 1].LastModified);
             var interval_hour = Math.ceil(moment.duration($scope.currentSetTime.diff(oldestTime)).asHours());
             var newRange = {
-              label: interval_hour + interval_hour == 1 ? ' hour' : ' hours',
+              label: interval_hour + (interval_hour == 1 ? ' hour' : ' hours'),
               range: interval_hour,
               value: interval_hour * 60 / NUMBER_OF_RECTS
             };
