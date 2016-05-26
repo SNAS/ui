@@ -7,3 +7,18 @@
   max-height: 200px;
   overflow-y: auto;
 }
+
+#colorList {
+  background-color: white;
+  width: 150px;
+  border: 1px solid lightgrey;
+  max-height: 400px;
+  p {
+    margin:0;
+    color:#FFFFFF;
+  }
+}
+
+.legendActive{
+  border: 2px solid orangered;
+}

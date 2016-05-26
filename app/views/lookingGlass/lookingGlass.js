@@ -9,21 +9,223 @@
  */
 angular.module('bmpUiApp')
   .controller('lookingGlassController', ['$scope', '$http', 'apiFactory',
-    'uiGridConstants', 'uiGridFactory',
-    function($scope, $http, apiFactory, uiGridConstants, uiGridFactory) {
+    'uiGridConstants', 'uiGridFactory', 'leafletData',
+    function ($scope, $http, apiFactory, uiGridConstants, uiGridFactory, leafletData) {
+
+      $scope.mapHeight = $(window).height() - 220;
+
+      $scope.tab = 'map';
+
+      var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
+      var mapID = 'pickledbadger.mbkpbek5';
+      angular.extend($scope, {
+        defaults: {
+          tileLayer: 'https://{s}.tiles.mapbox.com/v4/' + mapID + '/{z}/{x}/{y}.png?access_token=' + accessToken,
+          minZoom: 2,
+          maxZoom: 15,
+          zoomControl: false,
+          scrollWheelZoom: false
+        }
+      });
+
+      L.Control.Legend = L.Control.extend({
+        options: {
+          position: 'topright'
+        },
+        onAdd: function (map) {
+          var container = L.DomUtil.create('div', null);
+          container.id = 'list';
+          this.colorList = L.DomUtil.create('div', null, container);
+          this.colorList.id = 'colorList';
+          L.DomEvent.addListener(container, 'click', filterMap, this);
+          L.DomEvent.disableClickPropagation(container);
+          L.DomEvent.addListener(container, 'mousewheel', function (e) {
+            L.DomEvent.stopPropagation(e);
+          });
+          return container;
+        }
+      });
+
+      function getRandomColor() {
+        var letters = '012345678'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 9)];
+        }
+        return color
+      }
+
+      leafletData.getMap("LookingGlassMap").then(function (map) {
+        $scope.map = map;
+        L.control.zoomslider().addTo($scope.map);
+        $scope.map.addControl(new L.Control.Legend());
+      });
+
+      var peers;
+      var cluster, markerLayer, markers;
+      var colorDict;
+
+      var filterMap = function (e) {
+        var filteredPrefix = e.target.innerText;
+        $('[id^=legend]').removeClass('legendActive');
+        $('[id="legend' + filteredPrefix + '"]').addClass('legendActive');
+        markerLayer.clearLayers();
+        cluster.clearLayers();
+        angular.forEach(markers, function (marker) {
+          if (filteredPrefix == 'ALL' || marker.options.data.wholePrefix == filteredPrefix)
+            marker.addTo(markerLayer);
+        });
+        cluster.addLayer(markerLayer);
+        $scope.map.fitBounds(markerLayer.getBounds());
+      };
+
+      $scope.peerListRibClicked = function (rib) {
+        var keepGoing = true;
+        angular.forEach(markers, function (marker) {
+          if (keepGoing)
+            if (marker.options.data.rib_hash_id == rib.rib_hash_id) {
+              $scope.map.fitBounds([marker.getLatLng()]);
+              keepGoing = false;
+            }
+        });
+
+        $scope.values = rib;
+        createASpath($scope.values.AS_Path);
+
+        scrollToDetail();
+
+      };
+
+      $scope.renderMapDisplay = function (ribData) {
+        if (peers == null) {
+          apiFactory.getPeersAndLocationsByIp("").success(
+            function (result) {
+              peers = {};
+              angular.forEach(result.v_peers.data, function (peer) {
+                peers[peer.peer_hash_id] = peer;
+              });
+              $scope.renderMapDisplay(ribData);
+            }).error(function (error) {
+            console.log(error.message);
+          });
+        } else {
+          if (cluster && $scope.map.hasLayer(cluster))
+            $scope.map.removeLayer(cluster);
+
+          colorDict = {};
+
+          markers = [];
+
+          $scope.cardPeers = {};
+
+          cluster = L.markerClusterGroup({
+            maxClusterRadius: 15,
+            spiderfyDistanceMultiplier: 1.5
+          }).on('clusterclick', function (a) {
+            var markers = a.layer.getAllChildMarkers();
+            angular.forEach($scope.cardPeers, function (value, key) {
+              var peerHash = key.substring(0, key.indexOf('@'));
+              var selector = $("#" + peerHash);
+              var nodesSelector = $("#" + peerHash + 'nodes');
+              selector.removeClass("expanded");
+              nodesSelector.hide();
+            });
+            angular.forEach(markers, function (marker) {
+              var selector = $("#" + marker.options.data.peer_hash_id);
+              var nodesSelector = $("#" + marker.options.data.peer_hash_id + 'nodes');
+              selector.addClass("expanded");
+              nodesSelector.show();
+            });
+          });
+          markerLayer = new L.FeatureGroup();
+          markerLayer.on('click', function (e) {
+            $scope.values = e.layer.options.data;
+            createASpath($scope.values.AS_Path);
+            scrollToDetail();
+          });
+          markerLayer.on('mouseover', function (e) {
+            e.layer.openPopup();
+          });
+          markerLayer.on('mouseout', function (e) {
+            e.layer.closePopup();
+          });
+
+          angular.forEach(ribData, function (rib) {
+
+            var peer = peers[rib.peer_hash_id];
+            var color;
+            if (colorDict[rib.wholePrefix] != null) {
+              color = colorDict[rib.wholePrefix];
+            }
+            else {
+              color = getRandomColor();
+              colorDict[rib.wholePrefix] = color;
+            }
+            var coloredMarker = L.VectorMarkers.icon({
+              markerColor: color
+            });
+
+            if (peer.latitude == null || peer.longitude == null) {
+              peer.latitude = 37.3382;
+              peer.longitude = -121.886;
+            }
+
+            var marker = new L.Marker([peer.latitude, peer.longitude], {
+              icon: coloredMarker,
+              data: rib,
+              title: "Peer Name: " + peer.PeerName
+            });
+
+            var popup = 'RouterName: ' + rib.RouterName + '<br>' +
+              'PeerName: ' + rib.PeerName + '<br>' +
+              'Prefix: ' + rib.Prefix + '<br>' +
+              'PrefixLen: ' + rib.PrefixLen + '<br>' +
+              'AS_Path: ' + rib.AS_Path;
+
+            if ((peer.peer_hash_id + '@' + peer.PeerName) in $scope.cardPeers) {
+              $scope.cardPeers[peer.peer_hash_id + '@' + peer.PeerName].push(rib);
+            } else {
+              $scope.cardPeers[peer.peer_hash_id + '@' + peer.PeerName] = [rib];
+            }
+
+            marker.bindPopup(popup);
+            marker.addTo(markerLayer);
+            markers.push(marker);
+          });
+
+          $('#colorList')[0].innerHTML = '<p id="legendALL" class="btn btn-block btn-sm legendActive" style="background-color:white;color:black;">ALL</p>';
+
+          angular.forEach(colorDict, function (value, key) {
+
+            $('#colorList')[0].innerHTML += '<p id="legend' + key + '" class="btn btn-block btn-sm" style="background-color:' + value + '">' + key + '</p>';
+
+          });
+
+          $scope.map.addLayer(cluster.addLayer(markerLayer));
+
+          if ($scope.tab == "map")
+            $scope.map.fitBounds(markerLayer.getBounds());
+        }
+      };
 
       //DEBUG
       window.SCOPE = $scope;
 
       $scope.glassGridInitHeight = 300;
-      $scope.isAggregate = false;
-      $scope.isDistinct = false;
-      $scope.isLongestMatch = true;
 
-      $scope.turnOnDistinct = function() {
-        if (!$scope.isDistinct)
-          $scope.isAggregate = true;
+      $scope.togglePeerSelection = function (peerHash) {
+        var selector = $("#" + peerHash);
+        var nodesSelector = $("#" + peerHash + 'nodes');
+        if (!selector.hasClass("expanded")) {
+          selector.addClass("expanded");
+          nodesSelector.show();
+        } else {
+          selector.removeClass("expanded");
+          nodesSelector.hide();
+        }
       };
+
+      $scope.cardPeers = {};  //used for card
 
       $scope.glassGridOptions = {
         height: $scope.glassGridInitHeight,
@@ -58,8 +260,9 @@ angular.module('bmpUiApp')
         displayName: 'Communities'
       }, {
         name: "isWithdrawn",
-        displayName: 'Withdrawn',
-        type: 'number'
+        displayName: 'Status',
+        type: 'number',
+        cellFilter: 'statusFilter'
       }];
 
       $scope.glassGridOptions.multiSelect = false;
@@ -67,22 +270,21 @@ angular.module('bmpUiApp')
       $scope.glassGridOptions.modifierKeysToMultiSelect = false;
       $scope.glassGridOptions.rowTemplate =
         '<div class="hover-row-highlight"><div ng-click="grid.appScope.glassGridSelection();" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>';
-      $scope.glassGridOptions.onRegisterApi = function(gridApi) {
+      $scope.glassGridOptions.onRegisterApi = function (gridApi) {
         $scope.glassGridApi = gridApi;
       };
       $scope.glassGridOptions.enableFiltering = false;
-      $scope.toggleFiltering = function() {
+      $scope.toggleFiltering = function () {
         $scope.glassGridOptions.enableFiltering = !$scope.glassGridOptions.enableFiltering;
         $scope.glassGridApi.core.notifyDataChange(uiGridConstants.dataChange
           .COLUMN);
       };
 
       // use another API to look for a default value, which is displayed on the page
-      apiFactory.getPeerRibLookupIp('190.0.103.0').
-      success(function(result) {
+      apiFactory.getPeerRibLookupIp('190.0.103.0').success(function (result) {
         // got response
         if (!$.isEmptyObject(result)) {
-          var resultData = result.v_routes.data;
+          var resultData = result.v_all_routes.data;
 
           if (resultData.length == 0) { // no data
             $scope.glassGridOptions.data = [];
@@ -92,6 +294,7 @@ angular.module('bmpUiApp')
               resultData[i].wholePrefix = resultData[i].Prefix + "/" + resultData[i].PrefixLen;
             }
             $scope.glassGridOptions.data = $scope.initalRibdata = resultData;
+            $scope.renderMapDisplay(resultData);
             uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
           }
         } else { // empty response
@@ -99,17 +302,29 @@ angular.module('bmpUiApp')
           $scope.glassGridOptions.showGridFooter = false;
         }
         $scope.glassGridOptions.glassGridIsLoad = false; //stop loading
-      }).
-      error(function(error) {
+      }).error(function (error) {
         console.log(error.message);
       });
 
-      $scope.glassGridSelection = function() {
+      $scope.glassGridSelection = function () {
         $scope.values = $scope.glassGridApi.selection.getSelectedRows()[0];
         createASpath($scope.values.AS_Path);
+        scrollToDetail();
       };
 
-      var createASpath = function(path) {
+      function scrollToDetail() {
+        if ($("#detailView")[0] != null)
+          $('html, body').animate({
+            scrollTop: $("#detailView").offset().top + $("#detailView").outerHeight(true) - $(window).height()
+          }, 600);
+        else
+          setTimeout(function () {
+            scrollToDetail();
+          }, 250);
+      }
+
+
+      var createASpath = function (path) {
         //e.g. " 64543 1221 4637 852 852 29810 29810 29810 29810 29810"
         $scope.asPath = {};
         var iconWidth = 50;
@@ -151,8 +366,7 @@ angular.module('bmpUiApp')
 
         var asname;
         $scope.as_path = [];
-        apiFactory.getWhoIsASNameList($scope.norepeat).
-        success(function(result) {
+        apiFactory.getWhoIsASNameList($scope.norepeat).success(function (result) {
 
           $scope.as_path = as_path;
 
@@ -214,13 +428,12 @@ angular.module('bmpUiApp')
           //len + 1 for router     + 80 stop wrapping and padding
           $scope.asPath.width = nodeWidth * $scope.as_path.length + 80 +
             "px";
-        }).
-        error(function(error) {
+        }).error(function (error) {
           console.log(error);
         });
 
         var originalLeave = $.fn.popover.Constructor.prototype.leave;
-        $.fn.popover.Constructor.prototype.leave = function(obj) {
+        $.fn.popover.Constructor.prototype.leave = function (obj) {
           var self = obj instanceof this.constructor ?
             obj : $(obj.currentTarget)[this.type](this.getDelegateOptions())
             .data('bs.' + this.type)
@@ -231,11 +444,11 @@ angular.module('bmpUiApp')
           if (obj.currentTarget) {
             container = $(obj.currentTarget).siblings('.popover')
             timeout = self.timeout;
-            container.one('mouseenter', function() {
+            container.one('mouseenter', function () {
               //We entered the actual popover – call off the dogs
               clearTimeout(timeout);
               //Let's monitor popover content instead
-              container.one('mouseleave', function() {
+              container.one('mouseleave', function () {
                 $.fn.popover.Constructor.prototype.leave.call(
                   self, self);
               });
@@ -245,7 +458,7 @@ angular.module('bmpUiApp')
         //$('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 20}});
 
         //for the tooltip
-        $scope.wordCheck = function(word) {
+        $scope.wordCheck = function (word) {
           if (word.length > 6) {
             return word.slice(0, 4) + " ...";
           } else {
@@ -260,34 +473,34 @@ angular.module('bmpUiApp')
       $scope.searchOptions = [
         'Prefix/IP',
         'Hostname',
-        'Community',
-        'AS Number'
+        'Community'
       ];
       $scope.searchOption = 'Prefix/IP';
+      $scope.searchKeywords = {};
+      $scope.searchParams = {};
 
-      $scope.preSearch = function() {
+      $scope.preSearch = function () {
         $scope.glassGridOptions.glassGridIsLoad = true;
         $scope.p2 = [];
         $scope.ipAddr = [];
         if ($scope.searchOption == 'Prefix/IP') {
-          $scope.search($("#prefixSearchBox").val());
+          // $scope.search($("#prefixSearchBox").val());
+          $scope.search($scope.searchKeywords.prefix);
         } else if ($scope.searchOption == 'Hostname') {
-          $scope.search($("#hostnameSearchBox").val());
+          $scope.search($scope.searchKeywords.hostname);
         } else if ($scope.searchOption == 'Community') {
-          var part1 = $("#part1SearchBox").val();
-          var part2 = $("#part2SearchBox").val();
+          var part1 = $scope.searchKeywords.part1;
+          var part2 = $scope.searchKeywords.part2;
           var community = part1 + ":" + part2;
           $scope.searchCommunity(community);
-        } else {
-          $scope.searchASN(value);
         }
       };
 
-      $scope.searchCommunity = function(keywords) {
+      $scope.searchCommunity = function (keywords) {
         $scope.glassGridOptions.glassGridIsLoad = true;
         $scope.glassGridOptions.data = [];
         apiFactory.getPrefixByCommunity(keywords)
-          .success(function(data) {
+          .success(function (data) {
             var resultData = data.Community.data.data;
             for (var i = 0; i < resultData.length; i++) {
               resultData[i].wholePrefix = resultData[i].Prefix + "/" +
@@ -298,31 +511,31 @@ angular.module('bmpUiApp')
               $scope.glassGridOptions.showGridFooter = false;
             } else {
               $scope.glassGridOptions.data = resultData;
+              $scope.renderMapDisplay(resultData);
               uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
             }
             $scope.glassGridOptions.glassGridIsLoad = false;
           });
       };
 
-      $scope.part1Lookup = function(value) {
+      $scope.part1Lookup = function (value) {
         if (value.indexOf(":") == -1) {
-          return apiFactory.getCommP1Suggestions(value).then(function(
-            response) {
-            return response.data.Community.data.data.map(function(item,
-              key) {
+          return apiFactory.getCommP1Suggestions(value).then(function (response) {
+            return response.data.Community.data.data.map(function (item,
+                                                                   key) {
               return item['part1'];
             })
           })
         }
       };
 
-      $scope.onSelectPart1 = function($item, $model, $label) {
+      $scope.onSelectPart1 = function ($item, $model, $label) {
         $scope.p2 = [];
         $scope.selectedPart1 = $label;
         apiFactory.getCommP2ByP1($label)
-          .success(function(data) {
+          .success(function (data) {
             data = data.Community.data.data;
-            $scope.p2 = data.sort(function(a, b) {
+            $scope.p2 = data.sort(function (a, b) {
               if (a.count > b.count) {
                 return 1;
               }
@@ -334,12 +547,12 @@ angular.module('bmpUiApp')
           })
       };
 
-      $scope.onSelectPart2 = function($item, $model, $label) {
+      $scope.onSelectPart2 = function ($item, $model, $label) {
         var community = $scope.selectedPart1 + ":" + $label;
         $scope.searchCommunity(community);
       };
 
-      $scope.compareP2 = function(actual, expected) {
+      $scope.compareP2 = function (actual, expected) {
         return actual.toString().indexOf(expected, 0) === 0;
       };
 
@@ -348,11 +561,11 @@ angular.module('bmpUiApp')
       //TODO - also XXXX::XXXX: is accepted for some reason
       var ipv4Regex = /\d{1,3}\./;
       var ipv6Regex = /([0-9a-fA-F]{1,4}\:)|(\:\:([0-9a-fA-F]{1,4})?)/;
-      $scope.dnsLookup = function(value) {
+      $scope.dnsLookup = function (value) {
         $scope.ipAddr = [];
         if (ipv4Regex.exec(value) == null && ipv6Regex.exec(value) == null) {
-          return apiFactory.lookupDNS(value).then(function(response) {
-            return response.data.data.map(function(item, key) {
+          return apiFactory.lookupDNS(value).then(function (response) {
+            return response.data.data.map(function (item, key) {
               $scope.ipAddr.push(item["IPAddr" + key]);
               return item["IPAddr" + key];
             })
@@ -362,12 +575,12 @@ angular.module('bmpUiApp')
         }
       };
 
-      $scope.onSelectHostname = function($item, $model, $label) {
+      $scope.onSelectHostname = function ($item, $model, $label) {
         $scope.search($label);
       };
 
       //Loop through data selecting and altering relevant data.
-      $scope.search = function(value) {
+      $scope.search = function (value) {
         //used to determine which regex's to use ipv4 || ipv6
         var isIPv6;
         if (ipv4Regex.exec(value) != null) {
@@ -394,12 +607,12 @@ angular.module('bmpUiApp')
 
         var regexs = [
           [
-            /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\/(\d|2\d|3[0-2])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])\/(\d|2\d|3[0-2])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*\/(\d|2\d|3[0-2])$/,
-            /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\/(12[0-8]|1[0-1][0-9]|[0-9]{1,2})$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])\/(12[0-8]|1[0-1][0-9]|[0-9]{1,2})$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*\/(12[0-8]|1[0-1][0-9]|[0-9]{1,2})$/
+            /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/(\d|[12]\d|3[0-2])$/,
+            /^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])\/(12[0-8]|1[0-1][0-9]|[0-9]{1,2})$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*\/(12[0-8]|1[0-1][0-9]|[0-9]{1,2})$/
           ],
           [
-            /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/,
-            /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/
+            /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+            /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/
           ],
           [/^(\d{1,3}\.){0,2}\d{1,3}\.?$/,
             /^([0-9a-fA-F]{1,4}\:){0,7}[0-9a-fA-F]{1,4}\:{1,2}?$/
@@ -414,20 +627,22 @@ angular.module('bmpUiApp')
           value = value.split('/')[0];
         }
 
-        if (fullIpWithPreLenReg.exec(value) != null || partCompIpRegex.exec(
-            value) != null) {
-          //Full ip with prefix or partial ip
-          if ($scope.isAggregate && $scope.isDistinct) {
-            value += "?aggregates&distinct";
-          } else if ($scope.isAggregate) {
-            value += "?aggregates";
-          } else if ($scope.isDistinct) {
-            value += "?distinct";
+        if (fullIpWithPreLenReg.exec(value) != null || partCompIpRegex.exec(value) != null) {
+          //prefix with len or partial prefix
+
+          if (!$.isEmptyObject($scope.searchParams)) {
+            value += '?';
+            for (var key in $scope.searchParams) {
+              var val = $scope.searchParams[key];
+              if (val) {
+                value += key.substring(2).toLowerCase() + '&';
+              }
+            }
+            value = value.substring(0, value.length - 1);
           }
-          apiFactory.getPrefix(value).
-          success(function(result) {
+          apiFactory.getPrefix(value).success(function (result) {
             if (!$.isEmptyObject(result)) {
-              var resultData = result.v_routes.data;
+              var resultData = result.v_all_routes.data;
               for (var i = 0; i < resultData.length; i++) {
                 resultData[i].wholePrefix = resultData[i].Prefix + "/" +
                   resultData[i].PrefixLen;
@@ -438,6 +653,7 @@ angular.module('bmpUiApp')
               } else {
                 $scope.glassGridOptions.showGridFooter = true;
                 $scope.glassGridOptions.data = resultData;
+                $scope.renderMapDisplay(resultData);
                 uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
               }
 
@@ -446,24 +662,24 @@ angular.module('bmpUiApp')
               $scope.glassGridOptions.showGridFooter = false;
             }
             $scope.glassGridOptions.glassGridIsLoad = false;
-          }).
-          error(function(error) {
+          }).error(function (error) {
             console.log(error.message);
           });
         } else if (fullIpRegex.exec(value) != null) {
           //full ip
-          //pass in peer hash and the matched regex value
-          if ($scope.isAggregate && $scope.isDistinct) {
-            value += "?aggregates&distinct";
-          } else if ($scope.isAggregate) {
-            value += "?aggregates";
-          } else if ($scope.isDistinct) {
-            value += "?distinct";
+          if (!$.isEmptyObject($scope.searchParams)) {
+            value += '?';
+            for (var key in $scope.searchParams) {
+              var val = $scope.searchParams[key];
+              if (val) {
+                value += key.substring(2).toLowerCase() + '&';
+              }
+            }
+            value = value.substring(0, value.length - 1);
           }
-          apiFactory.getPeerRibLookupIp(value).
-          success(function(result) {
+          apiFactory.getPeerRibLookupIp(value).success(function (result) {
             if (!$.isEmptyObject(result)) {
-              var resultData = result.v_routes.data;
+              var resultData = result.v_all_routes.data;
               for (var i = 0; i < resultData.length; i++) {
                 resultData[i].wholePrefix = resultData[i].Prefix + "/" +
                   resultData[i].PrefixLen;
@@ -474,6 +690,7 @@ angular.module('bmpUiApp')
               } else {
                 $scope.glassGridOptions.showGridFooter = true;
                 $scope.glassGridOptions.data = resultData;
+                $scope.renderMapDisplay(resultData);
                 uiGridFactory.calGridHeight($scope.glassGridOptions, $scope.glassGridApi);
               }
             } else {
@@ -481,13 +698,23 @@ angular.module('bmpUiApp')
               $scope.glassGridOptions.showGridFooter = false;
             }
             $scope.glassGridOptions.glassGridIsLoad = false;
-          }).
-          error(function(error) {
+          }).error(function (error) {
             console.log(error.message);
           });
         } else {
           console.log('invalid input');
         }
       };
+
+      $scope.changeTab = function (value) {
+        $scope.tab = value;
+        if (value == 'map') {
+          $scope.map.invalidateSize(false);
+          $scope.map.fitBounds(markerLayer.getBounds());
+
+
+        }
+      }
+
     }
   ]);

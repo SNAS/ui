@@ -778,27 +778,46 @@ angular.module('bmpUiApp')
 
   ])
   .directive('scrollable', function(){
-    function link($scope, element) {
-      $(element).addClass('long');  //  add class to indicate it is scrollable
-      $(element).after('<span class="glyphicon glyphicon-chevron-down down-arrow"></span>');  // add down arrow
-      $('.down-arrow').on('click', function(){
-        $(element).find('.preStyle').scrollTop($(element).height());  // jump to bottom
-        $(this).hide();
-        $(element).addClass('down');  // hide pseudo after element
-      });
-      $(".preStyle").scroll(function(){
-        if ($(this).scrollTop() < $(element).find('table').height() - $(element).find('.preStyle').height()) {
-          // reach bottom
-          $(".down-arrow").show();
-          $(element).removeClass('down');
+    function link($scope, element, attr) {
+
+      $scope.$watch('expand', function(newValue) {
+        if (newValue) {
+          scroll();
         } else {
+          $(element).removeClass('long');
           $(".down-arrow").hide();
-          $(element).addClass('down');
         }
-      })
+      });
+
+      function scroll() {
+        $(element).addClass('long');  //  add class to indicate it is scrollable
+        $(element).after('<span class="glyphicon glyphicon-chevron-down down-arrow"></span>');  // add down arrow
+        $('.down-arrow').on('click', function(){
+          $(element).find('.preStyle').scrollTop($(element).height());  // jump to bottom
+          $(this).hide();
+          $(element).addClass('down');  // hide pseudo after element
+        });
+        $(".preStyle").scroll(function(){
+          if ($(this).scrollTop() < $(element).find('table').height() - $(element).find('.preStyle').height()) {
+            // reach bottom
+            $(".down-arrow").show();
+            $(element).removeClass('down');
+          } else {
+            $(".down-arrow").hide();
+            $(element).addClass('down');
+          }
+        })
+      }
+
+      if (attr.scrollable == '' || attr.scrollable == 'true') {
+        scroll();
+      }
     }
     return {
       restrict: 'AE',
-      link: link
+      link: link,
+      scope: {
+        expand: '=scrollable'
+      }
     }
   });

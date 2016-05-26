@@ -9,10 +9,10 @@
                   ng-options="option for option in searchOptions"
           ></select>
           <input id="prefixSearchBox" ng-if="searchOption == 'Prefix/IP'"
-                 type="text" ng-model="prefxiKeywords" class="input-large search-query" placeholder="190.0.103.0"
+                 type="text" ng-model="searchKeywords.prefix" class="input-large search-query" placeholder="190.0.103.0"
           />
           <input id="hostnameSearchBox" ng-if="searchOption == 'Hostname'"
-                 type="text" ng-model="hostnameKeywords" class="input-large search-query" placeholder="cisco.com"
+                 type="text" ng-model="searchKeywords.hostname" class="input-large search-query" placeholder="cisco.com"
                  typeahead="ipAddr for ipAddr in dnsLookup($viewValue)"
                  typeahead-loading="loadingLocations"
                  typeahead-no-results="noResults"
@@ -21,7 +21,7 @@
                  typeahead-min-length="4"
           />
           <input id="part1SearchBox" ng-if="searchOption == 'Community'"
-                 type="text" ng-model="part1Keywords" class="input-large search-query" placeholder="3257"
+                 type="text" ng-model="searchKeywords.part1" class="input-large search-query" placeholder="3257"
                  typeahead="part1 for part1 in part1Lookup($viewValue)"
                  typeahead-loading="loadingLocations"
                  typeahead-no-results="noResults"
@@ -31,75 +31,129 @@
           />
           <span ng-if="searchOption == 'Community'"> : </span>
           <input id="part2SearchBox" ng-if="searchOption == 'Community'"
-                 type="text" ng-model="part2Keywords" class="input-large search-query" placeholder="8012"
+                 type="text" ng-model="searchKeywords.part2" class="input-large search-query" placeholder="8012"
                  typeahead="p2.part2 for p2 in p2 | filter: {part2: $viewValue} : compareP2"
                  typeahead-on-select="onSelectPart2($item, $model, $label)"
                  typeahead-min-length="1"
           />
           <button type="submit" class="btn btn-sm btn-info" ng-click="preSearch()">Search</button>
-          <label class="btn btn-default btn-xs"
-                 ng-style="{'margin-left': '20px', 'width': '120px'}"
-                 ng-if="searchOption == 'Prefix/IP'">Longest Match
-            <input type="checkbox" ng-model="isLongestMatch"/>
-          </label>
+          <!--<label class=""-->
+                 <!--ng-style="{'margin-left': '20px', 'width': '120px'}"-->
+                 <!--ng-if="searchOption == 'Prefix/IP'">Longest Match-->
+            <!--<input type="checkbox"-->
+                   <!--ng-model="isLongestMatch"-->
+                   <!--ng-disabled="searchKeywords.prefix.indexOf('/') > -1"-->
+                   <!--ng-checked="searchKeywords.prefix.indexOf('/') == -1"/>-->
+          <!--</label>-->
           <label class="btn btn-default btn-xs" ng-style="{'margin-left': '10px', 'width': '120px'}">Aggregates
-            <input type="checkbox" ng-model="isAggregate"/>
+            <input type="checkbox" ng-model="searchParams.isAggregates"/>
+          </label>
+          <label class="btn btn-default btn-xs" ng-style="{'margin-left': '10px', 'width': '120px'}" ng-show="searchKeywords.prefix.indexOf('/') > -1">Specific
+            <input type="checkbox" ng-model="searchParams.isSpecific"/>
           </label>
           <label class="btn btn-default btn-xs" ng-style="{'margin-left': '10px', 'width': '120px'}">Distinct
-            <input type="checkbox" ng-model="isDistinct" ng-click="turnOnDistinct()"/>
+            <input type="checkbox" ng-model="searchParams.isDistinct"/>
           </label>
         </form>
       </div>
 
-      <div class="main-area row">
+      <div class="main-area row" ng-if="searchOption == 'Hostname'">
         <div class="col-lg-12">
           <button type="button" class="btn btn-default"
                   ng-repeat="ip in ipAddr"
                   ng-click="search(ip)"
                   ng-style="{'margin-right': '30px', 'margin-top': '10px'}"
-                  ng-if="searchOption == 'Hostname'"
           >{{ip}}</button>
         </div>
       </div>
 
 
+    <div class="main-area row">
+      <div class="col-lg-12">
+        <tabset>
+          <tab heading="Map View" ng-click="changeTab('map')">
+            <div class="loading-section">
+              <div class="map-container relative">
+                <div class="map-control router-list expanded" ng-style="{'height': mapHeight}">
+                  <h3 class="panel-header">
+                    Peer List
+                    <!--<div class="panel-search">-->
+                    <!--<input type="text" placeholder="Search..." class="search" ng-model="panelSearchKey.NodeName"-->
+                    <!--ng-click="panelSearch(panelSearchKey)"/>-->
+                    <!--<span style="color:black" class="glyphicon glyphicon-remove" ng-show="panelSearchKey"-->
+                    <!--ng-click="panelSearchKey = ''"></span>-->
+                    <!--</div>-->
+                  </h3>
+
+                  <div class="main" ng-style="{'height': mapHeight - 55, 'padding-bottom': 0}">
+                    <ul class="locations">
+                      <li ng-repeat="(peer, peerRibs) in cardPeers" id="{{peer.substring(0,peer.indexOf('@'))}}"
+                          class="loca">
+                        <p class="router-list-city" ng-click="togglePeerSelection(peer.substring(0,peer.indexOf('@')))">
+                          <span class="glyphicon glyphicon-play"></span>{{peer.substring(peer.indexOf('@') + 1)}}
+                          <span class="count">({{peerRibs.length}})</span>
+                        </p>
+                        <ul class="peers locationItems" id="{{peer.substring(0,peer.indexOf('@'))}}nodes" hidden>
+                          <li ng-repeat="rib in peerRibs | filter:panelSearchKey"
+                              ng-click="peerListRibClicked(rib)">
+                            <div class="row">
+                              <div class="col-xs-12">
+                                <!--tooltip-popup-delay="1000" tooltip-append-to-body="true"-->
+                                <!--tooltip="{{rib.PeerName}} | {{rib.wholePrefix}}" tooltip-placement="top"-->
+                                {{rib.wholePrefix}}
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>  <!-- end of main expanded -->
+                </div> <!-- End of router-list -->
+                <leaflet ng-attr-id="LookingGlassMap" class="map" defaults="defaults" height="{{mapHeight}}"
+                         width="71.9%" resize></leaflet>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Table View" ng-click="changeTab('table')">
+            <div class="table-container">
+              <h3>Looking Glass Information
+                <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
+              </h3>
+              <!--Angular Table added here-->
+              <div class="loading-section">
+                <div ng-show="glassGridOptions.glassGridIsLoad" bmp-loading
+                     loading-var="glassGridOptions.glassGridIsLoad" font-width="80"></div>
+                <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.height}"
+                     ui-grid-auto-resize ui-grid-resize-columns>
+                  <div class="watermark" ng-if="!glassGridOptions.data.length">No data available</div>
+                </div>
+              </div>
+
+            </div>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+
+
+    <div ng-if="values !== undefined" id="detailView">
       <div class="main-area row">
         <div class="col-lg-12">
           <div class="table-container">
-            <h3>Looking Glass Information
-              <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
-            </h3>
-            <!--Angular Table added here-->
-            <div class="loading-section">
-              <div ng-show="glassGridOptions.glassGridIsLoad" bmp-loading loading-var="glassGridOptions.glassGridIsLoad" font-width="80"></div>
-              <div ui-grid-selection ui-grid="glassGridOptions" ng-style="{'height':glassGridOptions.height}" ui-grid-auto-resize ui-grid-resize-columns>
-                <div class="watermark" ng-if="!glassGridOptions.data.length">No data available</div>
-              </div>
-            </div>
 
-          </div>
-        </div>
-      </div>
+            <br>
+            <h3>Prefix Detail</h3>
 
+            <section style="width: 100%;margin: auto;padding: 10px;">
 
+              <div class="as-path">
 
-      <div ng-if="values !== undefined">
-        <div class="main-area row">
-          <div class="col-lg-12">
-            <div class="table-container">
+                <div ng-style="{'width':asPath.width}">
 
-              <br>
-              <h3>Prefix Detail</h3>
-
-              <section style="width: 100%;margin: auto;padding: 10px;">
-
-                <div class = "as-path">
-
-                  <div ng-style="{'width':asPath.width}">
-
-                    <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}" style="position: relative;float: left;">
-                      <!--icon-->
-                      <div style="display: table-cell;">
+                  <div ng-repeat="path in as_path" ng-style="{'width': path.addWidth}"
+                       style="position: relative;float: left;">
+                    <!--icon-->
+                    <div style="display: table-cell;">
 
                         <span ng-if="path.noTopText">
                           <div style="text-align: center">&nbsp;</div>
@@ -109,25 +163,28 @@
                           <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{ wordCheck(path.topVal) }}</div>
                         </span>
 
-                        <!--This is the actual AS icon-->
-                        <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}" data-content="{{path.popOut}}" data-html="true" popover-placement="right" popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
-                        <div style="text-align: center">{{ path.botVal }}</div>
-                      </div>
-                      <!--line-->
-                      <div style="display: table-cell;" ng-if="path.isEnd">
-                        <div style="width: 100px;height: 2px;background-color:#eaeaea;position: absolute;margin-top: 45px;"
-                             ng-style="{'width':asPath.lineWidth}"></div>
-                      </div>
+                      <!--This is the actual AS icon-->
+                      <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}"
+                           data-content="{{path.popOut}}" data-html="true" popover-placement="right"
+                           popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
+                      <div style="text-align: center">{{ path.botVal }}</div>
                     </div>
-
+                    <!--line-->
+                    <div style="display: table-cell;" ng-if="path.isEnd">
+                      <div
+                        style="width: 100px;height: 2px;background-color:#eaeaea;position: absolute;margin-top: 45px;"
+                        ng-style="{'width':asPath.lineWidth}"></div>
+                    </div>
                   </div>
 
                 </div>
 
+              </div>
 
-                <div class="left-container">
 
-                  <div class="detailspanel">
+              <div class="left-container">
+
+                <div class="detailspanel">
                     <pre class="preStyle">
                       <table>
                         <tr>
@@ -185,16 +242,16 @@
                         </tr>
                       </table>
                     </pre>
-                  </div>
-
                 </div>
-              </section>
 
               </div>
+            </section>
+
           </div>
         </div>
       </div>
-
     </div>
+
+  </div>
   <!--/tabset-->
 </div>
