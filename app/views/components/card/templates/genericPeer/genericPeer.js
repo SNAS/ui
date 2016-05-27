@@ -2,8 +2,8 @@
 
 angular.module('bmp.components.card')
 
-  .controller('BmpCardPeerController', ["$scope", "apiFactory", "timeFactory", "cardFactory", "uiGridFactory",
-    function ($scope, apiFactory, timeFactory, cardFactory, uiGridFactory) {
+  .controller('BmpCardPeerController', ["$scope", "apiFactory", "timeFactory", "cardFactory", "uiGridFactory", "countryConversionFactory",
+    function ($scope, apiFactory, timeFactory, cardFactory, uiGridFactory, countryConversionFactory) {
 
     //  PEER DATA
     //  {
@@ -140,7 +140,7 @@ angular.module('bmp.components.card')
     $scope.locationInfo = cardFactory.createLocationTable({
       stateprov: $scope.data.stateprov,
       city: $scope.data.city,
-      country: $scope.data.country,
+      country: countryConversionFactory.getName($scope.data.country),
       type: $scope.data.type
     });
 
