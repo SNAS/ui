@@ -559,7 +559,8 @@ angular.module('bmpUiApp')
 
           trendGraphUpdates = {
             key: "Updates",
-            values: updatesTrendData
+            values: updatesTrendData,
+            area: true
           };
         })
         .error(function (error) {
@@ -581,7 +582,8 @@ angular.module('bmpUiApp')
 
           trendGraphWithdraws = {
             key: "Withdraws",
-            values: withdrawsTrendData
+            values: withdrawsTrendData,
+            area: true
           };
         })
         .error(function (error) {
@@ -959,7 +961,7 @@ angular.module('bmpUiApp')
     /*Trend Graph START*/
     $scope.trendGraph = {
       chart: {
-        type: "stackedAreaChart",
+        type: "lineChart",
         height: 450,
         margin: {
           top: 20,
