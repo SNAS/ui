@@ -105,7 +105,7 @@
     float: left;
     a{
       color: white;
-      font-size: 25pt;
+      //font-size: 25pt;
       letter-spacing: 1px;
       font-weight: 400;
       transition: all 0.15s;
@@ -116,47 +116,71 @@
     }
   }
 
-  .navbar-brand{
-    font-size: 19pt;
-    color: #0386d2;
-    font-family: 'CiscoSansThin';
-    padding-left: 15px;
-    margin-left: 0 !important;
-    height: 55px;
+  .navbar-brand {
+    padding-left: 15px !important;
+    background-color: #fff;
     text-transform: capitalize;
-
-    .breadcrumbs{
-      color: #d0d0d0;
-      font-size: 13pt;
+    font-size: 18px;
+    
+  .context-box {
+    background-color: #868788;
+    height: 54px;
+    margin-top: -15px;
+    padding: 17px 15px 15px 15px;
+    color: #fff;
     }
+
+    .breadcrumbs {
+      color: #fff;
+    }
+    
+    .glyphicon-chevron-right {
+      font-size: 14px;
+    }
+   
+  }
+
+ .breadcrumbs-title  {
+    float: left;
+    display: inline;
+    font-size: 14px;
+    color: #172639;
+    font-size: 18px;
+    margin-top: 16px;
+    text-transform: capitalize !important;
   }
 
   .account{
-    text-align: center;
+    text-align: left;
     min-width: 106px;
     height: 55px;
     padding: 2px 10px 0;
 
     .account-logout{
-      font-family: 'CiscoSansThin';
-      font-size: 8pt;
+      font-size: 12px;
       display: inline-block;
     }
 
     .account-name{
-      margin-top: 9px;
-      font-size: 9pt;
+      margin-top: 20px;
+      font-size: 12px;
       display: block;
-      color: #c3c3c3;
+      color: #172639;
       margin-bottom: -5px;
       font-family: 'CiscoSansExtraLight';
     }
   }
-
   .settings{
     border-left: 1px solid #e4e4e4;
-    padding: 0 5px 0 3px;
+    padding: 22px 5px 0 20px;
     height: 55px;
+    cursor:pointer;
+    font-size: 12px;
+    
+    .glyphicon-cog {
+      color: #172639;
+      font-size: 16px !important;
+    }
   }
 }
 
@@ -181,7 +205,8 @@
 .sidebar{
   font-family: 'CiscoSans';
   border-right: 1px solid #061622;
-  background-color: #1c2b36;
+  //background-color: #1c2b36;
+  background-color: #172639;
   z-index: 1010;
   position: fixed;
   left: 210px;
@@ -192,14 +217,40 @@
   overflow-x: hidden;
   transition: 0.3s;
 
+  .glyphicon {
+      padding-right:10px;
+
+      .glyphicon-dashboard {
+        font-size: 14px;
+        color: #fff;
+        margin-right: 5px;
+        }
+
+      .glyphicon-user {
+        font-size: 14px;
+        color: #fff;
+        margin-right: 5px;
+      }
+
+      .glyphicon-stats  {
+        font-size: 14px;
+        color: #fff;
+        padding-right: 5px;
+      }
+    }
+
   h4{
     margin-left: 35px;
     //color: #314a5d;
-    color: #3a91a5;
-    padding: 25px 0 9px 14px;
+    //color: #3a91a5;
+    color: #fff;
+    padding: 10px 0 10px 14px; 
     margin: 0;
-    font-size: 9pt;
+    font-size: 16px;
     font-weight: 400;
+    a:hover {
+      color: #fff;
+    }
   }
 
   .sidebar-wrapper{
@@ -217,10 +268,11 @@
       margin: 6px auto;
       display: block;
     }
+
   }
 
   .nav-section{
-    border-top: 2px solid #17262e;
+    border-top: 3px solid #1f3857;
 
     &.last{
       padding-bottom: 60px;
@@ -233,23 +285,25 @@
     }
   }
 
-  .sidebar-nav{
+  .sidebar-nav {
     width: 210px;
     padding: 0;
     list-style: none;
     background-color: #1C2B36;
     margin-bottom: 20px;
 
-    li{
-      background-color: #1C2B36 !important;
+    li {
+      background-color: #172639 !important;
+      //background-color: #1C2B36 !important;
       border-left: 3px solid #1C2B36;
       transition: all 0.4s ease;
       position: relative;
+      padding-left: 15px;
       display: block;
 
       &.active{
-        background-color: #19232b !important;
-        border-color: #0386d2;
+        background-color: #0c1521 !important;
+        border-color: #fff;
 
         a{
           color: #fff;
@@ -257,8 +311,8 @@
       }
 
       &:hover{
-        background-color: #19232b !important;
-        border-color: #0386d2;
+        background-color: #1e3554 !important;
+        border-color: #fff;
 
         a{
           color: #fff;
@@ -273,7 +327,8 @@
         position: relative;
         display: block;
         padding: 10px 20px 10px 25px;
-        color: #9cb2c3;
+        color: #fff;
+        //color: #9cb2c3;
         background-color: transparent;
         font-size: 10pt;
         transition: color 0.3s;
@@ -328,7 +383,7 @@
 #sidebar::-webkit-scrollbar-thumb
 {
     border-radius: 10px;
-    background-color: #30495C;
+    background-color: #254163;
     margin: 2px;
 }
 

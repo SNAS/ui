@@ -8,8 +8,8 @@
  * Controller of the AS View page
  */
 angular.module('bmpUiApp')
-  .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', '$stateParams', 'uiGridConstants', 'uiGridFactory',
-    function ($scope, apiFactory, $timeout, $stateParams, uiGridConstants, uiGridFactory) {
+  .controller('ASViewController', ['$scope', 'apiFactory', '$timeout', '$stateParams', 'uiGridConstants', 'uiGridFactory', 'countryConversionFactory',
+    function ($scope, apiFactory, $timeout, $stateParams, uiGridConstants, uiGridFactory, countryConversionFactory) {
 
       //var suggestions = [];
       var upstreamData, downstreamData;
@@ -39,10 +39,12 @@ angular.module('bmpUiApp')
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 1,
         columnDefs: [
-          {name: "prefixWithLen", displayName: 'Prefix', width: '*',
+          {
+            name: "prefixWithLen", displayName: 'Prefix', width: '*',
             cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-tooltip prefix="{{ COL_FIELD }}"></div>'
           },
-          {name: "IPv", displayName: 'IPv', width: '*', visible: false,
+          {
+            name: "IPv", displayName: 'IPv', width: '*', visible: false,
             sort: {direction: uiGridConstants.ASC}
           }
         ],
@@ -327,15 +329,15 @@ angular.module('bmpUiApp')
         upstreamData.forEach(function (e) {
           e.name = e.as_name === null ? e.asn : e.as_name;
           if (e.country != null) {
-            e.countryCode = getCode(e.country.toUpperCase());
-            e.country = getName(e.countryCode.toUpperCase());
+            e.countryCode = countryConversionFactory.getCode(e.country.toUpperCase());
+            e.country = countryConversionFactory.getName(e.countryCode.toUpperCase());
           }
           else {
             e.countryCode = "[UNKNOWN]";
             e.country = "[UNKNOWN]";
           }
           if (e.countryCode != "[UNKNOWN]") {
-            e.continent = getContinent(e.countryCode);
+            e.continent = countryConversionFactory.getContinent(e.countryCode);
           }
           if (e.state_prov != null)
             e.state_prov = e.state_prov;
@@ -352,15 +354,15 @@ angular.module('bmpUiApp')
         downstreamData.forEach(function (e) {
           e.name = e.as_name === null ? e.asn : e.as_name;
           if (e.country != null) {
-            e.countryCode = getCode(e.country);
-            e.country = getName(e.countryCode);
+            e.countryCode = countryConversionFactory.getCode(e.country);
+            e.country = countryConversionFactory.getName(e.countryCode);
           }
           else {
             e.countryCode = "[UNKNOWN]";
             e.country = "[UNKNOWN]";
           }
           if (e.countryCode != "[UNKNOWN]") {
-            e.continent = getContinent(e.countryCode);
+            e.continent = countryConversionFactory.getContinent(e.countryCode);
           }
           else {
             e.continent = "[UNKNOWN]";
@@ -777,10 +779,10 @@ angular.module('bmpUiApp')
     }
 
   ])
-  .directive('scrollable', function(){
+  .directive('scrollable', function () {
     function link($scope, element, attr) {
 
-      $scope.$watch('expand', function(newValue) {
+      $scope.$watch('expand', function (newValue) {
         if (newValue) {
           scroll();
         } else {
@@ -792,12 +794,12 @@ angular.module('bmpUiApp')
       function scroll() {
         $(element).addClass('long');  //  add class to indicate it is scrollable
         $(element).after('<span class="glyphicon glyphicon-chevron-down down-arrow"></span>');  // add down arrow
-        $('.down-arrow').on('click', function(){
+        $('.down-arrow').on('click', function () {
           $(element).find('.preStyle').scrollTop($(element).height());  // jump to bottom
           $(this).hide();
           $(element).addClass('down');  // hide pseudo after element
         });
-        $(".preStyle").scroll(function(){
+        $(".preStyle").scroll(function () {
           if ($(this).scrollTop() < $(element).find('table').height() - $(element).find('.preStyle').height()) {
             // reach bottom
             $(".down-arrow").show();
@@ -813,6 +815,7 @@ angular.module('bmpUiApp')
         scroll();
       }
     }
+
     return {
       restrict: 'AE',
       link: link,

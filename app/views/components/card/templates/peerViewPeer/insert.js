@@ -176,6 +176,7 @@ angular.module('bmp.components.card')
       }
 
       //make last as not have connecting line
+      if(as_path.length > 0)
       as_path[as_path.length - 1].isEnd = false;
 
       var asname;

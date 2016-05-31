@@ -2,8 +2,11 @@
   <h4>Further Peer Information</h4>
   <tabset>
     <tab heading="Peer Details" select="showDetailTab()">
-      <h3>Peer Details of
-        <span ng-class="PeerStatus">&nbsp;&nbsp; {{data.RouterName}}&nbsp;&nbsp;&nbsp; {{data.PeerName}}</span>
+      <h3>Peering Details of
+        <span ng-class="PeerStatus">
+          <!--&nbsp;&nbsp; {{data.RouterName}}&nbsp;-->
+          &nbsp;&nbsp; {{data.PeerName}}
+        </span>
       </h3>
 
       <div class="loading-section">
@@ -26,7 +29,7 @@
         <div ui-grid="summaryPeerOptions" ui-grid-selection ui-grid-auto-resize
              ng-style="{'height':summaryPeerOptions.height}"
              style="margin-top: 27px;" ui-grid-resize-columns>
-          <div class="watermark" ng-if="!summaryPeerOptions.data.length">No data available</div>
+          <div class="watermark" ng-if="!summaryPeerOptions.data.length">{{data.PeerASN==data.LocalASN?"Peer is in same AS as router":"No data available"}}</div>
         </div>
       </div>
     </tab>
@@ -64,15 +67,15 @@
                 <!--icon-->
                 <div style="display: table-cell;">
 
-                  <span ng-if="path.noTopText">
-                    <div style="text-align: center">&nbsp;</div>
-                  </span>
+                  <!--<span ng-if="path.noTopText">-->
+                    <!--<div style="text-align: center">&nbsp;</div>-->
+                  <!--</span>-->
 
-                  <span ng-if="!path.noTopText">
-                    <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{
-                      wordCheck(path.topVal) }}
-                    </div>
-                  </span>
+                  <!--<span ng-if="!path.noTopText">-->
+                    <!--<div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{-->
+                      <!--wordCheck(path.topVal) }}-->
+                    <!--</div>-->
+                  <!--</span>-->
 
                   <!--This is the actual AS icon-->
                   <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}"
