@@ -164,10 +164,10 @@
 
           <div class="right-container"
                style="margin-left: 49%;">
-            <div ng-if="latLong != undefined">
+            <div class="nogeowatermark" ng-if="!values.geo">No geo data available</div>
+            <div ng-if="values.geo">
               <map name="peer-view-peer-card" location="'peerCard'" plot-marker="latLong"
                    style="top:0; bottom:0; width:100%; height: 300px"/>
-            </div>
             <div style="width:49%;display: inline-block;">
               <p><span class="bold">Country:</span> {{values.geo.country}}</p>
 
@@ -190,6 +190,7 @@
               <p><span class="bold">Connection type:</span> {{values.geo.connection_type}}</p>
 
               <p><span class="bold">Org name:</span> {{values.geo.organization_name}}</p>
+            </div>
             </div>
 
           </div>
