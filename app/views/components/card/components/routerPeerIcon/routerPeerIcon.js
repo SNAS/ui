@@ -32,6 +32,16 @@ angular.module('bmp.components.card')
           });
         }
 
+        scope.simplifyCapabs = {
+          'MPBGP(1) : afi=2 safi=1 : Unicast IPv6': 'BGPv6',
+          'MPBGP(1) : afi=1 safi=1 : Unicast IPv4': 'BGPv4',
+          'MPBGP (1) : afi=1 safi=2 : Multicast IPv4': 'BGPv4',
+          'Route Refresh Old (128)': 'RR',
+          'Route Refresh (2)': 'RR',
+          'Graceful Restart (64)': 'GR',
+          '4 Octet ASN (65)': '4Octet'
+        };
+
         if ((scope.data.PeerASN > 64512 && scope.data.PeerASN <= 65534) || (scope.data.PeerASN > 4200000000 && scope.data.PeerASN <= 4294967294)) {
           scope.PeerASName = "Private AS";
         }
@@ -54,7 +64,7 @@ angular.module('bmp.components.card')
                 match = true;
               if (match)
                 if (!scope.enabledCapabs.indexOf(capability) > -1)
-                  scope.enabledCapabs.push(capability);
+                  scope.enabledCapabs.push(capability.trim());
             }
           });
         });

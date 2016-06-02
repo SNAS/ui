@@ -75,15 +75,12 @@
           <span style="float:right">{{ data.PeerIP }}</span>
         </div>
         <div class="row" style="text-align:center;margin-top:70px" ng-show="enabledCapabs.length>0">
-          <div style="width: 100%;margin: auto;">
-            <div class="router-name-text">Enabled Capabilities:</div>
-            <div ng-repeat="capability in enabledCapabs">
-              <span class="router-name-text"
-                    ng-style="{'border-bottom':$last?'':'1px solid lightgrey','white-space':'nowrap','font-size':'12px'}">
-                {{capability}}
-              </span>
-            </div>
-          </div>
+          <span class="router-name-text">Enabled Capabilities:</span>
+          <p>
+          <span class="capabilities" tooltip="{{capability}}" ng-repeat="capability in enabledCapabs">
+                {{simplifyCapabs[capability]?simplifyCapabs[capability]:capability}}
+          </span>
+          </p>
         </div>
       </div>
 
