@@ -553,6 +553,7 @@ angular.module('bmpUiApp')
           + '</div>'
           + '</li>';
       }
+      $scope.$apply();
     };
 
     // for history graph
