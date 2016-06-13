@@ -31,7 +31,8 @@ angular.module('bmpUiApp')
           $scope.peerData.selectPeer = row.entity;
           getPrefixHistory($scope.value, $scope.peerData.selectPeer.peer_hash_id);
           // $scope.selectUpdates();
-          $scope.fromPeer = 'FROM ' + $scope.peerData.selectPeer.PeerName;
+          $scope.fromRouter = 'FROM ' + $scope.peerData.selectPeer.RouterName;
+          $scope.fromPeer = '-> ' + $scope.peerData.selectPeer.PeerName;
           $scope.selectedPeerCaption = $scope.peerData.selectPeer.PeerName + ' selected';
         });
       },
@@ -154,15 +155,17 @@ angular.module('bmpUiApp')
         });
       },
       columnDefs: [
-        {name: "RouterName", displayName: 'RouterName'},
-        {name: "PeerName", displayName: 'PeerName'},
-        {name: "PeerAddress", displayName: 'PeerAddress'},
         {
-          name: "PeerASN", displayName: 'Peer_ASN',
-          cellTemplate: '<div class="ui-grid-cell-contents"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+          name: "LastModified", displayName: "Timestamp",
+          sort: {priority: 0, direction: uiGridConstants.DESC},
+          width: '20%'
         },
+        {name: 'AS_Path', displayName: 'AS Path', width: '20%'},
+        {name: 'LocalPref', displayName: 'Local Preference'},
+        {name: 'Communities', displayName: 'Communities'},
+        {name: 'MED', displayName: 'MED'},
+        {name: 'NH', displayName: 'Next Hop'},
         {name: "Status", displayName: 'Status'},
-        {name: "LastModified", displayName: "Timestamp", sort: {priority: 0, direction: uiGridConstants.DESC}}
       ]
     };
 
@@ -371,7 +374,7 @@ angular.module('bmpUiApp')
         .success(function(data1) {
           if (data1.hasOwnProperty('v_routes_history') && data1.v_routes_history.data.length != 0) {
             data1.v_routes_history.data.forEach(function(value) {
-              value.Status = 'update';
+              value.Status = 'updated';
             });
             prefixHistoryData = prefixHistoryData.concat(data1.v_routes_history.data);
           }
