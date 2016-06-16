@@ -12,7 +12,8 @@
   background-color: white;
   width: 150px;
   border: 1px solid lightgrey;
-  max-height: 400px;
+  max-height: 550px;
+  overflow-y: auto;
   p {
     margin:0;
     color:#FFFFFF;
