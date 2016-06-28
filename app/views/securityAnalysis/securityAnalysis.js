@@ -135,7 +135,7 @@ angular.module('bmpUiApp')
             apiFactory.getPrefix(row.entity.prefixWithLen)
               .success(function(res) {
                 $scope.showCard = true;
-                var resultData = res.v_routes.data;
+                var resultData = res.v_all_routes.data;
                 for (var i = 0; i < resultData.length; i++) {
                   resultData[i].wholePrefix = resultData[i].Prefix +
                     "/" + resultData[i].PrefixLen;
