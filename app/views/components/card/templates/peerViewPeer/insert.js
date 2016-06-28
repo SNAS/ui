@@ -155,7 +155,7 @@ angular.module('bmp.components.card')
 
       $scope.norepeat = [];
       for (var i = 0; i < path.length; i++) {
-        if ($scope.norepeat.indexOf(path[i]) == -1) {
+        if ($scope.norepeat.indexOf(path[i]) == -1 && path[i] != '}' && path[i] != '{') {
           $scope.norepeat.push(path[i]);
         }
       }

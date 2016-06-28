@@ -69,6 +69,12 @@ angular.module('bmp.components.card')
           });
         });
 
+        // if (scope.data.isPrePolicy == 0 && scope.data.PeerBGPId == '0.0.0.0' &&
+        //   scope.data.PeerIP == '0.0.0.0') {
+        //   scope.pseudoPeer = true;
+        // }
+        console.log(scope.data)
+
         scope.sameASN = scope.data.RouterASN == scope.data.PeerASN;
         if (scope.sameASN) {
           scope.outerBorder = {'border': '1px solid #A7A7A7'};

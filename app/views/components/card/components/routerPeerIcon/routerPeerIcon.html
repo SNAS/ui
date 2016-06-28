@@ -2,13 +2,15 @@
   <h4> Router - Peer Diagram</h4>
   <div class="peers-amount-img">
     <div class="row" style="margin-top: 30px; padding-top: 50px" ng-style="outerBorder">
-      <div class="col-lg-4" ng-style="innerBorder">
+      <div ng-class="data.pseudoPeer ? 'col-lg-6 col-lg-offset-3' : 'col-lg-4'" ng-style="innerBorder">
         <div class="row">
           <div class="col-xs-2">
             <div class="router-name-text">AS</div>
           </div>
           <div class="col-xs-10">
-            <div class="router-name-text"><span style="float:left">{{ data.RouterASN }}</span><span style="float:right">{{ RouterASName }}</span>
+            <div class="router-name-text">
+              <span style="float:left">{{ data.RouterASN }}</span>
+              <span style="float:right">{{ RouterASName }}</span>
             </div>
           </div>
         </div>
@@ -16,7 +18,7 @@
           <div class="as-section">
             <div class="centre">
               <div style="position: relative;">
-                <div class="router-name-text">Router Name: {{ data.RouterName }}</div>
+                <div class="router-name-text">Router Name: {{ data.RouterName }} {{data.pseudoPeer ? 'Local RIB': ''}}</div>
               </div>
               <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
               <div class="row router-name-text" style="margin: 5px 0 0 0;">
@@ -64,7 +66,7 @@
         </div>
       </div>
 
-      <div class="col-lg-4" style="padding-top: 88px">
+      <div class="col-lg-4" style="padding-top: 88px" ng-hide='data.pseudoPeer'>
         <div class="row" style="margin:0">
           <span style="float:left">Local IP</span>
           <span style="float:right">Peer IP</span>
@@ -84,7 +86,7 @@
         </div>
       </div>
 
-      <div class="col-lg-4" ng-style="innerBorder">
+      <div class="col-lg-4" ng-style="innerBorder" ng-hide='data.pseudoPeer'>
         <div class="row" ng-show="data.RouterASN!=data.PeerASN">
           <div class="col-xs-2">
             <div class="router-name-text">AS</div>

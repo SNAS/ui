@@ -129,6 +129,11 @@ angular.module('bmp.components.card')
       }
     };
 
+    if ($scope.data.isPrePolicy == 0 && $scope.data.PeerBGPId == '0.0.0.0' &&
+      $scope.data.PeerIP == '0.0.0.0') {
+      $scope.data.pseudoPeer = true;
+    }
+
     $scope.rpDiagramData = {};
 
     for(var attrname in $scope.data){
