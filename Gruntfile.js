@@ -360,7 +360,6 @@ module.exports = function(grunt) {
             '*.html',
             'views/**/*.html',
             'images/{,*/}*.{webp}',
-            'views/components/NeXt*/**',
             'views/components/leaflet-*/**',
             'fonts/*'
           ]
