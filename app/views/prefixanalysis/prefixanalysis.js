@@ -599,7 +599,7 @@ angular.module('bmpUiApp')
     var getPrefixHisDataHour = function () {
       $scope.loading = true;
 
-      var allHisData = $scope.originHisData.reverse();
+      var allHisData = angular.copy($scope.originHisData.reverse());
       $scope.asPathList = new Array();
 
       $scope.asPathChangeNumber = new Array(NUMBER_OF_RECTS);
