@@ -834,11 +834,17 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       apiFactory.getRouters()
         .success(function (result) {
           var routers = result.routers.data;
+
+          var upRouterNames = [];
+          var downRouterNames = [];
+
           for(var i = 0; i < routers.length; i++) {
             if (routers[i].isConnected == 1) {
               routers[i].Status = 1;
+              upRouterNames.push(routers[i].RouterName !== '' ? routers[i].RouterName : routers[i].RouterIP);
             } else {
               routers[i].Status = 0;
+              downRouterNames.push(routers[i].RouterName !== '' ? routers[i].RouterName : routers[i].RouterIP);
             }
             routers[i].$$treeLevel = 0;
             $scope.routerDict[routers[i].RouterIP] = [routers[i]];
@@ -863,6 +869,17 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             return results
           });
 
+          var routerContents = '<ul class="list-group">';
+          angular.forEach(downRouterNames, function (name) {
+            routerContents += '<li class="list-group-item"><span class="circle-down"></span>' + name + '</li>'
+          });
+          angular.forEach(upRouterNames, function (name) {
+            routerContents += '<li class="list-group-item"><span class="circle-up"></span>' + name + '</li>'
+          });
+          routerContents += '</ul>';
+
+          $('#routers').webuiPopover({title: 'Routers', content: routerContents});
+
         })
         .error(function (result) {
           console.log("api routers bottom pannel error")
@@ -876,6 +893,9 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
           //[ Up-ColDwn, Dwn-ColDwn, Up, Dwn, total ]
           var ips = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]];
+
+          var upPeerNames = [];
+          var downPeerNames = [];
 
           $scope.peerCount = peersData.v_peers.size;
           $rootScope.peerCount = $scope.peerCount;
@@ -905,10 +925,12 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
               //Up  if and only if router is connected and peer is up
               ips[whichIp][2]++;
               item.Status = 1;
+              upPeerNames.push(item.PeerName !== '' ? item.PeerName : item.PeerIP);
             } else {
               //Down
               item.Status = 0;
               ips[whichIp][3]++;
+              downPeerNames.push(item.PeerName !== '' ? item.PeerName : item.PeerIP);
             }
 
             //add item to correct total
@@ -940,6 +962,17 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
               $rootScope.routerTableOptions.data = $rootScope.routerTableOptions.data.concat($scope.routerDict[router]);
             }
           }
+
+          var peerContents = '<ul class="list-group">';
+          angular.forEach(downPeerNames, function (name) {
+            peerContents += '<li class="list-group-item"><span class="circle-down"></span>' + name + '</li>'
+          });
+          angular.forEach(upPeerNames, function (name) {
+            peerContents += '<li class="list-group-item"><span class="circle-up"></span>' + name + '</li>'
+          });
+          peerContents += '</ul>';
+
+          $('#peers').webuiPopover({title: 'Peers', content: peerContents});
 
         })
         .error(function (result) {
