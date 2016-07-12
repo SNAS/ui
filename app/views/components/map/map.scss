@@ -8,10 +8,10 @@
 }
 
 .nvtooltip{
-  padding: 5px; 
+  padding: 5px;
   border: 1px solid #eee;
   box-shadow: 0 0 3px rgba(0,0,0,0.1);
-  
+
   h4{
     margin: 0; font-size:10pt;
   }
@@ -532,3 +532,37 @@
   cursor: inherit;
 }
 
+.webui-popover-title {
+  font-size: 1.2rem;
+}
+
+.list-group {
+  max-height:200px;
+  overflow:auto;
+  overflow-y: auto;
+  .list-group-item {
+    padding: 3px 6px;
+    font-size: 1.2rem;
+    background-color: #e6edf1;
+    border: none;
+    &:nth-child(even) {
+      background-color: #c4d7e1;
+    }
+  }
+}
+
+.hand-clickable{
+  cursor: pointer;
+}
+
+.circle-up::before{
+  content: '\25CF';
+  color: #7bad85;
+  font-size:15px;
+}
+
+.circle-down::before{
+  content: '\25CF';
+  color: #ad7b7b;
+  font-size:15px;
+}

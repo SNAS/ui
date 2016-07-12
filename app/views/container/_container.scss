@@ -121,7 +121,7 @@
     background-color: #fff;
     text-transform: capitalize;
     font-size: 18px;
-    
+
   .context-box {
     background-color: #868788;
     height: 54px;
@@ -133,11 +133,11 @@
     .breadcrumbs {
       color: #fff;
     }
-    
+
     .glyphicon-chevron-right {
       font-size: 14px;
     }
-   
+
   }
 
  .breadcrumbs-title  {
@@ -176,7 +176,7 @@
     height: 55px;
     cursor:pointer;
     font-size: 12px;
-    
+
     .glyphicon-cog {
       color: #172639;
       font-size: 16px !important;
@@ -244,7 +244,7 @@
     //color: #314a5d;
     //color: #3a91a5;
     color: #fff;
-    padding: 10px 0 10px 14px; 
+    padding: 10px 0 10px 14px;
     margin: 0;
     font-size: 16px;
     font-weight: 400;
@@ -259,7 +259,9 @@
   }
 
   .sidebar-logo{
-    height: 55px;
+    height: 40px;
+    margin: 6px 0 0 0;
+    //height: 55px;
     border: 1px solid #14222a;
     border-bottom: none;
 
