@@ -417,8 +417,18 @@ angular.module('bmpUiApp')
                     range: interval_hour,
                     value: interval_hour * 60 / NUMBER_OF_RECTS
                   };
-                  $scope.timeranges.push(newRange);
-                  $scope.timeRange = newRange;
+                  var flag = false;
+                  for (var i = $scope.timeranges.length - 1; i >= 0; i--) {
+                    if ($scope.timeranges[i].range == interval_hour) {
+                      flag = true;
+                      $scope.timeRange = $scope.timeranges[i];
+                      break;
+                    }
+                  }
+                  if (!flag) {
+                    $scope.timeranges.push(newRange);
+                    $scope.timeRange = newRange;
+                  }
                 }
               }
               getPrefixHisDataHour();
