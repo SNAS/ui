@@ -33,9 +33,9 @@ angular.module('bmp.components.card')
         }
 
         scope.simplifyCapabs = {
-          'MPBGP(1) : afi=2 safi=1 : Unicast IPv6': 'BGPv6',
-          'MPBGP(1) : afi=1 safi=1 : Unicast IPv4': 'BGPv4',
-          'MPBGP (1) : afi=1 safi=2 : Multicast IPv4': 'BGPv4',
+          'MPBGP(1) : afi=2 safi=1 : Unicast IPv6': 'IPv6',
+          'MPBGP(1) : afi=1 safi=1 : Unicast IPv4': 'IPv4',
+          'MPBGP (1) : afi=1 safi=2 : Multicast IPv4': 'M-IPv4',
           'Route Refresh Old (128)': 'RRO',
           'Route Refresh (2)': 'RR',
           'Graceful Restart (64)': 'GR',

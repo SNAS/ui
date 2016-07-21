@@ -1004,7 +1004,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         $timeout(function () {
           scope.map.invalidateSize();
         }, 1000);
-      }
+      };
       scope.getWindowDimensions = function () {
         return {'h': w.height() - 50};  // for tab height
       };
