@@ -13,8 +13,9 @@
     }
   .filter-button {
     color: #000;
+    margin-top: 8px;
   }
-  .label-info {
+  .peers {
     background-color: #fff;
     color: #000;
     padding: 6px;
@@ -22,7 +23,7 @@
     font-size: 1.4rem;
     color: #565a5c;
   }
-  .label-danger, .label-success {
+  .label-danger, .label-success, .label-info  {
     border-radius: 7px;
     padding: 4px 7px;
     cursor: pointer;
