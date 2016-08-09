@@ -1,6 +1,6 @@
 $router-color: #5795DC;
 $peer-color: #EAA546;
-$connector-color: #a7a7a7;
+$connector-color: #43e1ce;
 $peer-text-color: #FFFFFF;
 
 //.amount-img{
@@ -10,16 +10,72 @@ $peer-text-color: #FFFFFF;
 //}
 
 .router-name-text {
-  color: $connector-color;
-  margin-top: 4px;
+  color: #333333;
+  margin-top: 10px;
   margin-bottom: 4px;
   font-size: 13px;
 }
 
+.enabled-capabilities {
+  text-align: center;
+  word-wrap: break-word;
+  padding: 0 3px;
+}
+
+.arrow_box {
+  background-color: #43e1ce;
+  padding: 6px 0 6px 0;
+  width: 100%;
+  // border corners
+  border-radius: 54px;
+    // &:after, &:before {
+    // bottom: 12%;
+    // border: solid transparent;
+    // content: " ";
+    // height: 0;
+    // width: 0;
+    // position: absolute;
+  //}
+  // &:after {
+  //   border-left-color: #43e1ce;
+  //   border-width: 17px;
+  //   left: 0%;
+  //   margin-left: 93%;
+  // }
+  // &:before {
+  //   border-right-color: #43e1ce;
+  //   border-width: 16px;
+  //   left: -6%;
+  // }
+// }
+//
+// .arrow_box > div:after,
+// .arrow_box > div:before {
+//   top: 10%;
+//   border: solid transparent;
+//   content: " ";
+//   height: 0;
+//   width: 0;
+//   position: absolute;
+// }
+// .arrow_box > div:after {
+//   border-left-color: #43e1ce;
+//   border-width: 20px;
+//   left: 100%;
+//   margin-top: -10px;
+// }
+// .arrow_box > div:before {
+//   border-width: 10px;
+//   right: 0%;
+//   margin-bottom: 0px;
+  }
+
 .capabilities {
-  color: $connector-color;
-  border: 1px solid lightgrey;
+  color: #333333;
+  border: 1px solid #ccc;
   border-radius: 5px;
+  text-transform: uppercase;
+  background-color: #fff;
   white-space: nowrap;
   font-size: 12px;
   padding: 0 5px 0 5px;
@@ -39,7 +95,12 @@ $peer-text-color: #FFFFFF;
   .as-section {
     margin: auto;
     width: 90%;
+    line-height: 3.5rem;
     height: auto;
+    .name {
+      line-height: 1.7rem;
+      font-weight: 700;
+    }
     .centre {
       text-align: center;
       .bmp-outline-route {
@@ -50,6 +111,15 @@ $peer-text-color: #FFFFFF;
         color: #EAA546;
       }
     }
+  }
+
+  .as-bg {
+    background-color: #d1f4ee;
+    border-radius: 30px 0px;
+  }
+
+  .as-row {
+    margin-bottom: 0px !important;
   }
 
   .left-section {
@@ -107,6 +177,7 @@ $peer-text-color: #FFFFFF;
       }
     }
 
+
     .bmp-peer_label {
       text-align: center;
       font-size: 18px;
@@ -120,6 +191,7 @@ $peer-text-color: #FFFFFF;
   background-color: $connector-color;
   height: 1px;
   top: 50%;
+  z-index: 9999;
   width: 83px;
   left: 39%;
 }
@@ -127,7 +199,35 @@ $peer-text-color: #FFFFFF;
 .router-peer-line-wide {
   background-color: $connector-color;
   position: absolute;
-  left: -37%;
+  margin: -1px 0;
+  left: 0%;
   height: 1px;
-  width: 183%;
+  z-index: 9999;
+  width: 100%;
+}
+
+// BMP router icon - Peer view diagram
+.bmp-bmp_router10-17 {
+  &.bmp-outline-route {
+    position: absolute;
+    margin-left: 208px;
+    top: 25px;
+  }
+}
+
+// BMP-IBGP router icon - Peer view diagram
+.bmp-ibgp_router10-17 {
+  &.peer.bmp-outline-route {
+    margin-left: -110px;
+    top: 25px;
+    position: absolute;
+  }
+}
+
+.bmp-ebgp_router10-17 {
+ &.peer.bmp-outline-route {
+   margin-left: -110px;
+   top: 25px;
+   position: absolute;
+ }
 }

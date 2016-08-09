@@ -77,11 +77,11 @@ angular.module('bmp.components.card')
 
         scope.sameASN = scope.data.RouterASN == scope.data.PeerASN;
         if (scope.sameASN) {
-          scope.outerBorder = {'border': '1px solid #A7A7A7'};
+          scope.outerBorder = {'border': '4px solid #97eee4'};
           scope.innerBorder = {};
         }
         else {
-          scope.innerBorder = {'border': '1px solid #A7A7A7'};
+          scope.innerBorder = {'border': '4px solid #97eee4'};
           scope.outerBorder = {};
         }
 

@@ -1,9 +1,9 @@
 <div>
   <h4> Router - Peer Diagram</h4>
   <div class="peers-amount-img">
-    <div class="row" style="margin-top: 30px; padding-top: 50px" ng-style="outerBorder">
-      <div ng-class="data.pseudoPeer ? 'col-lg-6 col-lg-offset-3' : 'col-lg-4'" ng-style="innerBorder">
-        <div class="row">
+    <div class="row">
+      <div ng-class="data.pseudoPeer ? 'col-lg-6 col-lg-offset-3' : 'col-lg-4 as-bg'" ng-style="innerBorder">
+        <div class="row as-row">
           <div class="col-xs-2">
             <div class="router-name-text">AS</div>
           </div>
@@ -18,7 +18,7 @@
           <div class="as-section">
             <div class="centre">
               <div style="position: relative;">
-                <div class="router-name-text">Router Name: {{ data.RouterName }} {{data.pseudoPeer ? 'Local RIB': ''}}</div>
+                <div class="router-name-text name">Router Name: {{ data.RouterName }} {{data.pseudoPeer ? 'Local RIB': ''}}</div>
               </div>
               <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
               <div class="row router-name-text" style="margin: 5px 0 0 0;">
@@ -76,17 +76,17 @@
           <span style="float:left">{{ data.LocalIP }}</span>
           <span style="float:right">{{ data.PeerIP }}</span>
         </div>
-        <div class="row" style="text-align:center;margin-top:70px" ng-show="enabledCapabs.length>0">
+        <div class="row enabled-capabilities" ng-show="enabledCapabs.length>0">
           <span class="router-name-text">Enabled Capabilities:</span>
-          <p>
-          <span class="capabilities" tooltip="{{capability}}" ng-repeat="capability in enabledCapabs">
-                {{simplifyCapabs[capability]?simplifyCapabs[capability]:capability}}
-          </span>
-          </p>
+            <div class="arrow_box">
+              <span class="capabilities" tooltip="{{capability}}" ng-repeat="capability in enabledCapabs">
+                    {{simplifyCapabs[capability]?simplifyCapabs[capability]:capability}}
+              </span>
+          </div>
         </div>
       </div>
 
-      <div class="col-lg-4" ng-style="innerBorder" ng-hide='data.pseudoPeer'>
+      <div class="col-lg-4 as-bg" ng-hide='data.pseudoPeer'>
         <div class="row" ng-show="data.RouterASN!=data.PeerASN">
           <div class="col-xs-2">
             <div class="router-name-text">AS</div>
@@ -96,7 +96,7 @@
             </div>
           </div>
         </div>
-        <div class="row" ng-show="data.RouterASN==data.PeerASN">
+        <div class="row as-row" ng-show="data.RouterASN==data.PeerASN">
           <div class="col-xs-5 col-xs-offset-3">
             <div class="router-name-text">Same AS</div>
           </div>
@@ -105,7 +105,7 @@
           <div class="as-section">
             <div class="centre">
               <div style="position: relative;">
-                <div class="router-name-text">Peer Name: {{ data.PeerName }}</div>
+                <div class="router-name-text name">Peer Name: {{ data.PeerName }}</div>
               </div>
               <div class="{{ routerIcon }} peer bmp-outline-route" ng-style="{'color':colour}"></div>
               <div class="row router-name-text" style="margin: 5px 0 0 0;">
