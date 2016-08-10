@@ -1,6 +1,6 @@
 $router-color: #5795DC;
 $peer-color: #EAA546;
-$connector-color: #43e1ce;
+$connector-color: #AFAFAF;
 $peer-text-color: #FFFFFF;
 
 //.amount-img{
@@ -197,7 +197,7 @@ $peer-text-color: #FFFFFF;
 }
 
 .router-peer-line-wide {
-  background-color: $connector-color;
+  background-color: #43e1ce;
   position: absolute;
   margin: -1px 0;
   left: 0%;
