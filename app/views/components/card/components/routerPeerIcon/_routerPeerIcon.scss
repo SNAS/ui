@@ -1,6 +1,6 @@
 $router-color: #5795DC;
 $peer-color: #EAA546;
-$connector-color: #AFAFAF;
+$connector-color: #43e1ce;
 $peer-text-color: #FFFFFF;
 
 //.amount-img{
@@ -20,7 +20,6 @@ $peer-text-color: #FFFFFF;
   text-align: center;
   word-wrap: break-word;
   padding: 0 3px;
-  margin-top: 10px !important;
 }
 
 .arrow_box {
@@ -137,7 +136,7 @@ $peer-text-color: #FFFFFF;
         color: #EAA546;
       }
       .router-name-text {
-        color: #333333;
+        color: $connector-color;
       }
     }
   }
@@ -198,7 +197,7 @@ $peer-text-color: #FFFFFF;
 }
 
 .router-peer-line-wide {
-  background-color: #43e1ce;
+  background-color: $connector-color;
   position: absolute;
   margin: -1px 0;
   left: 0%;
