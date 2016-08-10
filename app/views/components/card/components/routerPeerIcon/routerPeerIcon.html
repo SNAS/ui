@@ -9,8 +9,8 @@
           </div>
           <div class="col-xs-10">
             <div class="router-name-text">
-              <span style="float:left">{{ data.RouterASN }}</span>
-              <span style="float:right">{{ RouterASName }}</span>
+              <span class="pull-left">{{ data.RouterASN }}</span>
+              <span class="pull-right">{{ RouterASName }}</span>
             </div>
           </div>
         </div>
@@ -21,7 +21,7 @@
                 <div class="router-name-text name">Router Name: {{ data.RouterName }} {{data.pseudoPeer ? 'Local RIB': ''}}</div>
               </div>
               <div class="bmp-bmp_router10-17 bmp-outline-route"></div>
-              <div class="row router-name-text" style="margin: 5px 0 0 0;">
+              <div class="row router-name-text">
                 <div class="col-xs-4" style="padding:0">
                   <div class="pull-right">
                     Router IP :
@@ -31,34 +31,40 @@
                   {{ data.RouterIP }}
                 </div>
               </div>
-              <div class="row router-name-text" style="margin: 5px 0 0 0;">
+              <div class="row router-name-text">
                 <div class="col-xs-4" style="padding:0">
                   <div class="pull-right">
                     BGP ID :
                   </div>
                 </div>
-                <div class="col-xs-8" style="text-align:left">
-                  {{ data.LocalBGPId }}
+                <div class="col-xs-8">
+                    <span class="pull-left">
+                    {{ data.LocalBGPId }}
+                  </span>
                 </div>
               </div>
-              <div class="row router-name-text" style="margin: 5px 0 0 0;">
+              <div class="row router-name-text">
                 <div class="col-xs-4" style="padding:0">
                   <div class="pull-right">
                     TCP Port :
                   </div>
                 </div>
-                <div class="col-xs-8" style="text-align:left">
-                  {{ data.LocalPort }}
+                <div class="col-xs-8">
+                  <span class="pull-left">
+                    {{ data.LocalPort }}
+                  </span>
                 </div>
               </div>
-              <div class="row router-name-text" style="margin: 5px 0 0 0;">
+              <div class="row router-name-text">
                 <div class="col-xs-4" style="padding:0">
                   <div class="pull-right">
                     Hold Time :
                   </div>
                 </div>
-                <div class="col-xs-8" style="text-align:left">
-                  {{ data.LocalHoldTime }}
+                <div class="col-xs-8">
+                  <span class="pull-left">
+                    {{ data.LocalHoldTime }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -108,7 +114,7 @@
                 <div class="router-name-text name">Peer Name: {{ data.PeerName }}</div>
               </div>
               <div class="{{ routerIcon }} peer bmp-outline-route" ng-style="{'color':colour}"></div>
-              <div class="row router-name-text" style="margin: 5px 0 0 0;">
+              <div class="row router-name-text">
                 <div class="col-xs-4" style="padding:0">
                   <div class="pull-right">
                     Peer IP :
@@ -118,7 +124,7 @@
                   {{ data.PeerIP }}
                 </div>
               </div>
-              <div class="row router-name-text" style="margin: 5px 0 0 0;">
+              <div class="row router-name-text">
                 <div class="col-xs-4" style="padding:0">
                   <div class="pull-right">
                     BGP ID :
@@ -128,7 +134,7 @@
                   {{ data.PeerBGPId }}
                 </div>
               </div>
-              <div class="row router-name-text" style="margin: 5px 0 0 0;">
+              <div class="row router-name-text">
                 <div class="col-xs-4" style="padding:0">
                   <div class="pull-right">
                     TCP Port :
@@ -138,7 +144,7 @@
                   {{ data.PeerPort }}
                 </div>
               </div>
-              <div class="row router-name-text" style="margin: 5px 0 0 0;">
+              <div class="row router-name-text">
                 <div class="col-xs-4" style="padding:0">
                   <div class="pull-right">
                     Hold Time :
