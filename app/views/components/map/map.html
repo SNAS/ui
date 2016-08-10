@@ -30,10 +30,10 @@
 
         <ul class="locations" ng-hide="selectedRouter">
           <li ng-repeat="location in locations | orderBy: 'options.city'" ng-hide="selectedRouter" ng-show="filteredRouters.length">
-            <p class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
+            <div class="router-list-city" ng-class="{expanded: location.expandRouters}" ng-click="selectPanelLocation(location)">
               <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
               <span class="count">({{location.options.routers.length}})</span>
-            </p>
+            </div>
             <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
             <ul class="routers" ng-show="location.expandRouters">
               <li ng-repeat="router in filteredRouters = (location.options.routers | filter:panelSearch)" ng-click="selectPanelRouter(location, router)">
@@ -52,10 +52,10 @@
 
         <ul class="locations" ng-show="selectedRouter">
           <li ng-repeat="(latlng, location) in peerDictionary | orderBy: 'location.options.city'" ng-show="filteredPeers.length">
-            <p class="router-list-city" ng-class="{expanded: location.options.expandPeers}" ng-click="selectPanelPeerLocation(location)">
+            <div class="router-list-city" ng-class="{expanded: location.options.expandPeers}" ng-click="selectPanelPeerLocation(location)">
               <span class="glyphicon glyphicon-play"></span>{{location.options.city}}
               <span class="count">({{location.options.peers.length}})</span>
-            </p>
+            </div>
             <span class="go-to-location glyphicon glyphicon-search" ng-click="goto(location)"></span>
             <ul class="peers" ng-show="location.options.expandPeers">
               <li ng-repeat="peer in filteredPeers = (location.options.peers | filter:panelSearch)" ng-click="selectPanelPeer(location, peer)" tooltip-popup-delay="1000" data-container="body" tooltip-append-to-body="true" tooltip="Router: {{peer.RouterName}}" tooltip-placement="bottom">

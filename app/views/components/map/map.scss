@@ -171,7 +171,7 @@
           opacity: 0;
           padding: 5px;
           margin: 0;
-          font-size: 9pt;
+          font-size: 12px;
           right: 10px;
           z-index: 2;
           color: #aaa;
@@ -236,7 +236,7 @@
                 cursor: default;
 
                 h3{
-                    font-size: 9pt;
+                    font-size: 12px;
                     margin: 0 0 5px 0;
                 }
 
@@ -245,7 +245,7 @@
                     color: #d5d5d5;
                     top: 12px;
                     left: 5px;
-                    font-size: 9pt;
+                    font-size: 12px;
                     width: 20px;
                     height: 20px;
                     border-radius: 10px;
@@ -278,10 +278,10 @@
                 list-style-type: none;
                 cursor: pointer;
                 background-color: white;
-                font-size: 9pt;
+                font-size: 12px;
                 color: #5c6e7c;
                 li{
-                    padding: 8px 0 8px 30px;
+                    padding: 0px 0 0px 30px;
                     position: relative;
                     &:nth-child(even){
                       background-color: #fbfbfb;
@@ -319,6 +319,7 @@
                 height: 100%;
                 li{
                     position:relative;
+                    margin: 0px;
                 }
             }
 
@@ -343,7 +344,7 @@
 
             .router-list-city{
                 cursor: pointer;
-                padding: 10px;
+                padding: 0 10px;
                 margin: 0;
                 transition: background-color 0.1s;
                 background-color: #f6f6f6;
@@ -447,6 +448,21 @@
 
   .col-xs-6{
     padding: 0;
+  }
+
+  .map-control {
+    &.router-list {
+      &.main  {
+        &.router-list-city {
+          cursor: pointer;
+          padding: 10px;
+          margin: 0;
+          transition: background-color .1s;
+          background-color: #f6f6f6;
+          color: #5c6e7c;
+        }
+      }
+    }
   }
 
   svg{
