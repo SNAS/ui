@@ -87,10 +87,10 @@
         </div>
         <div class="col-xs-6">
           <div class="peer-chart hand-clickable" id="routers">
-            <p>
+            <div>
               <span class="count">{{routerCount}}</span>
               Routers
-            </p>
+            </div>
             <nvd3 ng-click="bottomPaneGraphSelect()" options="routerChartOptions" data="routerChartData" config="showChartsConfig" style="float: left;"></nvd3>
           </div>
         </div>
@@ -101,10 +101,10 @@
         </div> -->
         <div class="col-xs-6">
           <div class="peer-chart right hand-clickable" id="peers">
-            <p>
+            <div>
               <span class="count">{{peerCount}}</span>
               Peers
-            </p>
+            </div>
             <nvd3 ng-click="bottomPaneGraphSelect()" options="peerIpChartOptions" data="peerIpChartData" config="showChartsConfig" style="float: left;"></nvd3>
           </div>
         </div>
