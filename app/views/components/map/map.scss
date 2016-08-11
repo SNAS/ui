@@ -498,8 +498,9 @@
 .peers-up-down{
   position: absolute;
   left: 40%;
-  font-size: 8pt;
+  font-size: 10px;
   top: 30%;
+  line-height: 1.6rem;
   font-family: 'CiscoSansExtraLight';
 
   .peers-up{
@@ -511,7 +512,7 @@
     margin-bottom: 0;
   }
   .line{
-    width: 80px;
+    width: 98%;
     height: 2px;
     background-color: #E4E4E4;
   }
