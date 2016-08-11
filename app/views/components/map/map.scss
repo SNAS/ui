@@ -13,8 +13,7 @@
   box-shadow: 0 0 3px rgba(0,0,0,0.1);
 
   h4{
-    margin: 0;
-    font-size:10pt;
+    margin: 0; font-size:10pt;
   }
 }
 
@@ -479,7 +478,7 @@
     border-radius: 75px;
     position: relative;
     margin: 0;
-    div {
+    p{
       color: #555;
       text-align: center;
       width: 75px;
@@ -499,8 +498,7 @@
 .peers-up-down{
   position: absolute;
   left: 40%;
-  font-size: 10px;
-  line-height: 1.6rem;
+  font-size: 8pt;
   top: 30%;
   font-family: 'CiscoSansExtraLight';
 
@@ -513,9 +511,8 @@
     margin-bottom: 0;
   }
   .line{
-    width: 98%;
+    width: 80px;
     height: 2px;
-    text-align: center;
     background-color: #E4E4E4;
   }
 
