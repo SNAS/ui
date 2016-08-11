@@ -3,7 +3,7 @@
     font-size: 45px;
     color: #EAA546;
   }
-
+  &.router-peer-diagram { height: 500px;}
   .rib-image {
     text-align: center;
     font-family: 'CiscoSansExtraLight';
@@ -28,6 +28,10 @@
 }
 .import {
   height: auto;
+}
+
+.icon-container {
+  &.router-peer-diagram { height: 505px;}
 }
 
 .tab-content h4 {
