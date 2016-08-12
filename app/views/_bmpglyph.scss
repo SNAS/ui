@@ -17,10 +17,7 @@
 	font-variant: normal;
 	text-transform: none;
 	line-height: 1;
-	font-weight: bold;
-	color: #172639;
-	cursor: pointer;
-	padding: 0px;
+
 	/* Better Font Rendering =========== */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -42,7 +39,7 @@
 
 icon
 {
-    font-size: 34px;
+    font-size: 38px;
 }
 
 /*.multi icon:nth-child(1)
@@ -350,3 +347,4 @@ icon
 .bmp-view:before {
 	content: "\e63f";
 }
+
