@@ -259,6 +259,7 @@
                 }
             }
         }
+
         .main {
             background-color: white;
             color: #555;
@@ -320,6 +321,7 @@
                 li{
                     position:relative;
                     margin: 0px;
+                    line-height: 2.8rem;
                 }
             }
 
@@ -345,6 +347,7 @@
             .router-list-city{
                 cursor: pointer;
                 padding: 0 10px;
+                line-height: 3rem;
                 margin: 0;
                 transition: background-color 0.1s;
                 background-color: #f6f6f6;
@@ -386,7 +389,7 @@
             }
         }
         &.with-router{
-            .main .locations{
+            .main .locations {
               margin-bottom: 0;
               margin-top: 97px;
             }
