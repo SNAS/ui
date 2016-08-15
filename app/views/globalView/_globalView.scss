@@ -4,7 +4,7 @@
 
 .router-list {
   display: inline;
-  line-height: 3rem;
+  line-height: 5rem;
   font-family: 'CiscoSans';
   text-transform: uppercase;
   .pgtitle {
@@ -15,7 +15,7 @@
     color: #000;
     margin-top: 8px;
   }
-  .peers {
+  .peers, .routers {
     background-color: #fff;
     color: #000;
     padding: 6px;
