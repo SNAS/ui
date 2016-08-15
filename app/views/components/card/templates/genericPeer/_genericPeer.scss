@@ -3,11 +3,11 @@
     font-size: 45px;
     color: #EAA546;
   }
-  &.router-peer-diagram { height: 500px;}
+  &.router-peer-diagram { height: 386px;}
   .rib-image {
     text-align: center;
     font-family: 'CiscoSansExtraLight';
-      padding-top: 40px;
+      padding-top: 10px;
       color: #afafaf;
     .rib-section {
       display: table-cell;
@@ -31,7 +31,7 @@
 }
 
 .icon-container {
-  &.router-peer-diagram { height: 505px;}
+  &.router-peer-diagram { height: 386px;}
 }
 
 .tab-content h4 {
