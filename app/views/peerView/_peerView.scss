@@ -1,7 +1,7 @@
 
 .peer-list {
   display: inline;
-  line-height: 5rem;
+  line-height: 3rem;
   font-family: 'CiscoSans';
   text-transform: uppercase;
   .pgtitle {
@@ -13,12 +13,14 @@
     margin-top: 8px;
   }
   .label-info {
-    background-color: #fff;
-    color: #000;
-    padding: 6px;
+    border-radius: 7px;
+    padding: 4px 7px;
+    cursor: pointer;
     margin-right: 10px;
-    font-size: 1.4rem;
-    color: #565a5c;
+    font-size: 1.3rem;
+    -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
   }
   .label-danger, .label-success {
     border-radius: 7px;
