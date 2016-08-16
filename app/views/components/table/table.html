@@ -1,8 +1,7 @@
 <div class="table-container">
   <div class="router-list">
     <!-- <span class="lable routers">Routers</span> -->
-    <span class="label label-info" ng-click="clickRouters()">Routers</span>
-    <span class="label label-success" ng-click="clickRouters()">{{$root.routerCount}} Connected</span>
+    <span class="label label-info" ng-click="clickRouters()">{{$root.routerCount}} Routers</span>
     <span class="label label-danger" ng-click="clickDisconnected()">{{$root.routersTotals[1]}} Disconnected</span>
     <span class="label peers" style="margin-left: 50px;">{{$root.peerCount}} Peers</span>
     <span class="label label-success" ng-click="clickIpv4Up()">{{$root.ips[0][2]}} IPv4<span class="glyphicon glyphicon-arrow-up"></span></span>
