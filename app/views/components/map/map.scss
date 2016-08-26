@@ -352,12 +352,13 @@
                 transition: background-color 0.1s;
                 background-color: #f6f6f6;
                 color: #5c6e7c;
-
+                &.ng-binding {
+                  font-size: 1.2rem;
+                }
                 .count{
                     text-align: right;
                     color: #bbb;
                 }
-
                 .glyphicon-play{
                     width: 1em;
                     margin-right: 8px;
@@ -490,9 +491,10 @@
       height: 50px;
       left: 21%;
       top: 28%;
+      font-size: 1.3rem;
 
       .count{
-        font-size: 28px;
+        font-size: 2.7rem;
         display: block;
         margin-bottom: -27px;
       }
@@ -568,6 +570,9 @@
     &:nth-child(even) {
       background-color: #c4d7e1;
     }
+    .circle-down, .circle-up {
+      margin-right: 5px;
+      }
   }
 }
 
