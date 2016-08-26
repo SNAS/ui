@@ -73,8 +73,8 @@ svg.title {
 .icon-container{
   padding: 0px 30px 30px;
   margin: 0;
-  background-color: #fff;
   border: 1px solid #f1f1f1;
+  background-color: #fff;
   height: 190px;
   position:relative;
   h4{
@@ -83,6 +83,12 @@ svg.title {
     color: #677885;
     font-size: 15px;
     text-transform: uppercase;
+  }
+  &.downstream {
+    height: 100%;
+  .ui-grid-contents-wrapper {
+    background-color: #fff;
+    }
   }
   .table{
     color: #999;
