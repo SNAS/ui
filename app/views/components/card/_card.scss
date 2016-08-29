@@ -27,12 +27,9 @@
       position: absolute;
       padding: 3px;
       cursor: pointer;
-      border-radius: 20px;
-      border: 1px solid #ccc;
       transition: background-color 0.2s;
-      background-color: rgb(228, 228, 228);
       &:hover{
-        opacity: .5;
+        opacity: .3;
       }
     }
     .bmp-close{
@@ -46,7 +43,7 @@
       border-radius: 20px;
       transition: background-color 0.2s;
       &:hover{
-        background-color: rgb(228, 228, 228);
+        opacity: .3;
       }
     }
 
