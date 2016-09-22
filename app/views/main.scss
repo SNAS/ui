@@ -87,7 +87,6 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 @import "prefixanalysis/prefixanalysis";
 @import "whois/whois";
 @import "container/container";
-@import "container/button_factory";
 @import "globalView/globalView";
 @import "peerView/peerView";
 @import "bmpglyph";
@@ -250,14 +249,10 @@ icon.bmp-down {
   color: #888;
   font-family: 'CiscoSansExtraLight';
   outline: none;
-  padding: 4px;
-  border-radius: 4px;
 }
 
 .input {
   padding-bottom: 12px;
-  padding: 4px;
-  border-radius: 4px;
 }
 
 .filter-button {
