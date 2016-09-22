@@ -123,7 +123,8 @@
     font-size: 18px;
 
   .context-box {
-    background-color: #868788;
+    // background-color: #868788;
+    background-color: #aeaeae;
     height: 54px;
     margin-top: -15px;
     padding: 17px 15px 15px 15px;
@@ -322,6 +323,8 @@
 
         .instant-input{
           opacity: 1;
+          padding: 4px;
+          border-radius: 4px;
         }
       }
 
@@ -350,6 +353,8 @@
         border: none;
         outline: none;
         background-color: #273b4a;
+        padding: 4px;
+        border-radius: 4px;
 
         &::-webkit-input-placeholder { /* WebKit browsers */
             color:    #9cb2c3;
