@@ -1,0 +1,24 @@
+<div ng-controller="BGPController">
+
+  <h1 class="pgtitle">AS List</h1>
+  <button class="btn btn-success" ng-click="triggerDataUpdate()">trigger data update notification from server</button>
+
+  <nvd3 options="options" data="data"></nvd3>
+
+  <table class="table table-condensed table-striped table-hover">
+    <tr>
+      <th>AS</th>
+      <th>Origins</th>
+      <th>Routes</th>
+    </tr>
+    <tr ng-repeat="as in asList">
+      <td>{{as.as}}</td>
+      <td>{{as.origins}}</td>
+      <td>{{as.routes}}</td>
+    </tr>
+  </table>
+
+</div>
+
+
+

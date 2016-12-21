@@ -7,6 +7,15 @@
       </div>
       <div class="nav-section">
         <div class="shadow"></div>
+        <h4><img src="../images/pnda.png" class="pnda-logo" />PNDA Apps</h4>
+        <ul class="nav sidebar-nav">
+          <li active-item><a ui-sref="app.bgp" ui-sref-opts="{reload: true}">BGP AS</a>
+            <dual-control d="dualWindow" l="bgp"></dual-control>
+          </li>
+        </ul>
+      </div>
+      <div class="nav-section">
+        <div class="shadow"></div>
         <h4><span class="glyphicon glyphicon-dashboard"></span>Dashboards</h4>
         <ul class="nav sidebar-nav">
           <li active-item><a ui-sref="app.globalView" ui-sref-opts="{reload: true}">Global View</a>
@@ -24,7 +33,7 @@
             <dual-control d="dualWindow" l="asView"></dual-control>
           </li>
           <!--<li active-item><a ui-sref="app.networkView" ui-sref-opts="{reload: true}">Network View</a>-->
-            <!--<dual-control d="dualWindow" l="orrView"></dual-control>-->
+          <!--<dual-control d="dualWindow" l="orrView"></dual-control>-->
           <!--</li>-->
           <li active-item><a ui-sref="app.linkState" ui-sref-opts="{reload: true}">Link State View</a>
             <dual-control d="dualWindow" l="linkState"></dual-control>
@@ -38,7 +47,7 @@
             <dual-control d="dualWindow" l="lookingGlass"></dual-control>
           </li>
           <!--<li active-item><a ui-sref="app.atlas" ui-sref-opts="{reload: true}">ATLAS</a>-->
-            <!--<dual-control d="dualWindow" l="atlas"></dual-control>-->
+          <!--<dual-control d="dualWindow" l="atlas"></dual-control>-->
           <!--</li>-->
         </ul>
       </div>

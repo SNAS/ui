@@ -60,6 +60,9 @@ module.exports = function(grunt) {
         files: ['bower.json'],
         tasks: ['wiredep']
       },
+      html: {
+        files: ['<%= yeoman.app %>/views/**/*.html']
+      },
       js: {
         files: ['<%= yeoman.app %>/views/**/*.js'],
         options: {

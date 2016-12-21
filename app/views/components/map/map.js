@@ -733,7 +733,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             return d3.format('')(d);
           },
           color: function (d, i) {
-            return d.data.color
+            return d.color;
+//            return d.data.color
           },
           tooltipContent: function (key, y, e, graph) {
             return '<h4>' + y + ' <span class="count">' + e.point.key + '</span></h4>';
@@ -769,7 +770,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             return d3.format('')(d);
           },
           color: function (d, i) {
-            return d.data.color
+            return d.color;
+//            return d.data.color
           },
           tooltipContent: function (key, y, e, graph) {
             return '<h4>' + y + ' <span class="count">' + e.point.key + '</span></h4>';

@@ -1,0 +1,10 @@
+{
+  "bgpDataService": {
+    "host": "10.230.48.135",
+    "port": 3001
+  },
+  "openbmp": {
+    "host": "bmp-dev.openbmp.org",
+    "port": 8001
+  }
+}
