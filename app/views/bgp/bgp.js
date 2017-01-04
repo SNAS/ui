@@ -8,22 +8,67 @@
  * Controller of the BGP page
  */
 angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataService", "ConfigService", "socket",
-  function($scope, bgpDataService, ConfigService, socket) {
+  function($scope, bgpDataService, ConfigService, socket, uiGridConstants) {
     // TODO: have a widget to choose the start and end dates/times
     var start = 1483463232000;
     var end = 1483549631000;
-    bgpDataService.getASList(start, end).success(function(result) {
-        // TODO: have a way to choose which result to display
-        $scope.asList = result.length > 0 ? result[0].asList : [];
-        $scope.data = transformToGraphData($scope.asList);
-        console.log("$scope.data", $scope.data);
-      }
-    ).error(function(error) {
-        console.log("Failed to retrieve AS list", error);
-        $scope.error = error;
-      });
 
-    $scope.options = {
+    // AS list table options
+    const asListGridInitHeight = 450;
+    $scope.asListGridOptions = {
+      enableColumnResizing: true,
+      rowHeight: 32,
+      gridFooterHeight: 0,
+      showGridFooter: true,
+      height: asListGridInitHeight,
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      columnDefs: [
+        {
+          name: "as", displayName: 'ASN', width: '*', type: 'number',
+          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+        },
+        {
+          name: "origins", displayName: 'Origins', width: '25%',
+          type: 'number', cellClass: 'align-right', headerCellClass: 'header-align-right'
+        },
+        {
+          name: "routes", displayName: 'Routes', width: '25%',
+          type: 'number', cellClass: 'align-right', headerCellClass: 'header-align-right',
+          sort: { direction: uiGridConstants.DESC }
+        }
+      ]//,
+//      onRegisterApi: function (gridApi) {
+//        $scope.upstreamGridApi = gridApi;
+//      }
+    };
+
+    function updateData(result) {
+      // TODO: have a way to choose which result to display
+      $scope.asList = result.length > 0 ? result[0].asList : [];
+      $scope.data = transformToGraphData($scope.asList);
+      console.log("$scope.data", $scope.data);
+
+      $scope.loadingASList = false; //stop loading
+      $scope.asListGridOptions.data = $scope.asList;
+    }
+
+    function getData() {
+      $scope.loadingASList = true; // begin loading
+      $scope.asListGridOptions.data = [];
+      bgpDataService.getASList(start, end).success(function(result) {
+          updateData(result);
+        }
+      ).error(function(error) {
+          console.log("Failed to retrieve AS list", error);
+          $scope.error = error;
+        }
+      );
+    }
+
+    getData();
+
+    $scope.barChartOptions = {
       chart: {
         type: 'multiBarChart',
         height: 450,
@@ -84,8 +129,8 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";
     socket.connect(SOCKET_IO_SERVER, uiServer);
     socket.on(SOCKET_IO_SERVER, 'dataUpdate', function(data) {
-      $scope.asList = data;
-      $scope.data = transformToGraphData($scope.asList);
+      console.log("dataUpdate", data);
+      updateData(data);
     });
 
     // this function is for testing purposes, to trigger a socket.io update from the server

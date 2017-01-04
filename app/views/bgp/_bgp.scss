@@ -2,3 +2,27 @@
   width: 20px;
   margin-right: 6px;
 }
+
+#bgpView {
+  $marginLeft: 10px;
+  h3 {
+    margin-left: $marginLeft;
+  }
+  .ui-grid {
+    margin: 0 $marginLeft;
+    .align-right, .header-align-right {
+      text-align: right;
+    }
+    .header-align-right {
+      &>div {
+        margin-right: 15px;
+      }
+      .ui-grid-column-menu-button-last-col {
+        margin-right: 0;
+      }
+    }
+    .ui-grid-column-menu-button {
+      top: 5px;
+    }
+  }
+}

@@ -1,24 +1,51 @@
-<div ng-controller="BGPController">
+<div ng-controller="BGPController" id="bgpView">
 
-  <h1 class="pgtitle">AS List</h1>
-  <div ng-if="error">{{error}}</div>
-  <div ng-if="!error">
-    <button class="btn btn-success" ng-click="triggerDataUpdate()">trigger data update notification from server</button>
+  <div class="main-page-search">
+    AS Number or AS Name:
+    <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-model="searchValue"
+           placeholder="Search ..."
+           typeahead="as_name for as_name in getSuggestions($viewValue)"
+           typeahead-loading="loadingLocations"
+           typeahead-no-results="noResults"
+           typeahead-wait-ms="300"
+           typeahead-on-select="onSelect($item, $model, $label)"/>
+    <span class="help-block">Examples: 109, Cisco, etc.</span>
+    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+    <!--<br/>-->
+    <!--<br/>-->
+    <div class="row">
+      <div ng-show="nodata" class="col-md-4">
+        <p ng-style="{'font-size': '20px', opacity: 0.5, align: center}">
+          <i class="glyphicon glyphicon-remove"></i>
+          No Results Found
+        </p>
+      </div>
+    </div>
+  </div>
 
-    <nvd3 options="options" data="data"></nvd3>
+  <div class="main-area row">
+    <div class="col-lg-8">
+      <div class="table-container">
+        <h3>Prefixes originated and transitted per AS</h3>
+        <nvd3 options="barChartOptions" data="data"></nvd3>
+      </div>
+    </div>
 
-    <table class="table table-condensed table-striped table-hover">
-      <tr>
-        <th>AS</th>
-        <th>Origins</th>
-        <th>Routes</th>
-      </tr>
-      <tr ng-repeat="as in asList">
-        <td>{{as.as}}</td>
-        <td>{{as.origins}}</td>
-        <td>{{as.routes}}</td>
-      </tr>
-    </table>
+    <div class="col-lg-4">
+      <div class="table-container">
+        <h3>AS List
+          <button ng-if="!error" class="btn btn-success btn-xs right" ng-click="triggerDataUpdate()">trigger data update notification from server</button>
+        </h3>
+
+        <div class="loading-section">
+          <div ng-show="loadingASList" bmp-loading loading-var="loadingASList"></div>
+          <div class="grid" ui-grid-auto-resize ui-grid-resize-columns="true" ui-grid="asListGridOptions"
+               ng-style="{'height': asListGridOptions.height}">
+            <div class="watermark" ng-if="!asListGridOptions.data.length">No data available</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>
