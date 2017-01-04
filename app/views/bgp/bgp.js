@@ -9,13 +9,18 @@
  */
 angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataService", "ConfigService", "socket",
   function($scope, bgpDataService, ConfigService, socket) {
-    bgpDataService.getASList().success(function(result) {
-        $scope.asList = result;
+    // TODO: have a widget to choose the start and end dates/times
+    var start = 1483463232000;
+    var end = 1483549631000;
+    bgpDataService.getASList(start, end).success(function(result) {
+        // TODO: have a way to choose which result to display
+        $scope.asList = result.length > 0 ? result[0].asList : [];
         $scope.data = transformToGraphData($scope.asList);
         console.log("$scope.data", $scope.data);
       }
     ).error(function(error) {
-        console.log("Failed to retrieve AS list", error.message);
+        console.log("Failed to retrieve AS list", error);
+        $scope.error = error;
       });
 
     $scope.options = {

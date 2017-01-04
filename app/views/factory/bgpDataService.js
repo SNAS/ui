@@ -14,9 +14,9 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', 'ConfigService', 
   var bgpAPI = "http://" + host + ":" + port + "/as";
 
   return {
-    getASList: function() {
+    getASList: function(start, end) {
       // get the AS list from the BGP data service
-      return $http.get(bgpAPI);
+      return $http.get(bgpAPI + "?start="+start+"&end="+end);
     }
   };
 }]);
