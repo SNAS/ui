@@ -3,6 +3,10 @@
 angular.module('bmpUiApp')
   .controller('TopsViewController', ["$scope", "apiFactory", '$timeout', '$state', '$stateParams', function ($scope, apiFactory, $timeout, $state, $stateParams) {
 
+    // load UTC timezone
+    moment.tz.add("Etc/UTC|UTC|0|0|");
+    moment.tz.link("Etc/UTC|UTC");
+
     var updateColor = "#EAA546";
     var withdrawColor = "#4B84CA";
 
@@ -11,7 +15,7 @@ angular.module('bmpUiApp')
     var startTimestamp, endTimestamp;
 
     endTimestamp = moment().toDate();
-    startTimestamp = moment().subtract('minutes', 15).toDate();
+    startTimestamp = moment().subtract(15, 'minutes').toDate();
     var duration, durationInMinutes;
 
 
