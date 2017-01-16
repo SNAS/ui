@@ -14,7 +14,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
     var end = 1483549631000;
 
     // AS list table options
-    const asListGridInitHeight = 450;
+    const asListGridInitHeight = 449;
     $scope.asListGridOptions = {
       enableColumnResizing: true,
       rowHeight: 32,
@@ -29,27 +29,76 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
         },
         {
-          name: "origins", displayName: 'Origins', width: '25%',
+          name: "origins", displayName: 'Origins', width: '*',
           type: 'number', cellClass: 'align-right', headerCellClass: 'header-align-right'
         },
         {
-          name: "routes", displayName: 'Routes', width: '25%',
+          name: "routes", displayName: 'Routes', width: '*',
           type: 'number', cellClass: 'align-right', headerCellClass: 'header-align-right',
           sort: { direction: uiGridConstants.DESC }
         }
-      ]//,
-//      onRegisterApi: function (gridApi) {
-//        $scope.upstreamGridApi = gridApi;
-//      }
+      ]
     };
 
-    function updateData(result) {
-      // TODO: have a way to choose which result to display
-      $scope.asList = result.length > 0 ? result[0].asList : [];
-      $scope.data = transformToGraphData($scope.asList);
-      console.log("$scope.data", $scope.data);
+    var color = d3.scale.category20();
+    var minRadius = 4;
+    var maxRadius = 20;
+    // the domains for both scales below need to be updated when we receive the data
+    var radiusLinearScale = d3.scale.linear()
+      .domain([0,10000])
+      .range([minRadius, maxRadius]);
+    var minLinkWidth = 1;
+    var maxLinkWidth = 4;
+    var linkWidthLinearScale = d3.scale.linear()
+      .domain([0,10000])
+      .range([minLinkWidth, maxLinkWidth]);
+    var minLinkLength = 20;
+    var maxLinkLength = 150;
+    var linkLengthLinearScale = d3.scale.linear()
+      .domain([0,10000])
+      .range([minLinkLength, maxLinkLength]);
 
-      $scope.loadingASList = false; //stop loading
+//    var nodeIndexes = {};
+    function getDataFromArray(result, key) {
+      // TODO: have a way to choose which result to display
+      return result.length > 0 ? result[0][key] : [];
+    }
+
+    function stream_index(d, i) {
+      return {x: i, y: Math.max(0, d)};
+    }
+
+    function transformToGraphData(asList) {
+      var prefixesOriginated = [];
+      var prefixesTransitted = [];
+      for (var i = 0 ; i < asList.length ; i++) {
+        prefixesOriginated.push(asList[i].origins);
+        prefixesTransitted.push(asList[i].routes - asList[i].origins);
+      }
+
+      // update the scales' domain for the force directed graph
+      radiusLinearScale.domain([0, d3.max(prefixesOriginated)]);
+//      radiusLinearScale.domain([0, d3.max(prefixesTransitted)]);
+
+      return [
+        {
+          key: "Prefixes Originated",
+          values: prefixesOriginated.map(stream_index)
+        },
+        {
+          key: "Prefixed Transitted",
+          values: prefixesTransitted.map(stream_index)
+        }
+      ];
+    }
+
+    function updateNodeData(result) {
+      console.log("updateNodeData");
+      $scope.asList = getDataFromArray(result, "asList");
+      $scope.barChartData = transformToGraphData($scope.asList);
+//      console.log("$scope.barChartData", $scope.barChartData)
+
+      $scope.loadingASList = false; // stop loading
       $scope.asListGridOptions.data = $scope.asList;
     }
 
@@ -57,16 +106,27 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
       $scope.loadingASList = true; // begin loading
       $scope.asListGridOptions.data = [];
       bgpDataService.getASList(start, end).success(function(result) {
-          updateData(result);
+          updateNodeData(result);
         }
       ).error(function(error) {
-          console.log("Failed to retrieve AS list", error);
+          console.error("Failed to retrieve AS list", error);
           $scope.error = error;
         }
       );
+
+      bgpDataService.getASNodesAndIndexedLinks(start, end).then(function(data) {
+        $scope.forceDirectedGraph.data = data;
+        console.log("forceDirectedGraph data", $scope.forceDirectedGraph.data);
+        var linkWeight = function(link) { return link.weight; };
+        var minWeight = d3.min(data.links.map(linkWeight));
+        var maxWeight = d3.max(data.links.map(linkWeight));
+        linkWidthLinearScale.domain([0, maxWeight]);
+        linkLengthLinearScale.domain([maxWeight, minWeight]);
+        console.log("minWeight %s maxWeight %s", minWeight, maxWeight);
+      });
     }
 
-    getData();
+    /* bar chart */
 
     $scope.barChartOptions = {
       chart: {
@@ -102,41 +162,148 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
       }
     };
 
-    function transformToGraphData(asList) {
-      var prefixesOriginated = [];
-      var prefixesTransitted = [];
-      for (var i = 0 ; i < asList.length ; i++) {
-        prefixesOriginated.push(asList[i].origins);
-        prefixesTransitted.push(asList[i].routes - asList[i].origins);
+    /* end of bar chart */
+
+    /* force-directed graph */
+
+    // stability is a value between 0 and 1. A value over 1 will be mapped to 1
+    function linkStabilityColor(stability) {
+      var colors = ["#ca0020", "#f4a582", "#92c5de", "#0571b0"];
+      var index = 0;
+      if (stability >= 1) {
+        index = 3;
+      } else if (stability >= 0.75) {
+        index = 2;
+      } else if (stability >= 0.4) {
+        index = 1;
       }
-      return [
-        {
-          key: "Prefixes Originated",
-          values: prefixesOriginated.map(stream_index)
-        },
-        {
-          key: "Prefixed Transitted",
-          values: prefixesTransitted.map(stream_index)
-        }
-      ];
+      return colors[index];
     }
 
-    function stream_index(d, i) {
-      return {x: i, y: Math.max(0, d)};
-    }
+    $scope.tooltipFields = [ "as", "routes", "origins", "weight" ];
+    $scope.forceDirectedGraph = {
+      options: {
+        chart: {
+          type: 'customForceDirectedGraph',
+          height: 500,
+          width: (function() {
+            var parentDiv = $("#forceDirectedGraph");
+            var defaultScrollbarWidth = 15;
+            return parentDiv.width() - defaultScrollbarWidth;// - margins - borders - padding;
+          })(),
+          margin:{top: 20, right: 20, bottom: 20, left: 20},
+          color: function(d){
+            return color(d.num_of_prefixes)
+          },
+          nodeExtras: function(node) {
+            node && node
+              .append("text")
+              .attr("dx", function(d) { return radiusLinearScale(d.origins) + 2; })
+              .attr("dy", ".35em")
+              .text(function(d) { return d.as })
+              .style('font-size', '10px');
+          },
+          linkExtras: function(link) {
+            link && link
+              .style("stroke-width", function(d) { return linkWidthLinearScale(d.weight); })
+              .style("stroke", function(d) { return linkStabilityColor(d.stability); })
+          },
+          linkColor: function(d) {
+            return linkStabilityColor(d.stability);
+          },
+          linkDist: function(link) {
+            return linkLengthLinearScale(link.weight);
+          },
+          linkStrength: 0.8,
+          charge: -200,
+//          initCallback: function(svgContainer) {
+//          },
+          radius: function(d) {
+            return radiusLinearScale(d.origins);
+          },
+          nvTooltipFields: $scope.tooltipFields,
+          useNVTooltip: false,
+          tooltipCallback: function(hideTooltip, tooltipData) {
+//            console.debug("tooltipData", tooltipData);
+            var nodeTooltip = $("#nodeTooltips");
+            if (!hideTooltip) {
+              for (var i = 0 ; i < $scope.tooltipFields.length ; i++) {
+                var field = $scope.tooltipFields[i];
+                $("#field-"+field+" .value").text(tooltipData[field]);
+                nodeTooltip.removeClass("hideTooltip")
+              }
+            } else {
+              nodeTooltip.addClass("hideTooltip")
+            }
+          }
+        }
+      }
+    };
+
+    /* end of force-directed graph */
+
+    /* time slider */
+
+    // load UTC timezone
+    moment.tz.add("Etc/UTC|UTC|0|0|");
+    moment.tz.link("Etc/UTC|UTC");
+
+    var timeFormat = 'YYYY-MM-DD HH:mm';
+
+    var startTimestamp, endTimestamp;
+
+    endTimestamp = moment().toDate();
+    startTimestamp = moment().subtract(30, 'minutes').toDate();
+
+    var sliderSettings = {
+      start: [startTimestamp.getTime(), endTimestamp.getTime()], // Handle start position
+      step: 60 * 1000, // Slider moves in increments of a minute
+      margin: 60 * 1000, // Handles must be more than 1 minute apart
+      limit: 120 * 60 * 1000, // Maximum 2 hours
+      connect: true, // Display a colored bar between the handles
+      orientation: 'horizontal', // Orient the slider vertically
+      behaviour: 'tap-drag', // Move handle on tap, bar is draggable
+      range: {
+        'min': moment().subtract(4, 'hours').toDate().getTime(),
+        'max': moment().toDate().getTime()
+      },
+      format: {
+        to: function (value) {
+          return moment(parseInt(value));
+        },
+        from: function (value) {
+          return parseInt(value);
+        }
+      },
+      pips: {
+        mode: 'count',
+        values: 5,
+        density: 4,
+        format: {
+          to: function (value) {
+            return moment(parseInt(value)).format('MM/DD HH:mm');
+          }
+        }
+      }
+    };
+
+    /* end of time slider */
+
+    // initialisation
+    getData();
 
     var uiServer = ConfigService.bgpDataService;
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";
     socket.connect(SOCKET_IO_SERVER, uiServer);
     socket.on(SOCKET_IO_SERVER, 'dataUpdate', function(data) {
       console.log("dataUpdate", data);
-      updateData(data);
+      updateNodeData(data);
     });
 
     // this function is for testing purposes, to trigger a socket.io update from the server
     // this is TEMPORARY and will be removed once the server gets real-time OpenTSDB updates
     $scope.triggerDataUpdate = function() {
-      socket.emit(SOCKET_IO_SERVER, "updateData");
+      socket.emit(SOCKET_IO_SERVER, "updateNodeData");
     };
   }
 );

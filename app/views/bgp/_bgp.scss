@@ -25,4 +25,35 @@
       top: 5px;
     }
   }
+  .table-container {
+    margin-bottom: 30px;
+  }
+
+  .nv-container {
+    position: relative;
+    #nodeTooltips {
+      position: absolute;
+      top: 0;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 4px;
+      background-color: rgba(255,255,255,0.8);
+      .value {
+        text-align: right;
+      }
+      .field,.value {
+        padding: 2px 5px;
+      }
+      opacity: 1;
+      transition: opacity .2s ease-in-out, stroke-dasharray .2s ease-in-out;
+      &.hideTooltip {
+        opacity: 0;
+      }
+    }
+    svg {
+      line, circle {
+        transition: all .2s ease-in-out;
+      }
+    }
+  }
 }

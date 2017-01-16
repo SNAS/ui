@@ -211,8 +211,6 @@ function bootstrapApplication() {
 
       bmpUiApp.config(['ConfigServiceProvider', function (ConfigServiceProvider) {
         ConfigServiceProvider.config(json.data);
-
-//        console.log("conf/config.json loaded successfully", json.data);
       }]);
 
       bootstrapApplication();
