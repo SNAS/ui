@@ -29,7 +29,8 @@ nv.models.customForceDirectedGraph = function() {
   // you can specify the list of fields you want to show when hovering a node e.g. ["name", "value"]
     , nvTooltipFields = null
     , useNVTooltip = true
-    , tooltipCallback = function(hide, tooltipData) { /* Do nothing */ }
+    , tooltipCallback = function(hide, tooltipData) { /* Do nothing */}
+    , nodeCircles = null
     ;
 
   //============================================================
@@ -57,12 +58,6 @@ nv.models.customForceDirectedGraph = function() {
   var focus_node = null, highlight_node = null;
   var default_node_color = "#ccc";
   var default_link_color = "#888";
-
-  var outline = false;
-  var towhite = "stroke";
-  if (outline) {
-    towhite = "fill"
-  }
 
   function chart(selection) {
     renderWatch.reset();
@@ -112,19 +107,19 @@ nv.models.customForceDirectedGraph = function() {
         return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
       }
 
-      function hasConnections(a) {
-        for (var property in linkedByIndex) {
-          var s = property.split(",");
-          if ((s[0] == a.index || s[1] == a.index) && linkedByIndex[property]) {
-            return true;
-          }
-        }
-        return false;
-      }
-
-      function isNumber(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
-      }
+//      function hasConnections(a) {
+//        for (var property in linkedByIndex) {
+//          var s = property.split(",");
+//          if ((s[0] == a.index || s[1] == a.index) && linkedByIndex[property]) {
+//            return true;
+//          }
+//        }
+//        return false;
+//      }
+//
+//      function isNumber(n) {
+//        return !isNaN(parseFloat(n)) && isFinite(n);
+//      }
 
       var force = d3.layout.force()
         .nodes(data.nodes)
@@ -152,10 +147,23 @@ nv.models.customForceDirectedGraph = function() {
         .attr("class", "nv-force-node")
         .call(force.drag);
 
-      var circle = node
-        .append("circle")
-        .attr("r", radius)
-        .style("fill", function(d) { return color(d) } )
+      if (nodeCircles === null) {
+        nodeCircles = [
+          { color: function(d) { return color(d) }, radius: radius }
+        ];
+      }
+
+      var circles = []
+      var group = node.append("g").attr("class", "circles");
+      for (var i = 0 ; i < nodeCircles.length ; i++) {
+        var n = nodeCircles[i];
+        var c = group.append("circle")
+          .attr("r", n.radius)
+//          .style("fill", n.color)
+          .attr("class", function(d) { return (n.displayNode(d) ? "" : "hidden") + " " + n.cssClass; });
+        circles.push(c);
+      }
+      group
         .on("mouseover", function(evt) {
           container.select('.nv-series-' + evt.seriesIndex + ' .nv-distx-' + evt.pointIndex)
             .attr('y1', evt.py);
@@ -190,7 +198,9 @@ nv.models.customForceDirectedGraph = function() {
         if (focus_node === null) {
           svg.style("cursor","move");
           if (highlight_color !== "white") {
-            circle.style(towhite, "white");
+            nodeCircles.forEach(function(n, i) {
+              circles[i].style("stroke", "white");
+            });
             link.style("opacity", 1);
             link.style("stroke", function(o) {
               return linkColor(o);
@@ -201,8 +211,10 @@ nv.models.customForceDirectedGraph = function() {
 
       function set_focus(d) {
         if (highlight_trans < 1) {
-          circle.style("opacity", function(o) {
-            return isConnected(d, o) ? 1 : highlight_trans;
+          nodeCircles.forEach(function(n, i) {
+            circles[i].style("opacity", function(o) {
+              return isConnected(d, o) ? 1 : highlight_trans;
+            });
           });
 
           link.style("opacity", function(o) {
@@ -217,8 +229,11 @@ nv.models.customForceDirectedGraph = function() {
         highlight_node = d;
 
         if (highlight_color !== "white") {
-          circle.style(towhite, function(o) {
-            return isConnected(d, o) ? highlight_color : "white";});
+//          nodeCircles.forEach(function(n, i) {
+//            circles[i].style("stroke", function(o) {
+//              return isConnected(d, o) ? highlight_color : "white";
+//            });
+//          });
           link.style("opacity", function(o) {
             return o.source.index == d.index || o.target.index == d.index ? 1 : 0.5;
           });
@@ -247,7 +262,9 @@ nv.models.customForceDirectedGraph = function() {
         if (focus_node !== null) {
           focus_node = null;
           if (highlight_trans < 1) {
-            circle.style("opacity", 1);
+            nodeCircles.forEach(function(n, i) {
+              circles[i].style("opacity", 1);
+            });
             link.style("opacity", 1);
           }
         }
@@ -255,21 +272,66 @@ nv.models.customForceDirectedGraph = function() {
         if (highlight_node === null) exit_highlight();
       });
 
-
-      zoom.on("zoom", function() {
-        console.debug("zoom");
+      function zoomed() {
         var stroke = nominal_stroke;
         if (nominal_stroke*zoom.scale()>max_stroke) stroke = max_stroke/zoom.scale();
         link.style("stroke-width",stroke);
-        circle.style("stroke-width",stroke);
+        nodeCircles.forEach(function(n, i) {
+          circles[i].style("stroke-width",stroke);
+        });
 
         var base_radius = nominal_base_node_size;
         if (nominal_base_node_size*zoom.scale()>max_base_node_size) base_radius = max_base_node_size/zoom.scale();
-        circle.attr("r", function(d) {
-          return (radius(d)*base_radius/nominal_base_node_size||base_radius);
+        nodeCircles.forEach(function(n, i) {
+          circles[i].attr("r", function(d) {
+            return (n.radius(d)*base_radius/nominal_base_node_size/*||base_radius*/);
+          });
         });
         g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-      });
+      }
+
+      function interpolateZoom (translate, scale) {
+        var self = this;
+        return d3.transition().duration(350).tween("zoom", function () {
+          var iTranslate = d3.interpolate(zoom.translate(), translate),
+            iScale = d3.interpolate(zoom.scale(), scale);
+          return function (t) {
+            zoom
+              .scale(iScale(t))
+              .translate(iTranslate(t));
+            zoomed();
+          };
+        });
+      }
+
+      function zoomClick(zoomDirection) {
+        var direction = 1,
+          factor = 0.2,
+          target_zoom = 1,
+          center = [width / 2, height / 2],
+          extent = zoom.scaleExtent(),
+          translate = zoom.translate(),
+          translate0 = [],
+          l = [],
+          view = {x: translate[0], y: translate[1], k: zoom.scale()};
+
+        d3.event.preventDefault();
+        direction = (zoomDirection === 'zoom_in') ? 1 : -1;
+        target_zoom = zoom.scale() * (1 + factor * direction);
+
+        if (target_zoom < extent[0] || target_zoom > extent[1]) { return false; }
+
+        translate0 = [(center[0] - view.x) / view.k, (center[1] - view.y) / view.k];
+        view.k = target_zoom;
+        l = [translate0[0] * view.k + view.x, translate0[1] * view.k + view.y];
+
+        view.x += center[0] - l[0];
+        view.y += center[1] - l[1];
+
+        interpolateZoom([view.x, view.y], view.k);
+      }
+
+      zoom.on("zoom", zoomed);
 
       tooltip.headerFormatter(function(d) {return "Node";});
 
@@ -353,11 +415,22 @@ nv.models.customForceDirectedGraph = function() {
     }},
     tooltipCallback: {get: function() { return tooltipCallback; }, set: function(_) {
       tooltipCallback = _;
-    }}
+    }},
+    nodeCircles: { get: function() { return nodeCircles;}, set: function(_) { nodeCircles = _; }},
+    zoomClick: { get: function() { console.debug("zoom click4"); }, set: function(_) {}}
   });
+
+//  chart.calls = nv.utils.optionsFunc.bind(chart);
+//  chart._calls = Object.create({}, {
+//    zoomClick: function() { console.debug("zoom click2"); }
+//  });
+  chart._calls = new function() {
+    this.zoomClick3 = function() { console.debug("zoom click3"); }
+  }
 
   chart.dispatch = dispatch;
   chart.tooltip = tooltip;
+  chart.zoomClick = function() { console.debug("zoom click"); }
   nv.utils.initOptions(chart);
   return chart;
 };

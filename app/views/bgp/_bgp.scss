@@ -4,12 +4,13 @@
 }
 
 #bgpView {
-  $marginLeft: 10px;
+  $margin: 10px;
   h3 {
-    margin-left: $marginLeft;
+    margin-left: $margin;
+    margin-right: $margin;
   }
   .ui-grid {
-    margin: 0 $marginLeft;
+    margin: 0 $margin;
     .align-right, .header-align-right {
       text-align: right;
     }
@@ -25,8 +26,60 @@
       top: 5px;
     }
   }
-  .table-container {
-    margin-bottom: 30px;
+
+  .merge-columns {
+    width: calc(100% - 30px);
+    margin-left: 15px;
+  }
+
+  #barChart {
+    .tick text {// uncomment below to hide the text under the X axis of the bar chart
+  //    opacity: 0 !important;
+    }
+  }
+
+  .maximise {
+    float: right;
+    box-shadow: 0px 1px 4px rgba(0,0,0,0.3);
+    border-radius: 2px;
+  }
+
+  button.btn-icon {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font: inherit;
+    vertical-align: baseline;
+    background: transparent;
+    list-style: none;
+    overflow: visible;
+    color: #666;
+    &:hover {
+      color: #333;
+    }
+    border-radius: 2px;
+    transition: background-color 0.16s ease-out, font-size 0.16s ease-out, color 0.16s ease-out;
+    &:active {
+      background-color: #ddd;
+    }
+    height: 29px;
+    width: 29px;
+    &.btn-maximise, &.btn-minimise {
+      color: #aaa;
+      &:hover {
+        color: #666;
+      }
+    }
+    &.btn-maximise:hover {
+      font-size: 21px;
+    }
+    &.btn-minimise {
+      font-size: 21px;
+      &:hover {
+        font-size: inherit;
+      }
+    }
   }
 
   .nv-container {
@@ -53,6 +106,75 @@
     svg {
       line, circle {
         transition: all .2s ease-in-out;
+      }
+      @mixin circle-style($color) {
+        fill: $color;
+        &:hover {
+          fill: darken($color, 10%);
+        }
+      }
+      circle.routes {
+        @include circle-style(#aec7e8);
+      }
+      circle.origins {
+        @include circle-style(#1f77b4);
+      }
+      //circle {
+      //  //opacity: 0.8;
+      //  &:hover {
+      //    opacity: 1;
+      //  }
+      //}
+    }
+    .zoom-buttons {
+      height: 57px;
+      width: 29px;
+      position: absolute;
+      right: 10px;
+      //bottom: -21px;
+      bottom: 0px;
+      font-size: 0;
+      box-shadow: 0px 1px 4px rgba(0,0,0,0.3);
+      border-radius: 2px;
+      .widget-zoom-button {
+        //background-color: rgba(255,255,255,1);
+        display: block;
+        height: 29px;
+        left: 0px;
+        overflow: hidden;
+        position: absolute;
+        cursor: pointer;
+        width: 29px;
+        z-index: 2;
+        box-sizing: border-box;
+        font-size: 11px;
+        //&:hover {
+        //  background-color: #eee;
+        //}
+      }
+      .widget-zoom-button.widget-zoom-in {
+        top: 0px;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+        padding-left: 1px;
+        padding-top: 2px;
+      }
+      .widget-zoom-button.widget-zoom-out {
+        bottom: 0px;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+        padding-right: 1px;
+        padding-top: 2px;
+      }
+      .widget-zoom-button-divider {
+        background-color: rgb(90%,90%,90%);
+        height: 1px;
+        left: 5px;
+        position: absolute;
+        top: 0px;
+        width: 19px;
+        z-index: 3;
+        transition: background-color 0.16s ease-out;
       }
     }
   }

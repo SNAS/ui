@@ -82,17 +82,15 @@
     </div>
   </div>
 
-  <div class="main-area row">
-    <div class="col-lg-8">
-      <div class="table-container">
+  <div class="main-area row" ng-init="obj={maximiseForceDirectedGraph:false}" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
+    <div class="table-container col-lg-12 merge-columns">
+      <div class="col-lg-8">
         <h3>Prefixes originated and transitted per AS</h3>
-        <nvd3 options="barChartOptions" data="barChartData"></nvd3>
+        <nvd3 options="barChartOptions" data="barChartData" id="barChart"></nvd3>
       </div>
-    </div>
 
-    <div class="col-lg-4">
-      <div class="table-container">
-        <h3>AS List
+      <div class="col-lg-4">
+        <h3>Controls
           <button ng-if="!error" class="btn btn-success btn-xs right" ng-click="triggerDataUpdate()">trigger data update notification from server</button>
         </h3>
 
@@ -105,10 +103,24 @@
         </div>
       </div>
     </div>
+  </div>
 
+  <div class="main-area row">
     <div class="col-lg-12">
       <div class="table-container" id="forceDirectedGraph">
-        <h3>AS Links</h3>
+        <h3>
+          AS Links
+          <div class="maximise">
+            <!--<button class="btn btn-default glyphicon glyphicon-resize-full" ng-if="!obj.maximiseForceDirectedGraph"></button>-->
+            <button class="button btn-icon btn-maximise" ng-if="!obj.maximiseForceDirectedGraph" ng-click="obj.maximiseForceDirectedGraph = true">
+              <span class="glyphicon glyphicon-resize-full"></span>
+            </button>
+            <!--<div class="glyphicon glyphicon-resize-small" ng-if="maximiseForceDirectedGraph"></div>-->
+            <button class="button btn-icon btn-minimise" ng-if="obj.maximiseForceDirectedGraph" ng-click="obj.maximiseForceDirectedGraph = false">
+              <span class="glyphicon glyphicon-resize-small"></span>
+            </button>
+          </div>
+        </h3>
         <div class="nv-container">
           <nvd3 options="forceDirectedGraph.options" data="forceDirectedGraph.data" class="with-3d-shadow with-transitions"></nvd3>
           <div id="nodeTooltips" class="hideTooltip">
@@ -118,6 +130,15 @@
                 <td class="value">-</td>
               </tr>
             </table>
+          </div>
+          <div class="zoom-buttons">
+            <button aria-label="Zoom in" id="widget-zoom-in" class="btn-icon widget-zoom-button widget-zoom-in" ng-click="zoomIn()">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <button aria-label="Zoom out" id="widget-zoom-out" class="btn-icon widget-zoom-button widget-zoom-out">
+              <span class="glyphicon glyphicon-minus"></span>
+              <div class="widget-zoom-button-divider"></div>
+            </button>
           </div>
         </div>
       </div>
