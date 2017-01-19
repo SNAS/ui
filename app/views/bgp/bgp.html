@@ -140,6 +140,13 @@
               <div class="widget-zoom-button-divider"></div>
             </button>
           </div>
+          <div class="legend">
+            <div class="color-label">Unstable</div>
+            <ul class="colors">
+              <li ng-repeat="c in stabilityColors" style="background-color: {{c}}"></li>
+            </ul>
+            <div class="color-label">Stable</div>
+          </div>
         </div>
       </div>
     </div>

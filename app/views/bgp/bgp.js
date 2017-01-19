@@ -212,8 +212,10 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
     /* force-directed graph */
 
     // stability is a value between 0 and 1. A value over 1 will be mapped to 1
+    // colors (red to green) checked for color blindness
+    $scope.stabilityColors = ["#9e1313", "#e60000", "#f07d02", "#84ca50"];
     function linkStabilityColor(stability) {
-      var colors = ["#ca0020", "#f4a582", "#92c5de", "#0571b0"];
+//      var colors = ["#ca0020", "#f4a582", "#92c5de", "#0571b0"];
       var index = 0;
       if (stability >= .8) {
         index = 3;
@@ -222,7 +224,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
       } else if (stability >= 0.2) {
         index = 1;
       }
-      return colors[index];
+      return $scope.stabilityColors[index];
     }
 
     function getParentWidth() {
