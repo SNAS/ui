@@ -8,7 +8,7 @@ nv.models.customForceDirectedGraph = function() {
     , width = 400
     , height = 32
     , container = null
-    , dispatch = d3.dispatch('renderEnd')
+    , dispatch = d3.dispatch('renderEnd', 'zoomControl')
     , color = nv.utils.getColor(['#000'])
     , tooltip = nv.models.tooltip()
     , noData = null
@@ -287,7 +287,8 @@ nv.models.customForceDirectedGraph = function() {
             return (n.radius(d)*base_radius/nominal_base_node_size/*||base_radius*/);
           });
         });
-        g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+//        g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        g.attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")");
       }
 
       function interpolateZoom (translate, scale) {
@@ -304,7 +305,7 @@ nv.models.customForceDirectedGraph = function() {
         });
       }
 
-      function zoomClick(zoomDirection) {
+      dispatch.on("zoomControl", function(zoomDirection) {
         var direction = 1,
           factor = 0.2,
           target_zoom = 1,
@@ -315,7 +316,7 @@ nv.models.customForceDirectedGraph = function() {
           l = [],
           view = {x: translate[0], y: translate[1], k: zoom.scale()};
 
-        d3.event.preventDefault();
+//        d3.event.preventDefault();
         direction = (zoomDirection === 'zoom_in') ? 1 : -1;
         target_zoom = zoom.scale() * (1 + factor * direction);
 
@@ -329,7 +330,7 @@ nv.models.customForceDirectedGraph = function() {
         view.y += center[1] - l[1];
 
         interpolateZoom([view.x, view.y], view.k);
-      }
+      });
 
       zoom.on("zoom", zoomed);
 
@@ -416,21 +417,17 @@ nv.models.customForceDirectedGraph = function() {
     tooltipCallback: {get: function() { return tooltipCallback; }, set: function(_) {
       tooltipCallback = _;
     }},
-    nodeCircles: { get: function() { return nodeCircles;}, set: function(_) { nodeCircles = _; }},
-    zoomClick: { get: function() { console.debug("zoom click4"); }, set: function(_) {}}
+    nodeCircles: { get: function() { return nodeCircles;}, set: function(_) { nodeCircles = _; }}
   });
 
-//  chart.calls = nv.utils.optionsFunc.bind(chart);
-//  chart._calls = Object.create({}, {
-//    zoomClick: function() { console.debug("zoom click2"); }
-//  });
-  chart._calls = new function() {
-    this.zoomClick3 = function() { console.debug("zoom click3"); }
-  }
+  // I didn't find a better way than exposing this functionality to the window level
+  // for emitting custom events from outside
+  window.customForceDirectedGraph = {
+    dispatch: dispatch
+  };
 
   chart.dispatch = dispatch;
   chart.tooltip = tooltip;
-  chart.zoomClick = function() { console.debug("zoom click"); }
   nv.utils.initOptions(chart);
   return chart;
 };

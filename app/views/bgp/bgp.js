@@ -231,11 +231,12 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
       return parentDiv.width() - defaultScrollbarWidth;
     }
     $scope.tooltipFields = [ "as", "routes", "origins", "weight" ];
+//    var customForceDirectedGraphSvg;
     $scope.forceDirectedGraph = {
       options: {
         chart: {
           type: 'customForceDirectedGraph',
-          height: Math.min($(window).height()-20, Math.max(500, getParentWidth() * 0.75)),
+          height: Math.min($(window).height()-85, Math.max(500, getParentWidth() * 0.75)),
           width: getParentWidth(),
           margin:{top: 20, right: 20, bottom: 20, left: 20},
           color: function(d){
@@ -263,6 +264,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
           linkStrength: 0.8,
           charge: -200,
 //          initCallback: function(svgContainer) {
+//            customForceDirectedGraphSvg = svgContainer;
 //          },
           radius: function(d) {
             return radiusLinearScale(d.origins);
@@ -300,9 +302,8 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
       }
     };
 
-    $scope.zoomIn = function() {
-      console.debug("forceDirectedGraph", $scope.forceDirectedGraph);
-      console.debug("zoomIn", $scope.forceDirectedGraph.options.zoomClick);
+    $scope.controlZoom = function(direction) {
+      window.customForceDirectedGraph.dispatch.zoomControl(direction);
     };
 
     /* end of force-directed graph */
