@@ -91,7 +91,7 @@
 
       <div class="col-lg-4">
         <h3>Controls
-          <button ng-if="!error" class="btn btn-success btn-xs right" ng-click="triggerDataUpdate()">trigger data update notification from server</button>
+          <button ng-if="!error" class="btn btn-success btn-xs right" ng-click="triggerDataUpdate()">trigger update from server</button>
         </h3>
 
         <div class="loading-section">
@@ -143,7 +143,7 @@
           <div class="legend">
             <div class="color-label">Unstable</div>
             <ul class="colors">
-              <li ng-repeat="c in stabilityColors" style="background-color: {{c}}"></li>
+              <li ng-repeat="c in stabilityColors" style="background-color: {{c.color}}"></li>
             </ul>
             <div class="color-label">Stable</div>
           </div>

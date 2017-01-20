@@ -14,9 +14,12 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
     var end = 1483549631000;
 //    var start = 1484665200000;
 //    var end = start + 10;
+//    var start = 1483466300000;
+//    var end = start + 10;
 
     // AS list table options
-    const asListGridInitHeight = 449;
+    const firstRowHeight = 350;
+    const asListGridInitHeight = firstRowHeight;
     $scope.asListGridOptions = {
       enableColumnResizing: true,
       rowHeight: 32,
@@ -70,15 +73,15 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
     var linkWidthLinearScale = d3.scale.linear()
       .domain([0,10000])
       .range([minLinkWidth, maxLinkWidth]);
-    var minLinkLength = 20;
-    var maxLinkLength = 150;
+    var minLinkLength = 3 * maxRadius;
+    var maxLinkLength = 4 * minLinkLength;
     var linkLengthLinearScale = d3.scale.linear()
       .domain([0,10000])
       .range([minLinkLength, maxLinkLength]);
 
-    function getDataFromArray(result, key) {
+    function getDataFromArray(result, index, key) {
       // TODO: have a way to choose which result to display
-      return result.length > 0 ? result[0][key] : [];
+      return index < result.length ? result[index][key] : [];
     }
 
     function stream_index(d, i) {
@@ -132,7 +135,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
 
     function updateNodeData(result) {
       console.log("updateNodeData");
-      $scope.asListBeforeSorting = getDataFromArray(result, "asList");
+      $scope.asListBeforeSorting = getDataFromArray(result, 0, "asList");
       console.log("asListBeforeSorting", $scope.asListBeforeSorting);
 
       sortASList("routes", true);
@@ -153,6 +156,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
       console.log("minWeight %s maxWeight %s", minWeight, maxWeight);
     }
 
+//    $scope.
     function getData() {
       $scope.loadingASList = true; // begin loading
       $scope.asListGridOptions.data = [];
@@ -175,7 +179,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
     $scope.barChartOptions = {
       chart: {
         type: 'multiBarChart',
-        height: 450,
+        height: firstRowHeight,
         margin : {
           top: 20,
           right: 20,
@@ -213,9 +217,25 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
 
     // stability is a value between 0 and 1. A value over 1 will be mapped to 1
     // colors (red to green) checked for color blindness
-    $scope.stabilityColors = ["#9e1313", "#e60000", "#f07d02", "#84ca50"];
-    function linkStabilityColor(stability) {
-//      var colors = ["#ca0020", "#f4a582", "#92c5de", "#0571b0"];
+    $scope.stabilityColors = [
+      {
+        label: "stability-0",
+        color: "#9e1313"
+      },
+      {
+        label: "stability-1",
+        color: "#e60000"
+      },
+      {
+        label: "stability-2",
+        color: "#f07d02"
+      },
+      {
+        label: "stability-3",
+        color: "#84ca50"
+      }
+    ];
+    function linkStabilityIndex(stability) {
       var index = 0;
       if (stability >= .8) {
         index = 3;
@@ -224,7 +244,16 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
       } else if (stability >= 0.2) {
         index = 1;
       }
-      return $scope.stabilityColors[index];
+      return index;
+    }
+    function linkStabilityLabel(stability) {
+      var index = linkStabilityIndex(stability);
+      return $scope.stabilityColors[index].label;
+    }
+    function linkStabilityColor(stability) {
+//      var colors = ["#ca0020", "#f4a582", "#92c5de", "#0571b0"];
+      var index = linkStabilityIndex(stability);
+      return $scope.stabilityColors[index].color;
     }
 
     function getParentWidth() {
@@ -247,7 +276,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
           nodeExtras: function(node) {
             node && node
               .append("text")
-              .attr("dx", function(d) { return radiusLinearScale(d.origins) + 2; })
+              .attr("dx", function(d) { return radiusLinearScale(d.routes) + 2; })
               .attr("dy", ".35em")
               .text(function(d) { return d.as })
               .style('font-size', '10px');
@@ -256,15 +285,20 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "bgpDataServ
             link && link
               .style("stroke-width", function(d) { return linkWidthLinearScale(d.weight); })
               .style("stroke", function(d) { return linkStabilityColor(d.stability); })
+              .attr("marker-end", function(d) {
+                var stabilityLabel = linkStabilityLabel(d.stability);
+                return "url(#arrow-"+stabilityLabel+")";
+              });
           },
+          linkColorSet: $scope.stabilityColors,
           linkColor: function(d) {
             return linkStabilityColor(d.stability);
           },
           linkDist: function(link) {
             return linkLengthLinearScale(link.weight);
           },
-          linkStrength: 0.8,
-          charge: -200,
+          linkStrength: 0.5,
+          charge: -300,
 //          initCallback: function(svgContainer) {
 //            customForceDirectedGraphSvg = svgContainer;
 //          },

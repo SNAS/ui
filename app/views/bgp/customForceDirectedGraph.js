@@ -31,6 +31,7 @@ nv.models.customForceDirectedGraph = function() {
     , useNVTooltip = true
     , tooltipCallback = function(hide, tooltipData) { /* Do nothing */}
     , nodeCircles = null
+    , linkColorSet = []
     ;
 
   //============================================================
@@ -59,6 +60,25 @@ nv.models.customForceDirectedGraph = function() {
   var default_node_color = "#ccc";
   var default_link_color = "#888";
 
+  // d contains source and target, each of them containing x and y coordinates
+  // this function calculates the angle (in radians) between vectors (source,target) and (source,projectionOfTargetOntoXAxis)
+  function calculateAngleXAxis(d) {
+    var distX = d.target.x - d.source.x;
+    var distY = d.target.y - d.source.y;
+    return Math.atan(distY/distX);
+  }
+
+  function getPrecalculatedValue(d, parameter, forceUpdate) {
+    if (undefined === d.precalculatedValues || forceUpdate) {
+      d.precalculatedValues = {
+        angle: calculateAngleXAxis(d),
+        x1CircleRadius: d3.max(d.source.calculatedRadius, function(r) { return r.radius; }),
+        x2CircleRadius: d3.max(d.target.calculatedRadius, function(r) { return r.radius; })
+      };
+    }
+    return d.precalculatedValues[parameter];
+  }
+
   function chart(selection) {
     renderWatch.reset();
 
@@ -68,6 +88,37 @@ nv.models.customForceDirectedGraph = function() {
         container = svg.append("g");
         g = container;
         svg.style("cursor","move");
+
+        const markerDim = 15;
+        const refX = 9.5, refY = 0;
+
+        // adding svg defs
+        var defs = svg.append("defs");
+        var arrowClasses = ["arrow"];
+        for (var i = 0 ; i < linkColorSet.length ; i++) {
+          arrowClasses.push("arrow-" + linkColorSet[i].label);
+        }
+        defs.selectAll("marker")
+          .data(arrowClasses)
+          .enter().append("marker")
+          .attr("id", function(d) { return d; })
+          .attr("viewBox", "0 -5 10 10")
+          .attr("refX", refX)
+          .attr("refY", refY)
+          .attr("markerWidth", markerDim)
+          .attr("markerHeight", markerDim)
+          .attr("markerUnits", "userSpaceOnUse")// userSpaceOnUse: no autoscaling of marker; strokeWidth: autoscaling
+          .attr("orient", "auto")
+          .append("path")
+          .attr("d", "M2,0L0,-5L10,0L0,5");
+
+        defs.select("marker#arrow")
+          .style("fill", "#555");
+
+        for (var i = 0 ; i < linkColorSet.length ; i++) {
+          defs.select("marker#arrow-"+linkColorSet[i].label)
+            .style("fill", linkColorSet[i].color);
+        }
       }
       nv.utils.initSVG(container);
 
@@ -135,8 +186,9 @@ nv.models.customForceDirectedGraph = function() {
         .start();
 
       var link = container.selectAll(".link")
-        .data(data.links)
+        .data(data.links, linkId)
         .enter().append("line")
+        .attr("id", linkId)
         .attr("class", "nv-force-link")
         .style("stroke-width", function(d) { return Math.sqrt(d.value); });
 
@@ -158,7 +210,15 @@ nv.models.customForceDirectedGraph = function() {
       for (var i = 0 ; i < nodeCircles.length ; i++) {
         var n = nodeCircles[i];
         var c = group.append("circle")
-          .attr("r", n.radius)
+//          .attr("r", n.radius)
+          .attr("r", function(d) {
+            var r = n.radius(d);
+            if (d.calculatedRadius === undefined) {
+              d.calculatedRadius = [];
+            }
+            d.calculatedRadius[i] = {key: n.cssClass, radius: r};
+            return r;
+          })
 //          .style("fill", n.color)
           .attr("class", function(d) { return (n.displayNode(d) ? "" : "hidden") + " " + n.cssClass; });
         circles.push(c);
@@ -304,6 +364,9 @@ nv.models.customForceDirectedGraph = function() {
           };
         });
       }
+      function linkId(d) {
+        return "link_" + d.source.as + "-" + d.target.as;
+      }
 
       dispatch.on("zoomControl", function(zoomDirection) {
         var direction = 1,
@@ -341,10 +404,37 @@ nv.models.customForceDirectedGraph = function() {
       nodeExtras(node);
 
       force.on("tick", function() {
-        link.attr("x1", function(d) { return d.source.x; })
-          .attr("y1", function(d) { return d.source.y; })
-          .attr("x2", function(d) { return d.target.x; })
-          .attr("y2", function(d) { return d.target.y; });
+        link
+          .attr("tmp", function(d) { return getPrecalculatedValue(d, "angle", true); }) // temporary store values so that we don't need to recalculate them
+          .attr("tmp", null) // unset the attribute
+//          .attr("x1", function(d) { return d.source.x; })
+//          .attr("y1", function(d) { return d.source.y; })
+//          .attr("x2", function(d) { return d.target.x; })
+//          .attr("y2", function(d) { return d.target.y; })
+          .attr("x1", function(d) {
+            var angle = getPrecalculatedValue(d, "angle");
+            var r = getPrecalculatedValue(d, "x1CircleRadius");
+            var inverse = d.source.x < d.target.x ? 1 : -1;
+            return d.source.x + inverse * r * Math.cos(angle);
+          })
+          .attr("y1", function(d) {
+            var angle = getPrecalculatedValue(d, "angle");
+            var r = getPrecalculatedValue(d, "x1CircleRadius");
+            var inverse = d.source.x < d.target.x ? 1 : -1;
+            return d.source.y + inverse * r * Math.sin(angle);
+          })
+          .attr("x2", function(d) {
+            var angle = getPrecalculatedValue(d, "angle");
+            var r = getPrecalculatedValue(d, "x2CircleRadius");
+            var inverse = d.source.x > d.target.x ? 1 : -1;
+            return d.target.x + inverse * r * Math.cos(angle);
+          })
+          .attr("y2", function(d) {
+            var angle = getPrecalculatedValue(d, "angle");
+            var r = getPrecalculatedValue(d, "x2CircleRadius");
+            var inverse = d.source.x > d.target.x ? 1 : -1;
+            return d.target.y + inverse * r * Math.sin(angle);
+          })
 
         node.attr("transform", function(d) {
           return "translate(" + d.x + ", " + d.y + ")";
@@ -417,7 +507,8 @@ nv.models.customForceDirectedGraph = function() {
     tooltipCallback: {get: function() { return tooltipCallback; }, set: function(_) {
       tooltipCallback = _;
     }},
-    nodeCircles: { get: function() { return nodeCircles;}, set: function(_) { nodeCircles = _; }}
+    nodeCircles: { get: function() { return nodeCircles;}, set: function(_) { nodeCircles = _; }},
+    linkColorSet: { get: function() { return linkColorSet;}, set: function(_) { linkColorSet = _; }}
   });
 
   // I didn't find a better way than exposing this functionality to the window level
