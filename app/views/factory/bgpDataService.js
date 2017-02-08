@@ -14,9 +14,9 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
   var bgpAPI = "http://" + host + ":" + port;
 
   return {
-    getASList: function(start, end) {
+    getASList: function(orderBy, orderDir, limit, offset) {
       // get the AS list from the BGP data service
-      return $http.get(bgpAPI + "/as?start="+start+"&end="+end);
+      return $http.get(bgpAPI + "/as?orderBy="+orderBy+"&orderDir="+orderDir+"&limit="+limit+"&offset="+offset);
     },
     getASLinks: function(start, end) {
       // get the AS links from the BGP data service
@@ -58,6 +58,13 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         }
         return { nodes: nodes, links: links };
       });
+    },
+    getASStats: function(asn, end) {
+      return $http.get(bgpAPI + "/as/stats/"+asn+(end !== undefined ? "?end="+end : ""));
+    },
+    // unfinished
+    getLinkStats: function(asn, end) {
+      return $http.get(bgpAPI + "/link/stats/"+asn+(end !== undefined ? "?end="+end : ""));
     }
   };
 }]);

@@ -31,7 +31,7 @@ nv.models.customForceDirectedGraph = function() {
     , useNVTooltip = true
     , tooltipCallback = function(hide, tooltipData) { /* Do nothing */}
     , nodeCircles = null
-    , linkColorSet = []
+    , linkColorSet = []// used for the arrows' colors to match the link colors, should the user decide to use marker-end to display an arrow
     ;
 
   //============================================================

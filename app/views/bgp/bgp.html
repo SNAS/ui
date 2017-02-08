@@ -1,7 +1,7 @@
-<div ng-controller="BGPController" id="bgpView">
+<div ng-controller="BGPController" id="bgpView" ng-init="obj={maximiseForceDirectedGraph:false}">
 
-  <div class="main-page-search hidden">
-    AS Number or AS Name:
+  <div class="main-page-search" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
+    AS Number or prefix:
     <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-model="searchValue"
            placeholder="Search ..."
            typeahead="as_name for as_name in getSuggestions($viewValue)"
@@ -9,10 +9,13 @@
            typeahead-no-results="noResults"
            typeahead-wait-ms="300"
            typeahead-on-select="onSelect($item, $model, $label)"/>
-    <span class="help-block">Examples: 109, Cisco, etc.</span>
+    <span class="help-block">Examples: 109, 1.0.128.0/17, 1.0.*</span>
+    <button type="button" class="btn btn-sm right time-slider-toggle-button" ng-class="{'btn-success': !dateFilterOn, 'btn-danger': dateFilterOn}" ng-click="dateFilterOn = !dateFilterOn">
+      <span class="glyphicon" ng-class="{'glyphicon-plus': !dateFilterOn, 'glyphicon-minus': dateFilterOn}"></span>
+      Date/time filter
+    </button>
     <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
-    <!--<br/>-->
-    <!--<br/>-->
+
     <div class="row">
       <div ng-show="nodata" class="col-md-4">
         <p ng-style="{'font-size': '20px', opacity: 0.5, align: center}">
@@ -22,67 +25,49 @@
       </div>
     </div>
 
-    <!-- date/time selector -->
-    <div class="row">
-      <div class="col-lg-1" style="width:4%;vertical-align: middle">
-        <span class="btn btn-default" style="margin:110px 0 0 10px" ng-click="leftArrow()"><span class="glyphicon glyphicon-arrow-left"></span></span>
-      </div>
-      <div class="col-lg-10" style="width:91%">
-        <nvd3 options="previewGraph" data="previewGraphData"></nvd3>
-        <div id="timeSelector"></div>
-      </div>
-      <div class="col-lg-1" style="width:5%;height:100%;">
-        <span class="btn btn-default pull-right" style="margin:110px 10px 0 0" ng-click="rightArrow()"><span class="glyphicon glyphicon-arrow-right"></span></span>
-      </div>
-    </div>
-    <div class="row" style="padding:0px 25px 0px 25px; margin-top:80px">
-      <div class="col-lg-5">
-        <span>Start: <input type='text' class="form-control" id="startDatetimePicker"/></span>
-      </div>
-      <div class="col-lg-2" style="height:34px;padding:27px 0px 0px 0px;">
-        <span type='text' class='label label-info' style="font-size:14px;">
-          Duration: <span id="duration"></span>
-        </span>
-      </div>
-      <div class="col-lg-5">
-        <span>End:
-          <span class='input-group'>
-            <input type='text' class="form-control" id='endDatetimePicker'/>
-              <span class="input-group-addon">
-                  <span style="cursor:pointer" ng-click="setToNow()">SET TO NOW</span>
-              </span>
-          </span>
-        </span>
-      </div>
-    </div>
-    <div class="row" style="padding:0px 25px 0px 25px;margin-bottom:20px">
-      <div class="col-lg-10" style="margin-top:30px">
-        <div ng-show="filterPeerText||filterPrefixText">
-          <span>Filter:</span>
+    <div ng-class="{hidden: !dateFilterOn}">
+      <div class="separator"></div>
 
-          <label id="filterPeer" class="btn btn-sm btn-info filterText"
-                 ng-show="filterPeerText"
-                 ng-mouseover='clearOneVisible=true'
-                 ng-mouseleave='clearOneVisible=false;'
-                 ng-click="clearFilter('peer')">
-            Peer: {{filterPeerText}}
-            <span ng-show="clearOneVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
-          </label>
+      <!-- date/time selector -->
+      <div class="row">
+        <div class="col-lg-2">
+          <table class="table start-end">
+            <tr>
+              <th class="timestamp-label">Start:</th>
+              <td class="input"><input type='text' class="form-control" id="startDatetimePicker"/></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th class="timestamp-label">End:</th>
+              <td class="input"><input type='text' class="form-control" id="endDatetimePicker"/></td>
+              <td>
+                <button class="btn btn-primary btn-xs btn-now" ng-click="setToNow()">now</button>
+              </td>
+            </tr>
+            <tr>
+              <th>Duration:</th>
+              <td id="duration"></td>
+            </tr>
+          </table>
+        </div>
 
-          <label id="filterPrefix" class="btn btn-sm btn-warning filterText"
-                 ng-show="filterPrefixText"
-                 ng-mouseover='clearTwoVisible=true'
-                 ng-mouseleave='clearTwoVisible=false'
-                 ng-click="clearFilter('prefix')">
-            Prefix: {{filterPrefixText}}
-            <span ng-show="clearTwoVisible" class="glyphicon glyphicon-remove" style="font-size:13px"></span>
-          </label>
+        <div class="col-lg-10 time-slider">
+          <div class="col-lg-1 btn-arrow">
+            <span class="btn btn-default btn-xs" ng-click="leftArrow()"><span class="glyphicon glyphicon-arrow-left"></span></span>
+          </div>
+          <div class="col-lg-10 slider">
+            <nvd3 options="previewGraph" data="previewGraphData"></nvd3>
+            <div id="timeSelector"></div>
+          </div>
+          <div class="col-lg-1 btn-arrow">
+            <span class="btn btn-default btn-xs" ng-click="rightArrow()"><span class="glyphicon glyphicon-arrow-right"></span></span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="main-area row" ng-init="obj={maximiseForceDirectedGraph:false}" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
+  <div class="main-area row" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
     <div class="table-container col-lg-12 merge-columns">
       <div class="col-lg-8">
         <h3>Prefixes originated and transitted per AS</h3>
@@ -91,7 +76,12 @@
 
       <div class="col-lg-4">
         <h3>Controls
-          <button ng-if="!error" class="btn btn-success btn-xs right" ng-click="triggerDataUpdate()">trigger update from server</button>
+          <!--<button ng-if="!error" class="btn btn-success btn-xs right" ng-click="triggerDataUpdate()">trigger update from server</button>-->
+          <div ng-if="!error" class="data-offset right">
+            <span class="btn btn-default btn-xs" ng-click="previousData()"><span class="glyphicon glyphicon-arrow-left"></span></span>
+            Results {{offset}} to {{offset+limit}}
+            <span class="btn btn-default btn-xs" ng-click="nextData()"><span class="glyphicon glyphicon-arrow-right"></span></span>
+          </div>
         </h3>
 
         <div class="loading-section">
@@ -107,7 +97,7 @@
 
   <div class="main-area row">
     <div class="col-lg-12">
-      <div class="table-container" id="forceDirectedGraph">
+      <div class="table-container" id="forceDirectedGraph" data-ng-show="showDirectedGraph">
         <h3>
           AS Links
           <div class="maximise">
