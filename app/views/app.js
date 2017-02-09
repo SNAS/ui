@@ -158,7 +158,7 @@ var bmpUiApp = angular
         templateUrl: 'views/adminView/adminView.html'
       })
       .state('app.bgp',{
-        url: '/bgp',
+        url: '/bgp?:search?',
         templateUrl: 'views/bgp/bgp.html'
       })
 

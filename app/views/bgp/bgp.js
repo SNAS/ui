@@ -7,8 +7,8 @@
  * # BGPController
  * Controller of the BGP page
  */
-angular.module('bmpUiApp').controller('BGPController', //["$scope", "$filter", "bgpDataService", "ConfigService", "socket", "uiGridConstants",
-  function($scope, $filter, bgpDataService, ConfigService, socket, uiGridConstants) {
+angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParams", "$filter", "bgpDataService", "ConfigService", "socket", "uiGridConstants",
+  function($scope, $stateParams, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory) {
     // TODO: have a widget to choose the start and end dates/times
     var start = 1483463232000;
     var end = 1483549631000;
@@ -26,13 +26,44 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$filter", "
     $scope.previousData = function() {
       if ($scope.offset > 0) {
         $scope.offset -= $scope.limit;
-        getData();
+        getASListData();
       }
     }
     $scope.nextData = function() {
       $scope.offset += $scope.limit;
-      getData();
+      getASListData();
     }
+
+    //get all the information of this AS
+    function searchValueFn() {
+      $scope.asInfo = {};
+      if (isNaN($scope.searchValue)) {
+        console.warn("TODO: check what to do when searchValue isn't an number!")
+//        apiFactory.getWhoIsASName($scope.searchValue).success(function(result) {
+//          var data = result.w.data;
+//          getData(data);
+//        }).error(function (error) {
+//          console.log(error.message);
+//        });
+      }
+      else {
+        apiFactory.getWhoIsASN($scope.searchValue).success(function(result) {
+          var data = result.gen_whois_asn.data;
+          $scope.asnDetails = [];
+          getASWhoIsInfo(data);
+          getASNodeAndLinks($scope.searchValue);
+        }).error(function (error) {
+          console.log(error.message);
+        });
+
+//        $scope.asInfo.asn = $scope.searchValue;
+      }
+    }
+
+    $scope.keypress = function (keyEvent) {
+      if (keyEvent.which === 13)
+        searchValueFn($scope.searchValue);
+    };
 
     // AS list table options
     const firstRowHeight = 350;
@@ -71,7 +102,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$filter", "
             orderBy = c.field;
             orderDir = c.sort.direction;
             $scope.offset = 0;
-            getData();
+            getASListData();
 
 //            sortASList(c.field, c.sort.direction==="desc");
           }
@@ -180,8 +211,84 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$filter", "
       console.log("minWeight %s maxWeight %s", minWeight, maxWeight);
     }
 
-//    $scope.
-    function getData() {
+
+    // Get detailed information of this AS
+    function getASDetails(data) {
+      var keysToFilterOut = ["raw_output", "remarks", "isTransit", "isOrigin",
+        "transit_v4_prefixes", "transit_v6_prefixes", "origin_v4_prefixes", "origin_v6_prefixes"];
+
+      for (var key in data) {
+        if (data.hasOwnProperty(key) && keysToFilterOut.indexOf(key) === -1) {
+          $scope.asnDetails.push({ key: key, value: data[key]||"null" });
+        }
+      }
+    }
+
+    function getASNodeAndLinks(asn) {
+      $scope.loadingASNodesAndLinksData = true;
+      bgpDataService.getASNodesAndIndexedLinks(asn).then(function(res) {
+        console.log("all nodes and links", res);
+
+        // find information about this particular AS
+        var asNumber = parseInt(asn, 10);
+        for (var i = 0 ; i < res.nodes.length ; i++) {
+//          console.log("compare %s (%s) with %s (%s)", res.nodes[i].asn, typeof(res.nodes[i].asn), asn, typeof(asn));
+          if (res.nodes[i].asn === asNumber) {
+            $scope.asnDetails.push({ key: "Number of routes", value: res.nodes[i].routes });
+            $scope.asnDetails.push({ key: "Number of origins", value: res.nodes[i].origins });
+          }
+        }
+
+        $scope.loadingASNodesAndLinksData = false;
+      }, function error(err) {
+        console.log("failed to get info about all AS nodes and links", err);
+      });
+    }
+
+    // Get prefixes information of this AS
+    function getPrefixes() {
+      $scope.prefixGridOptions.data = [];
+      $scope.loadingPrefixes = true; // begin loading
+      apiFactory.getRIBbyASN($scope.asn).success(function (result) {
+        var data = result.v_routes.data;
+        for (var i = 0; i < result.v_routes.size; i++) {
+          data[i].prefixWithLen = data[i].Prefix + "/" + data[i].PrefixLen;
+          data[i].IPv = (data[i].isIPv4 === 1) ? '4' : '6';
+        }
+        $scope.prefixGridOptions.data = data;
+        $scope.loadingPrefixes = false; // stop loading
+//        uiGridFactory.calGridHeight($scope.prefixGridOptions, $scope.prefixGridApi);
+      }).error(function (error) {
+        console.log(error.message);
+      });
+    }
+
+    // get AS data (details, prefixes)
+    function getASWhoIsInfo(data) {
+      if (data.length != 0) {
+        $scope.asn = data[0].asn;
+        getASDetails(data[0]);
+        getPrefixes();
+//        getUpstream();
+//        getDownstream();
+//
+//        //$scope.topologyIsLoad = true; //start loading
+//        downstreamPromise.success(function () {
+//          upstreamPromise.success(function () {
+//            topoClear();
+//            drawD3(data[0]);
+//          });
+//        });
+
+        $scope.nodata = false;
+      }
+      else {
+        $scope.nodata = true;
+      }
+    }
+
+    function getASListData() {
+      console.trace();
       $scope.loadingASList = true; // begin loading
       $scope.asListGridOptions.data = [];
       bgpDataService.getASList(orderBy, orderDir, $scope.limit, $scope.offset).success(function(result) {
@@ -246,6 +353,34 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$filter", "
     };
 
     /* end of bar chart */
+
+    /* prefix table */
+
+    $scope.prefixGridInitHeight = 300;
+    $scope.prefixGridOptions = {
+      rowHeight: 32,
+      gridFooterHeight: 0,
+      showGridFooter: true,
+      enableFiltering: true,
+      height: $scope.prefixGridInitHeight,
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      columnDefs: [
+        {
+          name: "prefixWithLen", displayName: 'Prefix', width: '*',
+          cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-tooltip prefix="{{ COL_FIELD }}"></div>'
+        },
+        {
+          name: "IPv", displayName: 'IPv', width: '*', visible: false,
+          sort: {direction: uiGridConstants.ASC}
+        }
+      ],
+      onRegisterApi: function (gridApi) {
+        $scope.prefixGridApi = gridApi;
+      }
+    };
+
+    /* end of prefix table */
 
     /* force-directed graph */
 
@@ -580,9 +715,6 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$filter", "
 
     /* end of time slider */
 
-    // initialisation
-    getData();
-
     var uiServer = ConfigService.bgpDataService;
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";
     socket.connect(SOCKET_IO_SERVER, uiServer);
@@ -609,5 +741,24 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$filter", "
       });
     };
     */
+
+    // initialisation
+    $(function () {
+      //initial search
+      console.debug("stateParams", $stateParams);
+      if ($stateParams.search) {
+        $scope.searchValue = $stateParams.search;
+        searchValueFn();
+        $scope.showDirectedGraph = true;
+        $scope.asn = $scope.searchValue;
+        $scope.displayASNInfo = true;
+
+        // TODO: handle prefix case and invalid ASN or prefix cases
+      }
+      else {
+        getASListData();
+        $scope.showDirectedGraph = false;
+      }
+    });
   }
 );

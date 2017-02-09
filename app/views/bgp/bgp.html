@@ -67,7 +67,9 @@
     </div>
   </div>
 
-  <div class="main-area row" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
+  <!-- THIS SECTION IS FOR DISPLAYING INFORMATION ABOUT ALL AS NODES -->
+
+  <div class="main-area row" ng-class="{hidden: obj.maximiseForceDirectedGraph || displayASNInfo}">
     <div class="table-container col-lg-12 merge-columns">
       <div class="col-lg-8">
         <h3>Prefixes originated and transitted per AS</h3>
@@ -95,7 +97,40 @@
     </div>
   </div>
 
-  <div class="main-area row">
+  <!-- THIS SECTION DISPLAYS INFORMATION FOR A SPECIFIC AS NODE -->
+
+  <!--<div class="main-area row" ng-show="displayASNInfo">-->
+  <div class="main-area row" ng-show="!nodata && !obj.maximiseForceDirectedGraph && displayASNInfo">
+    <!-- WhoIs info and prefixes -->
+    <div class="col-lg-6">
+      <div class="table-container whois">
+        <h3>AS {{asn}} Information</h3>
+        <div class="preStyle" style="height: {{prefixGridInitHeight}}px">
+          <table class="tableStyle">
+            <tbody>
+            <tr ng-repeat="row in asnDetails">
+              <td>{{row.key}}</td>
+              <td>{{row.value}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="table-container">
+        <h3>Prefixes with AS Path containing AS {{asn}}</h3>
+
+        <div class="loading-section">
+          <div ng-show="loadingPrefixes" bmp-loading></div>
+          <div ui-grid="prefixGridOptions" ui-grid-auto-resize ng-style="{'height': prefixGridOptions.height}"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-area row" ng-show="displayASNInfo">
+    <!-- force directed graph -->
     <div class="col-lg-12">
       <div class="table-container" id="forceDirectedGraph" data-ng-show="showDirectedGraph">
         <h3>
@@ -111,6 +146,9 @@
             </button>
           </div>
         </h3>
+        <div class="loading-section">
+          <div ng-show="loadingASNodesAndLinksData" bmp-loading></div>
+        </div>
         <div class="nv-container">
           <nvd3 options="forceDirectedGraph.options" data="forceDirectedGraph.data" class="with-3d-shadow with-transitions"></nvd3>
           <div id="nodeTooltips" class="hideTooltip">
@@ -121,7 +159,7 @@
               </tr>
             </table>
           </div>
-          <div class="zoom-buttons">
+          <div class="zoom-buttons" ng-show="!loadingASNodesAndLinksData">
             <button aria-label="Zoom in" id="widget-zoom-in" class="btn-icon widget-zoom-button widget-zoom-in" ng-click="controlZoom('zoom_in')">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
@@ -130,7 +168,7 @@
               <div class="widget-zoom-button-divider"></div>
             </button>
           </div>
-          <div class="legend">
+          <div class="legend" ng-show="!loadingASNodesAndLinksData">
             <div class="color-label">Unstable</div>
             <ul class="colors">
               <li ng-repeat="c in stabilityColors" style="background-color: {{c.color}}"></li>
