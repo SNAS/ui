@@ -18,8 +18,7 @@
     </div>
   </script>
 
-  <!--<span ng-click="open()">{{ asn }}</span>-->
-  <span ng-if="hoverFound" ng-click="open()"
+  <span ng-if="hoverFound" ng-click="onClick()"
         class="asn-clickable"
         tooltip-append-to-body="true"
         tooltip-html-unsafe="AS Name: {{modelData.as_name}}<br>
@@ -29,6 +28,6 @@
         >
     {{asn}}
   </span>
-  <span ng-if="!hoverFound" ng-click="open()">{{asn}}</span>
+  <span ng-if="!hoverFound" ng-click="onClick()">{{asn}}</span>
 
 </span>

@@ -1,6 +1,14 @@
 angular.module('bmp.components.asnModel', [])
 
-.controller('ModalDemoCtrl', function($scope, $modal, $log, apiFactory) {
+.controller('ModalDemoCtrl', function($scope, $modal, $log, apiFactory, $location) {
+
+    $scope.onClick = function() {
+      if ($scope.changeUrlOnClick === undefined) {
+        $scope.open();
+      } else {
+        $location.url($scope.changeUrlOnClick);
+      }
+    }
 
   $scope.$watch('asn', function(newVal, oldVal) {
     if (newVal == '-') {
@@ -105,7 +113,8 @@ angular.module('bmp.components.asnModel', [])
     //transclude: true,
     controller: 'ModalDemoCtrl',
     scope: {
-      asn: "@"
+      asn: "@",
+      changeUrlOnClick: "@"
     },
     link: function($scope) {
       $scope.noModal = true;

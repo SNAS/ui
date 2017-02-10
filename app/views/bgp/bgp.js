@@ -107,9 +107,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         {
           name: "asn", displayName: 'ASN', width: '*', type: 'number',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}"></div>'+
-//            '<button type="button" class="btn btn-xs btn-default" ng-click="changeLocation({{ COL_FIELD }})">load</button>' +
-            '</div>'
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="'+$location.path()+'?search={{ COL_FIELD}}"></div></div>'
         },
         {
           name: "origins", displayName: 'Origins', width: '*',
