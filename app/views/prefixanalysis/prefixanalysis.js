@@ -18,6 +18,8 @@ angular.module('bmpUiApp')
     var requestStartTime = $stateParams.startTime
     var requestEndTime = $stateParams.endTime
 
+    $scope.isFirstFromTopsWithPeer = false
+
     //DEBUG
     $scope.nodata = false;
     // resize the window
@@ -44,7 +46,10 @@ angular.module('bmpUiApp')
           $scope.selectPeer = row.entity;
           console.log("ROW SELECTION CHANGED...")
 
-          getPrefixHistory($scope.value, $scope.selectPeer.peer_hash_id);
+          if ($scope.isFirstFromTopsWithPeer == false) {
+            getPrefixHistory($scope.value, $scope.selectPeer.peer_hash_id);
+          }
+
           // $scope.selectUpdates();
           $scope.fromRouter = 'FROM ' + $scope.selectPeer.RouterName;
           $scope.fromPeer = '-> ' + $scope.selectPeer.PeerName;
@@ -232,9 +237,10 @@ angular.module('bmpUiApp')
               for (var i = 0, len = $scope.AllPeersOptions.data.length; i < len; i++) {
 
                 if ($stateParams.peer == $scope.AllPeersOptions.data[i].PeerAddress) {
-
+                  $scope.isFirstFromTopsWithPeer = true
                   $scope.AllPeersGridApi.grid.modifyRows($scope.AllPeersOptions.data);
                   $scope.AllPeersGridApi.selection.selectRow($scope.AllPeersOptions.data[i]);
+                  $scope.isFirstFromTopsWithPeer = false
 
                   if ($stateParams.type == "updates")
                     $('#updatesBtn').click();
@@ -400,10 +406,10 @@ angular.module('bmpUiApp')
           withdrawnRequest = apiFactory.getPeerWithdrawPrefixBetweenTimestamps(prefix, peerHashID, requestStartTime, requestEndTime, 100);
         }
 
-        $scope.currentSetTime = moment(endTime)
+        $scope.currentSetTime = moment(endTime);
 
-        requestStartTime = "defaultStartTimestamp"
-        requestEndTime = "defaultEndTimestamp"
+        requestStartTime = "defaultStartTimestamp";
+        requestEndTime = "defaultEndTimestamp";
 
       }
       else {
@@ -849,6 +855,7 @@ angular.module('bmpUiApp')
       getPrefixHistory($scope.value);
       $scope.selectedPeerCaption = '';
     };
+
 
     if ($stateParams.p != 'defaultPrefix') {
       console.log("INIT")

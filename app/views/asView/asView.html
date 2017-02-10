@@ -1,87 +1,84 @@
 <div ng-controller="ASViewController">
 
-    <!--<h1 class="pgtitle"> AS View</h1>-->
+  <!--<h1 class="pgtitle"> AS View</h1>-->
 
-    <div class="main-page-search">
-        AS Number or AS Name:
-        <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-model="searchValue"
-               placeholder="Search ..."
-               typeahead="as_name for as_name in getSuggestions($viewValue)"
-               typeahead-loading="loadingLocations"
-               typeahead-no-results="noResults"
-               typeahead-wait-ms="300"
-               typeahead-on-select="onSelect($item, $model, $label)"/>
-        <span class="help-block">Examples: 109, Cisco, etc.</span>
-        <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
-      <br/>
-      <br/>
-        <div class="row">
-          <div ng-show="nodata" class="col-md-4">
-            <p ng-style="{'font-size': '20px', opacity: 0.5, align: center}">
-              <i class="glyphicon glyphicon-remove"></i>
-              No Results Found
-            </p>
+  <div class="main-page-search">
+    AS Number or AS Name:
+    <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-model="searchValue"
+           placeholder="Search ..."
+           typeahead="as_name for as_name in getSuggestions($viewValue)"
+           typeahead-loading="loadingLocations"
+           typeahead-no-results="noResults"
+           typeahead-wait-ms="300"
+           typeahead-on-select="onSelect($item, $model, $label)"/>
+    <span class="help-block">Examples: 109, Cisco, etc.</span>
+    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+    <br/>
+    <br/>
+    <div class="row">
+      <div ng-show="nodata" class="col-md-4">
+        <p ng-style="{'font-size': '20px', opacity: 0.5, align: center}">
+          <i class="glyphicon glyphicon-remove"></i>
+          No Results Found
+        </p>
+      </div>
+    </div>
+
+    <!--<h3 ng-show="nodata">This AS doesn't exist</h3>-->
+    <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
+    <!--again! :)</h3>-->
+  </div>
+  <div ng-show="!nodata">
+    <div class="main-area row">
+      <div class="col-lg-6">
+        <div class="table-container whois" scrollable>
+          <h3>Whois Information for AS {{asn}}</h3>
+          <pre class="preStyle" ng-bind-html="details"></pre>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="table-container">
+          <h3>Prefixes Originated by AS {{asn}}</h3>
+
+          <div class="loading-section">
+            <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
+            <div ui-grid="prefixGridOptions" ui-grid-auto-resize ng-style="{'height': prefixGridOptions.height}"></div>
           </div>
         </div>
-
-        <!--<h3 ng-show="nodata">This AS doesn't exist</h3>-->
-        <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
-        <!--again! :)</h3>-->
+      </div>
     </div>
-    <div ng-show="!nodata">
-        <div class="main-area row">
-            <div class="col-lg-6">
-                <div class="table-container whois" scrollable>
-                    <h3>Whois Information for AS {{asn}}</h3>
-                    <pre class="preStyle" ng-bind-html="details"></pre>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="table-container">
-                    <h3>Prefixes Originated by AS {{asn}}</h3>
 
-                    <div class="loading-section">
-                        <div ng-show="prefixIsLoad" bmp-loading loading-var="prefixIsLoad"></div>
-                        <div ui-grid="prefixGridOptions" ui-grid-auto-resize ng-style="{'height': prefixGridOptions.height}"></div>
-                    </div>
-                </div>
+    <div class="main-area row">
+      <div class="col-lg-6">
+        <div class="table-container">
+          <h3>Left ASes of AS {{asn}}</h3>
+
+          <div class="loading-section">
+            <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
+            <div class="grid" ui-grid-auto-resize ui-grid="upstreamGridOptions"
+                 ng-style="{'height': upstreamGridOptions.height}">
+              <div class="watermark" ng-if="!upstreamGridOptions.data.length">No data available</div>
             </div>
+          </div>
         </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="table-container">
+          <h3>Right ASes of AS {{asn}}</h3>
 
-        <div class="main-area row">
-            <div class="col-lg-6">
-                <div class="table-container">
-                    <h3>Upstream ASes of AS {{asn}}</h3>
-
-                    <div class="loading-section">
-                        <div ng-show="upstreamIsLoad" bmp-loading loading-var="upstreamIsLoad"></div>
-                        <div class="grid" ui-grid-auto-resize ui-grid="upstreamGridOptions"
-                             ng-style="{'height': upstreamGridOptions.height}">
-                            <div class="watermark" ng-if="!upstreamGridOptions.data.length">No data available</div>
-                        </div>
-                    </div>
-                </div>
+          <div class="loading-section">
+            <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
+            <div ui-grid="downstreamGridOptions" ui-grid-auto-resize ng-style="{'height': downstreamGridOptions.height}">
+              <div class="watermark" ng-if="!downstreamGridOptions.data.length">No data available</div>
             </div>
-            <div class="col-lg-6">
-                <div class="table-container">
-                    <h3>Downstream ASes of AS {{asn}}</h3>
-
-                    <div class="loading-section">
-                        <div ng-show="downstreamIsLoad" bmp-loading loading-var="downstreamIsLoad"></div>
-                        <div ui-grid="downstreamGridOptions" ui-grid-auto-resize ng-style="{'height': downstreamGridOptions.height}">
-                            <div class="watermark" ng-if="!downstreamGridOptions.data.length">No data available</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-
-        <!--Topology area-->
-        <div class="d3-container">
-            <d3 id="AS_topology"></d3>
-        </div>
+      </div>
     </div>
+
+    <!--Topology area-->
+    <div class="d3-container">
+      <d3 id="AS_topology"></d3>
+    </div>
+  </div>
 </div>
-
-
-
