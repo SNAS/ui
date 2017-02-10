@@ -10,11 +10,15 @@
            typeahead-wait-ms="300"
            typeahead-on-select="onSelect($item, $model, $label)"/>
     <span class="help-block">Examples: 109, 1.0.128.0/17, 1.0.*</span>
+    <button type="button" class="btn btn-xs btn-default" ng-show="displayASNInfo" ng-click="changeLocation()">
+      <span class="glyphicon glyphicon-remove"></span>
+      all AS nodes
+    </button>
     <button type="button" class="btn btn-sm right time-slider-toggle-button" ng-class="{'btn-success': !dateFilterOn, 'btn-danger': dateFilterOn}" ng-click="dateFilterOn = !dateFilterOn">
       <span class="glyphicon" ng-class="{'glyphicon-plus': !dateFilterOn, 'glyphicon-minus': dateFilterOn}"></span>
       Date/time filter
     </button>
-    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+    <!--<i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>-->
 
     <div class="row">
       <div ng-show="nodata" class="col-md-4">
@@ -69,7 +73,7 @@
 
   <!-- THIS SECTION IS FOR DISPLAYING INFORMATION ABOUT ALL AS NODES -->
 
-  <div class="main-area row" ng-class="{hidden: obj.maximiseForceDirectedGraph || displayASNInfo}">
+  <div class="main-area row" ng-show="!displayASNInfo" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
     <div class="table-container col-lg-12 merge-columns">
       <div class="col-lg-8">
         <h3>Prefixes originated and transitted per AS</h3>

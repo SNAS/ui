@@ -30,7 +30,11 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
           for (i = 0 ; i < asLinks.length ; i++) {
             var src = asLinks[i].source;
             var tgt = asLinks[i].target;
-            if (src !== tgt) {
+            if (isNaN(src)) {
+              console.warn("source=%s invalid in link", src, asLinks[i]);
+            } else if (isNaN(tgt)) {
+              console.warn("target=%s invalid in link", tgt, asLinks[i]);
+            } else if (src !== tgt) {
               // add source and target to the list of ASN to get more info on
               if (asnToFindOutAbout.indexOf(src) === -1) {
                 asnToFindOutAbout.push(src);
@@ -66,6 +70,13 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
                 asLinks[i].source = nodeIndexes[asLinks[i].source];
                 asLinks[i].targetASN = asLinks[i].target;
                 asLinks[i].target = nodeIndexes[asLinks[i].target];
+                if (asLinks[i].source === undefined || asLinks[i].target === undefined) {
+                  console.warn("Could not find AS%s - removing link between AS%s and AS%s",
+                    asLinks[i].source === undefined ? asLinks[i].sourceASN : asLinks[i].targetASN, asLinks[i].sourceASN, asLinks[i].targetASN
+                  );
+                  asLinks.splice(i, 1);
+                  i--;
+                }
               }
 
               deferred.resolve({ nodes: nodes, links: asLinks });
@@ -105,6 +116,26 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
     // unfinished
     getLinkStats: function(asn, end) {
       return $http.get(bgpAPI + "/link/stats/"+asn+(end !== undefined ? "?end="+end : ""));
+    },
+    getASPaths: function(asn, start, end) {
+      var parameters = "";
+      if (start !== undefined) {
+        parameters = "?start=" + start;
+      }
+      if (end !== undefined) {
+        parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
+      }
+      return $http.get(bgpAPI + "/aspaths/"+asn+parameters);
+    },
+    getASPathsHistory: function(asn, start, end) {
+      var parameters = "";
+      if (start !== undefined) {
+        parameters = "?start=" + start;
+      }
+      if (end !== undefined) {
+        parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
+      }
+      return $http.get(bgpAPI + "/aspaths/hist/"+asn+parameters);
     }
   };
 }]);

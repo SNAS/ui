@@ -32,6 +32,7 @@ nv.models.customForceDirectedGraph = function() {
     , tooltipCallback = function(hide, tooltipData) { /* Do nothing */}
     , nodeCircles = null
     , linkColorSet = []// used for the arrows' colors to match the link colors, should the user decide to use marker-end to display an arrow
+    , nodeIdField = "id"
     ;
 
   //============================================================
@@ -365,7 +366,7 @@ nv.models.customForceDirectedGraph = function() {
         });
       }
       function linkId(d) {
-        return "link_" + d.source.as + "-" + d.target.as;
+        return "link_" + d.source[nodeIdField] + "-" + d.target[nodeIdField];
       }
 
       dispatch.on("zoomControl", function(zoomDirection) {
@@ -508,7 +509,8 @@ nv.models.customForceDirectedGraph = function() {
       tooltipCallback = _;
     }},
     nodeCircles: { get: function() { return nodeCircles;}, set: function(_) { nodeCircles = _; }},
-    linkColorSet: { get: function() { return linkColorSet;}, set: function(_) { linkColorSet = _; }}
+    linkColorSet: { get: function() { return linkColorSet;}, set: function(_) { linkColorSet = _; }},
+    nodeIdField: { get: function() { return nodeIdField;}, set: function(_) { nodeIdField = _; }}
   });
 
   // I didn't find a better way than exposing this functionality to the window level

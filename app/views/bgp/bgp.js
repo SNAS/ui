@@ -7,8 +7,8 @@
  * # BGPController
  * Controller of the BGP page
  */
-angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParams", "$filter", "bgpDataService", "ConfigService", "socket", "uiGridConstants",
-  function($scope, $stateParams, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory) {
+angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParams", "$location", "$filter", "bgpDataService", "ConfigService", "socket", "uiGridConstants",
+  function($scope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory) {
     // TODO: have a widget to choose the start and end dates/times
     var start = 1483463232000;
     var end = 1483549631000;
@@ -17,9 +17,25 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 //    var start = 1483466300000;
 //    var end = start + 10;
 
+    $scope.changeLocation = function(parameter) {
+      console.debug("changeLocation", parameter);
+      var currentUrl = $location.url();
+      var path = $location.path();
+      var newUrl = path + (parameter !== undefined ? "?search="+parameter : "");
+      console.log("currentUrl %s, path %s, newUrl %s", currentUrl, path, newUrl);
+      if (currentUrl !== newUrl) {
+        $location.url(newUrl);
+      } else if (parameter === undefined) {
+        $scope.searchValue = "";
+        searchValueFn();
+      } else {
+        console.log("what to do?");
+      }
+    };
+
     var orderBy = "routes";
     var orderDir = "desc";
-    $scope.limit = 20;
+    $scope.limit = 30;
     $scope.offset = 0;
     function sortThisColumn(){}
 
@@ -34,10 +50,19 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       getASListData();
     }
 
+    function displayAllASNodes() {
+      getASListData();
+      $scope.showDirectedGraph = false;
+      $scope.displayASNInfo = false;
+    }
+
     //get all the information of this AS
     function searchValueFn() {
       $scope.asInfo = {};
-      if (isNaN($scope.searchValue)) {
+      if ($scope.searchValue === "") {
+        displayAllASNodes();
+      }
+      else if (isNaN($scope.searchValue)) {
         console.warn("TODO: check what to do when searchValue isn't an number!")
 //        apiFactory.getWhoIsASName($scope.searchValue).success(function(result) {
 //          var data = result.w.data;
@@ -52,6 +77,8 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           $scope.asnDetails = [];
           getASWhoIsInfo(data);
           getASNodeAndLinks($scope.searchValue);
+          $scope.displayASNInfo = true;
+          $scope.showDirectedGraph = true;
         }).error(function (error) {
           console.log(error.message);
         });
@@ -79,7 +106,10 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       columnDefs: [
         {
           name: "asn", displayName: 'ASN', width: '*', type: 'number',
-          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable"><div bmp-asn-model asn="{{ COL_FIELD }}"></div></div>'
+          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+            '<div bmp-asn-model asn="{{ COL_FIELD }}"></div>'+
+//            '<button type="button" class="btn btn-xs btn-default" ng-click="changeLocation({{ COL_FIELD }})">load</button>' +
+            '</div>'
         },
         {
           name: "origins", displayName: 'Origins', width: '*',
@@ -117,6 +147,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     var color = d3.scale.category20();
     var minRadius = 4;
     var maxRadius = 30;
+    // TODO: make minRadius and maxRadius dependent on the number of nodes to show
     // the domains for both scales below need to be updated when we receive the data
     // TODO: add a slider to change the exponent
     var exponent = .5;
@@ -166,7 +197,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           values: prefixesOriginated.map(stream_index)
         },
         {
-          key: "Prefixed Transitted",
+          key: "Prefixes Transitted",
           values: prefixesTransitted.map(stream_index)
         }//,
 //        {
@@ -201,14 +232,21 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     }
 
     function updateForceDirectedGraphData(data) {
+      // for a force directed graph, it's important for a node to have a weight
+      // we'll use the number of origins as the weight factor for an AS node
+      angular.forEach(data.nodes, function(node) {
+        node.weight = node.origins;
+      });
       $scope.forceDirectedGraph.data = data;
       console.log("forceDirectedGraph data", $scope.forceDirectedGraph.data);
-      var linkWeight = function(link) { return link.weight; };
+      console.debug("links", JSON.stringify($scope.forceDirectedGraph.data.links));
+      console.debug("nodes", JSON.stringify($scope.forceDirectedGraph.data.nodes));
+      var linkWeight = function(link) { return link.sum_changes; };
       var minWeight = d3.min(data.links.map(linkWeight));
       var maxWeight = d3.max(data.links.map(linkWeight));
       linkWidthLinearScale.domain([0, maxWeight]);
       linkLengthLinearScale.domain([maxWeight, minWeight]);
-      console.log("minWeight %s maxWeight %s", minWeight, maxWeight);
+      console.log("minWeight %d maxWeight %d", minWeight, maxWeight);
     }
 
 
@@ -226,18 +264,20 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 
     function getASNodeAndLinks(asn) {
       $scope.loadingASNodesAndLinksData = true;
-      bgpDataService.getASNodesAndIndexedLinks(asn).then(function(res) {
-        console.log("all nodes and links", res);
+      bgpDataService.getASNodesAndIndexedLinks(asn).then(function(data) {
+        console.log("all nodes and links", data);
 
         // find information about this particular AS
         var asNumber = parseInt(asn, 10);
-        for (var i = 0 ; i < res.nodes.length ; i++) {
+        for (var i = 0 ; i < data.nodes.length ; i++) {
 //          console.log("compare %s (%s) with %s (%s)", res.nodes[i].asn, typeof(res.nodes[i].asn), asn, typeof(asn));
-          if (res.nodes[i].asn === asNumber) {
-            $scope.asnDetails.push({ key: "Number of routes", value: res.nodes[i].routes });
-            $scope.asnDetails.push({ key: "Number of origins", value: res.nodes[i].origins });
+          if (data.nodes[i].asn === asNumber) {
+            $scope.asnDetails.push({ key: "Number of routes", value: data.nodes[i].routes });
+            $scope.asnDetails.push({ key: "Number of origins", value: data.nodes[i].origins });
           }
         }
+
+        updateForceDirectedGraphData(data);
 
         $scope.loadingASNodesAndLinksData = false;
       }, function error(err) {
@@ -249,18 +289,31 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     function getPrefixes() {
       $scope.prefixGridOptions.data = [];
       $scope.loadingPrefixes = true; // begin loading
-      apiFactory.getRIBbyASN($scope.asn).success(function (result) {
-        var data = result.v_routes.data;
-        for (var i = 0; i < result.v_routes.size; i++) {
-          data[i].prefixWithLen = data[i].Prefix + "/" + data[i].PrefixLen;
-          data[i].IPv = (data[i].isIPv4 === 1) ? '4' : '6';
-        }
-        $scope.prefixGridOptions.data = data;
+//      apiFactory.getRIBbyASN($scope.asn).success(function (result) {
+//        console.debug("prefixes", result);
+//        var data = result.v_routes.data;
+//        for (var i = 0; i < result.v_routes.size; i++) {
+//          data[i].prefixWithLen = data[i].Prefix + "/" + data[i].PrefixLen;
+//          data[i].IPv = (data[i].isIPv4 === 1) ? '4' : '6';
+//        }
+//        $scope.prefixGridOptions.data = data;
+//        $scope.loadingPrefixes = false; // stop loading
+////        uiGridFactory.calGridHeight($scope.prefixGridOptions, $scope.prefixGridApi);
+//      }).error(function (error) {
+//        console.error(error.message);
+//      });
+
+      console.log("getting prefixes for AS", $scope.asn);
+      bgpDataService.getASPaths($scope.asn).success(function(result) {
+        console.log("prefixes1", result);
+//        var data = result.v_routes.data;
+//        $scope.prefixGridOptions.data = data;
+        $scope.prefixGridOptions.data = result;
         $scope.loadingPrefixes = false; // stop loading
 //        uiGridFactory.calGridHeight($scope.prefixGridOptions, $scope.prefixGridApi);
       }).error(function (error) {
-        console.log(error.message);
-      });
+          console.error(error.message);
+        });
     }
 
     // get AS data (details, prefixes)
@@ -356,7 +409,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 
     /* prefix table */
 
-    $scope.prefixGridInitHeight = 300;
+    $scope.prefixGridInitHeight = 250;
     $scope.prefixGridOptions = {
       rowHeight: 32,
       gridFooterHeight: 0,
@@ -366,13 +419,22 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
       columnDefs: [
+//        {
+//          name: "prefix", displayName: 'Prefix', width: '*',
+//          cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-tooltip prefix="{{ COL_FIELD }}"></div>'
+//        },
+//        {
+//          name: "as_path", displayName: 'AS Path', width: '*'
+//        },
+//        {
+//          name: "created_on", displayName: 'Timestamp', width: '*'
+//        }
         {
-          name: "prefixWithLen", displayName: 'Prefix', width: '*',
+          name: "prefix", displayName: 'Prefix', width: '*',
           cellTemplate: '<div class="ui-grid-cell-contents" bmp-prefix-tooltip prefix="{{ COL_FIELD }}"></div>'
         },
         {
-          name: "IPv", displayName: 'IPv', width: '*', visible: false,
-          sort: {direction: uiGridConstants.ASC}
+          name: "origin", displayName: 'Origin AS', width: '*'
         }
       ],
       onRegisterApi: function (gridApi) {
@@ -430,7 +492,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       var defaultScrollbarWidth = 15;
       return parentDiv.width() - defaultScrollbarWidth;
     }
-    $scope.tooltipFields = [ "asn", "routes", "origins", "weight" ];
+    $scope.tooltipFields = [ "asn", "routes", "origins" ];
 //    var customForceDirectedGraphSvg;
     $scope.forceDirectedGraph = {
       options: {
@@ -452,7 +514,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           },
           linkExtras: function(link) {
             link && link
-              .style("stroke-width", function(d) { return linkWidthLinearScale(d.weight); })
+              .style("stroke-width", function(d) { return linkWidthLinearScale(d.sum_changes); })
               .style("stroke", function(d) { return linkStabilityColor(d.stability); })
               .attr("marker-end", function(d) {
                 var stabilityLabel = linkStabilityLabel(d.stability);
@@ -464,7 +526,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
             return linkStabilityColor(d.stability);
           },
           linkDist: function(link) {
-            return linkLengthLinearScale(link.weight);
+            return linkLengthLinearScale(link.sum_changes);
           },
           linkStrength: 0.5,
           charge: -300,
@@ -502,7 +564,8 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
             } else {
               nodeTooltip.addClass("hideTooltip")
             }
-          }
+          },
+          nodeIdField: "asn"
         }
       }
     };
@@ -756,8 +819,8 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         // TODO: handle prefix case and invalid ASN or prefix cases
       }
       else {
-        getASListData();
-        $scope.showDirectedGraph = false;
+        $scope.searchValue = "";
+        displayAllASNodes();
       }
     });
   }
