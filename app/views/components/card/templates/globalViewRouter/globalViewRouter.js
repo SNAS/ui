@@ -41,11 +41,17 @@ angular.module('bmp.components.card')
 
     $scope.ipAmountData = [
       {
-        key: 'ips',
+        key: 'Up',
         values: [
           {label: "IPv4", value: 0},
-          {label: "IPv6", value: 0},
-          {label: "Total", value: 0}
+          {label: "IPv6", value: 0}
+        ]
+      },
+      {
+        key: 'Down',
+        values: [
+          {label: "IPv4", value: 0},
+          {label: "IPv6", value: 0}
         ]
       }
     ];
@@ -53,22 +59,30 @@ angular.module('bmp.components.card')
     //<!--IP's Graph-->
     var whichip = ['v4', 'v6'];
 
-
-    var ipTotal = 0;
     var graphPoint = [0];
     angular.forEach(whichip, function (obj, index) {
-      var ipAmount = 0;
-      apiFactory.getRouterIpType($scope.data.RouterIP, whichip[index]).success(function (result) {
-        ipAmount = result.v_peers.size;
-        ipTotal += ipAmount;
+
+      //alert(JSON.stringify($scope.data))
+      apiFactory.getPeersOfRouterWithIpType($scope.data.RouterHashId, whichip[index]).success(function (result) {
+        var ups = 0;
+        var downs = 0;
+
+        result.v_peers.data.forEach(function(peer_row, index) {
+          if (peer_row.isUp == 1) {
+            ups++;
+          }
+
+          else if (peer_row.isUp == 0) {
+            downs++;
+          }
+        });
 
         //if(ipAmount > graphPoint[0]) //for changing graph axis
         //  graphPoint[0] = ipAmount;
         //
-        $scope.ipAmountData[0].values[index].value = ipAmount;
-        $scope.ipAmountData[0].values[$scope.ipAmountData[0].values.length - 1].value = ipTotal;
-
-        $scope.peersAmount = ipTotal;
+        $scope.ipAmountData[0].values[index].value = ups; // Add number of peers up.
+        $scope.ipAmountData[1].values[index].value = downs; // Add number of peers down.
+        //$scope.ipAmountData[0].values[$scope.ipAmountData[0].values.length - 1].value = ipTotal;
 
         $scope.ipGraphIsLoad = false; //stop loading
       }).error(function (error) {
@@ -78,7 +92,7 @@ angular.module('bmp.components.card')
 
     $scope.ipAmountOptions = {
       chart: {
-        type: 'discreteBarChart',
+        type: 'multiBarChart',
         height: 170,
         width: 285,
         margin: {
@@ -94,6 +108,8 @@ angular.module('bmp.components.card')
           return d.value;
         },
         showValues: true,
+        stacked: true, // For stack chart.
+        showControls: false,
         valueFormat: function (d) {
           return d3.format('')(d);
         },
@@ -199,7 +215,16 @@ angular.module('bmp.components.card')
       if (!$.isEmptyObject(result)) {
         $scope.peersAmount = result.v_peers.size;
         // peersData = result.v_peers.data;
-        $scope.globalViewPeerOptions.data = result.v_peers.data;
+        var filteredPeers = []
+
+        // Filters peers with PeerASN number 0.
+        result.v_peers.data.forEach(function(peer) {
+              if (peer['PeerASN'] != 0) {
+                  filteredPeers.push(peer)
+              }
+        });
+
+        $scope.globalViewPeerOptions.data = filteredPeers;
       } else {
         $scope.globalViewPeerOptions.data = [];
       }

@@ -135,6 +135,7 @@ angular.module('bmpUiApp')
         case "app.whoIs":
         case "app.adminView":
         case "app.lookingGlass":
+        case "app.bgp":
           $scope.category = "Dashboards";
           $scope.atlas = false;
           break;

@@ -60,12 +60,14 @@ angular.module('bmp.components.table', ['ui.grid.treeView'])
         $scope.gridApi = gridApi;
         $scope.gridApi.grid.registerRowsProcessor( $scope.singleFilter, 200 );
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+          console.log("Parent selected...")
           if (!row.entity.hasOwnProperty('$$treeLevel')) {
-            apiFactory.getPeersAndLocationsByIp(row.entity['RouterIP']).
+            console.log(row.entity['peer_hash_id'])
+            apiFactory.getPeersAndLocationsByHashId(row.entity['peer_hash_id']).
               success(function (result) {
                 var data = result.v_peers.data;
                 for (var i = 0; i < data.length; i++) {
-                  if (data[i]['PeerIP'] == row.entity['PeerIP']) {
+                  if (data[i]['peer_hash_id'] == row.entity['peer_hash_id']) {
                     break;
                   }
                 }  // end for loop

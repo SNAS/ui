@@ -32,7 +32,7 @@ To build from source you will need to install nodejs **npm** and **grunt**.
         
 Build from source
 -----------------
-Some external dependancies are required, install the following only once.
+Some external dependencies are required, install the following only once.
 
     sudo gem install compass
 
@@ -47,9 +47,9 @@ Checkout the latest code using the following:
 
 Run ``sudo npm install -g grunt-cli`` to install grunt CLI.  This should install **/usr/local/bin/grunt**
 
-Run ``npm install`` to install all the dependancies under **bmpUI**.  This will read the **package.json** file to install each dependancy.
+Run ``npm install`` to install all the dependencies under **bmpUI**.  This will read the **package.json** file to install each dependency.
 
-Install bower and it's dependancies using the following:
+Install bower and it's dependencies using the following:
 
     npm install -g bower
     bower install

@@ -164,6 +164,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       var data;
       apiFactory.getRoutersAndLocations().
       success(function (result) {
+        //console.log("YEYYYY");
         try {
           data = result.routers.data;
         } catch (e) {
@@ -190,8 +191,11 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             RouterIP: data[i].RouterIP,
             LastModified: data[i].LastModified,
             isConnected: data[i].isConnected,
-            type: 'Router'
+            type: 'Router',
+            RouterHashId: data[i].RouterHashId
           };
+
+          //alert(data[i].RouterHashId)
 
           //concat of latlng for value (not an array)
           var pos = $scope.allLocations.indexOf(data[i].latitude + data[i].longitude);
@@ -733,7 +737,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             return d3.format('')(d);
           },
           color: function (d, i) {
-            return d.data.color
+            return d.color;
+//            return d.data.color
           },
           tooltipContent: function (key, y, e, graph) {
             return '<h4>' + y + ' <span class="count">' + e.point.key + '</span></h4>';
@@ -769,7 +774,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             return d3.format('')(d);
           },
           color: function (d, i) {
-            return d.data.color
+            return d.color;
+//            return d.data.color
           },
           tooltipContent: function (key, y, e, graph) {
             return '<h4>' + y + ' <span class="count">' + e.point.key + '</span></h4>';
@@ -803,7 +809,8 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             $scope.routerTotals[1]++;
           }
           $scope.routerTotals[2]++;
-          urlCalls.push(apiFactory.getPeersByIp(value.RouterIP));
+          //console.log("Value: "+JSON.stringify(value));
+          urlCalls.push(apiFactory.getPeersByHashId(value.RouterHashId));
         });
         $rootScope.routersTotals = $scope.routerTotals;
 
@@ -904,6 +911,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           for (var i = 0; i < peersData.v_peers.size; i++) {
 
             var item = peersData.v_peers.data[i];
+            //console.log(JSON.stringify(item));
 
             var whichIp = 1;
             if (item.isPeerIPv4 == 1) {
@@ -940,6 +948,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             } else {
               $rootScope.rp[item.RouterIP] = [i];
             }
+            //console.log(item.peer_hash_id);
             if ($scope.routerDict[item.RouterIP])
               $scope.routerDict[item.RouterIP].push(item);
           }
@@ -959,7 +968,9 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           $rootScope.ips = ips;
           if ($rootScope.hasOwnProperty('routerTableOptions')) {
             for (var router in $scope.routerDict) {
+              //console.log("Parent Router: " + router);
               $rootScope.routerTableOptions.data = $rootScope.routerTableOptions.data.concat($scope.routerDict[router]);
+              //break;
             }
           }
 

@@ -8,12 +8,9 @@
  * Factory for API calls
  */
 angular.module('bmpUiApp')
-  .factory('apiFactory', function($http, $q, $location, $cookies) {
-
-    //http://demo.openbmp.org:8001/db_rest/v1/
-    //If other host and port for db_rest is desired, change below.
-    var host = $location.host();
-    var port = $location.port();
+  .factory('apiFactory', function($http, $q, $location, $cookies, ConfigService) {
+    var host = ConfigService.openbmp.host;
+    var port = ConfigService.openbmp.port;
     var urlBase = 'http://' + host + ':' + port + '/db_rest/v1/';
     var limit = 1000;
     var apiFactory = {};
@@ -48,6 +45,18 @@ angular.module('bmpUiApp')
         ipType); //v4 | v6
     };
 
+    apiFactory.getPeersOfRouterWithIpType = function(routerHashId, ipType) {
+
+      var ipPrefix = 1 // Default ipPrefix is v4.
+      if (ipType == "v6") {
+        ipPrefix = 0
+      }
+
+      var url = urlBase + "peer?where=router_hash_id='" + routerHashId + "' AND isPeerIPv4=" + ipPrefix;
+      var encodedURL = encodeURI(url);
+      return $http.get(encodedURL);
+    };
+
     apiFactory.getPeers = function() {
       return $http.get(urlBase + "peer");
     };
@@ -61,9 +70,19 @@ angular.module('bmpUiApp')
         "%%27");
     };
 
+    apiFactory.getPeersByHashId = function(peer_hash_id) {
+      return $http.get(urlBase + "peer/" + peer_hash_id);
+    };
+
     apiFactory.getPeersAndLocationsByIp = function(ip) {
       return $http.get(urlBase + "peer?where=routerip%20like%20%27" + ip +
         "%%27&withgeo");
+    };
+
+    ///****///
+    apiFactory.getPeersAndLocationsByHashId = function(peer_hash_id) {
+      return $http.get(urlBase + "peer/" + peer_hash_id +
+        "?withgeo");
     };
 
     apiFactory.getPeersAndLocationsGrouped = function() {
@@ -301,14 +320,35 @@ angular.module('bmpUiApp')
       return $http.get(urlBase + "rib/history/" + prefixWithLen);
     };
 
+    // ----
+    apiFactory.getHistoryPrefixBetweenTimestamps = function(prefixWithLen, startTime, endTime, limit) {
+      var url = urlBase + "rib/history/" + prefixWithLen + "&limit=" + limit + "&where=timestamp BETWEEN '" + startTime + "' AND '" + endTime + "'";
+      var encodedURL = encodeURI(url);
+      return $http.get(encodedURL);
+    };
+
     apiFactory.getPeerHistoryPrefix = function(prefix, hashId) {
       return $http.get(urlBase + "rib/peer/" + hashId + "/history/" +
         prefix)
     };
 
+    // ----
+    apiFactory.getPeerHistoryPrefixBetweenTimestamps = function(prefixWithLen, hashId, startTime, endTime, limit) {
+      var url = urlBase + "rib/peer/" + hashId + "/history/" + prefixWithLen + "&limit=" + limit + "&where=timestamp BETWEEN '" + startTime + "' AND '" + endTime + "'";
+      var encodedURL = encodeURI(url);
+      return $http.get(encodedURL);
+    };
+
     apiFactory.getPeerWithdrawPrefix = function(prefix, hashId) {
       return $http.get(urlBase + "rib/peer/" + hashId + "/withdraws/" +
         prefix)
+    };
+
+    // ----
+    apiFactory.getPeerWithdrawPrefixBetweenTimestamps = function(prefixWithLen, hashId, startTime, endTime, limit) {
+      var url = urlBase + "rib/peer/" + hashId + "/withdraws/" + prefixWithLen + "&limit=" + limit + "&where=timestamp BETWEEN '" + startTime + "' AND '" + endTime + "'";
+      var encodedURL = encodeURI(url);
+      return $http.get(encodedURL);
     };
 
     apiFactory.getWhoIsWhereASNSync = function(asn) {
@@ -317,13 +357,18 @@ angular.module('bmpUiApp')
     };
 
     apiFactory.getWhoisPrefix = function(prefix) {
-      return $http.get(urlBase + "whois/prefix/" + prefix, {
-        cache: true
-      });
+      return $http.get(urlBase + "whois/prefix/" + prefix);
     };
 
     apiFactory.getWithdrawnPrefix = function(prefixWithLen) {
       return $http.get(urlBase + "rib/withdraws/" + prefixWithLen)
+    };
+
+    // ----
+    apiFactory.getWithdrawnPrefixBetweenTimestamps = function(prefixWithLen, startTime, endTime, limit) {
+      var url = urlBase + "rib/withdraws/" + prefixWithLen + "&limit=" + limit + "&where=timestamp BETWEEN '" + startTime + "' AND '" + endTime + "'";
+      var encodedURL = encodeURI(url);
+      return $http.get(encodedURL);
     };
 
     // Aggregation analysis

@@ -3,15 +3,20 @@
 angular.module('bmpUiApp')
   .controller('TopsViewController', ["$scope", "apiFactory", '$timeout', '$state', '$stateParams', function ($scope, apiFactory, $timeout, $state, $stateParams) {
 
+    // load UTC timezone
+    moment.tz.add("Etc/UTC|UTC|0|0|");
+    moment.tz.link("Etc/UTC|UTC");
+
     var updateColor = "#EAA546";
     var withdrawColor = "#4B84CA";
 
     var timeFormat = 'YYYY-MM-DD HH:mm';
 
-    var startTimestamp, endTimestamp;
+    $scope.startTimestamp = null;
+    $scope.endTimestamp = null;
 
-    endTimestamp = moment().toDate();
-    startTimestamp = moment().subtract('minutes', 15).toDate();
+    $scope.endTimestamp = moment().toDate();
+    $scope.startTimestamp = moment().subtract(15, 'minutes').toDate();
     var duration, durationInMinutes;
 
 
@@ -28,7 +33,7 @@ angular.module('bmpUiApp')
     $scope.searchPrefix = null;
 
     var sliderSettings = {
-      start: [startTimestamp.getTime(), endTimestamp.getTime()], // Handle start position
+      start: [$scope.startTimestamp.getTime(), $scope.endTimestamp.getTime()], // Handle start position
       step: 60 * 1000, // Slider moves in increments of a minute
       margin: 60 * 1000, // Handles must be more than 1 minute apart
       limit: 120 * 60 * 1000, // Maximum 2 hours
@@ -65,8 +70,8 @@ angular.module('bmpUiApp')
 
     noUiSlider.create(timeSelector, sliderSettings);
 
-    var startDatetimePicker = $('#startDatetimePicker'),
-      endDatetimePicker = $('#endDatetimePicker');
+    var startDatetimePicker = $('#startDatetimePicker');
+    var endDatetimePicker = $('#endDatetimePicker');
 
     startDatetimePicker.datetimepicker({
       sideBySide: true,
@@ -330,12 +335,16 @@ angular.module('bmpUiApp')
 
     $scope.goPrefixAnalysis = function () {
       $('#redirectModal').modal('hide');
+      //console.log("GO PREFIX: " + $scope.filterPrefixText);
+      console.log("GO PEER: " + $scope.startTimestamp);
       $('body').removeClass('modal-open');
       $('.modal-backdrop').remove();
       $state.go('app.prefixAnalysis', {
         p: $scope.filterPrefixText,
-        peer: goPrefixPeer,
-        type: goPrefixAnaType
+        peer: $scope.filterPeerText,
+        type: goPrefixAnaType,
+        startTime: $scope.startTimestamp,
+        endTime: $scope.endTimestamp
       });
     };
     //load All the graphs
@@ -372,10 +381,10 @@ angular.module('bmpUiApp')
       ];
       $scope.trendGraphData = [];
 
-      startTimestamp = moment(startDatetimePicker.data("DateTimePicker").date()).tz('UTC').format(timeFormat);
-      endTimestamp = moment(endDatetimePicker.data("DateTimePicker").date()).tz('UTC').format(timeFormat);
+      $scope.startTimestamp = moment(startDatetimePicker.data("DateTimePicker").date()).tz('UTC').format(timeFormat);
+      $scope.endTimestamp = moment(endDatetimePicker.data("DateTimePicker").date()).tz('UTC').format(timeFormat);
 
-      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
+      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", $scope.startTimestamp, $scope.endTimestamp)
         .success(function (result) {
 
           if (result.l != undefined) {
@@ -415,7 +424,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "peer", startTimestamp, endTimestamp)
+      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "peer", $scope.startTimestamp, $scope.endTimestamp)
         .success(function (result) {
 
           if (result.l != undefined) {
@@ -456,7 +465,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, true)
+      apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "prefix", $scope.startTimestamp, $scope.endTimestamp, true)
         .success(function (result) {
 
           if (result.l != undefined) {
@@ -498,7 +507,7 @@ angular.module('bmpUiApp')
           console.log(error.message);
         });
 
-      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", startTimestamp, endTimestamp, true)
+      apiFactory.getTopWithdraws($scope.searchPeer, $scope.searchPrefix, "prefix", $scope.startTimestamp, $scope.endTimestamp, true)
         .success(function (result) {
 
           if (result.l != undefined) {
@@ -543,7 +552,7 @@ angular.module('bmpUiApp')
       var trendGraphUpdates = null, trendGraphWithdraws = null;
 
       //Trend Graph
-      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, ((durationInMinutes * 60) / 24), startTimestamp, endTimestamp)
+      apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, ((durationInMinutes * 60) / 24), $scope.startTimestamp, $scope.endTimestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -566,7 +575,7 @@ angular.module('bmpUiApp')
         .error(function (error) {
           console.log(error.message);
         });
-      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, ((durationInMinutes * 60) / 24), startTimestamp, endTimestamp)
+      apiFactory.getWithdrawsOverTime($scope.searchPeer, $scope.searchPrefix, ((durationInMinutes * 60) / 24), $scope.startTimestamp, $scope.endTimestamp)
         .success(function (result) {
           var len = result.table.data.length;
           var data = result.table.data;
@@ -692,7 +701,7 @@ angular.module('bmpUiApp')
             }
             else {
               $('#redirectModal').modal('show');
-              goPrefixPeer = d.peerHash;
+              goPrefixPeer = d;
               goPrefixAnaType = 'updates';
             }
           });
@@ -716,7 +725,7 @@ angular.module('bmpUiApp')
             }
             else {
               $('#redirectModal').modal('show');
-              goPrefixPeer = d.peerHash;
+              goPrefixPeer = d;
               goPrefixAnaType = 'withdraws';
             }
           });

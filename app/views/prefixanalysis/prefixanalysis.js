@@ -9,12 +9,21 @@
  */
 angular.module('bmpUiApp')
   .controller('PrefixAnalysisController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$location', '$window', '$anchorScroll', '$compile', 'modal', '$stateParams', '$rootScope', 'uiGridConstants', function ($scope, apiFactory, $http, $timeout, $interval, $location, $window, $anchorScroll, $compile, modal, $stateParams, $rootScope, uiGridConstants) {
+
+    console.log("goPrefixPeer: " + $stateParams.peer);
+    console.log("From Prefix Analysis: " + $stateParams.startTime)
+    console.log("From Prefix Analysis: " + $stateParams.endTime)
+    console.log("State Params: " + JSON.stringify($stateParams));
+
+    var requestStartTime = $stateParams.startTime
+    var requestEndTime = $stateParams.endTime
+
     //DEBUG
     $scope.nodata = false;
     // resize the window
     window.SCOPE = $scope;
     //Create the  prefix data grid
-    $scope.AllPrefixOptions = {
+    $scope.AllPeersOptions = {
       showGridFooter: true,
       enableFiltering: false,
       enableRowSelection: true,
@@ -22,19 +31,26 @@ angular.module('bmpUiApp')
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
       multiSelect: false,
-      rowHeight: 25,
+      rowHeight: 30,
       gridFooterHeight: 0,
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>',
       onRegisterApi: function (gridApi) {
-        $scope.AllPrefixGridApi = gridApi;
+        console.log("PEER TABLE CREATED !!!")
+        $scope.AllPeersGridApi = gridApi;
+
+        console.log(JSON.stringify($scope.AllPeersOptions.data,"", 4))
+
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.selectPeer = row.entity;
+          console.log("ROW SELECTION CHANGED...")
+
           getPrefixHistory($scope.value, $scope.selectPeer.peer_hash_id);
           // $scope.selectUpdates();
           $scope.fromRouter = 'FROM ' + $scope.selectPeer.RouterName;
           $scope.fromPeer = '-> ' + $scope.selectPeer.PeerName;
           $scope.selectedPeerCaption = $scope.selectPeer.PeerName + ' selected';
         });
+
       },
       columnDefs: [
         {name: "RouterName", displayName: 'RouterName'},
@@ -46,6 +62,8 @@ angular.module('bmpUiApp')
         }
       ]
     };
+
+
 
     // updates/history of prefixes after clicking 'update' button
     $scope.HistoryPrefixOptions = {
@@ -201,7 +219,8 @@ angular.module('bmpUiApp')
         .success(function (data) {
           // execute the function and get data successfully.
           $scope.PrefixData = data.v_all_routes.data;
-          $scope.AllPrefixOptions.data = data.v_all_routes.data;
+          $scope.AllPeersOptions.data = data.v_all_routes.data;
+
           var peerDataOriginal = data.v_all_routes.data;
           $scope.peerData = filterUnique(peerDataOriginal, "PeerName");
           createPrefixGridTable();
@@ -209,9 +228,14 @@ angular.module('bmpUiApp')
           $scope.allPreLoad = false;
           $timeout(function () {
             if ($stateParams.p != 'defaultPrefix') {
-              for (var i = 0, len = $scope.AllPrefixOptions.data.length; i < len; i++) {
-                if ($stateParams.peer == $scope.AllPrefixOptions.data[i].peer_hash_id) {
-                  $scope.AllPrefixGridApi.selection.selectRow($scope.AllPrefixOptions.data[i]);
+
+              for (var i = 0, len = $scope.AllPeersOptions.data.length; i < len; i++) {
+
+                if ($stateParams.peer == $scope.AllPeersOptions.data[i].PeerAddress) {
+
+                  $scope.AllPeersGridApi.grid.modifyRows($scope.AllPeersOptions.data);
+                  $scope.AllPeersGridApi.selection.selectRow($scope.AllPeersOptions.data[i]);
+
                   if ($stateParams.type == "updates")
                     $('#updatesBtn').click();
                   else
@@ -237,6 +261,7 @@ angular.module('bmpUiApp')
           .success(function (result) {
             $scope.showPrefixInfo = '<table>';
             if (result.gen_whois_route.data.length > 0) {
+              $scope.origin_as_number =  result.gen_whois_route.data[0].origin_as // Set Origin AS number to load in originating as information section.
               $scope.values = result.gen_whois_route.data[0];
               $scope.values['prefix'] = $scope.values['prefix'] + '/' + $scope.values['prefix_len'];
               delete $scope.values['prefix_len'];
@@ -278,7 +303,7 @@ angular.module('bmpUiApp')
         var Origin_AS = $scope.PrefixData[0].Origin_AS;
 
         // create the table
-        var url = apiFactory.getWhoIsWhereASNSync(Origin_AS);
+        var url = apiFactory.getWhoIsWhereASNSync(Origin_AS); // DEBUG !
 
         var flag = true;
         for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
@@ -302,6 +327,9 @@ angular.module('bmpUiApp')
             $scope.showValues = '<table>';
             $scope.values = result.w.data[0];
             angular.forEach($scope.values, function (value, key) {
+              if (!value) {
+                value = "-"
+              }
 
               if (key != "raw_output") {
                 switch (key) {
@@ -349,20 +377,45 @@ angular.module('bmpUiApp')
     //   getPrefixHistory($scope.currentValue);
     // };
 
-    // get last 100 records of updates and withdrawns, populate allHistoryOptions
+    // get last 1000 records of updates and withdrawns, populate allHistoryOptions
     var getPrefixHistory = function(prefix, peerHashID) {
       $scope.allHisLoad = true;
       $scope.loading = true;
       prefix += '?ts=lastupdate';
       var prefixHistoryData = [];
       var historyRequest, withdrawnRequest;
+      console.log("xxxxx: " + requestStartTime);
+      console.log("yyyyy: " + requestEndTime)
 
-      if (!peerHashID) {
-        historyRequest = apiFactory.getHistoryPrefix(prefix);
-        withdrawnRequest = apiFactory.getWithdrawnPrefix(prefix)
-      } else {
-        historyRequest = apiFactory.getPeerHistoryPrefix(prefix, peerHashID);
-        withdrawnRequest = apiFactory.getPeerWithdrawPrefix(prefix, peerHashID);
+      var endTime = moment.utc(requestEndTime, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD HH:mm:ss.SSSSSS');
+      var startTime = moment.utc(requestStartTime, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD HH:mm:ss.SSSSSS');
+
+      if (requestStartTime != "defaultStartTimestamp" && requestEndTime != "defaultEndTimestamp") {
+        console.log("FROM TOPS !!!")
+        if (!peerHashID) {
+          historyRequest = apiFactory.getHistoryPrefixBetweenTimestamps(prefix, requestStartTime, requestEndTime, 100);
+          withdrawnRequest = apiFactory.getWithdrawnPrefixBetweenTimestamps(prefix, requestStartTime, requestEndTime, 100)
+        } else {
+          historyRequest = apiFactory.getPeerHistoryPrefixBetweenTimestamps(prefix, peerHashID, requestStartTime, requestEndTime, 100);
+          withdrawnRequest = apiFactory.getPeerWithdrawPrefixBetweenTimestamps(prefix, peerHashID, requestStartTime, requestEndTime, 100);
+        }
+
+        $scope.currentSetTime = moment(endTime)
+
+        requestStartTime = "defaultStartTimestamp"
+        requestEndTime = "defaultEndTimestamp"
+
+      }
+      else {
+          if (!peerHashID) {
+          historyRequest = apiFactory.getHistoryPrefix(prefix);
+          withdrawnRequest = apiFactory.getWithdrawnPrefix(prefix)
+        } else {
+          historyRequest = apiFactory.getPeerHistoryPrefix(prefix, peerHashID);
+          withdrawnRequest = apiFactory.getPeerWithdrawPrefix(prefix, peerHashID);
+        }
+
+        $scope.currentSetTime = moment();
       }
 
       historyRequest
@@ -387,6 +440,7 @@ angular.module('bmpUiApp')
               $scope.PrefixData = prefixHistoryData;
               var peerDataOriginal = prefixHistoryData;
               $scope.peerData = filterUnique(peerDataOriginal, "PeerName");
+
               // createPrefixGridTable();
               // createOriginASGridTable();
               // $timeout(function () {
@@ -406,9 +460,11 @@ angular.module('bmpUiApp')
               if ($scope.originHisData.length == 0) {
                 $scope.showTip = "true";
               } else {
+
                 $scope.showTip = "false";
-                $scope.currentSetTime = moment($scope.originHisData[0].LastModified);
+
                 if (prefix.indexOf('lastupdate') > -1) {
+
                   $("#endTimePicker").data("DateTimePicker").date($scope.currentSetTime);
                   var oldestTime = moment($scope.originHisData[$scope.originHisData.length - 1].LastModified);
                   var interval_hour = Math.ceil(moment.duration($scope.currentSetTime.diff(oldestTime)).asHours());
@@ -583,7 +639,7 @@ angular.module('bmpUiApp')
           $scope.showTip = "true";
         } else {
           $scope.showTip = "false";
-          $scope.currentSetTime = moment($scope.originHisData[0].LastModified);
+          $scope.currentSetTime = moment();
           if (searchPrefix.indexOf('lastupdate') > -1) {
             $("#endTimePicker").data("DateTimePicker").date($scope.currentSetTime);
             var oldestTime = moment($scope.originHisData[$scope.originHisData.length - 1].LastModified);
@@ -724,8 +780,10 @@ angular.module('bmpUiApp')
           allHisData[i].Communities_list[j]["last_flag"] = allHisData[i].Communities_list_flag_last[j];
         }
         // ********* the  above code is to create two field to record the Communities changing
-        if (offsetInMin / $scope.timeRange.value <= NUMBER_OF_RECTS)
+        if (offsetInMin / $scope.timeRange.value <= NUMBER_OF_RECTS && offsetInMin / $scope.timeRange.value >= 0) {
           $scope.HisData[NUMBER_OF_RECTS - Math.ceil(offsetInMin / $scope.timeRange.value)].push(allHisData[i]);
+        }
+
       }
 
       Array.prototype.compare = function (array) {
@@ -793,6 +851,7 @@ angular.module('bmpUiApp')
     };
 
     if ($stateParams.p != 'defaultPrefix') {
+      console.log("INIT")
       $scope.value = $stateParams.p;
       getPrefixDataGrid($scope.value);
       getPrefixHistory($scope.value);
@@ -1068,9 +1127,9 @@ angular.module('bmpUiApp')
     function link($scope, element) {
       var drawCircles = function (data) {
         var NUMBER_OF_RECTS = 30;
-        var margin = {top: 0, right: 20, bottom: 20, left: 25},
-          width = 800,
-          height = 200;
+        var margin = {top: 0, right: 20, bottom: 20, left: 20},
+          width = 850,
+          height = 280;
         var start_time = moment($scope.currentSetTime - $scope.timeRange.range * 60 * 60000);
         var end_time = $scope.currentSetTime;
         var x = d3.time.scale().range([0, width]).domain([start_time, end_time]);
@@ -1125,14 +1184,14 @@ angular.module('bmpUiApp')
 
         var svg = d3.select(element[0])
           .append("svg")
-          .attr("width", width)
+          .attr("width", width+300)
           .attr("height", height + margin.top + margin.bottom)
           .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         svg.append("g")
           .attr("class", "x axis")
-          .attr("transform", "translate(" + 15 + "," + 50 + ")")
+          .attr("transform", "translate(" + 0 + "," + 50 + ")")
           .call(xAxis);
 
         for (var j = 0; j < data.length; j++) {
