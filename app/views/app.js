@@ -135,7 +135,9 @@ var bmpUiApp = angular
           'type': 'defaultType',
           'peer': 'defaultPeer',
           'startTime': 'defaultStartTimestamp',
-          'endTime': 'defaultEndTimestamp'
+          'endTime': 'defaultEndTimestamp',
+          'limitForUpdates': 'defaultLimitForUpdates',
+          'limitForWithdraws': 'defaultLimitForWithdraws'
         },
         templateUrl: 'views/prefixanalysis/prefixanalysis.html'
       })

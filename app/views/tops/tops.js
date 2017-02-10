@@ -336,7 +336,8 @@ angular.module('bmpUiApp')
     $scope.goPrefixAnalysis = function () {
       $('#redirectModal').modal('hide');
       //console.log("GO PREFIX: " + $scope.filterPrefixText);
-      console.log("GO PEER: " + $scope.startTimestamp);
+      //console.log("Updates limit: " + $scope.topUpdatesByPrefixData[0].values[0].value);
+      //console.log("Withdraws limit: " + $scope.topWithdrawsByPrefixData[0].values[0].value)
       $('body').removeClass('modal-open');
       $('.modal-backdrop').remove();
       $state.go('app.prefixAnalysis', {
@@ -344,7 +345,9 @@ angular.module('bmpUiApp')
         peer: $scope.filterPeerText,
         type: goPrefixAnaType,
         startTime: $scope.startTimestamp,
-        endTime: $scope.endTimestamp
+        endTime: $scope.endTimestamp,
+        limitForUpdates: $scope.topUpdatesByPrefixData[0].values[0].value,
+        limitForWithdraws: $scope.topWithdrawsByPrefixData[0].values[0].value
       });
     };
     //load All the graphs

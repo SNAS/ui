@@ -18,6 +18,9 @@ angular.module('bmpUiApp')
     var requestStartTime = $stateParams.startTime
     var requestEndTime = $stateParams.endTime
 
+    var limitForUpdates = parseInt($stateParams.limitForUpdates)
+    var limitForWithdraws = parseInt($stateParams.limitForWithdraws)
+
     $scope.isFirstFromTopsWithPeer = false
 
     //DEBUG
@@ -399,11 +402,11 @@ angular.module('bmpUiApp')
       if (requestStartTime != "defaultStartTimestamp" && requestEndTime != "defaultEndTimestamp") {
         console.log("FROM TOPS !!!")
         if (!peerHashID) {
-          historyRequest = apiFactory.getHistoryPrefixBetweenTimestamps(prefix, requestStartTime, requestEndTime, 100);
-          withdrawnRequest = apiFactory.getWithdrawnPrefixBetweenTimestamps(prefix, requestStartTime, requestEndTime, 100)
+          historyRequest = apiFactory.getHistoryPrefixBetweenTimestamps(prefix, requestStartTime, requestEndTime, limitForUpdates);
+          withdrawnRequest = apiFactory.getWithdrawnPrefixBetweenTimestamps(prefix, requestStartTime, requestEndTime, limitForWithdraws)
         } else {
-          historyRequest = apiFactory.getPeerHistoryPrefixBetweenTimestamps(prefix, peerHashID, requestStartTime, requestEndTime, 100);
-          withdrawnRequest = apiFactory.getPeerWithdrawPrefixBetweenTimestamps(prefix, peerHashID, requestStartTime, requestEndTime, 100);
+          historyRequest = apiFactory.getPeerHistoryPrefixBetweenTimestamps(prefix, peerHashID, requestStartTime, requestEndTime, limitForUpdates);
+          withdrawnRequest = apiFactory.getPeerWithdrawPrefixBetweenTimestamps(prefix, peerHashID, requestStartTime, requestEndTime, limitForWithdraws);
         }
 
         $scope.currentSetTime = moment(endTime);
