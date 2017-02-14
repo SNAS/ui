@@ -1,6 +1,7 @@
 <div ng-controller="BGPController" id="bgpView" ng-init="obj={maximiseForceDirectedGraph:false}">
 
   <div class="main-page-search" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
+    <!--<button class="btn btn-danger" ng-click="cancelAllHttpRequests()">Cancel http requests</button>-->
     AS Number or prefix:
     <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-model="searchValue"
            placeholder="Search ..."
@@ -73,7 +74,7 @@
 
   <!-- THIS SECTION IS FOR DISPLAYING INFORMATION ABOUT ALL AS NODES -->
 
-  <div class="main-area row" ng-show="!displayASNInfo" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
+  <div class="main-area row" ng-show="displayAllNodes" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
     <div class="table-container col-lg-12 merge-columns">
       <div class="col-lg-8">
         <h3>Prefixes originated and transitted per AS</h3>
@@ -114,7 +115,7 @@
             <tbody>
             <tr ng-repeat="row in asnDetails">
               <td>{{row.key}}</td>
-              <td>{{row.value}}</td>
+              <td class="value">{{row.value}}</td>
             </tr>
             </tbody>
           </table>
@@ -126,8 +127,26 @@
         <h3>Prefixes with AS Path containing AS {{asn}}</h3>
 
         <div class="loading-section">
-          <div ng-show="loadingPrefixes" bmp-loading></div>
+          <div ng-show="loadingPrefixes" bmp-loading font-width="50"></div>
           <div ui-grid="prefixGridOptions" ui-grid-auto-resize ng-style="{'height': prefixGridOptions.height}"></div>
+          <div class="watermark" ng-if="!prefixGridOptions.data.length">No data available</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THIS SECTION DISPLAYS INFORMATION FOR A SPECIFIC PREFIX -->
+
+  <!--<div class="main-area row" ng-show="displayASNInfo">-->
+  <div class="main-area row" ng-show="!nodata && !obj.maximiseForceDirectedGraph && displayPrefixInfo">
+    <!-- prefixes -->
+    <div class="col-lg-12">
+      <div class="table-container">
+        <h3>Prefixes starting with {{prefix}}</h3>
+
+        <div class="loading-section">
+          <div ng-show="loadingPrefixes" bmp-loading font-width="50"></div>
+          <div ui-grid="prefixViewGridOptions" ui-grid-auto-resize ng-style="{'height': prefixGridOptions.height}"></div>
         </div>
       </div>
     </div>
@@ -151,7 +170,7 @@
           </div>
         </h3>
         <div class="loading-section">
-          <div ng-show="loadingASNodesAndLinksData" bmp-loading></div>
+          <div ng-show="loadingASNodesAndLinksData" bmp-loading font-width="50"></div>
         </div>
         <div class="nv-container">
           <nvd3 options="forceDirectedGraph.options" data="forceDirectedGraph.data" class="with-3d-shadow with-transitions"></nvd3>

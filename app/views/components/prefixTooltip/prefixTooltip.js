@@ -1,5 +1,6 @@
 angular.module('bmp.components.prefixTooltip', [])
-  .directive('bmpPrefixTooltip', ['apiFactory', function (apiFactory) {
+  .directive('bmpPrefixTooltip', ['apiFactory', '$location', function (apiFactory, $location) {
+
     function link($scope, element, attr) {
       element.on('mouseover', function(){
         apiFactory.getWhoisPrefix($scope.prefix.trim())
@@ -12,13 +13,19 @@ angular.module('bmp.components.prefixTooltip', [])
             }
           });
       });
+      element.on('click', function() {
+        if ($scope.changeUrlOnClick !== undefined) {
+          $location.url($scope.changeUrlOnClick);
+        }
+      });
     }
 
     return {
       templateUrl: "views/components/prefixTooltip/prefixTooltip.html",
       restrict: 'AE',
       scope: {
-        prefix: "@"
+        prefix: "@",
+        changeUrlOnClick: "@"
       },
       link: link
     }

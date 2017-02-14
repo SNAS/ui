@@ -294,4 +294,17 @@
   #forceDirectedGraph {
     min-height: 280px;
   }
+
+  .whois {
+    td.value {
+      padding-left: 10px;
+    }
+  }
+
+  .clickable {
+    cursor: pointer;
+    &:hover {
+      color: #43f0a2;
+    }
+  }
 }

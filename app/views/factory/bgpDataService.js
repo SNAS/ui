@@ -13,88 +13,23 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
   var port = ConfigService.bgpDataService.port;
   var bgpAPI = "http://" + host + ":" + port;
 
+  function cancel(canceller) {
+    return function() {
+      canceller.resolve();
+    }
+  };
+
   return {
     getASList: function(orderBy, orderDir, limit, offset) {
+      var canceller = $q.defer();
       // get the AS list from the BGP data service
-      return $http.get(bgpAPI + "/as?orderBy="+orderBy+"&orderDir="+orderDir+"&limit="+limit+"&offset="+offset);
-    },
-    getASNodesAndIndexedLinks: function(asn, start, end) {
-      var i;
-      var deferred = $q.defer();
-
-      // get list of AS numbers linked to the asn parameter
-      $http.get(bgpAPI + "/links/"+asn+(end !== undefined ? "?end="+end : "")).success(function(asLinks) {
-          var asnToFindOutAbout = [];
-
-          // ignore links between the same ASN, e.g. source=109, target=109
-          for (i = 0 ; i < asLinks.length ; i++) {
-            var src = asLinks[i].source;
-            var tgt = asLinks[i].target;
-            if (isNaN(src)) {
-              console.warn("source=%s invalid in link", src, asLinks[i]);
-            } else if (isNaN(tgt)) {
-              console.warn("target=%s invalid in link", tgt, asLinks[i]);
-            } else if (src !== tgt) {
-              // add source and target to the list of ASN to get more info on
-              if (asnToFindOutAbout.indexOf(src) === -1) {
-                asnToFindOutAbout.push(src);
-              }
-              if (asnToFindOutAbout.indexOf(tgt) === -1) {
-                asnToFindOutAbout.push(tgt);
-              }
-            }
-          }
-
-          console.debug("asnToFindOutAbout", asnToFindOutAbout);
-
-          var parameters = "";
-          if (start !== undefined) {
-            parameters = "?start=" + start;
-          }
-          if (end !== undefined) {
-            parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
-          }
-
-          // get information about all AS numbers
-          $http.get(bgpAPI + "/as/"+asnToFindOutAbout.join(',')+parameters).success(function(linkedASInfo) {
-              console.debug("got info for all ASes", JSON.stringify(linkedASInfo));
-              var nodes = linkedASInfo;
-
-              var nodeIndexes = {};
-              for (i = 0 ; i < nodes.length ; i++) {
-                nodeIndexes[nodes[i].asn] = i;
-              }
-
-              for (i = 0 ; i < asLinks.length ; i++) {
-                asLinks[i].sourceASN = asLinks[i].source;
-                asLinks[i].source = nodeIndexes[asLinks[i].source];
-                asLinks[i].targetASN = asLinks[i].target;
-                asLinks[i].target = nodeIndexes[asLinks[i].target];
-                if (asLinks[i].source === undefined || asLinks[i].target === undefined) {
-                  console.warn("Could not find AS%s - removing link between AS%s and AS%s",
-                    asLinks[i].source === undefined ? asLinks[i].sourceASN : asLinks[i].targetASN, asLinks[i].sourceASN, asLinks[i].targetASN
-                  );
-                  asLinks.splice(i, 1);
-                  i--;
-                }
-              }
-
-              deferred.resolve({ nodes: nodes, links: asLinks });
-            }
-          ).error(function(error) {
-              console.error("Failed to retrieve info for AS", asnToFindOutAbout.join(','), error);
-              deferred.reject("Failed to retrieve info for AS " + asnToFindOutAbout.join(','));
-            }
-          );
-
-        }
-      ).error(function(error) {
-          console.error("Failed to retrieve AS links", error);
-          deferred.reject("Failed to retrieve links for AS ", asn);
-        }
-      );
-
-      return deferred.promise;
+      var promise = $http.get(bgpAPI + "/as?orderBy="+orderBy+"&orderDir="+orderDir+"&limit="+limit+"&offset="+offset, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get AS list (request might have been cancelled)");
+        });
+      return { promise: promise, cancel: cancel(canceller) };
     },
     getASInfo: function(asn, start, end) {
       var parameters = "";
@@ -105,18 +40,32 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
       }
 
-      return $http.get(bgpAPI + "/as/"+asn+parameters);
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/as/"+asn+parameters, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get AS info (request might have been cancelled) - as="+asn);
+        });
+      return { promise: promise, cancel: cancel(canceller) };
     },
     getASLinks: function(asn, end) {
-      return $http.get(bgpAPI + "/links/"+asn+(end !== undefined ? "?end="+end : ""));
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/links/"+asn+(end !== undefined ? "?end="+end : ""), { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get AS links (request might have been cancelled) - as="+asn);
+        });
+      return { promise: promise, cancel: cancel(canceller) };
     },
-    getASStats: function(asn, end) {
-      return $http.get(bgpAPI + "/as/stats/"+asn+(end !== undefined ? "?end="+end : ""));
-    },
-    // unfinished
-    getLinkStats: function(asn, end) {
-      return $http.get(bgpAPI + "/link/stats/"+asn+(end !== undefined ? "?end="+end : ""));
-    },
+//    getASStats: function(asn, end) {
+//      return $http.get(bgpAPI + "/as/stats/"+asn+(end !== undefined ? "?end="+end : ""));
+//    },
+//    // unfinished
+//    getLinkStats: function(asn, end) {
+//      return $http.get(bgpAPI + "/link/stats/"+asn+(end !== undefined ? "?end="+end : ""));
+//    },
     getASPaths: function(asn, start, end) {
       var parameters = "";
       if (start !== undefined) {
@@ -125,7 +74,16 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       if (end !== undefined) {
         parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
       }
-      return $http.get(bgpAPI + "/aspaths/"+asn+parameters);
+
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/aspaths/"+asn+parameters, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get AS paths (request might have been cancelled) - as="+asn);
+        });
+
+      return { promise: promise, cancel: cancel(canceller) };
     },
     getASPathsHistory: function(asn, start, end) {
       var parameters = "";
@@ -135,7 +93,34 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       if (end !== undefined) {
         parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
       }
-      return $http.get(bgpAPI + "/aspaths/hist/"+asn+parameters);
+
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/aspaths/hist/"+asn+parameters, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get AS paths history (request might have been cancelled) - as="+asn);
+        });
+
+      return { promise: promise, cancel: cancel(canceller) };
+    },
+    getPrefixInfo: function(prefix, start, end) {
+      var parameters = "";
+      if (start !== undefined) {
+        parameters = "?start=" + start;
+      }
+      if (end !== undefined) {
+        parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
+      }
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/prefixes/"+prefix+parameters, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get AS paths history (request might have been cancelled) - prefix="+prefix);
+        });
+
+      return { promise: promise, cancel: cancel(canceller) };
     }
   };
 }]);
