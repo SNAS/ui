@@ -23,7 +23,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
     getASList: function(orderBy, orderDir, limit, offset) {
       var canceller = $q.defer();
       // get the AS list from the BGP data service
-      var promise = $http.get(bgpAPI + "/as?orderBy="+orderBy+"&orderDir="+orderDir+"&limit="+limit+"&offset="+offset, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/as?orderBy="+orderBy+"&orderDir="+orderDir+"&limit="+limit+"&offset="+offset, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -41,7 +41,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       }
 
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/as/"+asn+parameters, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/as/"+asn+parameters, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -76,7 +76,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       }
 
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/aspaths/"+asn+parameters, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/aspaths/"+asn+parameters,  { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -95,7 +95,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       }
 
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/aspaths/hist/"+asn+parameters, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/aspaths/hist/"+asn+parameters,  { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -113,7 +113,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
       }
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/prefixes/"+prefix+parameters, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/prefixes/"+prefix+parameters,  { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -131,7 +131,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
       }
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/as/hist/" + as + parameters, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/as/hist/" + as + parameters,  { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -149,7 +149,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
       }
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/links/hist/" + startAS + "/" + endAS + parameters, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/links/hist/" + startAS + "/" + endAS + parameters,  { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {

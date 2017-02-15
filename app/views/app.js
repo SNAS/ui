@@ -51,6 +51,10 @@ var bmpUiApp = angular
       return options;
     }];
   })
+  .config(['$httpProvider', function ($httpProvider) {
+        // enable http caching
+       $httpProvider.defaults.cache = true;
+  }])
   .config(function ($stateProvider, $urlRouterProvider, $logProvider) {
     $urlRouterProvider.otherwise("/login");
     $logProvider.debugEnabled(false);
