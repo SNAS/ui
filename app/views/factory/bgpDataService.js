@@ -121,6 +121,42 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         });
 
       return { promise: promise, cancel: cancel(canceller) };
+    },
+    getASHistInfo: function(as, start, end) {
+      var parameters = "";
+      if (start !== undefined) {
+        parameters = "?start=" + start;
+      }
+      if (end !== undefined) {
+        parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
+      }
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/as/hist/" + as + parameters, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get AS history (request might have been cancelled) - as="+as);
+        });
+
+      return { promise: promise, cancel: cancel(canceller) };
+    },
+    getLinkHistInfo: function(startAS, endAS, start, end) {
+      var parameters = "";
+      if (start !== undefined) {
+        parameters = "?start=" + start;
+      }
+      if (end !== undefined) {
+        parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
+      }
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/links/hist/" + startAS + "/" + endAS + parameters, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get AS link history (request might have been cancelled) - startAS="+startAS + " - endAS=" + endAS);
+        });
+
+      return { promise: promise, cancel: cancel(canceller) };
     }
   };
 }]);
