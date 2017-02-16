@@ -216,7 +216,7 @@
           <div ng-show="loadingPrefixes" bmp-loading font-width="50"></div>
         </div>
 
-        <div class="as-path" ng-repeat="as_path in asPathGraph.paths">
+        <div class="as-path" ng-repeat="as_path in asPathGraph.paths | orderBy:asPathsOrderProp" ng-show="as_path.visible">
           <div class="timestamp">{{as_path.timestamp}}</div>
           <div class="prefix">{{as_path.prefix}}</div>
           <div ng-style="{'width':config.width}">

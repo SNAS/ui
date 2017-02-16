@@ -457,9 +457,6 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           //   { "as_path": "123 444 789", "origin_as": 789, "created_on": "2017-02-12 22:39", "prefix": "1.2.3.0/24" },
           //   { "as_path": "123 654 567", "origin_as": 567, "created_on": "2017-02-12 22:54", "prefix": "1.2.9.0/22" }
           // ]
-          // we want to organise the data for 2 widgets:
-          // - a table listing distinct prefixes and their origin_as
-          // - an svg graph (with auto-layout) displaying all AS paths over time")
           $scope.prefixViewGridOptions.data = data;
 //          $scope.asPathGraph.data = transformASPathDataToGraphData(data);
           $scope.asPathGraph.paths = [];
@@ -467,7 +464,10 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
             //$scope.prefixViewGridOptions.data[i].as_path2 = $scope.prefixViewGridOptions.data[i].as_path;
             //$scope.prefixViewGridOptions.data[i].as_path3 = $scope.prefixViewGridOptions.data[i].as_path.split(' ');
             $scope.prefixViewGridOptions.data[i].length = $scope.prefixViewGridOptions.data[i].as_path.split(' ').length;
-            $scope.asPathGraph.paths.push({path: data[i].as_path, as_path: [], prefix: data[i].prefix, timestamp: data[i].created_on});
+
+            // initial_index is the link between asPathGraph.paths and prefixViewGridOptions.data
+            $scope.prefixViewGridOptions.data[i].initial_index = i;
+            $scope.asPathGraph.paths.push({initial_index: i, rendering_index: i, visible: true, path: data[i].as_path, as_path: [], prefix: data[i].prefix, timestamp: data[i].created_on});
           }
 
           createASpaths($scope.asPathGraph.paths);
@@ -607,7 +607,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="'+$location.path()+'?search={{ COL_FIELD}}"></div>'
         },
         {
-          name: "origin", displayName: 'Origin AS', width: '*',
+          name: "origin", displayName: 'Origin AS', width: '*', type: 'number',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
             '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="'+$location.path()+'?search={{ COL_FIELD}}"></div></div>'
         }
@@ -621,6 +621,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 
     /* prefix view table */
 
+    $scope.asPathsOrderProp = "rendering_index";
     $scope.prefixViewGridOptions = {
       rowHeight: 32,
       gridFooterHeight: 0,
@@ -638,7 +639,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           name: "as_path", displayName: 'AS Path', width: '*'
         },
         {
-          name: "length", displayName: 'Length', width: '5%', cellClass: 'align-center'
+          name: "length", displayName: 'Length', width: '6%', cellClass: 'align-center', type: 'number'
         },
 //        {
 //          name: "as_path2", displayName: 'AS Path 2', width: '*',
@@ -649,11 +650,24 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 //          cellTemplate: '<div ng-repeat="as in {{ COL_FIELD }}" class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="'+$location.path()+'?search="+as></div>'
 //        },
         {
-          name: "created_on", displayName: 'Timestamp', width: '*'
+          name: "created_on", displayName: 'Timestamp', width: '*',
+          sort: { direction: uiGridConstants.DESC }
         }
       ],
       onRegisterApi: function (gridApi) {
-        $scope.prefixViewGridApi = gridApi;
+        gridApi.core.on.rowsRendered($scope, function(a) {
+          // figure out which rows are now visible
+          for (var i = 0 ; i < a.grid.rows.length ; i++) {
+            var row = a.grid.rows[i];
+            $scope.asPathGraph.paths[row.entity.initial_index].visible = row.visible;
+          }
+
+          // figure out the ordering of the rows from the rowCache
+          for (var i = 0 ; i < a.grid.renderContainers.body.visibleRowCache.length ; i++) {
+            var entity = a.grid.renderContainers.body.visibleRowCache[i].entity;
+            $scope.asPathGraph.paths[entity.initial_index].rendering_index = i;
+          }
+        });
       }
     };
 
