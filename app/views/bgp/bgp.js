@@ -464,6 +464,9 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 //          $scope.asPathGraph.data = transformASPathDataToGraphData(data);
           $scope.asPathGraph.paths = [];
           for (var i = 0 ; i < data.length ; i++) {
+            //$scope.prefixViewGridOptions.data[i].as_path2 = $scope.prefixViewGridOptions.data[i].as_path;
+            //$scope.prefixViewGridOptions.data[i].as_path3 = $scope.prefixViewGridOptions.data[i].as_path.split(' ');
+            $scope.prefixViewGridOptions.data[i].length = $scope.prefixViewGridOptions.data[i].as_path.split(' ').length;
             $scope.asPathGraph.paths.push({path: data[i].as_path});
           }
 
@@ -648,6 +651,17 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         {
           name: "as_path", displayName: 'AS Path', width: '*'
         },
+        {
+          name: "length", displayName: 'Length', width: '5%', cellClass: 'align-center'
+        },
+//        {
+//          name: "as_path2", displayName: 'AS Path 2', width: '*',
+//          cellTemplate: '<div ng-repeat="as in {{ COL_FIELD }}.split(\' \')" class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="'+$location.path()+'?search="+as></div>'
+//        },
+//        {
+//          name: "as_path3", displayName: 'AS Path 3', width: '*',
+//          cellTemplate: '<div ng-repeat="as in {{ COL_FIELD }}" class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="'+$location.path()+'?search="+as></div>'
+//        },
         {
           name: "created_on", displayName: 'Timestamp', width: '*'
         }

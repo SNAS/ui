@@ -14,6 +14,9 @@
     .align-right, .header-align-right {
       text-align: right;
     }
+    .align-center, .header-align-center {
+      text-align: center;
+    }
     .header-align-right {
       &>div {
         margin-right: 15px;
