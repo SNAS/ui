@@ -27,6 +27,11 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         .then(function(response) {
           return response.data;
         }, function(response) {
+          console.error("Failed to get AS list", response);
+          return $q.reject("Failed to get AS list (request might have been cancelled)");
+        })
+        .catch(function(e) {
+          console.error("Failed to get AS list", e);
           return $q.reject("Failed to get AS list (request might have been cancelled)");
         });
       return { promise: promise, cancel: cancel(canceller) };
