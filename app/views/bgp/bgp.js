@@ -8,10 +8,11 @@
  * Controller of the BGP page
  */
 angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParams", "$location", "$filter", "bgpDataService", "ConfigService", "socket", "uiGridConstants",
-  function($scope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory) {
+  function($scope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout) {
     // TODO: have a widget to choose the start and end dates/times
     var start = 1483463232000;
     var end = 1483549631000;
+    var updateColor = "#EAA546";
 //    var start = 1484665200000;
 //    var end = start + 10;
 //    var start = 1483466300000;
@@ -58,6 +59,25 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       $scope.displayASNInfo = false;
     }
 
+    function loadPreviewASHist(result) {
+      $scope.previewGraphData = [];
+
+      var timeInterval = 60;
+
+      var gData = [];
+
+      angular.forEach(result, function(record) {
+        gData.push([new Date(record.created_on).getTime(), parseInt(record.chg)]);
+      });
+
+      console.log(gData);
+
+      $scope.previewGraphData[0] = {
+            key: "Change",
+            values: gData
+        };
+    }
+
     // returns true if string s is a valid AS number
     function isASN(s) {
       return s.match(/^[0-9]+$/) !== null;
@@ -83,6 +103,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           var data = result.gen_whois_asn.data;
           $scope.asnDetails = [];
           getASWhoIsInfo(data);
+          getASHistInfo();
           getASNodeAndLinks($scope.searchValue);
           $scope.displayASNInfo = true;
           $scope.showDirectedGraph = true;
@@ -446,6 +467,46 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       );
     }
 
+    // Get information for a specific AS hist
+    function getASHistInfo() {
+      var start, end;
+      // start = 1486903623000;
+      // end = 1487158528356;
+
+      if ($scope.dateFilterOn) {
+        start = getTimestamp("start");
+        end = getTimestamp("end");
+      }
+
+      console.log(start);
+      console.log(end);
+
+     // $scope.loadingPrefixes = true; // begin loading
+      var request = bgpDataService.getASHistInfo($scope.asn, start, end);
+      $scope.httpRequests.push(request);
+      request.promise.then(function(result) {
+          console.debug("AS hist info", result);
+          loadPreviewASHist(result);
+          // example of result: [
+          //   { "as_path": "123 456 789", "origin_as": 789, "created_on": "2017-02-12 22:55", "prefix": "1.2.3.0/24" },
+          //   { "as_path": "123 444 789", "origin_as": 789, "created_on": "2017-02-12 22:39", "prefix": "1.2.3.0/24" },
+          //   { "as_path": "123 654 567", "origin_as": 567, "created_on": "2017-02-12 22:54", "prefix": "1.2.9.0/22" }
+          // ]
+          // we want to organise the data for 2 widgets:
+          // - a table listing distinct prefixes and their origin_as
+          // - an svg graph (with auto-layout) displaying all AS paths over time
+          // $scope.prefixViewGridOptions.data = result;
+          // $scope.asPathGraph.data = transformASPathDataToGraphData(result);
+          // console.debug("as path graph data", $scope.asPathGraph.data);
+          // $scope.loadingPrefixes = false; // stop loading
+
+          clearRequest(request);
+        }, function(error) {
+          console.warn(error);
+        }
+      );
+    }
+
     // Get prefixes information of this AS
     function getPrefixes() {
       $scope.prefixGridOptions.data = [];
@@ -488,7 +549,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           console.warn(error);
         }
       );
-    }
+    }    
 
     /* bar chart */
 
@@ -815,12 +876,12 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       start: [startTimestamp.getTime(), endTimestamp.getTime()], // Handle start position
       step: 60 * 1000, // Slider moves in increments of a minute
       margin: 60 * 1000, // Handles must be more than 1 minute apart
-      limit: 120 * 60 * 1000, // Maximum 2 hours
+      limit: 3600 * 60 * 1000 * 4, // Maximum 2 hours
       connect: true, // Display a colored bar between the handles
       orientation: 'horizontal', // Orient the slider vertically
       behaviour: 'tap-drag', // Move handle on tap, bar is draggable
       range: {
-        'min': moment().subtract(4, 'hours').toDate().getTime(),
+        'min': moment().subtract(12, 'hours').toDate().getTime(),
         'max': moment().toDate().getTime()
       },
       format: {
@@ -849,7 +910,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 
     function getTimestamp(startOrEnd) {
       var dateTimePicker = startOrEnd === "start" ? startDatetimePicker : endDatetimePicker;
-      return startDatetimePicker.data('DateTimePicker').date();
+      return dateTimePicker.data('DateTimePicker').date();
     }
 
     var startDatetimePicker = $('#startDatetimePicker'),
@@ -867,9 +928,10 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         timeSelector.noUiSlider.destroy();
         sliderSettings.range = {
           'min': moment(setDate).toDate().getTime(),
-          'max': moment(setDate).add(4, 'hours').toDate().getTime()
+          'max': moment(setDate).add(12, 'hours').toDate().getTime()
         };
         loadPreview();
+        getASHistInfo();
         sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
         noUiSlider.create(timeSelector, sliderSettings);
         bindEvents();
@@ -878,9 +940,10 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         timeSelector.noUiSlider.destroy();
         sliderSettings.range = {
           'min': moment(setDate).toDate().getTime(),
-          'max': moment(setDate).add(4, 'hours').toDate().getTime()
+          'max': moment(setDate).add(12, 'hours').toDate().getTime()
         };
         loadPreview();
+        getASHistInfo();
         sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
         noUiSlider.create(timeSelector, sliderSettings);
         bindEvents();
@@ -904,26 +967,28 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       if (setDate <= moment(sliderSettings.range['min'])) {
         timeSelector.noUiSlider.destroy();
         sliderSettings.range = {
-          'min': moment(setDate).subtract(4, 'hours').toDate().getTime(),
+          'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
           'max': moment(setDate).toDate().getTime()
         };
         loadPreview();
+        getASHistInfo();
         sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
         noUiSlider.create(timeSelector, sliderSettings);
         bindEvents();
       }
-      else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(4, 'hours') <= moment()) {
+      else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(12, 'hours') <= moment()) {
         timeSelector.noUiSlider.destroy();
         sliderSettings.range = {
-          'min': moment(setDate).subtract(4, 'hours').toDate().getTime(),
+          'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
           'max': moment(setDate).toDate().getTime()
         };
         loadPreview();
+        getASHistInfo();
         sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
         noUiSlider.create(timeSelector, sliderSettings);
         bindEvents();
       }
-      else if (moment(setDate).subtract(4, 'hours') > moment()) {
+      else if (moment(setDate).subtract(12, 'hours') > moment()) {
         alert("You can't go to the future! But you can try to go to your past :)");
 
       }
@@ -937,20 +1002,31 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     };
 
     function bindEvents() {
+      var timer;
       timeSelector.noUiSlider.on('update', function () {
+        $timeout.cancel(timer);
         startDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
         endDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
         durationInMinutes = Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60));
+
         if (durationInMinutes > 60)
           duration = Math.floor(durationInMinutes / 60) + ' hrs ' + durationInMinutes % 60 + ' mins';
         else
           duration = durationInMinutes + ' Minutes';
         $('#duration').text(duration);
+
+        timer = $timeout(function() { 
+          loadPreview();
+          getASHistInfo(); 
+        }, 5000);
+
+        
       });
       timeSelector.noUiSlider.on('set', function () {
         loadAll();
       });
       loadAll();
+      
     }
 
     $scope.leftArrow = function () {
@@ -962,6 +1038,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         'max': originalRange[0]
       };
       loadPreview();
+      getASHistInfo();
       sliderSettings.start = [sliderSettings.range['max'] - (originalValues[1] - originalValues[0]), sliderSettings.range['max']];
       noUiSlider.create(timeSelector, sliderSettings);
       bindEvents();
@@ -976,6 +1053,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         'max': originalRange[1] + (originalRange[1] - originalRange[0])
       };
       loadPreview();
+      getASHistInfo();
       sliderSettings.start = [sliderSettings.range['min'], sliderSettings.range['min'] + (originalValues[1] - originalValues[0])];
       noUiSlider.create(timeSelector, sliderSettings);
       bindEvents();
@@ -985,10 +1063,11 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       var originalValues = timeSelector.noUiSlider.get();
       timeSelector.noUiSlider.destroy();
       sliderSettings.range = {
-        'min': moment().subtract(4, 'hours').toDate().getTime(),
+        'min': moment().subtract(12, 'hours').toDate().getTime(),
         'max': moment().toDate().getTime()
       };
       loadPreview();
+      getASHistInfo();
       sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
       noUiSlider.create(timeSelector, sliderSettings);
       bindEvents();
@@ -997,6 +1076,45 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     function loadPreview() {
       $scope.previewGraphData = [];
     }
+
+    $scope.previewGraph = {
+      chart: {
+        type: "lineChart",
+        height: 120,
+        margin: {
+          top: 20,
+          right: 0,
+          bottom: 10,
+          left: 0
+        },
+        color: function (d) {
+          if (d.key == "Change")
+            return updateColor;
+          if (d.key == "Withdraws")
+            return withdrawColor;
+        },
+        x: function (d) {
+          return d[0];
+        },
+        y: function (d) {
+          return d[1];
+        },
+        useVoronoi: true,
+        clipEdge: true,
+        transitionDuration: 500,
+        useInteractiveGuideline: true,
+        showLegend: false,
+        showControls: false,
+        showXAxis: false,
+        showYAxis: false,
+        forceY : [-2,2],
+        xAxis: {
+          tickFormat: function (d) {
+            return moment(d).format("MM/DD/YYYY HH:mm");
+          }
+        }
+      }
+    };
 
     bindEvents();
 
