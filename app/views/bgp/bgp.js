@@ -467,7 +467,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
             //$scope.prefixViewGridOptions.data[i].as_path2 = $scope.prefixViewGridOptions.data[i].as_path;
             //$scope.prefixViewGridOptions.data[i].as_path3 = $scope.prefixViewGridOptions.data[i].as_path.split(' ');
             $scope.prefixViewGridOptions.data[i].length = $scope.prefixViewGridOptions.data[i].as_path.split(' ').length;
-            $scope.asPathGraph.paths.push({path: data[i].as_path});
+            $scope.asPathGraph.paths.push({path: data[i].as_path, as_path: [], prefix: data[i].prefix, timestamp: data[i].created_on});
           }
 
           createASpaths($scope.asPathGraph.paths);
@@ -497,19 +497,6 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         request.promise.then(function(result) {
             console.debug("AS hist info", result);
             loadPreviewASHist(result);
-            // example of result: [
-            //   { "as_path": "123 456 789", "origin_as": 789, "created_on": "2017-02-12 22:55", "prefix": "1.2.3.0/24" },
-            //   { "as_path": "123 444 789", "origin_as": 789, "created_on": "2017-02-12 22:39", "prefix": "1.2.3.0/24" },
-            //   { "as_path": "123 654 567", "origin_as": 567, "created_on": "2017-02-12 22:54", "prefix": "1.2.9.0/22" }
-            // ]
-            // we want to organise the data for 2 widgets:
-            // - a table listing distinct prefixes and their origin_as
-            // - an svg graph (with auto-layout) displaying all AS paths over time
-            // $scope.prefixViewGridOptions.data = result;
-            // $scope.asPathGraph.data = transformASPathDataToGraphData(result);
-            // console.debug("as path graph data", $scope.asPathGraph.data);
-            // $scope.loadingPrefixes = false; // stop loading
-
             clearRequest(request);
           }, function(error) {
             console.warn(error);
@@ -1084,15 +1071,6 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       }
     };
 
-    $scope.wordCheck = function(word) {
-      if (word === undefined) return "";
-      if (word.length > 6) {
-        return word.slice(0, 4) + " ...";
-      } else {
-        return word;
-      }
-    };
-
     var peerASN = 11017;
     function createASpaths(paths) {
       for (var i = 0 ; i < paths.length ; i++) {
@@ -1131,14 +1109,14 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           colour: "#9467b0",
           botVal: norepeat[i],
           isEnd: true,
-          addWidth: nodeWidth
+          addWidth: nodeWidth,
+          leftPadding: 0
         });
       }
 
       //make last as not have connecting line
       as_path[as_path.length - 1].isEnd = false;
 
-      var asname;
       path.as_path = [];
       apiFactory.getWhoIsASNameList(norepeat).success(function(
         result) {
@@ -1175,6 +1153,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         path.as_path[0].colour = "#EAA546";
         path.as_path[0].noTopText = true;
         path.as_path[0].addWidth = nodeWidth + 28; //width of label from icon
+        path.as_path[0].leftPadding = 28;
 
         path.as_path = [{
           icon: "bmp-bmp_router10-17",
@@ -1183,7 +1162,8 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           colour: "#4b84ca",
           botVal: "",
           isEnd: true,
-          addWidth: nodeWidth
+          addWidth: nodeWidth,
+          leftPadding: 0
         }].concat(path.as_path);
 
         //set width of whole container depending on result size.

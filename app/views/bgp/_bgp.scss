@@ -318,4 +318,42 @@
     position: absolute;
     margin-top: 45px;
   }
+
+  .as-path {
+    padding-top: 8px;
+    height: 127px;
+    overflow-x: hidden;
+    padding-bottom: 8px;
+    & + .as-path {
+      border-top: 1px solid #eee;
+    }
+    .prefix, .timestamp {
+      display: inline-block;
+      min-width: 150px;
+      padding-right: 20px;
+      color: #aaa;
+      &:hover {
+        color: inherit;
+      }
+    }
+    .as-node-name {
+      text-align: center;
+      position: absolute;
+      left: -40px;
+      top: 0px;
+      width: 130px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .bmp-as_router10-17 {
+      margin-top: 20px;
+    }
+    .as-icon-and-number {
+      display: table-cell;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
 }

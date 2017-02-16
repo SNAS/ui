@@ -217,24 +217,26 @@
         </div>
 
         <div class="as-path" ng-repeat="as_path in asPathGraph.paths">
+          <div class="timestamp">{{as_path.timestamp}}</div>
+          <div class="prefix">{{as_path.prefix}}</div>
           <div ng-style="{'width':config.width}">
             <div ng-repeat="path in as_path.as_path" ng-style="{'width': path.addWidth}"
                  style="position: relative;float: left;">
               <!--icon-->
-              <div style="display: table-cell;">
+              <div class="as-icon-and-number" ng-click="changeLocation({{path.botVal}})">
                 <span ng-if="path.noTopText">
                   <div style="text-align: center">&nbsp;</div>
                 </span>
 
                 <span ng-if="!path.noTopText">
-                  <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{ wordCheck(path.topVal) }}</div>
+                  <div class="as-node-name" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{ path.topVal }}</div>
                 </span>
 
                 <!--This is the actual AS icon-->
                 <div class="{{ path.icon }}" style="font-size: 50px" ng-style="{'color':path.colour}"
                      data-content="{{path.popOut}}" data-html="true" popover-placement="right"
                      popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
-                <div style="text-align: center">{{ path.botVal }}</div>
+                <div style="text-align: center; padding-left: {{path.leftPadding}}px">{{ path.botVal }}</div>
               </div>
               <!--line-->
               <div style="display: table-cell;" ng-if="path.isEnd">
