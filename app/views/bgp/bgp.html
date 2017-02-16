@@ -92,7 +92,7 @@
         </h3>
 
         <div class="loading-section">
-          <div ng-show="loadingASList" bmp-loading loading-var="loadingASList"></div>
+          <div ng-show="loadingASList" bmp-loading></div>
           <div class="grid" ui-grid-auto-resize ui-grid-resize-columns="true" ui-grid="asListGridOptions"
                ng-style="{'height': asListGridOptions.height}">
             <div class="watermark" ng-if="!asListGridOptions.data.length">No data available</div>
@@ -103,10 +103,10 @@
   </div>
 
   <!-- THIS SECTION DISPLAYS INFORMATION FOR A SPECIFIC AS NODE -->
-
   <!--<div class="main-area row" ng-show="displayASNInfo">-->
   <div class="main-area row" ng-show="!nodata && !obj.maximiseForceDirectedGraph && displayASNInfo">
     <!-- WhoIs info and prefixes -->
+    
     <div class="col-lg-6">
       <div class="table-container whois">
         <h3>AS {{asn}} Information</h3>
