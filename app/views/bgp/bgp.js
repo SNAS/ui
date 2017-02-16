@@ -476,35 +476,32 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       if ($scope.dateFilterOn) {
         start = getTimestamp("start");
         end = getTimestamp("end");
+
+       // $scope.loadingPrefixes = true; // begin loading
+        var request = bgpDataService.getASHistInfo($scope.asn, start, end);
+        $scope.httpRequests.push(request);
+        request.promise.then(function(result) {
+            console.debug("AS hist info", result);
+            loadPreviewASHist(result);
+            // example of result: [
+            //   { "as_path": "123 456 789", "origin_as": 789, "created_on": "2017-02-12 22:55", "prefix": "1.2.3.0/24" },
+            //   { "as_path": "123 444 789", "origin_as": 789, "created_on": "2017-02-12 22:39", "prefix": "1.2.3.0/24" },
+            //   { "as_path": "123 654 567", "origin_as": 567, "created_on": "2017-02-12 22:54", "prefix": "1.2.9.0/22" }
+            // ]
+            // we want to organise the data for 2 widgets:
+            // - a table listing distinct prefixes and their origin_as
+            // - an svg graph (with auto-layout) displaying all AS paths over time
+            // $scope.prefixViewGridOptions.data = result;
+            // $scope.asPathGraph.data = transformASPathDataToGraphData(result);
+            // console.debug("as path graph data", $scope.asPathGraph.data);
+            // $scope.loadingPrefixes = false; // stop loading
+
+            clearRequest(request);
+          }, function(error) {
+            console.warn(error);
+          }
+        );
       }
-
-      console.log(start);
-      console.log(end);
-
-     // $scope.loadingPrefixes = true; // begin loading
-      var request = bgpDataService.getASHistInfo($scope.asn, start, end);
-      $scope.httpRequests.push(request);
-      request.promise.then(function(result) {
-          console.debug("AS hist info", result);
-          loadPreviewASHist(result);
-          // example of result: [
-          //   { "as_path": "123 456 789", "origin_as": 789, "created_on": "2017-02-12 22:55", "prefix": "1.2.3.0/24" },
-          //   { "as_path": "123 444 789", "origin_as": 789, "created_on": "2017-02-12 22:39", "prefix": "1.2.3.0/24" },
-          //   { "as_path": "123 654 567", "origin_as": 567, "created_on": "2017-02-12 22:54", "prefix": "1.2.9.0/22" }
-          // ]
-          // we want to organise the data for 2 widgets:
-          // - a table listing distinct prefixes and their origin_as
-          // - an svg graph (with auto-layout) displaying all AS paths over time
-          // $scope.prefixViewGridOptions.data = result;
-          // $scope.asPathGraph.data = transformASPathDataToGraphData(result);
-          // console.debug("as path graph data", $scope.asPathGraph.data);
-          // $scope.loadingPrefixes = false; // stop loading
-
-          clearRequest(request);
-        }, function(error) {
-          console.warn(error);
-        }
-      );
     }
 
     // Get prefixes information of this AS
@@ -543,7 +540,9 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       var request = bgpDataService.getASList(orderBy, orderDir, $scope.limit, $scope.offset);
       request.promise.then(function(result) {
           console.debug("got AS list", result);
+          $scope.loadingASList = false;
           updateNodeData(result);
+
           clearRequest(request);
         }, function(error) {
           console.warn(error);
