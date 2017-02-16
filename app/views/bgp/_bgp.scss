@@ -297,6 +297,9 @@
   #forceDirectedGraph {
     min-height: 280px;
   }
+  #asPathsGraph {
+    min-height: 200px;
+  }
 
   .whois {
     td.value {
@@ -354,6 +357,39 @@
       &:hover {
         cursor: pointer;
       }
+    }
+    .as-node-count {
+      position: absolute;
+      top: 15px;
+      right: 95px;
+      color: white;
+      border-radius: 3px;
+      width: 20px;
+      text-align: center;
+    }
+    $bmpRouterColor: #4b84ca;
+    .bmp-bmp_router10-17 {
+      color: $bmpRouterColor;
+    }
+    .bg-bmp-bmp_router10-17 {
+      background-color: darken($bmpRouterColor, 20%);
+    }
+    $bmpASColor: #9467b0;
+    .bmp-as_router10-17 {
+      color: $bmpASColor;
+    }
+    .bg-bmp-as_router10-17 {
+      background-color: darken($bmpASColor, 20%);
+    }
+    $bmpEBGPColor: #EAA546;
+    .bmp-ebgp_router10-17 {
+      color: $bmpEBGPColor;
+    }
+    .bg-bmp-ebgp_router10-17 {
+      background-color: darken($bmpEBGPColor, 20%);
+    }
+    .as-node-default-size {
+      font-size: 50px;
     }
   }
 }
