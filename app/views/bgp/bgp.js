@@ -280,7 +280,8 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       var minWeight = d3.min(data.links.map(linkWeight));
       var maxWeight = d3.max(data.links.map(linkWeight));
       linkWidthLinearScale.domain([0, maxWeight]);
-      linkLengthLinearScale.domain([maxWeight, minWeight]);
+//      linkLengthLinearScale.domain([maxWeight, minWeight]);
+      linkLengthLinearScale.domain([minWeight, maxWeight]);
       console.log("minWeight %d maxWeight %d", minWeight, maxWeight);
     }
 
@@ -696,13 +697,19 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     ];
     function linkStabilityIndex(stability) {
       var index = 0;
-      if (stability >= 8) {
+      // green
+      if (stability <= 25) {
         index = 3;
-      } else if (stability >= 5) {
+      }
+      // yellow
+      else if (stability <= 50) {
         index = 2;
-      } else if (stability >= 2) {
+      }
+      // orange
+      else if (stability <= 100) {
         index = 1;
       }
+      // else red
       return index;
     }
     function linkStabilityLabel(stability) {
