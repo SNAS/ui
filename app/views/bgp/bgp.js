@@ -393,48 +393,52 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       });
     }
 
-    function uniq_fast(a, containsJSON) {
-      var seen = {};
-      var out = [];
-      var j = 0;
-      for(var i = 0; i < a.length; i++) {
-        var item = containsJSON === true ? JSON.stringify(a[i]) : a[i];
-        if (seen[item] !== 1) {
-          seen[item] = 1;
-          out[j++] = a[i];
-        }
-      }
-      return out;
-    }
-
-    function transformASPathDataToGraphData(data) {
-      var nodes = [], links = [];
-      // split the AS path, concatenate all nodes and links
-      for (var i = 0 ; i < data.length ; i++) {
-        var split = data[i].as_path.split(' ');
-        split = split.map(function(as) { return parseInt(as, 10); });
-        nodes = nodes.concat(split);
-        for (var l = 0 ; l < split.length-1 ; l++) {
-          links.push({sourceASN: split[l], targetASN: split[l+1]});
-        }
-      }
-
-      // then eliminate duplicates
-      nodes = uniq_fast(nodes, false);
-      links = uniq_fast(links, true);
-
-      // links' source and target now need to be indexes in the nodes array
-      var nodeIndexes = {};
-      for (i = 0 ; i < nodes.length ; i++) {
-        nodeIndexes[nodes[i]] = i;
-      }
-      for (i = 0 ; i < links.length ; i++) {
-        links[i].source = nodeIndexes[links[i].sourceASN];
-        links[i].target = nodeIndexes[links[i].targetASN];
-      }
-
-      return {nodes: nodes, links: links};
-    }
+//    function uniq_fast(a, containsJSON) {
+//      var seen = {};
+//      var out = [];
+//      var j = 0;
+//      for(var i = 0; i < a.length; i++) {
+//        var item = containsJSON === true ? JSON.stringify(a[i]) : a[i];
+//        if (seen[item] !== 1) {
+//          seen[item] = 1;
+//          out[j++] = a[i];
+//        }
+//      }
+//      return out;
+//    }
+//
+//    function transformASPathDataToGraphData(data) {
+//      var nodes = [], links = [];
+//      // split the AS path, concatenate all nodes and links
+//      for (var i = 0 ; i < data.length ; i++) {
+//        var split = data[i].as_path.split(' ');
+//        split = split.map(function(as) { return parseInt(as, 10); });
+//        nodes = nodes.concat(split);
+//        for (var l = 0 ; l < split.length-1 ; l++) {
+//          links.push({sourceASN: split[l], targetASN: split[l+1]});
+//        }
+//      }
+//
+//      // then eliminate duplicates
+//      nodes = uniq_fast(nodes, false);
+//      links = uniq_fast(links, true);
+//
+//      for (var i = 0 ; i < nodes.length ; i++) {
+//        nodes[i] = {asn: nodes[i]};
+//      }
+//
+//      // links' source and target now need to be indexes in the nodes array
+//      var nodeIndexes = {};
+//      for (i = 0 ; i < nodes.length ; i++) {
+//        nodeIndexes[nodes[i].asn] = i;
+//      }
+//      for (i = 0 ; i < links.length ; i++) {
+//        links[i].source = nodeIndexes[links[i].sourceASN];
+//        links[i].target = nodeIndexes[links[i].targetASN];
+//      }
+//
+//      return {nodes: nodes, links: links};
+//    }
 
     // Get information for a specific prefix
     function getPrefixInfo(prefix) {
@@ -446,8 +450,8 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       $scope.loadingPrefixes = true; // begin loading
       var request = bgpDataService.getPrefixInfo(prefix, start, end);
       $scope.httpRequests.push(request);
-      request.promise.then(function(result) {
-          console.debug("prefix info", result);
+      request.promise.then(function(data) {
+          console.debug("prefix info", data, JSON.stringify(data));
           // example of result: [
           //   { "as_path": "123 456 789", "origin_as": 789, "created_on": "2017-02-12 22:55", "prefix": "1.2.3.0/24" },
           //   { "as_path": "123 444 789", "origin_as": 789, "created_on": "2017-02-12 22:39", "prefix": "1.2.3.0/24" },
@@ -455,10 +459,17 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           // ]
           // we want to organise the data for 2 widgets:
           // - a table listing distinct prefixes and their origin_as
-          // - an svg graph (with auto-layout) displaying all AS paths over time
-          $scope.prefixViewGridOptions.data = result;
-          $scope.asPathGraph.data = transformASPathDataToGraphData(result);
-          console.debug("as path graph data", $scope.asPathGraph.data);
+          // - an svg graph (with auto-layout) displaying all AS paths over time")
+          $scope.prefixViewGridOptions.data = data;
+//          $scope.asPathGraph.data = transformASPathDataToGraphData(data);
+          $scope.asPathGraph.paths = [];
+          for (var i = 0 ; i < data.length ; i++) {
+            $scope.asPathGraph.paths.push({path: data[i].as_path});
+          }
+
+          createASpaths($scope.asPathGraph.paths);
+          console.log("asPathGraph data", $scope.asPathGraph.data);
+
           $scope.loadingPrefixes = false; // stop loading
           clearRequest(request);
         }, function(error) {
@@ -704,85 +715,9 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           height: Math.min($(window).height()-85, Math.max(500, getParentWidth() * 0.75)),
           width: getParentWidth(),
           margin:{top: 20, right: 20, bottom: 20, left: 20},
-          color: function(d){
-            return color(d.num_of_prefixes)
-          },
-          nodeExtras: function(node) {
-            node && node
-              .append("text")
-              .attr("dx", function(d) { return radiusLinearScale(d.routes) + 2; })
-              .attr("dy", ".35em")
-              .text(function(d) { return d.asn })
-              .style('font-size', '10px');
-          },
-          linkExtras: function(link) {
-            link && link
-              .style("stroke-width", function(d) { return linkWidthLinearScale(d.sum_changes); })
-              .style("stroke", function(d) { return linkStabilityColor(d.changes); })
-              .attr("marker-end", function(d) {
-                var stabilityLabel = linkStabilityLabel(d.changes);
-                return "url(#arrow-"+stabilityLabel+")";
-              });
-          },
-          linkColorSet: $scope.stabilityColors,
-          linkColor: function(d) {
-            return linkStabilityColor(d.sum_changes);
-          },
-          linkDist: function(link) {
-            return linkLengthLinearScale(link.sum_changes);
-          },
-          linkStrength: 0.5,
-          charge: -300,
-//          initCallback: function(svgContainer) {
-//            customForceDirectedGraphSvg = svgContainer;
+//          color: function(d){
+//            return color(d.num_of_prefixes)
 //          },
-          radius: function(d) {
-            return radiusLinearScale(d.origins);
-          },
-          nodeCircles: [
-            {
-              color: "#aec7e8",
-              cssClass: "routes",
-              radius: function(d) { return radiusLinearScale(d.routes); },
-              displayNode: function(d) { return d.routes > 0; }
-            },
-            {
-              color: "#1f77b4",
-              cssClass: "origins",
-              radius: function(d) { return radiusLinearScale(d.origins); },
-              displayNode: function(d) { return d.origins > 0; }
-            }
-          ],
-          nvTooltipFields: $scope.tooltipFields,
-          useNVTooltip: false,
-          tooltipCallback: function(hideTooltip, tooltipData) {
-//            console.debug("tooltipData", tooltipData);
-            var nodeTooltip = $("#nodeTooltips");
-            if (!hideTooltip) {
-              for (var i = 0 ; i < $scope.tooltipFields.length ; i++) {
-                var field = $scope.tooltipFields[i];
-                $("#field-"+field+" .value").text(tooltipData[field]);
-                nodeTooltip.removeClass("hideTooltip")
-              }
-            } else {
-              nodeTooltip.addClass("hideTooltip")
-            }
-          },
-          nodeIdField: "asn"
-        }
-      }
-    };
-
-    $scope.asPathGraph = {
-      options: {
-        chart: {
-          type: 'customForceDirectedGraph',
-          height: Math.min($(window).height()-85, Math.max(500, getParentWidth() * 0.75)),
-          width: getParentWidth(),
-          margin:{top: 20, right: 20, bottom: 20, left: 20},
-          color: function(d){
-            return color(d.num_of_prefixes)
-          },
           nodeExtras: function(node) {
             node && node
               .append("text")
@@ -1118,6 +1053,139 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     bindEvents();
 
     /* end of time slider */
+
+    /* prefix AS path graph */
+
+    $scope.asPathGraph = {
+    };
+
+    $scope.testAsPathGraph = {
+      width: getParentWidth(),
+      height: 400,
+      testData: {
+        paths: [
+          {path: "6939 6939 6939 8220 8220 3096"},{path: "11017 6939 6939 8220 3096"},
+          {path: "11017 6939 12989 53723 53723 53723 53723 53723 53723 53723"}
+        ]
+      }
+    };
+
+    $scope.wordCheck = function(word) {
+      if (word === undefined) return "";
+      if (word.length > 6) {
+        return word.slice(0, 4) + " ...";
+      } else {
+        return word;
+      }
+    };
+
+    var peerASN = 11017;
+    function createASpaths(paths) {
+      for (var i = 0 ; i < paths.length ; i++) {
+        createASpath(paths[i]);
+      }
+    }
+    function createASpath(path) {
+      console.debug("createASpath", path);
+      path.config = {};
+      var iconWidth = 50;
+      var lineWidth = 100;
+      var nodeWidth = iconWidth + lineWidth;
+
+      path.config.width = "100%";
+      path.config.lineWidth = lineWidth + "px";
+      path.config.iconWidth = iconWidth + "px";
+
+      var pathArray = path.path.split(" ");
+
+      var norepeat = [];
+      for (var i = 0; i < pathArray.length; i++) {
+        if (norepeat.indexOf(pathArray[i]) == -1 && pathArray[i] != '}' && pathArray[i] != '{') {
+          norepeat.push(pathArray[i]);
+        }
+      }
+      console.debug("norepeat", norepeat);
+
+      //Router node
+      var as_path = [];
+
+      for (var i = 0; i < norepeat.length; i++) {
+        //AS nodes "bmp-as_router10-17"
+        as_path.push({
+          icon: "bmp-as_router10-17",
+          topVal: norepeat[i],
+          colour: "#9467b0",
+          botVal: norepeat[i],
+          isEnd: true,
+          addWidth: nodeWidth
+        });
+      }
+
+      //make last as not have connecting line
+      as_path[as_path.length - 1].isEnd = false;
+
+      var asname;
+      path.as_path = [];
+      apiFactory.getWhoIsASNameList(norepeat).success(function(
+        result) {
+
+        path.as_path = as_path;
+
+        var asname = result.w.data;
+        for (var i = 0; i < asname.length; i++) {
+          var index = norepeat.indexOf((asname[i].asn).toString());
+
+          //all fields/ info for popover.
+          var popOutFields = ["asn", "as_name", "org_id", "org_name",
+            "city", "state_prov", "postal_code", "country"
+          ]; //etc
+          var pcontent = "";
+          for (var j = 0; j < popOutFields.length; j++) {
+            if (asname[i][popOutFields[j]] != null) {
+              pcontent += popOutFields[j] + " : <span class='thin'>" +
+                asname[i][popOutFields[j]] + "</span><br>";
+              pcontent = pcontent.replace(/ASN-|ASN/g, "");
+            }
+          }
+          asname[i].as_name = asname[i].as_name.replace(/ASN-|ASN/g,
+            "");
+
+          //changed the name of the as to name from results.
+          path.as_path[index].topVal = asname[i].as_name; //+1 cause starting router node
+          path.as_path[index].noTopText = false;
+          path.as_path[index].popOut = pcontent; //+1 cause starting router node
+        }
+
+        console.log("peerASN", peerASN, "norepeat[0]", norepeat[0]);
+        path.as_path[0].icon = "bmp-ebgp_router10-17";
+        path.as_path[0].colour = "#EAA546";
+        path.as_path[0].noTopText = true;
+        path.as_path[0].addWidth = nodeWidth + 28; //width of label from icon
+
+        path.as_path = [{
+          icon: "bmp-bmp_router10-17",
+          topVal: "",
+          noTopText: true,
+          colour: "#4b84ca",
+          botVal: "",
+          isEnd: true,
+          addWidth: nodeWidth
+        }].concat(path.as_path);
+
+        //set width of whole container depending on result size.
+        //len + 1 for router     + 80 stop wrapping and padding
+        path.config.width = nodeWidth * path.as_path.length + 80 + "px";
+
+        console.debug("path", path);
+      }).error(function(error) {
+        console.log(error);
+      });
+    }
+
+    // TODO: remove after testing
+//    createASpaths($scope.testAsPathGraph.testData.paths);
+
+    /* end of prefix AS path graph */
 
     var uiServer = ConfigService.bgpDataService;
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";

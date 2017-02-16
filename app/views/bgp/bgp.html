@@ -11,9 +11,9 @@
            typeahead-wait-ms="300"
            typeahead-on-select="onSelect($item, $model, $label)"/>
     <span class="help-block">Examples: 109, 1.0.128.0/17, 1.0.*</span>
-    <button type="button" class="btn btn-xs btn-default" ng-show="displayASNInfo" ng-click="changeLocation()">
+    <button type="button" class="btn btn-xs btn-default" ng-show="displayASNInfo || displayPrefixInfo" ng-click="changeLocation()">
       <span class="glyphicon glyphicon-remove"></span>
-      all AS nodes
+      reset
     </button>
     <button type="button" class="btn btn-sm right time-slider-toggle-button" ng-class="{'btn-success': !dateFilterOn, 'btn-danger': dateFilterOn}" ng-click="dateFilterOn = !dateFilterOn">
       <span class="glyphicon" ng-class="{'glyphicon-plus': !dateFilterOn, 'glyphicon-minus': dateFilterOn}"></span>
@@ -135,22 +135,7 @@
     </div>
   </div>
 
-  <!-- THIS SECTION DISPLAYS INFORMATION FOR A SPECIFIC PREFIX -->
-
-  <!--<div class="main-area row" ng-show="displayASNInfo">-->
-  <div class="main-area row" ng-show="!nodata && !obj.maximiseForceDirectedGraph && displayPrefixInfo">
-    <!-- prefixes -->
-    <div class="col-lg-12">
-      <div class="table-container">
-        <h3>Prefixes starting with {{prefix}}</h3>
-
-        <div class="loading-section">
-          <div ng-show="loadingPrefixes" bmp-loading font-width="50"></div>
-          <div ui-grid="prefixViewGridOptions" ui-grid-auto-resize ng-style="{'height': prefixGridOptions.height}"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- THIS SECTION DISPLAYS A D3 GRAPH FOR A SPECIFIC AS NODE -->
 
   <div class="main-area row" ng-show="displayASNInfo">
     <!-- force directed graph -->
@@ -199,6 +184,98 @@
             <div class="color-label">Stable</div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THIS SECTION DISPLAYS INFORMATION FOR A SPECIFIC PREFIX -->
+
+  <!--<div class="main-area row" ng-show="displayASNInfo">-->
+  <div class="main-area row" ng-show="!nodata && !obj.maximiseForceDirectedGraph && displayPrefixInfo">
+    <!-- prefixes -->
+    <div class="col-lg-12">
+      <div class="table-container">
+        <h3>Prefixes starting with {{prefix}}</h3>
+
+        <div class="loading-section">
+          <div ng-show="loadingPrefixes" bmp-loading font-width="50"></div>
+          <div ui-grid="prefixViewGridOptions" ui-grid-auto-resize ng-style="{'height': prefixGridOptions.height}"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THIS SECTION DISPLAYS A D3 GRAPH FOR A SPECIFIC PREFIX -->
+
+  <div class="main-area row" ng-show="displayPrefixInfo">
+    <!-- AS paths graph -->
+    <div class="col-lg-12">
+      <div class="table-container" id="asPathForceDirectedGraph">
+        <h3>AS Paths</h3>
+        <div class="loading-section">
+          <div ng-show="loadingPrefixes" bmp-loading font-width="50"></div>
+        </div>
+
+        <div class="as-path" ng-repeat="as_path in asPathGraph.paths">
+          <div ng-style="{'width':config.width}">
+            <div ng-repeat="path in as_path.as_path" ng-style="{'width': path.addWidth}"
+                 style="position: relative;float: left;">
+              <!--icon-->
+              <div style="display: table-cell;">
+                <span ng-if="path.noTopText">
+                  <div style="text-align: center">&nbsp;</div>
+                </span>
+
+                <span ng-if="!path.noTopText">
+                  <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{ wordCheck(path.topVal) }}</div>
+                </span>
+
+                <!--This is the actual AS icon-->
+                <div class="{{ path.icon }}" style="font-size: 50px" ng-style="{'color':path.colour}"
+                     data-content="{{path.popOut}}" data-html="true" popover-placement="right"
+                     popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
+                <div style="text-align: center">{{ path.botVal }}</div>
+              </div>
+              <!--line-->
+              <div style="display: table-cell;" ng-if="path.isEnd">
+                <div class="asPathLine" ng-style="{'width':config.lineWidth}"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- TODO: remove after testing -->
+        <!--
+        <div class="as-path" ng-repeat="as_path in testAsPathGraph.testData.paths">
+          <div ng-style="{'width':config.width}">
+            <div ng-repeat="path in as_path.as_path" ng-style="{'width': path.addWidth}"
+                 style="position: relative;float: left;">
+              <div style="display: table-cell;">
+                <span ng-if="path.noTopText">
+                  <div style="text-align: center">&nbsp;</div>
+                </span>
+
+                <span ng-if="!path.noTopText">
+                  <div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{ wordCheck(path.topVal) }}</div>
+                </span>
+
+                <div class="{{ path.icon }}" id="here" style="font-size: 50px" ng-style="{'color':path.colour}"
+                     data-content="{{path.popOut}}" data-html="true" popover-placement="right"
+                     popover-trigger="mouseenter" popover="{{path.popOut}}" popover-append-to-body="true"></div>
+                <div style="text-align: center">{{ path.botVal }}</div>
+              </div>
+              <div style="display: table-cell;" ng-if="path.isEnd">
+                <div
+                        style="width: 100px;height: 2px;background-color:#eaeaea;position: absolute;margin-top: 45px;"
+                        ng-style="{'width':config.lineWidth}"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+-->
+
+
       </div>
     </div>
   </div>
