@@ -86,6 +86,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     //get all the information of this AS
     function searchValueFn() {
       $scope.cancelAllHttpRequests();
+      $scope.forceDirectedGraph.data = {nodes: [], links: []};
 
       $scope.asInfo = {};
       $scope.displayASNInfo = false;
