@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <div ng-class="{hidden: !dateFilterOn}">
+    <div ng-class="{hidden: !dateFilterOn}" style="min-height: 190px">
       <div class="separator"></div>
 
       <!-- date/time selector -->
@@ -61,8 +61,11 @@
             <span class="btn btn-default btn-xs" ng-click="leftArrow()"><span class="glyphicon glyphicon-arrow-left"></span></span>
           </div>
           <div class="col-lg-10 slider">
-            <nvd3 options="previewGraph" data="previewGraphData"></nvd3>
-            <div id="timeSelector"></div>
+            <div class="loading-section">
+              <div ng-show="loadingPreview" bmp-loading font-width="50"></div>
+              <nvd3 options="previewGraph" data="previewGraphData"></nvd3>
+              <div id="timeSelector"></div>
+            </div>
           </div>
           <div class="col-lg-1 btn-arrow">
             <span class="btn btn-default btn-xs" ng-click="rightArrow()"><span class="glyphicon glyphicon-arrow-right"></span></span>

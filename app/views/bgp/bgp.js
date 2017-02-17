@@ -487,6 +487,8 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       // start = 1486903623000;
       // end = 1487158528356;
 
+      $scope.loadingPreview = true;
+
       if ($scope.dateFilterOn) {
         start = getTimestamp("start");
         end = getTimestamp("end");
@@ -497,9 +499,11 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         request.promise.then(function(result) {
             console.debug("AS hist info", result);
             loadPreviewASHist(result);
+            $scope.loadingPreview = false;
             clearRequest(request);
           }, function(error) {
             console.warn(error);
+            $scope.loadingPreview = false;
           }
         );
       }
@@ -1035,7 +1039,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     $scope.previewGraph = {
       chart: {
         type: "lineChart",
-        height: 120,
+        height: 100,
         margin: {
           top: 20,
           right: 0,
@@ -1088,7 +1092,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     function createASpath(path) {
       path.config = {};
       var iconWidth = 50;
-      var lineWidth = 100;
+      var lineWidth = 90;
       var nodeWidth = iconWidth + lineWidth;
 
       path.config.width = "100%";
