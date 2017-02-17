@@ -14,6 +14,9 @@
     .align-right, .header-align-right {
       text-align: right;
     }
+    .align-center, .header-align-center {
+      text-align: center;
+    }
     .header-align-right {
       &>div {
         margin-right: 15px;
@@ -294,6 +297,9 @@
   #forceDirectedGraph {
     min-height: 280px;
   }
+  #asPathsGraph {
+    min-height: 200px;
+  }
 
   .whois {
     td.value {
@@ -314,5 +320,76 @@
     background-color: #eaeaea;
     position: absolute;
     margin-top: 45px;
+  }
+
+  .as-path {
+    padding-top: 8px;
+    height: 127px;
+    overflow-x: hidden;
+    padding-bottom: 8px;
+    & + .as-path {
+      border-top: 1px solid #eee;
+    }
+    .prefix, .timestamp {
+      display: inline-block;
+      min-width: 150px;
+      padding-right: 20px;
+      color: #aaa;
+      &:hover {
+        color: inherit;
+      }
+    }
+    .as-node-name {
+      text-align: center;
+      position: absolute;
+      left: -40px;
+      top: 0px;
+      width: 130px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .bmp-as_router10-17 {
+      margin-top: 20px;
+    }
+    .as-icon-and-number {
+      display: table-cell;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .as-node-count {
+      position: absolute;
+      top: 15px;
+      right: 95px;
+      color: white;
+      border-radius: 3px;
+      width: 20px;
+      text-align: center;
+    }
+    $bmpRouterColor: #4b84ca;
+    .bmp-bmp_router10-17 {
+      color: $bmpRouterColor;
+    }
+    .bg-bmp-bmp_router10-17 {
+      background-color: darken($bmpRouterColor, 20%);
+    }
+    $bmpASColor: #9467b0;
+    .bmp-as_router10-17 {
+      color: $bmpASColor;
+    }
+    .bg-bmp-as_router10-17 {
+      background-color: darken($bmpASColor, 20%);
+    }
+    $bmpEBGPColor: #EAA546;
+    .bmp-ebgp_router10-17 {
+      color: $bmpEBGPColor;
+    }
+    .bg-bmp-ebgp_router10-17 {
+      background-color: darken($bmpEBGPColor, 20%);
+    }
+    .as-node-default-size {
+      font-size: 50px;
+    }
   }
 }
