@@ -159,6 +159,14 @@ nv.models.customForceDirectedGraph = function() {
         return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
       }
 
+      function dragstart(d) {
+        d3.select(this).classed("fixed", d.fixed = true);
+      }
+
+      function elementClick(d) {
+        d3.select(this).classed("fixed", d.fixed = false);
+      }
+
 //      function hasConnections(a) {
 //        for (var property in linkedByIndex) {
 //          var s = property.split(",");
@@ -186,6 +194,8 @@ nv.models.customForceDirectedGraph = function() {
         .alpha(alpha)
         .start();
 
+      var drag = force.drag().on("dragstart", dragstart);
+
       var link = container.selectAll(".link")
         .data(data.links, linkId)
         .enter().append("line")
@@ -198,7 +208,8 @@ nv.models.customForceDirectedGraph = function() {
         .enter()
         .append("g")
         .attr("class", "nv-force-node")
-        .call(force.drag);
+        .on("dblclick", elementClick)
+        .call(drag);
 
       if (nodeCircles === null) {
         nodeCircles = [
