@@ -275,7 +275,10 @@ module.exports = function(grunt) {
     //     }
     //   }
     // },
-    // uglify: {
+    uglify: {
+      options: {
+        mangle: false
+      }
     //   dist: {
     //     files: {
     //       '<%= yeoman.dist %>/scripts/scripts.js': [
@@ -283,7 +286,7 @@ module.exports = function(grunt) {
     //       ]
     //     }
     //   }
-    // },
+    },
     // concat: {
     //   dist: {}
     // },
@@ -364,7 +367,8 @@ module.exports = function(grunt) {
             'views/**/*.html',
             'images/{,*/}*.{webp}',
             'views/components/leaflet-*/**',
-            'fonts/*'
+            'fonts/*',
+            'conf/*.json'
           ]
         }, {
           expand: true,
