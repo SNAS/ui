@@ -28,6 +28,9 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       console.log("currentUrl %s, path %s, newUrl %s", currentUrl, path, newUrl);
       if (currentUrl !== newUrl) {
         $location.url(newUrl);
+        // as $scope.changeLocation can be called from outside the scope of AngularJS,
+        // we need to call $scope.apply() to avoid any delay
+        $scope.$apply();
       } else if (parameter === undefined) {
         $scope.searchValue = "";
         searchValueFn();
@@ -755,9 +758,9 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           linkExtras: function(link) {
             link && link
               .style("stroke-width", function(d) { return linkWidthLinearScale(d.sum_changes); })
-              .style("stroke", function(d) { return linkStabilityColor(d.changes); })
+              .style("stroke", function(d) { return linkStabilityColor(d.sum_changes); })
               .attr("marker-end", function(d) {
-                var stabilityLabel = linkStabilityLabel(d.changes);
+                var stabilityLabel = linkStabilityLabel(d.sum_changes);
                 return "url(#arrow-"+stabilityLabel+")";
               });
           },
@@ -805,7 +808,13 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
               nodeTooltip.addClass("hideTooltip")
             }
           },
-          nodeIdField: "asn"
+          nodeIdField: "asn",
+          onLongPress: function(d) {
+            // delay changing the URL so that the progress animation can terminate
+            $timeout(function() {
+              $scope.changeLocation(d.asn);
+            }, 300);
+          }
         }
       }
     };

@@ -33,6 +33,7 @@ nv.models.customForceDirectedGraph = function() {
     , nodeCircles = null
     , linkColorSet = []// used for the arrows' colors to match the link colors, should the user decide to use marker-end to display an arrow
     , nodeIdField = "id"
+    , onLongPress = null;
     ;
 
   //============================================================
@@ -91,7 +92,7 @@ nv.models.customForceDirectedGraph = function() {
         svg.style("cursor","move");
 
         const markerDim = 15;
-        const refX = 9.5, refY = 0;
+        const refX = 7, refY = 0;
 
         // adding svg defs
         var defs = svg.append("defs");
@@ -203,24 +204,41 @@ nv.models.customForceDirectedGraph = function() {
         .attr("class", "nv-force-link")
         .style("stroke-width", function(d) { return Math.sqrt(d.value); });
 
+      function nodeId(node) {
+        return "node-" + node.asn;
+      }
       var node = container.selectAll(".node")
         .data(data.nodes)
         .enter()
         .append("g")
         .attr("class", "nv-force-node")
+        .attr("id", nodeId)
         .on("dblclick", elementClick)
         .call(drag);
 
       if (nodeCircles === null) {
         nodeCircles = [
-          { color: function(d) { return color(d) }, radius: radius }
+          { color: function(d) { return color(d) }, radius: radius, cssClass: "", displayNode: function(d) { return true; } }
         ];
       }
 
-      var circles = []
+      var circles = [];
       var group = node.append("g").attr("class", "circles");
       for (var i = 0 ; i < nodeCircles.length ; i++) {
         var n = nodeCircles[i];
+        // add a progress circle of the same dimension as the first circle
+        if (i === 0) {
+          group.append("circle")
+            .attr("r", function(d) {
+              var r = n.radius(d);
+              if (d.calculatedRadius === undefined) {
+                d.calculatedRadius = [];
+              }
+              d.calculatedRadius[i] = {key: n.cssClass, radius: r};
+              return r;
+            })
+            .attr("class", "progress");
+        }
         var c = group.append("circle")
 //          .attr("r", n.radius)
           .attr("r", function(d) {
@@ -315,12 +333,41 @@ nv.models.customForceDirectedGraph = function() {
         }
       }
 
+      var pressTimer;
+      function resetProgressCircle(d) {
+        if (onLongPress === null) return;
+
+        clearTimeout(pressTimer);
+        var progressCircle = $("#"+nodeId(d)+" > g > circle.progress");
+        progressCircle.attr("class", "progress");
+        progressCircle.attr("style", "stroke-dasharray: 0");
+      }
+      function activateProgressCircle(d) {
+        if (onLongPress === null) return;
+
+        var progressCircle = $("#"+nodeId(d)+" > g > circle.progress");
+        progressCircle.attr("class", "progress active");
+        progressCircle.attr("style", "stroke-dasharray: " + Math.PI * d.calculatedRadius[0].radius * 2);
+        // Set timeout
+        pressTimer = window.setTimeout(function() {
+          progressCircle.attr("class", "progress active launch");
+          /* open link, launch pop-up, etc etc */
+          onLongPress(d);
+        }, 2000);
+      }
       node
         .on("mouseover", function(d) {
           set_highlight(d);
         })
+        .on("mouseup", function(d) {
+          resetProgressCircle(d);
+          return false;
+        })
         .on("mousedown", function(d) {
           d3.event.stopPropagation();
+
+          activateProgressCircle(d);
+
           focus_node = d;
           set_focus(d);
           if (highlight_node === null) {
@@ -328,6 +375,7 @@ nv.models.customForceDirectedGraph = function() {
           }
         }).on("mouseout", function(d) {
           exit_highlight();
+          resetProgressCircle(d);
         });
 
       d3.select(window).on("mouseup", function() {
@@ -349,7 +397,7 @@ nv.models.customForceDirectedGraph = function() {
         if (nominal_stroke*zoom.scale()>max_stroke) stroke = max_stroke/zoom.scale();
         link.style("stroke-width",stroke);
         nodeCircles.forEach(function(n, i) {
-          circles[i].style("stroke-width",stroke);
+          circles[i].style("stroke-width", i === 0 ? 0 : stroke);
         });
 
         var base_radius = nominal_base_node_size;
@@ -415,6 +463,7 @@ nv.models.customForceDirectedGraph = function() {
       linkExtras(link);
       nodeExtras(node);
 
+      var markerEndSize = 5;
       force.on("tick", function() {
         link
           .attr("tmp", function(d) { return getPrecalculatedValue(d, "angle", true); }) // temporary store values so that we don't need to recalculate them
@@ -437,13 +486,13 @@ nv.models.customForceDirectedGraph = function() {
           })
           .attr("x2", function(d) {
             var angle = getPrecalculatedValue(d, "angle");
-            var r = getPrecalculatedValue(d, "x2CircleRadius");
+            var r = getPrecalculatedValue(d, "x2CircleRadius") + markerEndSize;
             var inverse = d.source.x > d.target.x ? 1 : -1;
             return d.target.x + inverse * r * Math.cos(angle);
           })
           .attr("y2", function(d) {
             var angle = getPrecalculatedValue(d, "angle");
-            var r = getPrecalculatedValue(d, "x2CircleRadius");
+            var r = getPrecalculatedValue(d, "x2CircleRadius") + markerEndSize;
             var inverse = d.source.x > d.target.x ? 1 : -1;
             return d.target.y + inverse * r * Math.sin(angle);
           })
@@ -521,7 +570,8 @@ nv.models.customForceDirectedGraph = function() {
     }},
     nodeCircles: { get: function() { return nodeCircles;}, set: function(_) { nodeCircles = _; }},
     linkColorSet: { get: function() { return linkColorSet;}, set: function(_) { linkColorSet = _; }},
-    nodeIdField: { get: function() { return nodeIdField;}, set: function(_) { nodeIdField = _; }}
+    nodeIdField: { get: function() { return nodeIdField;}, set: function(_) { nodeIdField = _; }},
+    onLongPress: { get: function() { return onLongPress;}, set: function(_) { onLongPress = _; }}
   });
 
   // I didn't find a better way than exposing this functionality to the window level

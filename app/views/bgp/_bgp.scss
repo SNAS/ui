@@ -128,6 +128,34 @@
       //    opacity: 1;
       //  }
       //}
+
+      circle.progress {
+        fill: none;
+        //stroke-linecap: round;
+        //stroke-miterlimit: 10;
+        stroke-dasharray: 0;
+        stroke: #171f30;
+        stroke-width: 0;
+        transition: 0s ease-out all;
+        opacity: 0;
+        transform-origin: 50% 50%;
+        transform: rotate(-90deg);
+      }
+      circle.progress.active {
+        //stroke-dasharray: 100; /* full circle: the values needs updating depending on the radius: PI * radius * 2 */
+        stroke-width: 10;
+        opacity: 0.5;
+        transform-origin: 50% 50%;
+        transform: rotate(180deg);
+        transition: 2s ease-in-out all;
+      }
+      circle.progress.active.launch {
+        stroke: #ce6800;
+        stroke-width: 16px;
+        opacity: 0.75;
+        transition: 0.25s ease-out all;
+      }
+
     }
     .zoom-buttons {
       height: 57px;
