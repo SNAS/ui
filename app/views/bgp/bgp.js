@@ -103,17 +103,24 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       else if (isASN($scope.searchValue)) {
         $scope.asn = $scope.searchValue;
         $scope.displayASNInfo = false;
+        $scope.loadingWhoIs = true;
         apiFactory.getWhoIsASN($scope.searchValue).success(function(result) {
+          $scope.loadingWhoIs = false;
           var data = result.gen_whois_asn.data;
           $scope.asnDetails = [];
-          getASWhoIsInfo(data);
-          getASHistInfo();
-          getASNodeAndLinks($scope.searchValue);
-          $scope.displayASNInfo = true;
-          $scope.showDirectedGraph = true;
+          if (getASWhoIsInfo(data)) {
+            // if this is a known ASN, get other information
+          }
         }).error(function (error) {
             console.log(error.message);
+            $scope.loadingWhoIs = false;
           });
+        // retrieve information from the BGP data service even if there's no response from the WhoIs API
+        getPrefixes();
+        getASHistInfo();
+        getASNodeAndLinks($scope.searchValue);
+        $scope.displayASNInfo = true;
+        $scope.showDirectedGraph = true;
       }
       // if it's not a number, assume it's a prefix
       else {
@@ -531,16 +538,17 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     }
 
     // get AS data (details, prefixes)
+    // returns a boolean indicating whether this ASN is known
     function getASWhoIsInfo(data) {
       if (data.length != 0) {
         $scope.asn = data[0].asn;
         getASDetails(data[0]);
-        getPrefixes();
         $scope.nodata = false;
       }
       else {
         $scope.nodata = true;
       }
+      return !$scope.nodata;
     }
 
     function getASListData() {

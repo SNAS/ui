@@ -21,15 +21,6 @@
     </button>
     <!--<i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>-->
 
-    <div class="row">
-      <div ng-show="nodata" class="col-md-4">
-        <p ng-style="{'font-size': '20px', opacity: 0.5, align: center}">
-          <i class="glyphicon glyphicon-remove"></i>
-          No Results Found
-        </p>
-      </div>
-    </div>
-
     <div ng-class="{hidden: !dateFilterOn}" style="min-height: 190px">
       <div class="separator"></div>
 
@@ -107,21 +98,27 @@
 
   <!-- THIS SECTION DISPLAYS INFORMATION FOR A SPECIFIC AS NODE -->
   <!--<div class="main-area row" ng-show="displayASNInfo">-->
-  <div class="main-area row" ng-show="!nodata && !obj.maximiseForceDirectedGraph && displayASNInfo">
+  <div class="main-area row" ng-show="!obj.maximiseForceDirectedGraph && displayASNInfo">
     <!-- WhoIs info and prefixes -->
     
     <div class="col-lg-6">
       <div class="table-container whois">
         <h3>AS {{asn}} Information</h3>
-        <div class="preStyle" style="height: {{prefixGridInitHeight}}px">
-          <table class="tableStyle">
-            <tbody>
-            <tr ng-repeat="row in asnDetails">
-              <td>{{row.key}}</td>
-              <td class="value">{{row.value}}</td>
-            </tr>
-            </tbody>
-          </table>
+        <div class="loading-section">
+          <div ng-show="loadingWhoIs" bmp-loading font-width="50"></div>
+        </div>
+        <div ng-show="!loadingWhoIs">
+          <div ng-show="nodata" class="col-lg-12">No results found</div>
+          <div class="preStyle" ng-show="!nodata" style="height: {{prefixGridInitHeight}}px">
+            <table class="tableStyle">
+              <tbody>
+              <tr ng-repeat="row in asnDetails">
+                <td>{{row.key}}</td>
+                <td class="value">{{row.value}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
