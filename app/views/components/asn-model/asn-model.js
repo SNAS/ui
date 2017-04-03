@@ -2,10 +2,14 @@ angular.module('bmp.components.asnModel', [])
 
 .controller('ModalDemoCtrl', function($scope, $modal, $log, apiFactory, $location) {
 
-    $scope.onClick = function() {
+    $scope.onClick = function(event) {
       if ($scope.changeUrlOnClick === undefined) {
         $scope.open();
-      } else {
+      }
+      else if (event.ctrlKey || event.metaKey || event.shiftKey) {
+        window.open("/#" + $scope.changeUrlOnClick, "_blank"); // in a new tab
+      }
+      else {
         $location.url($scope.changeUrlOnClick);
       }
     }

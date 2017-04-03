@@ -4,4 +4,4 @@
       prefix: {{items.prefix}}<br>
       source: {{items.source}}">{{prefix}}
 </span>
-<span ng-if="!hoverFound" ng-click="onClick()">{{prefix}}</span>
+<span ng-if="!hoverFound" ng-click="onClick($event)">{{prefix}}</span>

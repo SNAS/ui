@@ -86,13 +86,20 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       // retrieve information from the BGP data service even if there's no response from the WhoIs API
       getPrefixes();
       getASHistInfo();
-      getASNodeAndLinks($scope.searchValue);
+//      getASNodeAndLinks($scope.searchValue);
     }
+
+    $scope.showASGraph = false;
+    $scope.loadASGraph = function() {
+      $scope.showASGraph = true;
+      getASNodeAndLinks($scope.searchValue);
+    };
 
     //get all the information of this AS
     function searchValueFn() {
       $scope.cancelAllHttpRequests();
       $scope.forceDirectedGraph.data = {nodes: [], links: []};
+      $scope.showASGraph = false;
 
       $scope.asInfo = {};
       $scope.displayASNInfo = false;

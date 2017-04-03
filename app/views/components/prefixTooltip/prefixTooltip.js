@@ -13,9 +13,13 @@ angular.module('bmp.components.prefixTooltip', [])
             }
           });
       });
-      element.on('click', function() {
+      element.on('click', function(event) {
         if ($scope.changeUrlOnClick !== undefined) {
-          $location.url($scope.changeUrlOnClick);
+          if (event.ctrlKey || event.metaKey || event.shiftKey) {
+            window.open("/#" + $scope.changeUrlOnClick, "_blank"); // in a new tab
+          } else {
+            $location.url($scope.changeUrlOnClick);
+          }
         }
       });
     }

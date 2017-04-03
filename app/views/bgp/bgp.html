@@ -156,10 +156,17 @@
             </button>
           </div>
         </h3>
+        <div class="nv-container" ng-show="!showASGraph">
+          <button class="btn btn-sm btn-primary" ng-click="loadASGraph()">Load AS Graph</button>
+          Note: it can take a while...
+        </div>
+        <div class="nv-container" ng-show="showASGraph && !loadingASNodesAndLinksData">
+          <button class="btn btn-sm btn-primary" ng-click="loadASGraph()">Refresh</button>
+        </div>
         <div class="loading-section">
           <div ng-show="loadingASNodesAndLinksData" bmp-loading font-width="50"></div>
         </div>
-        <div class="nv-container">
+        <div class="nv-container" ng-show="showASGraph">
           <nvd3 options="forceDirectedGraph.options" data="forceDirectedGraph.data" class="with-3d-shadow with-transitions"></nvd3>
           <div id="nodeTooltips" class="hideTooltip">
             <table>
