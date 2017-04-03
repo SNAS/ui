@@ -8,8 +8,8 @@
  * Controller of the Dashboard page
  */
 angular.module('bmp.components.map', ['ui.bootstrap'])
-  .controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$q", "toolsFactory",
-    function ($scope, $rootScope, $timeout, apiFactory, leafletData, $compile, $window, $q, toolsFactory) {
+  .controller('MapController', ["$scope", "$rootScope", "$timeout", "apiFactory", "leafletData", "$compile", "$window", "$route", "$q", "toolsFactory",
+    function ($scope, $rootScope, $timeout, apiFactory, leafletData, $compile, $window, $route, $q, toolsFactory) {
 
     window.SCOPEMAP = $scope;
 
@@ -30,7 +30,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
     $scope.halfHeight = $('.half-height').height() - 50;
 
-
     /****************************************
      Set and store map credentials
      *****************************************/
@@ -49,10 +48,12 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
      Store map object when available
      *****************************************/
     leafletData.getMap($scope.id).then(function (map) {
+      console.log($scope.id)
       $scope.map = map;
-      L.control.zoomslider().addTo(map);
+      //L.control.zoomslider().addTo(map);
       map.scrollWheelZoom.disable();
       $scope.init();
+      L.control.zoomslider().addTo(map);
     });
 
 
@@ -99,7 +100,6 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       }, 1000);
     });
 
-
     /****************************************
      Initialise map based on location
      *****************************************/
@@ -112,14 +112,83 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       if ($scope.location === 'peerView') {
         $scope.panelTitle = "Peer List";
         $scope.selectedRouter = true;
+        $scope.map.invalidateSize();
         $scope.getPeers();
         loadBottomPane();
+
+        $scope.modalContent = "";
+
+        // Set API call modal dialog for peer list.
+        var linkPeerList = 'peer';
+        var textPeerList = "Peers - All";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkPeerList, textPeerList);
+
+        var linkPeerTypeCount = 'peer/type/count';
+        var textPeerTypeCount = "Peers - Type Count";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkPeerTypeCount, textPeerTypeCount);
+
+        var linkIPv4Peers = 'peer/type/v4';
+        var textIPv4Peers = "Peers - IPv4";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkIPv4Peers, textIPv4Peers);
+
+        var linkIPv6Peers = 'peer/type/v6';
+        var textIPv6Peers = "Peers - IPv6";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkIPv6Peers, textIPv6Peers);
+
+        var linkPeerCountsByStatus = 'peer/status/count';
+        var textPeerCountsByStatus = "Peers - Counts by Status";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkPeerCountsByStatus, textPeerCountsByStatus);
+
+        var linkPeerListUp = 'peer/status/up';
+        var textPeerListUp = "Peers - Up";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkPeerListUp, textPeerListUp);
+
+        var linkPeerListDown = 'peer/status/down';
+        var textPeerListDown = "Peers - Down";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkPeerListDown, textPeerListDown);
+
+        var linkPeerPolicyCounts = 'peer/prefix';
+        var textPeerPolicyCounts = "Peers - Pre-Policy and Post-Policy RIB Counts";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkPeerPolicyCounts, textPeerPolicyCounts);
+
       }
       else if ($scope.location === 'globalView') {
         $scope.panelTitle = "Router List";
         $scope.showBottomPane = true;
+        $scope.map.invalidateSize();
         $scope.getRouters();
         loadBottomPane();
+
+        $scope.modalContent = "";
+
+        // Set API call modal dialog for router list.
+        var linkRouterList = 'routers';
+        var textRouterList = "Routers - All";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkRouterList, textRouterList);
+
+        var linkRouterListGeo = 'routers?withgeo';
+        var textRouterListGeo = "Routers - All Geo";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkRouterListGeo, textRouterListGeo);
+
+        var linkRouterListAllCount = 'routers/status/count';
+        var textRouterListAllCount = "Routers - All Count";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkRouterListAllCount, textRouterListAllCount);
+
+        var linkRouterListUpCount = 'routers/status/up';
+        var textRouterListUpCount = "Routers - Up";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkRouterListUpCount, textRouterListUpCount);
+
+        var linkRouterListDownCount = 'routers/status/down';
+        var textRouterListDownCount = "Routers - Down";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkRouterListDownCount, textRouterListDownCount);
+
+        var linkPeerCountType = 'peer/type/count/router';
+        var textPeerCountType = "Routers - Count of Peers by IP Type";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkPeerCountType, textPeerCountType);
+
+        leafletData.getMap($scope.id).then(function (map) {
+          //console.log(map.getContent())
+        });
       }
       else if ($scope.location === 'peerCard') {
         $scope.mapWidth = "100%";
@@ -145,6 +214,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
 
       //Reset map view to avoid 'blank map' error
       $timeout(function () {
+
         $scope.map._resetView($scope.map.getCenter(), $scope.map.getZoom(), true);
       }, 100);
     }
@@ -164,7 +234,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       var data;
       apiFactory.getRoutersAndLocations().
       success(function (result) {
-        //console.log("YEYYYY");
+
         try {
           data = result.routers.data;
         } catch (e) {
@@ -236,6 +306,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
         $scope.loading = false;
         $scope.$broadcast('routers-loaded');
         $scope.fitMap('routers');
+        $scope.map.invalidateSize();
       }).
       error(function (error) {
         $scope.error = "Error: API error";
@@ -563,6 +634,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
       angular.element('.main').scrollTop(0);
       location.options.expandPeers = true;
       // $scope.panelSearch = location.options.city;
+
     };
 
 

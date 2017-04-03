@@ -62,6 +62,11 @@ angular.module('bmp.components.asnModel', [])
                 size: size,
                 resolve: {
                   items: function() {
+
+                    if (Object.keys($scope.modelData).length === 0) {
+                      return {"UNAVAILABLE": "No information found for the AS " + $scope.asn};
+                    }
+
                     return $scope.modelData;
                   }
                 }
@@ -87,6 +92,7 @@ angular.module('bmp.components.asnModel', [])
 .controller('ModalInstanceCtrl', function($scope, $modalInstance, items) {
 
   $scope.items = items;
+  $scope.noAsInfo = "";
 
   $scope.ok = function() {
     $modalInstance.close($scope.selected.item);

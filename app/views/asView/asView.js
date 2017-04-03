@@ -415,14 +415,14 @@ angular.module('bmpUiApp')
         root.children = [];
         if (upstreamData.length > 0)
           root.children.push({
-            name: "UPSTREAM ASES",
+            name: "LEFT ASES",
             children: upAndDown.upstreamData,
             type: "UPSTREAM",
             dataType: "STREAMTYPE"
           });
         if (downstreamData.length > 0)
           root.children.push({
-            name: "DOWNSTREAM ASES",
+            name: "RIGHT ASES",
             children: upAndDown.downstreamData,
             type: "DOWNSTREAM",
             dataType: "STREAMTYPE"

@@ -53,6 +53,10 @@ angular.module('bmpUiApp')
             getPrefixHistory($scope.value, $scope.selectPeer.peer_hash_id);
           }
 
+          // Reset the timeline and history prefix table.
+          $scope.timelineData = [];
+          $scope.HistoryPrefixOptions.data = [];
+
           // $scope.selectUpdates();
           $scope.fromRouter = 'FROM ' + $scope.selectPeer.RouterName;
           $scope.fromPeer = '-> ' + $scope.selectPeer.PeerName;
@@ -161,7 +165,7 @@ angular.module('bmpUiApp')
     $scope.allHistoryOptions = {
       showGridFooter: true,
       enableFiltering: false,
-      enableRowSelection: true,
+      enableRowSelection: false,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
@@ -200,7 +204,12 @@ angular.module('bmpUiApp')
       $scope.currentValue = value;
       $timeout(function () {
         if (value == $scope.currentValue) {
+          // Reset the timeline and history prefix table.
+          $scope.timelineData = [];
+          $scope.HistoryPrefixOptions.data = [];
+
           getPrefixDataGrid(value);
+          getPrefixHistory(value);
         }
       }, 500);
     };
@@ -232,7 +241,6 @@ angular.module('bmpUiApp')
           var peerDataOriginal = data.v_all_routes.data;
           $scope.peerData = filterUnique(peerDataOriginal, "PeerName");
           createPrefixGridTable();
-          createOriginASGridTable();
           $scope.allPreLoad = false;
           $timeout(function () {
             if ($stateParams.p != 'defaultPrefix') {
@@ -271,6 +279,8 @@ angular.module('bmpUiApp')
             $scope.showPrefixInfo = '<table>';
             if (result.gen_whois_route.data.length > 0) {
               $scope.origin_as_number =  result.gen_whois_route.data[0].origin_as // Set Origin AS number to load in originating as information section.
+              console.log("ASN 1: " + $scope.origin_as_number)
+              createOriginASGridTable();
               $scope.values = result.gen_whois_route.data[0];
               $scope.values['prefix'] = $scope.values['prefix'] + '/' + $scope.values['prefix_len'];
               delete $scope.values['prefix_len'];
@@ -309,21 +319,23 @@ angular.module('bmpUiApp')
     var createOriginASGridTable = function () {
       //$scope.AllPrefixOptions.data = $scope.PrefixData;
       if ($scope.PrefixData.length > 0) {
-        var Origin_AS = $scope.PrefixData[0].Origin_AS;
+        var Origin_AS = $scope.origin_as_number;
+        console.log("ASN 2: " + Origin_AS)
 
         // create the table
         var url = apiFactory.getWhoIsWhereASNSync(Origin_AS); // DEBUG !
 
         var flag = true;
-        for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
-          if (angular.equals($scope.PrefixData[i].Origin_AS, $scope.PrefixData[i + 1].Origin_AS)) {
-          }
-          else {
-            flag = false;
-            break;
-          }
-        }
+//        for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
+//          if (angular.equals($scope.PrefixData[i].Origin_AS, $scope.PrefixData[i + 1].Origin_AS)) {
+//          }
+//          else {
+//            flag = false;
+//            break;
+//          }
+//        }
 
+        console.log("FLAG: " + flag)
         if (flag) {
 
           //notice : synchronization
@@ -334,7 +346,8 @@ angular.module('bmpUiApp')
           $scope.infoCard = {};
           request.success(function (result) {
             $scope.showValues = '<table>';
-            $scope.values = result.w.data[0];
+            $scope.values = result['gen_whois_asn']['data'][0];
+            console.log("ASN VALUES: " + JSON.stringify($scope.values))
             angular.forEach($scope.values, function (value, key) {
               if (!value) {
                 value = "-"
@@ -498,6 +511,13 @@ angular.module('bmpUiApp')
               }
               getPrefixHisDataHour();
               $scope.loading = false;
+
+              // Load updates and changes in LAST circle.
+              setTimeout(function() {
+                $scope.createPrefixHisGrid(NUMBER_OF_RECTS-1);
+                $scope.createTimeline(NUMBER_OF_RECTS-1);
+              }, 100);
+
             })
             .error(function(error) {
               console.log('error when fetching history data');
@@ -553,6 +573,7 @@ angular.module('bmpUiApp')
     };
 
     $("#endTimePicker").on('dp.hide', function () {
+      console.log("END TIME PICKER HIDDEN...")
       changeTimeRange();
     });
 
@@ -639,6 +660,7 @@ angular.module('bmpUiApp')
       }
 
       req.success(function (data) {
+      console.log(data)
         $scope.originHisData = data.v_routes_history.data;
         angular.forEach($scope.originHisData, function (item) {
           item['LastModified'] = moment.utc(item['LastModified'], 'YYYY-MM-DD HH:mm:ss.SSSSSS').local().format('YYYY-MM-DD HH:mm:ss.SSSSSS');
@@ -865,6 +887,7 @@ angular.module('bmpUiApp')
       $scope.value = $stateParams.p;
       getPrefixDataGrid($scope.value);
       getPrefixHistory($scope.value);
+      $scope.timelineHtml = "";
     } else {
       init();
     }
@@ -872,6 +895,7 @@ angular.module('bmpUiApp')
     $scope.selectChange = function () {
       if (typeof($scope.currentValue) == "undefined") {
         $scope.currentValue = $scope.value;
+        $scope.timelineHtml = "";
       }
       changeTimeRange();
     };
@@ -1185,8 +1209,8 @@ angular.module('bmpUiApp')
           .html(function (d, i) {
             if (d != 0) d += 1;
             var time = $scope.currentSetTime;
-            var content = moment(time - (NUMBER_OF_RECTS - parseInt(i)) * $scope.timeRange.value * 60000).format("MM/DD HH:mm")
-              + "~" + moment(time - (NUMBER_OF_RECTS - 1 - parseInt(i)) * $scope.timeRange.value * 60000).format("MM/DD HH:mm")
+            var content = moment(time - (NUMBER_OF_RECTS - parseInt(i)) * $scope.timeRange.value * 60000).format("MM/DD/YY HH:mm")
+              + "~" + moment(time - (NUMBER_OF_RECTS - 1 - parseInt(i)) * $scope.timeRange.value * 60000).format("MM/DD/YY HH:mm")
               + "<br/><strong>Changes:</strong>" + d;
             return content;
           })
@@ -1251,6 +1275,7 @@ angular.module('bmpUiApp')
             .on("click", function (d, i) {
               $scope.createPrefixHisGrid(i);
               $scope.createTimeline(i);
+              console.log("Circle clicked: " + i);
             })
             .on("mouseout", function (d, i) {
               tip.destroy(d);

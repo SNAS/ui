@@ -26,6 +26,10 @@ angular.module('bmpUiApp')
       });
     };
 
+    apiFactory.getUrlBase = function() {
+      return urlBase;
+    }
+
     apiFactory.getRouters = function() {
       return $http.get(urlBase + 'routers');
     };
@@ -353,7 +357,7 @@ angular.module('bmpUiApp')
 
     apiFactory.getWhoIsWhereASNSync = function(asn) {
       //fix it later . now this is a Sync API
-      return urlBase + "whois/asn?where=w.asn=" + asn;
+      return urlBase + "whois/asn/" + asn;
     };
 
     apiFactory.getWhoisPrefix = function(prefix) {
@@ -570,6 +574,11 @@ angular.module('bmpUiApp')
 
     apiFactory.deleteUser = function(username) {
       return $http.get(urlBase + "auth/delete/" + username);
+    };
+
+    apiFactory.createApiCallHtml = function (link, text) {
+
+      return '<a href="'+ encodeURI(apiFactory.getUrlBase() + link) +'" target="_blank">' + text + ' </a><br>';
     };
 
     return apiFactory;

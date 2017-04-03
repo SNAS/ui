@@ -18,9 +18,33 @@ angular.module('bmp.components.card')
     //  "LastModified":"2015-04-01 18:36:36"
     // }
 
+    $scope.modalContent = "";
+
     if ($scope.data.RouterName === " " || $scope.data.RouterName === "") {
       $scope.data.RouterName = $scope.data.RouterIP;
     }
+
+    // Set API call modal dialog for corresponding router.
+    var linkRouter = 'routers?where=hash_id="' + $scope.data.RouterHashId + '"';
+    var textRouter = $scope.data.RouterName;
+    $scope.modalContent += apiFactory.createApiCallHtml(linkRouter, textRouter);
+
+    var linkRouterWithGeo = 'routers?where=hash_id="' + $scope.data.RouterHashId + '"&withgeo';
+    var textRouterWithGeo = $scope.data.RouterName + " - Geo";
+    $scope.modalContent += apiFactory.createApiCallHtml(linkRouterWithGeo, textRouterWithGeo);
+
+    var linkRouterPeers = 'peer?where=router_hash_id="' + $scope.data.RouterHashId + '"';
+    var textRouterPeers = $scope.data.RouterName + " - All Peers";
+    $scope.modalContent += apiFactory.createApiCallHtml(linkRouterPeers, textRouterPeers);
+
+    var linkRouterUpPeers = 'peer?where=router_hash_id="' + $scope.data.RouterHashId + '" AND isUp=1';
+    var textRouterUpPeers = $scope.data.RouterName + " - Up Peers";
+    $scope.modalContent += apiFactory.createApiCallHtml(linkRouterUpPeers, textRouterUpPeers);
+
+    var linkRouterDownPeers = 'peer?where=router_hash_id="' + $scope.data.RouterHashId + '" AND isUp=0';
+    var textRouterDownPeers = $scope.data.RouterName + " - Down Peers";
+    $scope.modalContent += apiFactory.createApiCallHtml(linkRouterDownPeers, textRouterDownPeers);
+
 
     //$scope.data.RouterIPWithLength = $scope.data.RouterIP + "/" + getAsLength($scope.data.RouterIP);
     //
@@ -189,7 +213,7 @@ angular.module('bmp.components.card')
     $scope.globalViewPeerGridInitHeight = 350;
 
     $scope.globalViewPeerOptions = {
-      enableRowSelection: true,
+      enableRowSelection: false,
       enableRowHeaderSelection: false,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
@@ -266,5 +290,8 @@ angular.module('bmp.components.card')
       country: countryConversionFactory.getName($scope.data.country),
       type: $scope.data.type
     });
+
+
+
 
   }]);

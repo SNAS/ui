@@ -26,7 +26,7 @@
       <div class="loading-section">
         <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading
              loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>
-        <div ui-grid="summaryPeerOptions" ui-grid-selection ui-grid-auto-resize
+        <div ui-grid="summaryPeerOptions" ui-grid-auto-resize
              ng-style="{'height':summaryPeerOptions.height}"
              style="margin-top: 27px;" ui-grid-resize-columns>
           <div class="watermark" ng-if="!summaryPeerOptions.data.length">{{data.PeerASN==data.LocalASN?"Peer is in same AS as router":"No data available"}}</div>

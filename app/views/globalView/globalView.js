@@ -25,4 +25,5 @@ angular.module('bmpUiApp')
     }
 
     $scope.location = "globalView";
+
 });
