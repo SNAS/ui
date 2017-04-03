@@ -1,0 +1,84 @@
+<div ng-controller="BGPSecurityAuditController" id="bgpView" class="securityAuditView">
+
+  <div class="main-page-search">
+    <div style="min-height: 180px">
+      <!-- date/time selector -->
+      <div class="row">
+        <div class="col-lg-2">
+          <table class="table start-end">
+            <tr>
+              <th class="timestamp-label">Start:</th>
+              <td class="input"><input type='text' class="form-control" id="startDatetimePicker"/></td>
+            </tr>
+            <tr>
+              <th class="timestamp-label">End:</th>
+              <td class="input"><input type='text' class="form-control" id="endDatetimePicker"/></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <button class="btn btn-primary btn-xs btn-now-no-margin" ng-click="setToNow()">now</button>
+              </td>
+            </tr>
+            <tr>
+              <th>Duration:</th>
+              <td id="duration"></td>
+            </tr>
+            <tr>
+              <th>Selection:</th>
+              <td>{{selectedTime | date:'MM/dd/yyyy HH:mm'}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="col-lg-10 time-slider">
+          <div class="col-lg-1 btn-arrow">
+            <span class="btn btn-default btn-xs" ng-click="leftArrow()"><span class="glyphicon glyphicon-arrow-left"></span></span>
+          </div>
+          <div class="col-lg-10 slider">
+            <div class="loading-section">
+              <div ng-show="loadingAnomalies" bmp-loading font-width="50"></div>
+              <nvd3 options="previewGraph" data="previewGraphData"></nvd3>
+              <div id="timeSelector"></div>
+            </div>
+          </div>
+          <div class="col-lg-1 btn-arrow">
+            <span class="btn btn-default btn-xs" ng-click="rightArrow()"><span class="glyphicon glyphicon-arrow-right"></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-area row">
+    <div class="loading-section">
+      <div ng-show="loadingAnomalies" bmp-loading font-width="50"></div>
+    </div>
+    <div class="col-lg-4" ng-repeat="view in views" ng-click="toggleAnomalyDetails(view.name)">
+      <div class="table-container anomaly-box">
+        <div class="name">{{view.name}}</div>
+        <div class="occurrences">{{view.occurrences}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-area row">
+    <div class="col-lg-12" ng-repeat="(anomaly, details) in anomalyDetails" ng-show="details.show">
+      <table class="table table-condensed">
+        <tr>
+          <th ng-repeat="field in displayFields[anomaly]">
+            {{field}}
+          </th>
+        </tr>
+        <tr ng-repeat="row in details.values">
+          <td ng-repeat="field in displayFields[anomaly]">
+            {{row[field]}}
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+

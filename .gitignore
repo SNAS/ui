@@ -7,3 +7,6 @@ dist_war
 bower_components
 .idea
 *.bak
+apache-tomcat*
+startTomcat.sh
+stopTomcat.sh

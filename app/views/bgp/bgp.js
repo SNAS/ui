@@ -65,25 +65,28 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     function loadPreviewASHist(result) {
       $scope.previewGraphData = [];
 
-      var timeInterval = 60;
-
       var gData = [];
 
       angular.forEach(result, function(record) {
         gData.push([new Date(record.created_on).getTime(), parseInt(record.chg)]);
       });
 
-      console.log(gData);
-
       $scope.previewGraphData[0] = {
-            key: "Change",
-            values: gData
-        };
+        key: "Change",
+        values: gData
+      };
     }
 
     // returns true if string s is a valid AS number
     function isASN(s) {
       return s.match(/^[0-9]+$/) !== null;
+    }
+
+    function refreshASInfo() {
+      // retrieve information from the BGP data service even if there's no response from the WhoIs API
+      getPrefixes();
+      getASHistInfo();
+      getASNodeAndLinks($scope.searchValue);
     }
 
     //get all the information of this AS
@@ -116,9 +119,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
             $scope.loadingWhoIs = false;
           });
         // retrieve information from the BGP data service even if there's no response from the WhoIs API
-        getPrefixes();
-        getASHistInfo();
-        getASNodeAndLinks($scope.searchValue);
+        refreshASInfo();
         $scope.displayASNInfo = true;
         $scope.showDirectedGraph = true;
       }
@@ -495,8 +496,6 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
     // Get information for a specific AS hist
     function getASHistInfo() {
       var start, end;
-      // start = 1486903623000;
-      // end = 1487158528356;
 
       $scope.loadingPreview = true;
 
@@ -508,7 +507,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         var request = bgpDataService.getASHistInfo($scope.asn, start, end);
         $scope.httpRequests.push(request);
         request.promise.then(function(result) {
-            console.debug("AS hist info", result);
+//            console.debug("AS hist info", result);
             loadPreviewASHist(result);
             $scope.loadingPreview = false;
             clearRequest(request);
@@ -522,10 +521,18 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 
     // Get prefixes information of this AS
     function getPrefixes() {
+      var start, end; // show the last hour by default
+      if ($scope.dateFilterOn) {
+        start = getTimestamp("start");
+        end = getTimestamp("end");
+      } else {
+        end = new Date().getTime();
+        start = end - 3600000;
+      }
       $scope.prefixGridOptions.data = [];
       $scope.loadingPrefixes = true; // begin loading
-      console.log("getting prefixes for AS", $scope.asn);
-      var request = bgpDataService.getASPaths($scope.asn);
+//      console.log("getting prefixes for AS", $scope.asn);
+      var request = bgpDataService.getASPaths($scope.asn, start, end);
       $scope.httpRequests.push(request);
       request.promise.then(function(result) {
           $scope.prefixGridOptions.data = result;
@@ -533,6 +540,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           clearRequest(request);
         }, function(error) {
           console.warn(error);
+          $scope.loadingPrefixes = false; // stop loading
         }
       );
     }
@@ -835,265 +843,36 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 
     /* time slider */
 
-    $scope.dateFilterOn = false;
+    $scope.dateFilterOn = true;
 
-    // load UTC timezone
-    moment.tz.add("Etc/UTC|UTC|0|0|");
-    moment.tz.link("Etc/UTC|UTC");
+//    function loadPreview() {
+//      $scope.previewGraphData = [];
+//    }
 
-    var timeFormat = 'YYYY-MM-DD HH:mm';
+    // init, changedDates, lineColor
+    var callbacks = {
+      init: function() {
 
-    var startTimestamp, endTimestamp;
-
-    endTimestamp = moment().toDate();
-    startTimestamp = moment().subtract(60, 'minutes').toDate();
-    var duration, durationInMinutes;
-
-    var sliderSettings = {
-      start: [startTimestamp.getTime(), endTimestamp.getTime()], // Handle start position
-      step: 60 * 1000, // Slider moves in increments of a minute
-      margin: 60 * 1000, // Handles must be more than 1 minute apart
-      limit: 3600 * 60 * 1000 * 4, // Maximum 2 hours
-      connect: true, // Display a colored bar between the handles
-      orientation: 'horizontal', // Orient the slider vertically
-      behaviour: 'tap-drag', // Move handle on tap, bar is draggable
-      range: {
-        'min': moment().subtract(12, 'hours').toDate().getTime(),
-        'max': moment().toDate().getTime()
       },
-      format: {
-        to: function (value) {
-          return moment(parseInt(value));
-        },
-        from: function (value) {
-          return parseInt(value);
-        }
+      changedDates: function() {
+        $timeout(function() {
+          if ($scope.searchValue === "") {
+            displayAllASNodes();
+          }
+          else if (isASN($scope.searchValue)) {
+            refreshASInfo();
+          }
+          // if it's not a number, assume it's a prefix
+          else {
+            getPrefixInfo($scope.searchValue);
+          }
+        });
       },
-      pips: {
-        mode: 'count',
-        values: 5,
-        density: 4,
-        format: {
-          to: function (value) {
-            return moment(parseInt(value)).format('MM/DD HH:mm');
-          }
-        }
+      lineColor: function(d) {
+        return "#EAA546";
       }
-    };
-
-    var timeSelector = $('#timeSelector')[0];
-
-    noUiSlider.create(timeSelector, sliderSettings);
-
-    function getTimestamp(startOrEnd) {
-      var dateTimePicker = startOrEnd === "start" ? startDatetimePicker : endDatetimePicker;
-      return dateTimePicker.data('DateTimePicker').date();
     }
-
-    var startDatetimePicker = $('#startDatetimePicker'),
-      endDatetimePicker = $('#endDatetimePicker');
-
-    startDatetimePicker.datetimepicker({
-      sideBySide: true,
-      format: 'MM/DD/YYYY HH:mm'
-    });
-
-    startDatetimePicker.on('dp.hide', function () {
-      var setDate = startDatetimePicker.data('DateTimePicker').date();
-      var originalValues = timeSelector.noUiSlider.get();
-      if (setDate < moment(sliderSettings.range['min'])) {
-        timeSelector.noUiSlider.destroy();
-        sliderSettings.range = {
-          'min': moment(setDate).toDate().getTime(),
-          'max': moment(setDate).add(12, 'hours').toDate().getTime()
-        };
-        loadPreview();
-        getASHistInfo();
-        sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
-        noUiSlider.create(timeSelector, sliderSettings);
-        bindEvents();
-      }
-      else if (setDate > moment(sliderSettings.range['max']) && setDate <= moment()) {
-        timeSelector.noUiSlider.destroy();
-        sliderSettings.range = {
-          'min': moment(setDate).toDate().getTime(),
-          'max': moment(setDate).add(12, 'hours').toDate().getTime()
-        };
-        loadPreview();
-        getASHistInfo();
-        sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
-        noUiSlider.create(timeSelector, sliderSettings);
-        bindEvents();
-      }
-      else if (setDate > moment()) {
-        alert("You can't go to the future! But you can try to go to your past :)");
-      }
-      else {
-        timeSelector.noUiSlider.set([moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])]);
-      }
-    });
-
-    endDatetimePicker.datetimepicker({
-      sideBySide: true,
-      format: 'MM/DD/YYYY HH:mm'
-    });
-
-    endDatetimePicker.on('dp.hide', function () {
-      var setDate = endDatetimePicker.data('DateTimePicker').date();
-      var originalValues = timeSelector.noUiSlider.get();
-      if (setDate <= moment(sliderSettings.range['min'])) {
-        timeSelector.noUiSlider.destroy();
-        sliderSettings.range = {
-          'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
-          'max': moment(setDate).toDate().getTime()
-        };
-        loadPreview();
-        getASHistInfo();
-        sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
-        noUiSlider.create(timeSelector, sliderSettings);
-        bindEvents();
-      }
-      else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(12, 'hours') <= moment()) {
-        timeSelector.noUiSlider.destroy();
-        sliderSettings.range = {
-          'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
-          'max': moment(setDate).toDate().getTime()
-        };
-        loadPreview();
-        getASHistInfo();
-        sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
-        noUiSlider.create(timeSelector, sliderSettings);
-        bindEvents();
-      }
-      else if (moment(setDate).subtract(12, 'hours') > moment()) {
-        alert("You can't go to the future! But you can try to go to your past :)");
-
-      }
-      else {
-        timeSelector.noUiSlider.set([moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()]);
-      }
-    });
-
-    // load all graphs
-    var loadAll = $scope.loadAll = function() {
-    };
-
-    function bindEvents() {
-      var timer;
-      timeSelector.noUiSlider.on('update', function () {
-        $timeout.cancel(timer);
-        startDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
-        endDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
-        durationInMinutes = Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60));
-
-        if (durationInMinutes > 60)
-          duration = Math.floor(durationInMinutes / 60) + ' hrs ' + durationInMinutes % 60 + ' mins';
-        else
-          duration = durationInMinutes + ' Minutes';
-        $('#duration').text(duration);
-
-        timer = $timeout(function() { 
-          loadPreview();
-          getASHistInfo(); 
-        }, 5000);
-
-        
-      });
-      timeSelector.noUiSlider.on('set', function () {
-        loadAll();
-      });
-      loadAll();
-      
-    }
-
-    $scope.leftArrow = function () {
-      var originalValues = timeSelector.noUiSlider.get();
-      timeSelector.noUiSlider.destroy();
-      var originalRange = [sliderSettings.range['min'], sliderSettings.range['max']];
-      sliderSettings.range = {
-        'min': originalRange[0] - (originalRange[1] - originalRange[0]),
-        'max': originalRange[0]
-      };
-      loadPreview();
-      getASHistInfo();
-      sliderSettings.start = [sliderSettings.range['max'] - (originalValues[1] - originalValues[0]), sliderSettings.range['max']];
-      noUiSlider.create(timeSelector, sliderSettings);
-      bindEvents();
-    };
-
-    $scope.rightArrow = function () {
-      var originalValues = timeSelector.noUiSlider.get();
-      timeSelector.noUiSlider.destroy();
-      var originalRange = [sliderSettings.range['min'], sliderSettings.range['max']];
-      sliderSettings.range = {
-        'min': originalRange[1],
-        'max': originalRange[1] + (originalRange[1] - originalRange[0])
-      };
-      loadPreview();
-      getASHistInfo();
-      sliderSettings.start = [sliderSettings.range['min'], sliderSettings.range['min'] + (originalValues[1] - originalValues[0])];
-      noUiSlider.create(timeSelector, sliderSettings);
-      bindEvents();
-    };
-
-    $scope.setToNow = function () {
-      var originalValues = timeSelector.noUiSlider.get();
-      timeSelector.noUiSlider.destroy();
-      sliderSettings.range = {
-        'min': moment().subtract(12, 'hours').toDate().getTime(),
-        'max': moment().toDate().getTime()
-      };
-      loadPreview();
-      getASHistInfo();
-      sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
-      noUiSlider.create(timeSelector, sliderSettings);
-      bindEvents();
-    };
-
-    function loadPreview() {
-      $scope.previewGraphData = [];
-    }
-
-    $scope.previewGraph = {
-      chart: {
-        type: "lineChart",
-        height: 100,
-        margin: {
-          top: 20,
-          right: 0,
-          bottom: 10,
-          left: 0
-        },
-        color: function (d) {
-          if (d.key == "Change")
-            return updateColor;
-          if (d.key == "Withdraws")
-            return withdrawColor;
-        },
-        x: function (d) {
-          return d[0];
-        },
-        y: function (d) {
-          return d[1];
-        },
-        useVoronoi: true,
-        clipEdge: true,
-        transitionDuration: 500,
-        useInteractiveGuideline: true,
-        showLegend: false,
-        showControls: false,
-        showXAxis: false,
-        showYAxis: false,
-        forceY : [-2,2],
-        xAxis: {
-          tickFormat: function (d) {
-            return moment(d).format("MM/DD/YYYY HH:mm");
-          }
-        }
-      }
-    };
-
-    bindEvents();
+    setUpTimeSlider($scope, $timeout, callbacks, { forceY: [-2,2] });
 
     /* end of time slider */
 

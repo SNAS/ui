@@ -300,6 +300,9 @@
     margin-left: 4px;
     height: 23px;
   }
+  .btn-now-no-margin {
+    margin: 0;
+  }
 
   .time-slider {
     padding-top: 4px;
@@ -422,4 +425,19 @@
       font-size: 50px;
     }
   }
+
+  .anomaly-box {
+    .name {
+
+    }
+    .occurrences {
+
+    }
+  }
+}
+
+line.nv-selectionline {
+  stroke: #333;
+  stroke-opacity: 0.5;
+  stroke-width: 2px;
 }

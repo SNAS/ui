@@ -81,11 +81,11 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       }
 
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/aspaths/"+asn+parameters,  { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/aspaths/"+asn+parameters, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get AS paths (request might have been cancelled) - as="+asn);
+          return $q.reject("Failed to get AS paths for as="+asn+" - ("+response.statusText+") "+response.data);
         });
 
       return { promise: promise, cancel: cancel(canceller) };
@@ -100,7 +100,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       }
 
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/aspaths/hist/"+asn+parameters,  { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/aspaths/hist/"+asn+parameters, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -118,7 +118,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
       }
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/prefixes/"+prefix+parameters,  { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/prefixes/"+prefix+parameters, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -136,7 +136,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
       }
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/as/hist/" + as + parameters,  { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/as/hist/" + as + parameters, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -154,13 +154,59 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
       }
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/links/hist/" + startAS + "/" + endAS + parameters,  { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/links/hist/" + startAS + "/" + endAS + parameters, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
           return $q.reject("Failed to get AS link history (request might have been cancelled) - startAS="+startAS + " - endAS=" + endAS);
         });
 
+      return { promise: promise, cancel: cancel(canceller) };
+    },
+    getAnomaliesTypes: function() {
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/anomalies/overview/list", { cache: true }, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get anomalies overview list");
+        });
+
+      return { promise: promise, cancel: cancel(canceller) };
+    },
+    getAnomalyOverview: function(anomaly) {
+      // get the types of anomalies and perform parallel requests
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/anomalies/overview/" + anomaly, { cache: true }, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get anomalies overview data for "+anomaly+" (request might have been cancelled)");
+        });
+      return { promise: promise, cancel: cancel(canceller) };
+    },
+    getAnomalies: function(parameters) {
+      // parameters is a json object with the following fields: anomaliesType, exportType, start, end
+      // allowed anomaliesType: "martians", "prefixLength" (mandatory parameter: no default value)
+      // allowed exportType: "json" (default), "csv"
+      if (parameters.exportType === undefined || parameters.exportType === "json") {
+        parameters.exportType = "";
+      }
+      var timestamps = "";
+      if (parameters.start !== undefined) {
+        timestamps = "?start=" + parameters.start;
+      }
+      if (parameters.end !== undefined) {
+        timestamps += (timestamps.length === 0 ? "?" : "&") + "end=" + parameters.end;
+      }
+
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/anomalies/" + parameters.anomaliesType + "/" + parameters.exportType + timestamps, { cache: true }, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get anomalies "+parameters.anomaliesType+" data (request might have been cancelled)");
+        });
       return { promise: promise, cancel: cancel(canceller) };
     }
   };
