@@ -10,9 +10,6 @@
 angular.module('bmpUiApp').controller('BGPSecurityAuditController',
   function($scope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout) {
 
-    $scope.views = [
-    ];
-
     const viewNames = {
       martians: "Martian anomalies",
       prefix_length: "Prefix length anomalies"
@@ -22,88 +19,81 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       prefix_length: "blue"
     };
 
+    function findIndexOfAnomaly(anomaly, array, field) {
+      return array.findIndex(function(el) {
+        return el[field] === anomaly;
+      });
+    }
+
+    // returns -1 if not found
+    function findIndexOfSelectedTime(array, selectedTime) {
+      for (var i = 0 ; i < array.length ; i++) {
+        var timestamp = array[i][0];
+        if (timestamp === selectedTime) {
+          return i;
+        }
+        // the data is ordered by timestamp ascending
+        // so if we've already passed the selected time, we can stop now
+        else if (timestamp > selectedTime) {
+          break;
+        }
+      }
+      return -1;
+    }
+
+    function computeValuesAtSelectedTime(dataObject) {
+      var gData = dataObject.values;
+      var index = findIndexOfSelectedTime(gData, $scope.selectedTime);
+        if (index !== -1) {
+        dataObject.occurrences = gData[index][1];
+        if (index === 0) {
+          dataObject.trend = "stable";
+        }
+        if (index > 0) {
+          dataObject.trend = gData[index-1][1] < gData[index][1] ? "up" :
+            gData[index-1][1] > gData[index][1] ? "down" : "stable";
+        }
+      }
+    }
+
     function loadAnomalies() {
       $scope.loadingAnomalies = true;
       bgpDataService.getAnomaliesTypes().promise.then(function(result) {
         console.debug("anomalies types", result);
-//        var parameters = {
-//          anomaliesType: "overview",
-//          overviewTypes: result
-//        };
-//        var request = bgpDataService.getAnomalies(parameters);
-//        request.promise.then(function(result) {
-//          console.debug("anomalies", result);
-//
-//          $scope.views = [];
-//          for (var key in result) {
-//            if (result.hasOwnProperty(key)) {
-//              var newView = {
-//                name: viewNames[key] !== undefined ? viewNames[key] : key,
-//                occurrences: Math.ceil(Math.random() * 10)
-//              }
-//              $scope.views.push(newView);
-//            }
-//          }
-//
-//          loadPreviewGraphData(result);
-//
-//          $scope.loadingAnomalies = false;
-//        }, function(error) {
-//          console.warn(error);
-//          $scope.loadingAnomalies = false;
-//        });
 
-        $scope.views = [];
         $scope.previewGraphData = [];
         angular.forEach(result, function(anomaly) {
-          var request = bgpDataService.getAnomalyOverview(anomaly);
+          var parameters = {
+            anomaliesType: anomaly,
+            start: getTimestamp("start"),
+            end: getTimestamp("end")
+          };
+          var request = bgpDataService.getAnomalyOverview(parameters);
           request.promise.then(function(result) {
-            console.debug("anomalies for", anomaly, result);
-            // find the selected timestamp in the data
-            var occurrences = -1;
-            for (var i = 0 ; i < result.length ; i++) {
-              var timestamp = result[i].hourtimestamp;//parseInt(result[i].hourtimestamp, 10) * 1000;
-              console.log("result", (i+1)+"/"+result.length, "timestamp=", timestamp, $scope.selectedTime, result[i].value);
-              if (timestamp === $scope.selectedTime) {
-                occurrences = result[i].value;//parseInt(result[i].value, 10);
-                break;
-              }
-            }
-            var newView = {
-              name: anomaly,
-              occurrences: occurrences
-            }
-            $scope.views.push(newView);
-            console.log("$scope.views", $scope.views);
-
-
             // find the graph lines in the data
             var gData = [];
             angular.forEach(result, function(record) {
               var timestamp = record.hourtimestamp;//parseInt(record.hourtimestamp, 10) * 1000;
               gData.push([new Date(timestamp).getTime(), record.value/*parseInt(record.value, 10)*/]);
             });
+
             var newGraphLine = {
               id: anomaly,
               key: viewNames[anomaly] !== undefined ? viewNames[anomaly] : anomaly,
-              values: gData
+              values: gData,
+              occurrences: 0,
+              trend: 0
             };
-            $scope.previewGraphData.push(newGraphLine);
+            computeValuesAtSelectedTime(newGraphLine);
 
-            console.log("previewGraphData", $scope.previewGraphData);
+            var index = findIndexOfAnomaly(anomaly, $scope.previewGraphData, "id");
+            if (index === -1) {
+              $scope.previewGraphData.push(newGraphLine);
+            } else {
+              $scope.previewGraphData[index] = newGraphLine;
+            }
 
-//            $scope.views = [];
-//            for (var key in result) {
-//              if (result.hasOwnProperty(key)) {
-//                var newView = {
-//                  name: viewNames[key] !== undefined ? viewNames[key] : key,
-//                  occurrences: Math.ceil(Math.random() * 10)
-//                }
-//                $scope.views.push(newView);
-//              }
-//            }
-//
-//            loadPreviewGraphData(result);
+//            console.log("previewGraphData", $scope.previewGraphData);
 
             $scope.loadingAnomalies = false;
           }, function(error) {
@@ -119,15 +109,59 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
 
     $scope.anomalyDetails = {};
     $scope.displayFields = {
-      martians: [ "as_path", "origin_as", "peer_as", "who_is", "prefix", "router_ip", "still_active", "timestamp", "type" ]
-    }
+      martians: [
+        { name: "prefix", displayName: "Prefix",
+          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div>' },
+        { name: "origin_as", displayName: "Origin AS", type: 'number',
+          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div></div>' },
+        { name: "peer_as", displayName: "Peer AS", type: 'number',
+          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div></div>' },
+        { name: "as_path", displayName: "AS Path" },
+//        { name: "who_is" },
+        { name: "router_ip", displayName: "Advertising Router" },
+        { name: "type", width: '50' },
+        { name: "timestamp", sort: { direction: uiGridConstants.DESC } },
+        { name: "still_active", width: '50' }
+      ]
+    };
+    $scope.anomalyGridHeight = 300;
     $scope.loadAnomalyDetails = function(anomaly) {
-      console.log("Loading anomaly details for", anomaly);
-      var request = bgpDataService.getAnomalies({ anomaliesType: anomaly });
+      $scope.loadingAnomalyDetails = true;
+//      console.log("Loading anomaly details for", anomaly);
+      var parameters = {
+        anomaliesType: anomaly,
+        start: getTimestamp("start"),
+        end: getTimestamp("end")
+      }
+      $scope.anomalyDetails[anomaly] = {
+        show: true,
+        loadingAnomalyDetails: true,
+        gridReady: false
+      };
+      var request = bgpDataService.getAnomalies(parameters);
       request.promise.then(function(result) {
-        console.debug("anomaly details for", anomaly, result);
-        $scope.anomalyDetails[anomaly] = result;
-        $scope.anomalyDetails[anomaly].show = true;
+//        console.debug("anomaly details for", anomaly, result);
+//        $scope.loadingAnomalyDetails = false;
+        var grid = {
+          rowHeight: 32,
+          gridFooterHeight: 0,
+          showGridFooter: true,
+          enableFiltering: true,
+          height: $scope.prefixGridInitHeight,
+          enableHorizontalScrollbar: 0,
+          enableVerticalScrollbar: 1,
+          columnDefs: $scope.displayFields[anomaly],
+          data: result
+        };
+        $scope.anomalyDetails[anomaly] = {
+          show: true,
+//          values: result,
+          grid: grid,
+          gridReady: true
+        };
+        console.debug("anomaly details for", anomaly, $scope.anomalyDetails);
       });
     };
     $scope.toggleAnomalyDetails = function(anomaly) {
@@ -138,34 +172,23 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       }
     };
 
-    function loadPreviewGraphData(data) {
-      $scope.previewGraphData = [];
-
-      // find the graph lines in the data
-      for (var key in data) {
-        if (data.hasOwnProperty(key)) {
-          var gData = [];
-          angular.forEach(data[key], function(record) {
-            gData.push([new Date(record.timestamp).getTime(), parseInt(record.value, 10)]);
-          });
-          var newGraphLine = {
-            id: key,
-            key: viewNames[key] !== undefined ? viewNames[key] : key,
-            values: gData
-          };
-          $scope.previewGraphData.push(newGraphLine);
-        }
-      }
-      console.log("previewGraphData", $scope.previewGraphData);
-    }
-
     // init, changedDates, lineColor
     var callbacks = {
+      changedDates: function() {
+        $timeout(function() {
+          loadAnomalies();
+        });
+      },
       lineColor: function (d) {
         if (lineColors[d.id] !== undefined) {
           return lineColors[d.id];
         }
         return "#777";
+      },
+      changedSelectedTime: function() {
+        for (var i = 0 ; i < $scope.previewGraphData.length ; i++) {
+          computeValuesAtSelectedTime($scope.previewGraphData[i]);
+        }
       }
     }
     setUpTimeSlider($scope, $timeout, callbacks, { showLegend: true });
@@ -180,7 +203,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
 
     // initialisation
     $(function () {
-      loadAnomalies();
+//      loadAnomalies();
     });
   }
 );

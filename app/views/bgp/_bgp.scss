@@ -427,11 +427,29 @@
   }
 
   .anomaly-box {
+    padding-bottom: 50px;
+    cursor: pointer;
     .name {
 
     }
-    .occurrences {
-
+    .occurrencesAndTrend {
+      position: absolute;
+      line-height: 5rem;
+      .occurrences, .trend {
+        display: inline-block;
+      }
+      .occurrences {
+        font-size: 4rem;
+      }
+      .trend {
+        vertical-align: top;
+      }
+      .glyphicon-arrow-up {
+        color: red;
+      }
+      .glyphicon-arrow-down {
+        color: green;
+      }
     }
   }
 }

@@ -331,6 +331,41 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       console.debug("all done");
     }
 
+    function loadNodes(nodes, asLinks, asn) {
+      var nodeIndexes = {};
+      for (i = 0 ; i < nodes.length ; i++) {
+        nodeIndexes[nodes[i].asn] = i;
+      }
+
+      for (i = 0 ; i < asLinks.length ; i++) {
+        asLinks[i].sourceASN = asLinks[i].source;
+        asLinks[i].source = nodeIndexes[asLinks[i].source];
+        asLinks[i].targetASN = asLinks[i].target;
+        asLinks[i].target = nodeIndexes[asLinks[i].target];
+        if (asLinks[i].source === undefined || asLinks[i].target === undefined) {
+          console.warn("Could not find AS%s - removing link between AS%s and AS%s",
+            asLinks[i].source === undefined ? asLinks[i].sourceASN : asLinks[i].targetASN, asLinks[i].sourceASN, asLinks[i].targetASN
+          );
+          asLinks.splice(i, 1);
+          i--;
+        }
+      }
+
+      var data = { nodes: nodes, links: asLinks };
+
+      // find information about this particular AS
+      var asNumber = parseInt(asn, 10);
+      for (var i = 0 ; i < data.nodes.length ; i++) {
+//          console.log("compare %s (%s) with %s (%s)", res.nodes[i].asn, typeof(res.nodes[i].asn), asn, typeof(asn));
+        if (data.nodes[i].asn === asNumber) {
+          $scope.asnDetails.push({ key: "Number of routes", value: data.nodes[i].routes });
+          $scope.asnDetails.push({ key: "Number of origins", value: data.nodes[i].origins });
+        }
+      }
+
+      updateForceDirectedGraphData(data);
+    }
+
     function getASNodeAndLinks(asn) {
       $scope.loadingASNodesAndLinksData = true;
 
@@ -363,44 +398,61 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 
         console.debug("asnToFindOutAbout", asnToFindOutAbout);
 
+        // load the graph without much info
+//        var incompleteNodes = [];
+//        for (var i = 0 ; i < asnToFindOutAbout.length ; i++) {
+//          var newAS = {
+//            asn: asnToFindOutAbout[i],
+//            routes: 1,
+//            origins: 1,
+//            changes: 1
+//          }
+//          incompleteNodes.push(newAS);
+//        }
+//        var clonedLinks = [];
+//        angular.copy(asLinks, clonedLinks);
+//        loadNodes(incompleteNodes, clonedLinks, asn);
+
         var asInfoRequest = bgpDataService.getASInfo(asnToFindOutAbout.join(','));
         $scope.httpRequests.push(asInfoRequest);
         asInfoRequest.promise.then(function(linkedASInfo) {
           var nodes = linkedASInfo;
 
-          var nodeIndexes = {};
-          for (i = 0 ; i < nodes.length ; i++) {
-            nodeIndexes[nodes[i].asn] = i;
-          }
+//          var nodeIndexes = {};
+//          for (i = 0 ; i < nodes.length ; i++) {
+//            nodeIndexes[nodes[i].asn] = i;
+//          }
+//
+//          for (i = 0 ; i < asLinks.length ; i++) {
+//            asLinks[i].sourceASN = asLinks[i].source;
+//            asLinks[i].source = nodeIndexes[asLinks[i].source];
+//            asLinks[i].targetASN = asLinks[i].target;
+//            asLinks[i].target = nodeIndexes[asLinks[i].target];
+//            if (asLinks[i].source === undefined || asLinks[i].target === undefined) {
+//              console.warn("Could not find AS%s - removing link between AS%s and AS%s",
+//                asLinks[i].source === undefined ? asLinks[i].sourceASN : asLinks[i].targetASN, asLinks[i].sourceASN, asLinks[i].targetASN
+//              );
+//              asLinks.splice(i, 1);
+//              i--;
+//            }
+//          }
+//
+//          var data = { nodes: nodes, links: asLinks };
+//
+//
+//          // find information about this particular AS
+//          var asNumber = parseInt(asn, 10);
+//          for (var i = 0 ; i < data.nodes.length ; i++) {
+////          console.log("compare %s (%s) with %s (%s)", res.nodes[i].asn, typeof(res.nodes[i].asn), asn, typeof(asn));
+//            if (data.nodes[i].asn === asNumber) {
+//              $scope.asnDetails.push({ key: "Number of routes", value: data.nodes[i].routes });
+//              $scope.asnDetails.push({ key: "Number of origins", value: data.nodes[i].origins });
+//            }
+//          }
+//
+//          updateForceDirectedGraphData(data);
 
-          for (i = 0 ; i < asLinks.length ; i++) {
-            asLinks[i].sourceASN = asLinks[i].source;
-            asLinks[i].source = nodeIndexes[asLinks[i].source];
-            asLinks[i].targetASN = asLinks[i].target;
-            asLinks[i].target = nodeIndexes[asLinks[i].target];
-            if (asLinks[i].source === undefined || asLinks[i].target === undefined) {
-              console.warn("Could not find AS%s - removing link between AS%s and AS%s",
-                asLinks[i].source === undefined ? asLinks[i].sourceASN : asLinks[i].targetASN, asLinks[i].sourceASN, asLinks[i].targetASN
-              );
-              asLinks.splice(i, 1);
-              i--;
-            }
-          }
-
-          var data = { nodes: nodes, links: asLinks };
-
-
-          // find information about this particular AS
-          var asNumber = parseInt(asn, 10);
-          for (var i = 0 ; i < data.nodes.length ; i++) {
-//          console.log("compare %s (%s) with %s (%s)", res.nodes[i].asn, typeof(res.nodes[i].asn), asn, typeof(asn));
-            if (data.nodes[i].asn === asNumber) {
-              $scope.asnDetails.push({ key: "Number of routes", value: data.nodes[i].routes });
-              $scope.asnDetails.push({ key: "Number of origins", value: data.nodes[i].origins });
-            }
-          }
-
-          updateForceDirectedGraphData(data);
+          loadNodes(nodes, asLinks, asn);
 
           $scope.loadingASNodesAndLinksData = false;
 
@@ -412,53 +464,6 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
         console.warn(error);
       });
     }
-
-//    function uniq_fast(a, containsJSON) {
-//      var seen = {};
-//      var out = [];
-//      var j = 0;
-//      for(var i = 0; i < a.length; i++) {
-//        var item = containsJSON === true ? JSON.stringify(a[i]) : a[i];
-//        if (seen[item] !== 1) {
-//          seen[item] = 1;
-//          out[j++] = a[i];
-//        }
-//      }
-//      return out;
-//    }
-//
-//    function transformASPathDataToGraphData(data) {
-//      var nodes = [], links = [];
-//      // split the AS path, concatenate all nodes and links
-//      for (var i = 0 ; i < data.length ; i++) {
-//        var split = data[i].as_path.split(' ');
-//        split = split.map(function(as) { return parseInt(as, 10); });
-//        nodes = nodes.concat(split);
-//        for (var l = 0 ; l < split.length-1 ; l++) {
-//          links.push({sourceASN: split[l], targetASN: split[l+1]});
-//        }
-//      }
-//
-//      // then eliminate duplicates
-//      nodes = uniq_fast(nodes, false);
-//      links = uniq_fast(links, true);
-//
-//      for (var i = 0 ; i < nodes.length ; i++) {
-//        nodes[i] = {asn: nodes[i]};
-//      }
-//
-//      // links' source and target now need to be indexes in the nodes array
-//      var nodeIndexes = {};
-//      for (i = 0 ; i < nodes.length ; i++) {
-//        nodeIndexes[nodes[i].asn] = i;
-//      }
-//      for (i = 0 ; i < links.length ; i++) {
-//        links[i].source = nodeIndexes[links[i].sourceASN];
-//        links[i].target = nodeIndexes[links[i].targetASN];
-//      }
-//
-//      return {nodes: nodes, links: links};
-//    }
 
     // Get information for a specific prefix
     function getPrefixInfo(prefix) {

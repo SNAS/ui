@@ -32,12 +32,14 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
 
   var startTimestamp, endTimestamp;
 
-  var latestTimestamp = 1490720400000; // moment().toDate().getTime();
+//  var latestTimestamp = 1490720400000; // 2017-03-28 17:00:00
+  var latestTimestamp = moment().toDate().getTime();
 
   endTimestamp = latestTimestamp;
 //  console.log("moment", moment(), endTimestamp, 1490720400000);
 //  startTimestamp = moment().subtract(60, 'minutes').toDate().getTime();
-  startTimestamp = endTimestamp - 3600000; // end timestamp - 60 minutes
+  var nbHoursToDisplayByDefault = 5;
+  startTimestamp = endTimestamp - nbHoursToDisplayByDefault * 3600000; // end timestamp - a few hours
   var duration, durationInMinutes;
 
   var sliderSettings = {
@@ -94,7 +96,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
         'max': moment(setDate).add(12, 'hours').toDate().getTime()
       };
       console.log("changedDates");
-      callback("changedDates");
+//      callback("changedDates");
       sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
       noUiSlider.create(timeSelector, sliderSettings);
       bindEvents();
@@ -105,7 +107,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
         'min': moment(setDate).toDate().getTime(),
         'max': moment(setDate).add(12, 'hours').toDate().getTime()
       };
-      callback("changedDates");
+//      callback("changedDates");
       sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
       noUiSlider.create(timeSelector, sliderSettings);
       bindEvents();
@@ -132,7 +134,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
         'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
         'max': moment(setDate).toDate().getTime()
       };
-      callback("changedDates");
+//      callback("changedDates");
       sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
       noUiSlider.create(timeSelector, sliderSettings);
       bindEvents();
@@ -143,7 +145,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
         'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
         'max': moment(setDate).toDate().getTime()
       };
-      callback("changedDates");
+//      callback("changedDates");
       sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
       noUiSlider.create(timeSelector, sliderSettings);
       bindEvents();
@@ -162,9 +164,8 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
   };
 
   function bindEvents() {
-    var timer;
     timeSelector.noUiSlider.on('update', function () {
-      $timeout.cancel(timer);
+      $timeout.cancel($scope.timeSliderUpdateTimer);
       startDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[0]);
       endDatetimePicker.data("DateTimePicker").date(timeSelector.noUiSlider.get()[1]);
       durationInMinutes = Math.round((timeSelector.noUiSlider.get()[1] - timeSelector.noUiSlider.get()[0]) / (1000 * 60));
@@ -175,7 +176,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
         duration = durationInMinutes + ' Minutes';
       $('#duration').text(duration);
 
-      timer = $timeout(function() {
+      $scope.timeSliderUpdateTimer = $timeout(function() {
         callback("changedDates");
       }, 500);
     });
@@ -193,7 +194,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
       'min': originalRange[0] - (originalRange[1] - originalRange[0]),
       'max': originalRange[0]
     };
-    callback("changedDates");
+//    callback("changedDates");
     sliderSettings.start = [sliderSettings.range['max'] - (originalValues[1] - originalValues[0]), sliderSettings.range['max']];
     noUiSlider.create(timeSelector, sliderSettings);
     bindEvents();
@@ -207,7 +208,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
       'min': originalRange[1],
       'max': originalRange[1] + (originalRange[1] - originalRange[0])
     };
-    callback("changedDates");
+//    callback("changedDates");
     sliderSettings.start = [sliderSettings.range['min'], sliderSettings.range['min'] + (originalValues[1] - originalValues[0])];
     noUiSlider.create(timeSelector, sliderSettings);
     bindEvents();
@@ -220,7 +221,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
       'min': moment().subtract(12, 'hours').toDate().getTime(),
       'max': moment().toDate().getTime()
     };
-    callback("changedDates");
+//    callback("changedDates");
     sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
     noUiSlider.create(timeSelector, sliderSettings);
     bindEvents();
@@ -266,6 +267,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
       onTimeSelectedCallback: function(selectedTimestamp) {
         $timeout(function() {
           $scope.selectedTime = selectedTimestamp;
+          callback("changedSelectedTime");
         });
       }
     }

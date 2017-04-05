@@ -174,14 +174,22 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
 
       return { promise: promise, cancel: cancel(canceller) };
     },
-    getAnomalyOverview: function(anomaly) {
+    // parameters is a json object with the following fields: anomaliesType, exportType, start, end
+    getAnomalyOverview: function(parameters) {
+      var timestamps = "";
+      if (parameters.start !== undefined) {
+        timestamps = "?start=" + parameters.start;
+      }
+      if (parameters.end !== undefined) {
+        timestamps += (timestamps.length === 0 ? "?" : "&") + "end=" + parameters.end;
+      }
       // get the types of anomalies and perform parallel requests
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/anomalies/overview/" + anomaly, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/anomalies/overview/" + parameters.anomaliesType + timestamps, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get anomalies overview data for "+anomaly+" (request might have been cancelled)");
+          return $q.reject("Failed to get anomalies overview data for "+parameters.anomaliesType+" (request might have been cancelled)");
         });
       return { promise: promise, cancel: cancel(canceller) };
     },
@@ -201,7 +209,9 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       }
 
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/anomalies/" + parameters.anomaliesType + "/" + parameters.exportType + timestamps, { cache: true }, { timeout: canceller.promise })
+      var query = bgpAPI + "/anomalies/" + parameters.anomaliesType + "/" + parameters.exportType + timestamps;
+      console.debug("anomalies query", query);
+      var promise = $http.get(query, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
