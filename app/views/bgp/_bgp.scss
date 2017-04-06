@@ -443,14 +443,33 @@
       }
       .trend {
         vertical-align: top;
-      }
-      .glyphicon-arrow-up {
-        color: red;
-      }
-      .glyphicon-arrow-down {
-        color: green;
+        padding-left: 3px;
+        .glyphicon {
+          margin-right: -3px;
+        }
+        &.up {
+          color: red;
+        }
+        &.down {
+          color: green;
+        }
       }
     }
+  }
+
+  .download {
+    margin: 0 10px 10px;
+    a+a {
+      margin-left: 10px;
+    }
+  }
+
+  .grid-placeholder {
+    height: 40px;
+  }
+
+  .anomaly-details+.anomaly-details {
+    margin-top: 20px;
   }
 }
 

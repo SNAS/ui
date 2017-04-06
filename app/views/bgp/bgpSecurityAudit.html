@@ -54,15 +54,16 @@
     <div class="loading-section">
       <div ng-show="loadingAnomalies" bmp-loading font-width="50"></div>
     </div>
-    <div class="col-lg-4" ng-repeat="view in previewGraphData" ng-click="toggleAnomalyDetails(view.id)">
+    <div class="col-lg-3" ng-repeat="view in previewGraphData" ng-click="toggleAnomalyDetails(view.id)">
       <div class="table-container anomaly-box">
         <div class="name">{{view.key}}</div>
         <div class="occurrencesAndTrend">
           <div class="occurrences">{{view.occurrences}}</div>
-          <div class="trend">
+          <div class="trend" ng-class="view.trend">
             <span class="glyphicon glyphicon-arrow-up" ng-if="view.trend === 'up'"></span>
             <span class="glyphicon glyphicon-arrow-down" ng-if="view.trend === 'down'"></span>
             <span class="glyphicon glyphicon-minus" ng-if="view.trend === 'stable'"></span>
+            {{view.difference > 0 ? view.difference : ''}}
           </div>
         </div>
       </div>
@@ -70,11 +71,16 @@
   </div>
 
   <div class="main-area row">
-    <div class="col-lg-12" ng-repeat="(anomaly, details) in anomalyDetails" ng-show="details.show">
+    <div class="col-lg-12 anomaly-details" ng-repeat="(anomaly, details) in anomalyDetails" ng-show="details.show">
       <div class="table-container">
+        <h3>{{details.displayTitle}}</h3>
+        <div class="download" ng-show="details.json !== undefined || details.groundTruthLink !== undefined">
+          Download data: <a ng-href="{{details.json}}" target="dataTab" ng-show="details.json !== undefined">JSON</a><a ng-href="{{details.groundTruthLink}}" target="groundTruthTab" ng-show="details.groundTruthLink !== undefined">ground truth</a>
+        </div>
         <div class="loading-section">
           <div ng-show="details.loadingAnomalyDetails" bmp-loading font-width="50"></div>
-          <div ng-if="details.gridReady" ui-grid="details.grid" ui-grid-auto-resize ng-style="{'height': anomalyGridHeight}"></div>
+          <div ng-if="!details.gridReady" class="grid-placeholder"></div>
+          <div ng-if="details.gridReady" ui-grid="details.grid" ui-grid-resize-columns ng-style="{'height': anomalyGridHeight}"></div>
         </div>
       </div>
     </div>

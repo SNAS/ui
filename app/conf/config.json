@@ -1,10 +1,11 @@
 {
   "bgpDataService": {
-    "host": "10.230.48.135",
+    "host": "localhost",
     "port": 3001
   },
+  "bogonListURL": "https://github.com/91pavan/bogon-list/tree/",
   "openbmp": {
-    "host": "bmp-dev.openbmp.org",
+    "host": "54.154.51.64",
     "port": 8001
   }
 }

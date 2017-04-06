@@ -46,12 +46,14 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       var index = findIndexOfSelectedTime(gData, $scope.selectedTime);
         if (index !== -1) {
         dataObject.occurrences = gData[index][1];
+        dataObject.difference = "";
         if (index === 0) {
           dataObject.trend = "stable";
         }
         if (index > 0) {
           dataObject.trend = gData[index-1][1] < gData[index][1] ? "up" :
             gData[index-1][1] > gData[index][1] ? "down" : "stable";
+          dataObject.difference = Math.abs(gData[index-1][1]-gData[index][1]);
         }
       }
     }
@@ -110,25 +112,39 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
     $scope.anomalyDetails = {};
     $scope.displayFields = {
       martians: [
-        { name: "prefix", displayName: "Prefix",
+        { name: "prefix", displayName: "Prefix", width: '120',
           cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div>' },
-        { name: "origin_as", displayName: "Origin AS", type: 'number',
+        { name: "origin_as", displayName: "Origin AS", type: 'number', width: '100',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
             '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div></div>' },
-        { name: "peer_as", displayName: "Peer AS", type: 'number',
+        { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
             '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div></div>' },
         { name: "as_path", displayName: "AS Path" },
-//        { name: "who_is" },
-        { name: "router_ip", displayName: "Advertising Router" },
-        { name: "type", width: '50' },
-        { name: "timestamp", sort: { direction: uiGridConstants.DESC } },
-        { name: "still_active", width: '50' }
+        { name: "router_ip", displayName: "Advertising Router", width: '132' },
+        { name: "type", width: '60' },
+        { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140' },
+        { name: "last_seen", width: '140' },
+        { name: "still_active", width: '50' },
+        { name: 'category', width: '100' }
+      ],
+      prefix_length: [
+        { name: "prefix", displayName: "Prefix", width: '120',
+          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div>' },
+        { name: "origin_as", displayName: "Origin AS", type: 'number', width: '100',
+          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div></div>' },
+        { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
+          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div></div>' },
+        { name: "as_path", displayName: "AS Path" },
+        { name: "router_ip", displayName: "Advertising Router", width: '132' },
+        { name: "type", width: '60' },
+        { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140' }
       ]
     };
     $scope.anomalyGridHeight = 300;
     $scope.loadAnomalyDetails = function(anomaly) {
-      $scope.loadingAnomalyDetails = true;
 //      console.log("Loading anomaly details for", anomaly);
       var parameters = {
         anomaliesType: anomaly,
@@ -138,8 +154,14 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       $scope.anomalyDetails[anomaly] = {
         show: true,
         loadingAnomalyDetails: true,
-        gridReady: false
+        gridReady: false,
+        displayTitle: viewNames[anomaly] !== undefined ? viewNames[anomaly] : anomaly
       };
+
+      if (anomaly === "martians") {
+        getMartiansGroundTruth($scope.anomalyDetails[anomaly]);
+      }
+
       var request = bgpDataService.getAnomalies(parameters);
       request.promise.then(function(result) {
 //        console.debug("anomaly details for", anomaly, result);
@@ -155,15 +177,21 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
           columnDefs: $scope.displayFields[anomaly],
           data: result
         };
-        $scope.anomalyDetails[anomaly] = {
-          show: true,
-//          values: result,
-          grid: grid,
-          gridReady: true
-        };
+        $scope.anomalyDetails[anomaly].grid = grid;
+        $scope.anomalyDetails[anomaly].gridReady = true;
+        $scope.anomalyDetails[anomaly].loadingAnomalyDetails = false;
+        $scope.anomalyDetails[anomaly].json = bgpDataService.getAnomaliesAPI(parameters);
         console.debug("anomaly details for", anomaly, $scope.anomalyDetails);
       });
     };
+
+    function getMartiansGroundTruth(dataObject) {
+      var request = bgpDataService.getGroundTruthHash();
+      request.promise.then(function(result) {
+        dataObject.groundTruthLink = ConfigService.bogonListURL + result.hash;
+      });
+    }
+
     $scope.toggleAnomalyDetails = function(anomaly) {
       if ($scope.anomalyDetails[anomaly] !== undefined) {
         $scope.anomalyDetails[anomaly].show = !$scope.anomalyDetails[anomaly].show;

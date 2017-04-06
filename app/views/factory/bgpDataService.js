@@ -218,6 +218,39 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
           return $q.reject("Failed to get anomalies "+parameters.anomaliesType+" data (request might have been cancelled)");
         });
       return { promise: promise, cancel: cancel(canceller) };
+    },
+    getAnomaliesAPI: function(parameters) {
+      // parameters is a json object with the following fields: anomaliesType, exportType, start, end
+      // allowed anomaliesType: "martians", "prefixLength" (mandatory parameter: no default value)
+      // allowed exportType: "json" (default), "csv"
+      if (parameters.exportType === undefined || parameters.exportType === "json") {
+        parameters.exportType = "";
+      }
+      var timestamps = "";
+      if (parameters.start !== undefined) {
+        timestamps = "?start=" + parameters.start;
+      }
+      if (parameters.end !== undefined) {
+        timestamps += (timestamps.length === 0 ? "?" : "&") + "end=" + parameters.end;
+      }
+
+      return bgpAPI + "/anomalies/" + parameters.anomaliesType + "/" + parameters.exportType + timestamps;
+    },
+    getGroundTruthHash: function(timestamp) {
+      var timestamps = "";
+      if (timestamp !== undefined) {
+        timestamps = "?timestamp=" + timestamp;
+      }
+
+      var canceller = $q.defer();
+      var query = bgpAPI + "/anomalies/ground_truth/" + timestamps;
+      var promise = $http.get(query, { cache: true }, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get anomalies' ground truth hash "+parameters.anomaliesType+" data (request might have been cancelled)");
+        });
+      return { promise: promise, cancel: cancel(canceller) };
     }
   };
 }]);
