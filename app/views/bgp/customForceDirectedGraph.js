@@ -67,7 +67,8 @@ nv.models.customForceDirectedGraph = function() {
   function calculateAngleXAxis(d) {
     var distX = d.target.x - d.source.x;
     var distY = d.target.y - d.source.y;
-    return Math.atan(distY/distX);
+    var angle = Math.atan(distY/distX);
+    return isNaN(angle) ? 0 : angle;
   }
 
   function getPrecalculatedValue(d, parameter, forceUpdate) {
