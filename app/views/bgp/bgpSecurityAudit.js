@@ -83,7 +83,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
               id: anomaly,
               key: viewNames[anomaly] !== undefined ? viewNames[anomaly] : anomaly,
               values: gData,
-              occurrences: 0,
+              occurrences: "No data",
               trend: 0
             };
             computeValuesAtSelectedTime(newGraphLine);
@@ -146,10 +146,11 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
     $scope.anomalyGridHeight = 300;
     $scope.loadAnomalyDetails = function(anomaly) {
 //      console.log("Loading anomaly details for", anomaly);
+      // load the details for the last hour from selectedTime
       var parameters = {
         anomaliesType: anomaly,
-        start: getTimestamp("start"),
-        end: getTimestamp("end")
+        start: $scope.selectedTime - 3600000,//getTimestamp("start"),
+        end: $scope.selectedTime//getTimestamp("end")
       }
       $scope.anomalyDetails[anomaly] = {
         show: true,
@@ -200,11 +201,26 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       }
     };
 
+    function reloadAnomalyDetails() {
+      // reload anomaly details that have been saved if they're being shown
+      // or just remove the saved details if they're hidden
+      for (var anomaly in $scope.anomalyDetails) {
+        if ($scope.anomalyDetails.hasOwnProperty(anomaly)) {
+          var previouslyShown = $scope.anomalyDetails[anomaly].show;
+          $scope.anomalyDetails[anomaly] = undefined;
+          if (previouslyShown) {
+            $scope.loadAnomalyDetails(anomaly);
+          }
+        }
+      }
+    }
+
     // init, changedDates, lineColor
     var callbacks = {
       changedDates: function() {
         $timeout(function() {
           loadAnomalies();
+          reloadAnomalyDetails();
         });
       },
       lineColor: function (d) {
@@ -217,6 +233,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         for (var i = 0 ; i < $scope.previewGraphData.length ; i++) {
           computeValuesAtSelectedTime($scope.previewGraphData[i]);
         }
+        reloadAnomalyDetails();
       }
     }
     setUpTimeSlider($scope, $timeout, callbacks, { showLegend: true });

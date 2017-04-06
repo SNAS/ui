@@ -38,7 +38,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
   endTimestamp = latestTimestamp;
 //  console.log("moment", moment(), endTimestamp, 1490720400000);
 //  startTimestamp = moment().subtract(60, 'minutes').toDate().getTime();
-  var nbHoursToDisplayByDefault = 1;
+  var nbHoursToDisplayByDefault = 4;
   startTimestamp = endTimestamp - nbHoursToDisplayByDefault * 3600000; // end timestamp - a few hours
   var duration, durationInMinutes;
 
