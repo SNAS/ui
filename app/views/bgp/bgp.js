@@ -349,6 +349,12 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
           asLinks.splice(i, 1);
           i--;
         }
+        // remove link if source === destination
+        else if (asLinks[i].source === asLinks[i].target) {
+          console.warn("Ignoring 'self-link' between AS%s and AS%s", asLinks[i].sourceASN, asLinks[i].targetASN);
+          asLinks.splice(i, 1);
+          i--;
+        }
       }
 
       var data = { nodes: nodes, links: asLinks };
@@ -763,7 +769,7 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
       var defaultScrollbarWidth = 15;
       return parentDiv.width() - defaultScrollbarWidth;
     }
-    $scope.tooltipFields = [ "asn", "routes", "origins", "changes" ];
+    $scope.tooltipFields = [ "asn", "asName", "routes", "origins", "changes" ];
 //    var customForceDirectedGraphSvg;
     $scope.forceDirectedGraph = {
       options: {
@@ -827,10 +833,23 @@ angular.module('bmpUiApp').controller('BGPController', //["$scope", "$stateParam
 //            console.debug("tooltipData", tooltipData);
             var nodeTooltip = $("#nodeTooltips");
             if (!hideTooltip) {
+              // get the AS name if we don't already know it
+              if (tooltipData.asName === undefined) {
+                apiFactory.getWhoIsASN(tooltipData.asn).success(function(result) {
+                  $scope.loadingWhoIs = false;
+                  var data = result.gen_whois_asn.data;
+//                  console.debug("whois", data);
+                  tooltipData.asName = data[0].as_name;
+                }).error(function (error) {
+                  console.log(error.message);
+                  tooltipData.asName = "unknown";
+                });
+              }
+
               for (var i = 0 ; i < $scope.tooltipFields.length ; i++) {
                 var field = $scope.tooltipFields[i];
                 $("#field-"+field+" .value").text(tooltipData[field]);
-                nodeTooltip.removeClass("hideTooltip")
+                nodeTooltip.removeClass("hideTooltip");
               }
             } else {
               nodeTooltip.addClass("hideTooltip")
