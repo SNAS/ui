@@ -455,6 +455,9 @@
         }
       }
     }
+    &.selected {
+      background-color: #fcff00;
+    }
   }
 
   .download {

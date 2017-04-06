@@ -55,7 +55,7 @@
       <div ng-show="loadingAnomalies" bmp-loading font-width="50"></div>
     </div>
     <div class="col-lg-3" ng-repeat="view in previewGraphData" ng-click="toggleAnomalyDetails(view.id)">
-      <div class="table-container anomaly-box">
+      <div class="table-container anomaly-box" ng-class="{selected: anomalyDetails[view.id].show}">
         <div class="name">{{view.key}}</div>
         <div class="occurrencesAndTrend">
           <div class="occurrences">{{view.occurrences}}</div>
