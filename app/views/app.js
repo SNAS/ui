@@ -30,6 +30,7 @@ var bmpUiApp = angular
     'bmp.components.loading',
     'bmp.components.asnModel',
     'bmp.components.prefixTooltip',
+    'bmp.components.utcFilter',
     'ui.bootstrap',
     'bgDirectives',
     'leaflet-directive',

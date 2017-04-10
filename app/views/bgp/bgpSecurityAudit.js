@@ -123,8 +123,11 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         { name: "as_path", displayName: "AS Path" },
         { name: "router_ip", displayName: "Advertising Router", width: '132' },
         { name: "type", width: '60' },
-        { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140' },
-        { name: "last_seen", width: '140' },
+        { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140',
+          cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>'
+        },
+        { name: "last_seen", width: '140',
+          cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' },
         { name: "still_active", width: '50' },
         { name: 'category', width: '100' }
       ],
@@ -133,14 +136,15 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
           cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div>' },
         { name: "origin_as", displayName: "Origin AS", type: 'number', width: '100',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div></div>' },
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD }}"></div></div>' },
         { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div></div>' },
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD }}"></div></div>' },
         { name: "as_path", displayName: "AS Path" },
         { name: "router_ip", displayName: "Advertising Router", width: '132' },
         { name: "type", width: '60' },
-        { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140' }
+        { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140',
+          cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' }
       ]
     };
     $scope.anomalyGridHeight = 300;
@@ -149,8 +153,8 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       // load the details for the last hour from selectedTime
       var parameters = {
         anomaliesType: anomaly,
-        start: $scope.selectedTime - 3600000,//getTimestamp("start"),
-        end: $scope.selectedTime//getTimestamp("end")
+        start: $scope.selectedTime - 3600000, // select the last hour from the selected time
+        end: $scope.selectedTime
       }
       $scope.anomalyDetails[anomaly] = {
         show: true,
