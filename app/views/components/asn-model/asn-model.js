@@ -1,17 +1,16 @@
 angular.module('bmp.components.asnModel', [])
 
-.controller('ModalDemoCtrl', function($scope, $modal, $log, apiFactory, $location) {
+.controller('ModalDemoCtrl', function($scope, $modal, $log, apiFactory, $location, ConfigService, $timeout) {
 
     $scope.onClick = function(event) {
-      if ($scope.changeUrlOnClick === undefined) {
-        $scope.open();
-      }
-      else if (event.ctrlKey || event.metaKey || event.shiftKey) {
-        window.open("/#" + $scope.changeUrlOnClick, "_blank"); // in a new tab
-      }
-      else {
-        $location.url($scope.changeUrlOnClick);
-      }
+      $timeout(function() {
+        if (ConfigService.preferences.alwaysOpenLinkInNewTab || event.ctrlKey || event.metaKey || event.shiftKey) {
+          window.open("/#" + $scope.changeUrlOnClick, "_blank"); // in a new tab
+        }
+        else {
+          $location.url($scope.changeUrlOnClick);
+        }
+      });
     }
 
   $scope.$watch('asn', function(newVal, oldVal) {

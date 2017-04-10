@@ -1,5 +1,6 @@
 angular.module('bmp.components.prefixTooltip', [])
-  .directive('bmpPrefixTooltip', ['apiFactory', '$location', function (apiFactory, $location) {
+  .directive('bmpPrefixTooltip', ['apiFactory', '$location', 'ConfigService', '$timeout',
+    function (apiFactory, $location, ConfigService, $timeout) {
 
     function link($scope, element, attr) {
       element.on('mouseover', function(){
@@ -15,11 +16,13 @@ angular.module('bmp.components.prefixTooltip', [])
       });
       element.on('click', function(event) {
         if ($scope.changeUrlOnClick !== undefined) {
-          if (event.ctrlKey || event.metaKey || event.shiftKey) {
-            window.open("/#" + $scope.changeUrlOnClick, "_blank"); // in a new tab
-          } else {
-            $location.url($scope.changeUrlOnClick);
-          }
+          $timeout(function() {
+            if (ConfigService.preferences.alwaysOpenLinkInNewTab || event.ctrlKey || event.metaKey || event.shiftKey) {
+              window.open("/#" + $scope.changeUrlOnClick, "_blank"); // in a new tab
+            } else {
+              $location.url($scope.changeUrlOnClick);
+            }
+          });
         }
       });
     }
