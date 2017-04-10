@@ -8,7 +8,7 @@
  * Controller for the BGP Security Audit page
  */
 angular.module('bmpUiApp').controller('BGPSecurityAuditController',
-  function($scope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout) {
+  function($scope, bgpDataService, ConfigService, socket, uiGridConstants, $timeout) {
 
     const viewNames = {
       martians: "Martian anomalies",
