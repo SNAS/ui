@@ -399,7 +399,7 @@ angular.module('bmpUiApp').controller('BGPController',
           }
         }
 
-        console.debug("asnToFindOutAbout", asnToFindOutAbout);
+//        console.debug("asnToFindOutAbout", asnToFindOutAbout);
 
         var asInfoRequest = bgpDataService.getASInfo(asnToFindOutAbout.join(','));
         $scope.httpRequests.push(asInfoRequest);
@@ -612,18 +612,19 @@ angular.module('bmpUiApp').controller('BGPController',
       enableVerticalScrollbar: 1,
       columnDefs: [
         {
-          name: "prefix", displayName: 'Prefix', width: '20%',
+          name: "prefix", displayName: 'Prefix', width: '150',
           cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>'
         },
         {
           name: "as_path", displayName: 'AS Path', width: '*'
         },
         {
-          name: "length", displayName: 'Length', width: '6%', cellClass: 'align-center', type: 'number'
+          name: "length", displayName: 'Length', width: '70', cellClass: 'align-center', type: 'number'
         },
         {
-          name: "created_on", displayName: 'Timestamp', width: '*',
-          sort: { direction: uiGridConstants.DESC }
+          name: "created_on", displayName: 'Timestamp', width: '140',
+          sort: { direction: uiGridConstants.DESC },
+          cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>'
         }
       ],
       onRegisterApi: function (gridApi) {
