@@ -8,7 +8,7 @@
  * Controller for the BGP Security Audit page
  */
 angular.module('bmpUiApp').controller('BGPSecurityAuditController',
-  function($scope, bgpDataService, ConfigService, socket, uiGridConstants, $timeout) {
+  function($scope, $stateParams, bgpDataService, ConfigService, socket, uiGridConstants, $timeout) {
 
     const viewNames = {
       martians: "Martian anomalies",
@@ -61,7 +61,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
     function loadAnomalies() {
       $scope.loadingAnomalies = true;
       bgpDataService.getAnomaliesTypes().promise.then(function(result) {
-        console.debug("anomalies types", result);
+//        console.debug("anomalies types", result);
 
         $scope.previewGraphData = [];
         angular.forEach(result, function(anomaly) {
@@ -109,17 +109,28 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       });
     }
 
+    $scope.newPathLocation = function(parameter) {
+      var path = "/bgp";
+      var urlParameters = [];
+      if (parameter !== undefined) {
+        urlParameters.push("search="+parameter);
+      }
+      urlParameters.push("start=" + getTimestamp("start"));
+      urlParameters.push("end=" + getTimestamp("end"));
+      return path + "?" + urlParameters.join("&");
+    };
+
     $scope.anomalyDetails = {};
     $scope.displayFields = {
       martians: [
         { name: "prefix", displayName: "Prefix", width: '120',
-          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div>' },
+          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>' },
         { name: "origin_as", displayName: "Origin AS", type: 'number', width: '100',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div></div>' },
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
         { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div></div>' },
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
         { name: "as_path", displayName: "AS Path" },
         { name: "router_ip", displayName: "Advertising Router", width: '132' },
         { name: "type", width: '60' },
@@ -133,13 +144,13 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       ],
       prefix_length: [
         { name: "prefix", displayName: "Prefix", width: '120',
-          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD}}"></div>' },
+          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>' },
         { name: "origin_as", displayName: "Origin AS", type: 'number', width: '100',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD }}"></div></div>' },
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
         { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="/bgp?search={{ COL_FIELD }}"></div></div>' },
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
         { name: "as_path", displayName: "AS Path" },
         { name: "router_ip", displayName: "Advertising Router", width: '132' },
         { name: "type", width: '60' },
@@ -220,7 +231,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
     }
 
     // init, changedDates, lineColor
-    var callbacks = {
+    var timeSliderCallbacks = {
       changedDates: function() {
         $timeout(function() {
           loadAnomalies();
@@ -239,9 +250,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         }
         reloadAnomalyDetails();
       }
-    }
-    setUpTimeSlider($scope, $timeout, callbacks, { showLegend: true });
-
+    };
 
     var uiServer = ConfigService.bgpDataService;
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";
@@ -252,7 +261,14 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
 
     // initialisation
     $(function () {
-//      loadAnomalies();
+      var timeSliderParameters = { showLegend: true };
+      if ($stateParams.start) {
+        timeSliderParameters.startTimestamp = parseInt($stateParams.start, 10);
+      }
+      if ($stateParams.end) {
+        timeSliderParameters.endTimestamp = parseInt($stateParams.end, 10);
+      }
+      setUpTimeSlider($scope, $timeout, timeSliderCallbacks, timeSliderParameters);
     });
   }
 );

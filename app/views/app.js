@@ -163,12 +163,16 @@ var bmpUiApp = angular
         templateUrl: 'views/adminView/adminView.html'
       })
       .state('app.bgp',{
-        url: '/bgp?:search?',
+        url: '/bgp?:search?:start?:end?',
         templateUrl: 'views/bgp/bgp.html'
       })
       .state('app.bgpSecurityAudit',{
-        url: '/bgpSecurityAudit?:search?',
+        url: '/bgpSecurityAudit?:start?:end?',
         templateUrl: 'views/bgp/bgpSecurityAudit.html'
+      })
+      .state('app.bgpASPath',{
+        url: '/bgpASPath?:search?',
+        templateUrl: 'views/bgp/bgpASPath.html'
       })
 
       //DUAL WINDOW MODE ENAGAAAGE

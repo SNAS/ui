@@ -5,10 +5,10 @@ angular.module('bmp.components.asnModel', [])
     $scope.onClick = function(event) {
       $timeout(function() {
         if (ConfigService.preferences.alwaysOpenLinkInNewTab || event.ctrlKey || event.metaKey || event.shiftKey) {
-          window.open("/#" + $scope.changeUrlOnClick, "_blank"); // in a new tab
+          window.open("/#" + $scope.changeUrlOnClick(), "_blank"); // in a new tab
         }
         else {
-          $location.url($scope.changeUrlOnClick);
+          $location.url($scope.changeUrlOnClick());
         }
       });
     }
@@ -117,7 +117,7 @@ angular.module('bmp.components.asnModel', [])
     controller: 'ModalDemoCtrl',
     scope: {
       asn: "@",
-      changeUrlOnClick: "@"
+      changeUrlOnClick: "&"
     },
     link: function($scope) {
       $scope.noModal = true;

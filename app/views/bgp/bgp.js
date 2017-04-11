@@ -11,17 +11,29 @@ angular.module('bmpUiApp').controller('BGPController',
   function($scope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout) {
     $scope.httpRequests = [];
 
-    $scope.changeLocation = function(parameter) {
-      console.debug("changeLocation", parameter);
-      var currentUrl = $location.url();
+    $scope.dateFilterOn = true;
+
+    $scope.newPathLocation = function(parameter) {
       var path = $location.path();
-      var newUrl = path + (parameter !== undefined ? "?search="+parameter : "");
-      console.log("currentUrl %s, path %s, newUrl %s", currentUrl, path, newUrl);
+      var urlParameters = [];
+      if (parameter !== undefined) {
+        urlParameters.push("search="+parameter);
+      }
+      if ($scope.dateFilterOn) {
+        urlParameters.push("start=" + getTimestamp("start"));
+        urlParameters.push("end=" + getTimestamp("end"));
+      }
+      return path + "?" + urlParameters.join("&");
+    };
+
+    $scope.changeLocation = function(parameter) {
+      var currentUrl = $location.url();
+      var newUrl = $scope.newPathLocation(parameter);
+//      console.log("currentUrl %s, newUrl %s", currentUrl, newUrl);
       if (currentUrl !== newUrl) {
-        $location.url(newUrl);
-        // as $scope.changeLocation can be called from outside the scope of AngularJS,
-        // we need to call $scope.apply() to avoid any delay
-        $scope.$apply();
+        $timeout(function() {
+          $location.url(newUrl);
+        });
       } else if (parameter === undefined) {
         $scope.searchValue = "";
         searchValueFn();
@@ -98,9 +110,11 @@ angular.module('bmpUiApp').controller('BGPController',
       $scope.displayPrefixInfo = false;
       if ($scope.searchValue === "") {
         $scope.displayAllNodes = true;
+        $scope.dateFilterOn = false;
         displayAllASNodes();
       }
       else if (isASN($scope.searchValue)) {
+        $scope.dateFilterOn = true;
         $scope.asn = $scope.searchValue;
         $scope.displayASNInfo = false;
         $scope.loadingWhoIs = true;
@@ -122,9 +136,9 @@ angular.module('bmpUiApp').controller('BGPController',
       }
       // if it's not a number, assume it's a prefix
       else {
+        $scope.dateFilterOn = true;
         $scope.displayPrefixInfo = true;
         $scope.prefix = $scope.searchValue;
-//        $scope.dateFilterOn = true;
         getPrefixInfo($scope.searchValue);
       }
     }
@@ -149,7 +163,7 @@ angular.module('bmpUiApp').controller('BGPController',
         {
           name: "asn", displayName: 'ASN', width: '*', type: 'number',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="'+$location.path()+'?search={{ COL_FIELD}}"></div></div>'
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>'
         },
         {
           name: "origins", displayName: 'Origins', width: '*',
@@ -230,8 +244,8 @@ angular.module('bmpUiApp').controller('BGPController',
 
       // update the scales' domain for the force directed graph
       radiusLinearScale.domain([0, Math.max(d3.max(prefixesOriginated), d3.max(routes))]);
-      console.log("max origins", d3.max(prefixesOriginated), "max routes", d3.max(routes));
-      console.log("radius scale", radiusLinearScale.domain());
+//      console.log("max origins", d3.max(prefixesOriginated), "max routes", d3.max(routes));
+//      console.log("radius scale", radiusLinearScale.domain());
 
       return [
         {
@@ -251,16 +265,16 @@ angular.module('bmpUiApp').controller('BGPController',
         $scope.asList = angular.copy($scope.asListBeforeSorting);
       } else {
         $scope.asList = $filter('orderBy')($scope.asListBeforeSorting, field, reverse);
-        console.log("sorted", $scope.asList);
+//        console.log("sorted", $scope.asList);
       }
       $scope.barChartData = transformToGraphData($scope.asList);
-      console.log("$scope.barChartData", $scope.barChartData);
+//      console.log("$scope.barChartData", $scope.barChartData);
     }
 
     function updateNodeData(result) {
-      console.log("updateNodeData");
+//      console.log("updateNodeData");
       $scope.asListBeforeSorting = result;//getDataFromArray(result, 0, "asList");
-      console.log("asListBeforeSorting", $scope.asListBeforeSorting);
+//      console.log("asListBeforeSorting", $scope.asListBeforeSorting);
 
       sortASList(orderBy, orderDir==="desc");
 
@@ -507,7 +521,7 @@ angular.module('bmpUiApp').controller('BGPController',
       $scope.asListGridOptions.data = [];
       var request = bgpDataService.getASList(orderBy, orderDir, $scope.limit, $scope.offset);
       request.promise.then(function(result) {
-          console.debug("got AS list", result);
+//          console.debug("got AS list", result);
           $scope.loadingASList = false;
           updateNodeData(result);
 
@@ -556,6 +570,8 @@ angular.module('bmpUiApp').controller('BGPController',
 
     /* prefix table */
 
+
+
     $scope.prefixGridInitHeight = 250;
     $scope.prefixGridOptions = {
       rowHeight: 32,
@@ -568,12 +584,12 @@ angular.module('bmpUiApp').controller('BGPController',
       columnDefs: [
         {
           name: "prefix", displayName: 'Prefix', width: '*',
-          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="'+$location.path()+'?search={{ COL_FIELD}}"></div>'
+          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>'
         },
         {
           name: "origin", displayName: 'Origin AS', width: '*', type: 'number',
           cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="'+$location.path()+'?search={{ COL_FIELD}}"></div></div>'
+            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>'
         }
       ],
       onRegisterApi: function (gridApi) {
@@ -597,7 +613,7 @@ angular.module('bmpUiApp').controller('BGPController',
       columnDefs: [
         {
           name: "prefix", displayName: 'Prefix', width: '20%',
-          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="'+$location.path()+'?search={{ COL_FIELD}}"></div>'
+          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>'
         },
         {
           name: "as_path", displayName: 'AS Path', width: '*'
@@ -779,10 +795,8 @@ angular.module('bmpUiApp').controller('BGPController',
 
     /* time slider */
 
-    $scope.dateFilterOn = true;
-
     // init, changedDates, lineColor
-    var callbacks = {
+    var timeSliderCallbacks = {
       init: function() {
 
       },
@@ -804,7 +818,6 @@ angular.module('bmpUiApp').controller('BGPController',
         return "#EAA546";
       }
     }
-    setUpTimeSlider($scope, $timeout, callbacks, { forceY: [-2,2] });
 
     /* end of time slider */
 
@@ -928,7 +941,17 @@ angular.module('bmpUiApp').controller('BGPController',
     // initialisation
     $(function () {
       //initial search
-      console.debug("stateParams", $stateParams);
+//      console.debug("stateParams", $stateParams);
+      var timeSliderParameters = { forceY: [-2,2] };
+      if ($stateParams.start) {
+//        setTimestamp("start", $stateParams.start);
+        timeSliderParameters.startTimestamp = parseInt($stateParams.start, 10);
+      }
+      if ($stateParams.end) {
+//        setTimestamp("end", $stateParams.end);
+        timeSliderParameters.endTimestamp = parseInt($stateParams.end, 10);
+      }
+      setUpTimeSlider($scope, $timeout, timeSliderCallbacks, timeSliderParameters);
       if ($stateParams.search) {
         $scope.searchValue = $stateParams.search;
         searchValueFn();
@@ -936,6 +959,7 @@ angular.module('bmpUiApp').controller('BGPController',
       else {
         $scope.searchValue = "";
         $scope.displayAllNodes = true;
+        $scope.dateFilterOn = false;
         displayAllASNodes();
       }
     });
