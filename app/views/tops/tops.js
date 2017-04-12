@@ -32,6 +32,52 @@ angular.module('bmpUiApp')
     $scope.searchPeer = null;
     $scope.searchPrefix = null;
 
+    function updateTopsModal() {
+
+      $scope.modalContent = "";
+
+      // *** Set API call modal dialog for tops ***
+
+      // *
+      var linkUpdatesOverTime = "updates/trend/interval/60" +
+                                              "?searchPeer=" + $scope.searchPeer + "&searchPrefix=" + $scope.searchPrefix +
+                                              "&startTs=" + moment(sliderSettings.range['min']).tz('UTC').format(timeFormat) +
+                                              "&endTs=" + moment(sliderSettings.range['max']).tz('UTC').format(timeFormat);
+
+      var textUpdatesOverTime = "Tops - Updates Over 4 Hours";
+      $scope.modalContent += apiFactory.createApiCallHtml(linkUpdatesOverTime, textUpdatesOverTime);
+
+
+      // *
+      var linkUpdatesOverTimePeriod = "updates/trend/interval/60" +
+                                               "?searchPeer=" + $scope.searchPeer + "&searchPrefix=" + $scope.searchPrefix +
+                                               "&startTs=" + moment($scope.startTimestamp).tz('UTC').format(timeFormat) +
+                                               "&endTs=" + moment($scope.endTimestamp).tz('UTC').format(timeFormat);
+
+      var textUpdatesOverTimePeriod = "Tops - Updates Between " + moment($scope.startTimestamp).tz('UTC').format(timeFormat) + " - " + moment($scope.endTimestamp).tz('UTC').format(timeFormat);
+      $scope.modalContent += apiFactory.createApiCallHtml(linkUpdatesOverTimePeriod, textUpdatesOverTimePeriod);
+
+      // *
+      var linkWithdrawnsOverTime = "withdrawns/trend/interval/60" +
+                                              "?searchPeer=" + $scope.searchPeer + "&searchPrefix=" + $scope.searchPrefix +
+                                              "&startTs=" + moment(sliderSettings.range['min']).tz('UTC').format(timeFormat) +
+                                              "&endTs=" + moment(sliderSettings.range['max']).tz('UTC').format(timeFormat);
+
+      var textWithdrawnsOverTime = "Tops - Withdrawns Over 4 Hours";
+      $scope.modalContent += apiFactory.createApiCallHtml(linkWithdrawnsOverTime, textWithdrawnsOverTime);
+
+
+      // *
+      var linkWithdrawnsOverTimePeriod = "withdrawns/trend/interval/60" +
+                                               "?searchPeer=" + $scope.searchPeer + "&searchPrefix=" + $scope.searchPrefix +
+                                               "&startTs=" + moment($scope.startTimestamp).tz('UTC').format(timeFormat) +
+                                               "&endTs=" + moment($scope.endTimestamp).tz('UTC').format(timeFormat);
+
+      var textWithdrawnsOverTimePeriod = "Tops - Withdrawns Between " + moment($scope.startTimestamp).tz('UTC').format(timeFormat) + " - " + moment($scope.endTimestamp).tz('UTC').format(timeFormat);
+      $scope.modalContent += apiFactory.createApiCallHtml(linkWithdrawnsOverTimePeriod, textWithdrawnsOverTimePeriod);
+
+    };
+
     var sliderSettings = {
       start: [$scope.startTimestamp.getTime(), $scope.endTimestamp.getTime()], // Handle start position
       step: 60 * 1000, // Slider moves in increments of a minute
@@ -212,6 +258,7 @@ angular.module('bmpUiApp')
       $scope.previewGraphData = [];
 
       var timeInterval = 60;
+      updateTopsModal();
 
       //Load previewGraph updates
       apiFactory.getUpdatesOverTime($scope.searchPeer, $scope.searchPrefix, timeInterval, moment(sliderSettings.range['min']).tz('UTC').format(timeFormat), moment(sliderSettings.range['max']).tz('UTC').format(timeFormat))
@@ -384,8 +431,10 @@ angular.module('bmpUiApp')
       ];
       $scope.trendGraphData = [];
 
-      $scope.startTimestamp = moment(startDatetimePicker.data("DateTimePicker").date()).tz('UTC').format(timeFormat);
-      $scope.endTimestamp = moment(endDatetimePicker.data("DateTimePicker").date()).tz('UTC').format(timeFormat);
+      updateTopsModal();
+
+      $scope.startTimestamp = moment(startDatetimePicker.data("DateTimePicker").date()).format(timeFormat);
+      $scope.endTimestamp = moment(endDatetimePicker.data("DateTimePicker").date()).format(timeFormat);
 
       apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", $scope.startTimestamp, $scope.endTimestamp)
         .success(function (result) {

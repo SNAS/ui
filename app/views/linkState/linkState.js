@@ -14,6 +14,34 @@ angular.module('bmpUiApp')
 
       init();
 
+      function updateLinkStateModal() {
+
+        $scope.modalContent = "";
+
+        // *** Set API call modal dialog for tops ***
+
+        // *
+        var linkLinkStatePeers= "linkstate/peers";
+        var textLinkStatePeers = "Link State Peers";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkLinkStatePeers, textLinkStatePeers);
+
+        // *
+        var linkLinkStatePeersWithGeo= "linkstate/peers/?withGeo";
+        var textLinkStatePeersWithGeo = "Link State Peers - Geo";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkLinkStatePeersWithGeo, textLinkStatePeersWithGeo);
+
+        // *
+        var linkLinkStateNodes= "linkstate/nodes";
+        var textLinkStateNodes = "Link State Nodes";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkLinkStateNodes, textLinkStateNodes);
+
+        // *
+        var linkLinkStateLinks= "linkstate/links";
+        var textLinkStateLinks = "Link State Links";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkLinkStateLinks, textLinkStateLinks);
+
+      };
+
       var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
       var mapID = 'pickledbadger.mbkpbek5';
       angular.extend($scope, {
@@ -123,11 +151,6 @@ angular.module('bmpUiApp')
 
       var polylines, drawnPolylines, cluster, markerLayer, paths;
 
-      var routerIcon = L.icon({
-        iconUrl: 'images/Router-icon.png',
-        iconSize: [15, 15]
-      });
-
       $scope.selectNode = function (selectedRouter) {
         removeLayers(circles);
         circles = [];
@@ -187,6 +210,8 @@ angular.module('bmpUiApp')
       };
 
       $scope.selectChange = function () {
+
+        $scope.selectedRouter = null;
 
         if ($(".leaflet-popup-close-button")[0])
           $(".leaflet-popup-close-button")[0].click();
@@ -258,6 +283,14 @@ angular.module('bmpUiApp')
                 }
               });
               angular.forEach(nodes, function (node) {
+
+                // Icon with html style.
+                var routerIcon = new L.DivIcon({
+                  html: '<img class="icon-image" src="images/Router-icon.png"/>' +
+                            '<span class="icon-text">' + node.NodeName + '</span>'
+                });
+
+
                 var marker = new L.Marker([node.latitude, node.longitude], {
                   icon: routerIcon,
                   data: node,
@@ -265,6 +298,7 @@ angular.module('bmpUiApp')
                   connectedPolylines: [],
                   connectedPaths: []
                 });
+
 
                 marker.on('move', function (e) {
                   if (e.target.options.connectedPolylines.length > 0) {
@@ -331,7 +365,9 @@ angular.module('bmpUiApp')
                 marker.addTo(markerLayer);
                 $scope.markers[node.id] = marker;
               });
+
               angular.forEach(links, function (link) {
+
                 var sourceNode, targetNode;
                 angular.forEach(nodes, function (node) {
                   if (node.id == link.source)
@@ -339,7 +375,13 @@ angular.module('bmpUiApp')
                   if (node.id == link.target)
                     targetNode = node;
                 });
+
+                console.log(sourceNode)
+                console.log(targetNode)
+                console.log("---------------------------------")
+
                 if (sourceNode && targetNode) {
+                  console.log("IF IN")
                   var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)], {
                     color: '#484848',
                     weight: 4,
@@ -358,8 +400,15 @@ angular.module('bmpUiApp')
                   $scope.markers[sourceNode.id].options.connectedPolylines.push(polyline);
                   $scope.markers[targetNode.id].options.connectedPolylines.push(polyline);
                 }
+
+
               });
+
+              console.log("ABC");
+              console.log(polylines.length);
+
               angular.forEach(polylines, function (polyline) {
+
                 var match = false;
                 angular.forEach(drawnPolylines, function (drawnPolyline) {
                   if ((drawnPolyline.options.sourceID==polyline.options.sourceID && drawnPolyline.options.targetID==polyline.options.targetID)
@@ -374,6 +423,8 @@ angular.module('bmpUiApp')
                 }
               });
               angular.forEach(drawnPolylines, function (drawnPolyline) {
+                console.log("Draw Polylines");
+                console.log(drawnPolylines.length)
                 var popup = "";
                 if (drawnPolyline.containedLines.length > 1) {
                   angular.forEach(drawnPolyline.containedLines, function (line) {
@@ -452,6 +503,8 @@ angular.module('bmpUiApp')
           $scope.map = map;
           L.control.zoomslider().addTo($scope.map);
           getPeers();
+          updateLinkStateModal();
+
         });
       }
 

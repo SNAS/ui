@@ -29,6 +29,45 @@ angular.module('bmpUiApp')
       $scope.upstreamNodata = false;
       $scope.downstreamNodata = false;
 
+      function updateAsViewModal() {
+
+        $scope.modalContent = "";
+        $scope.asNumber = $scope.asn;
+
+        // *** Set API call modal dialog for tops ***
+
+        if (!$scope.nodata) {
+
+          // *
+          var linkAsnWhois = "whois/asn/" + $scope.asn;
+          var textAsnWhois = "AS " + $scope.asn+ " - Whois Info";
+          $scope.modalContent += apiFactory.createApiCallHtml(linkAsnWhois, textAsnWhois);
+
+          // *
+          var linkAsnPrefixOriginated = "rib/asn/" + $scope.asn + "?distinct&brief";
+          var textAsnPrefixOriginated = "AS " + $scope.asn + " - Prefixes Originated By";
+          $scope.modalContent += apiFactory.createApiCallHtml(linkAsnPrefixOriginated, textAsnPrefixOriginated);
+
+          // *
+          var linkAsnUpstream = "upstream/" +$scope.asn;
+          var textAsnUpstream = "AS " + $scope.asn + " - Left ASes";
+          $scope.modalContent += apiFactory.createApiCallHtml(linkAsnUpstream, textAsnUpstream);
+
+          // *
+          var linkAsnDownstream = "downstream/" + $scope.asn;
+          var textAsnDownstream = "AS " + $scope.asn + " - Right ASes";
+          $scope.modalContent += apiFactory.createApiCallHtml(linkAsnDownstream, textAsnDownstream);
+        }
+
+        else {
+
+          $scope.asNumber = $scope.searchValue;
+          $scope.modalContent = "No information is available for AS " + $scope.searchValue;
+        }
+
+
+      };
+
       //prefix table options
       $scope.prefixGridOptions = {
         rowHeight: 32,
@@ -135,6 +174,7 @@ angular.module('bmpUiApp')
 
       //get all the information of this AS
       function searchValueFn() {
+
         if (isNaN($scope.searchValue)) {
           apiFactory.getWhoIsASName($scope.searchValue).success(function (result) {
             var data = result.w.data;
@@ -153,6 +193,8 @@ angular.module('bmpUiApp')
             console.log(error.message);
           });
         }
+
+
       }
 
       var tempData;
@@ -184,6 +226,8 @@ angular.module('bmpUiApp')
         else {
           $scope.nodata = true;
         }
+
+        updateAsViewModal();
       }
 
 

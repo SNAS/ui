@@ -13,8 +13,13 @@
            typeahead-on-select="onSelect($item, $model, $label)"/>
     <span class="help-block">Examples: 109, Cisco, etc.</span>
     <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+    <button type="submit" class="btn btn-sm btn-primary ng-click-active" data-toggle="modal" data-target="#asViewModal">
+        <span class="glyphicon glyphicon-globe" aria-hidden="true">
+        </span>
+    </button>
     <br/>
     <br/>
+
     <div class="row">
       <div ng-show="nodata" class="col-md-4">
         <p ng-style="{'font-size': '20px', opacity: 0.5, align: center}">
@@ -23,6 +28,8 @@
         </p>
       </div>
     </div>
+
+
 
     <!--<h3 ng-show="nodata">This AS doesn't exist</h3>-->
     <!--<h3 style="display:none;" id="dbina">DB is not available. Please, wait a minute then try-->
@@ -81,4 +88,24 @@
       <d3 id="AS_topology"></d3>
     </div>
   </div>
+
+  <!-- Tops Modal -->
+  <div class="modal fade" id="asViewModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" ng-class="{'modal-sm': size == 'sm', 'modal-lg': size == 'lg'}">
+      <div class="modal-content" modal-transclude="">
+        <div class="modal-header ng-scope">
+          <h3 class="modal-title">AS {{asNumber}} - API SERVICE</h3>
+        </div>
+
+        <div ng-bind-html="modalContent" class="modal-body ng-scope">
+
+        </div>
+
+        <div class="modal-footer ng-scope">
+          <button class="btn btn-warning modal-button" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

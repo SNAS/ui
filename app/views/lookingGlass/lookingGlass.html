@@ -54,6 +54,12 @@
           <label class="btn btn-default btn-xs" ng-style="{'margin-left': '10px', 'width': '120px'}">Distinct
             <input type="checkbox" ng-model="searchParams.isDistinct"/>
           </label>
+
+          <button type="submit" class="btn btn-sm btn-primary ng-click-active" data-toggle="modal" data-target="#lookingGlassModal">
+            <span class="glyphicon glyphicon-globe" aria-hidden="true">
+            </span>
+          </button>
+
         </form>
       </div>
 
@@ -253,5 +259,25 @@
     </div>
 
   </div>
+
+  <!-- Looking Glass Modal -->
+  <div class="modal fade" id="lookingGlassModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" ng-class="{'modal-sm': size == 'sm', 'modal-lg': size == 'lg'}">
+      <div class="modal-content" modal-transclude="">
+        <div class="modal-header ng-scope">
+          <h3 class="modal-title">Looking Glass - API SERVICE</h3>
+        </div>
+
+        <div ng-bind-html="modalContent" class="modal-body ng-scope">
+
+        </div>
+
+        <div class="modal-footer ng-scope">
+          <button class="btn btn-warning modal-button" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!--/tabset-->
 </div>
