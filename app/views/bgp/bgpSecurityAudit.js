@@ -75,8 +75,8 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             // find the graph lines in the data
             var gData = [];
             angular.forEach(result, function(record) {
-              var timestamp = record.hourtimestamp;//parseInt(record.hourtimestamp, 10) * 1000;
-              gData.push([new Date(timestamp).getTime(), record.value/*parseInt(record.value, 10)*/]);
+              var timestamp = record.hourtimestamp;
+              gData.push([new Date(timestamp).getTime(), record.value]);
             });
 
             var newGraphLine = {
@@ -89,6 +89,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             computeValuesAtSelectedTime(newGraphLine);
 
             var index = findIndexOfAnomaly(anomaly, $scope.previewGraphData, "id");
+            console.debug("newGraphLine", newGraphLine);
             if (index === -1) {
               $scope.previewGraphData.push(newGraphLine);
             } else {
@@ -121,43 +122,60 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
     };
 
     $scope.anomalyDetails = {};
-    $scope.displayFields = {
-      martians: [
-        { name: "prefix", displayName: "Prefix", width: '120',
-          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>' },
-        { name: "origin_as", displayName: "Origin AS", type: 'number', width: '100',
-          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
-        { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
-          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
-        { name: "as_path", displayName: "AS Path" },
-        { name: "router_ip", displayName: "Advertising Router", width: '132' },
-        { name: "type", width: '60' },
-        { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140',
-          cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>'
+    $scope.anomalyGridSettings = {
+      martians: {
+        displayFields: [
+          { name: "prefix", displayName: "Prefix", width: '120',
+            cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>' },
+          { name: "origin_as", displayName: "Origin AS", type: 'number', width: '100',
+            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+              '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
+          { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
+            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+              '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
+          { name: "as_path", displayName: "AS Path" },
+          { name: "router_ip", displayName: "Advertising Router", width: '132' },
+          { name: "type", width: '60' },
+          { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140',
+            cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>'
+          },
+          { name: "last_seen", width: '140',
+            cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' },
+          { name: "still_active", width: '50' },
+          { name: 'category', width: '100' }
+        ],
+        preferredSortOrder: {
+          "timestamp": "desc",
+          "last_seen": "desc"
         },
-        { name: "last_seen", width: '140',
-          cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' },
-        { name: "still_active", width: '50' },
-        { name: 'category', width: '100' }
-      ],
-      prefix_length: [
-        { name: "prefix", displayName: "Prefix", width: '120',
-          cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>' },
-        { name: "origin_as", displayName: "Origin AS", type: 'number', width: '100',
-          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
-        { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
-          cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
-            '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
-        { name: "as_path", displayName: "AS Path" },
-        { name: "router_ip", displayName: "Advertising Router", width: '132' },
-        { name: "type", width: '60' },
-        { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140',
-          cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' }
-      ]
-    };
+        currentSortColumns: [
+          { field: "timestamp", sort: { priority: 0, direction: "desc" } }
+        ]
+      },
+      prefix_length: {
+        displayFields: [
+          { name: "prefix", displayName: "Prefix", width: '120',
+            cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>' },
+          { name: "origin_as", displayName: "Origin AS", type: 'number', width: '100',
+            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+              '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
+          { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
+            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+              '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
+          { name: "as_path", displayName: "AS Path" },
+          { name: "router_ip", displayName: "Advertising Router", width: '132' },
+          { name: "type", width: '60' },
+          { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140',
+            cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' }
+        ],
+        preferredSortOrder: {
+          "timestamp": "desc"
+        },
+        currentSortColumns: [
+          { field: "timestamp", sort: { priority: 0, direction: "desc" } }
+        ]
+      }
+    }
     $scope.anomalyGridHeight = 300;
     $scope.loadAnomalyDetails = function(anomaly) {
 //      console.log("Loading anomaly details for", anomaly);
@@ -190,13 +208,49 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
           height: $scope.prefixGridInitHeight,
           enableHorizontalScrollbar: 0,
           enableVerticalScrollbar: 1,
-          columnDefs: $scope.displayFields[anomaly],
+          columnDefs: $scope.anomalyGridSettings[anomaly].displayFields,
+          preferredSortOrder: $scope.anomalyGridSettings[anomaly].preferredSortOrder,
+          currentSortColumns: $scope.anomalyGridSettings[anomaly].currentSortColumns,
           data: result
         };
         $scope.anomalyDetails[anomaly].grid = grid;
         $scope.anomalyDetails[anomaly].gridReady = true;
         $scope.anomalyDetails[anomaly].loadingAnomalyDetails = false;
         $scope.anomalyDetails[anomaly].json = bgpDataService.getAnomaliesAPI(parameters);
+
+        $scope.anomalyDetails[anomaly].grid.onRegisterApi = function (gridApi) {
+          // disable the 'no sorting' option and prioritise 'desc' over 'asc'
+          gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
+            if (sortColumns.length === 1) {
+              // if there is a preferred sort order for this column, apply it
+              if ($scope.anomalyDetails[anomaly].grid.preferredSortOrder[sortColumns[0].field] !== undefined) {
+                // was this column sorted previously?
+                var previouslySorted = false;
+                for (var i = 0 ; i < $scope.anomalyDetails[anomaly].grid.currentSortColumns.length ; i++) {
+                  var col = $scope.anomalyDetails[anomaly].grid.currentSortColumns[i];
+                  if (col.field === sortColumns[0].field) {
+                    previouslySorted = true;
+                    break;
+                  }
+                }
+                // if it wasn't sorted previously, apply the preferred sorting order
+                if (!previouslySorted) {
+                  sortColumns[0].sort.direction = $scope.anomalyDetails[anomaly].grid.preferredSortOrder[sortColumns[0].field];
+                }
+              }
+            }
+            // instead of removing sorting, invert the last sort direction
+            else if (sortColumns.length === 0) {
+              if ($scope.anomalyDetails[anomaly].grid.currentSortColumns.length === 1) {
+                var col = $scope.anomalyDetails[anomaly].grid.currentSortColumns[0];
+                col.sort.direction = col.sort.direction === "asc" ? "desc" : "asc";
+                sortColumns.push(col);
+              }
+            }
+            $scope.anomalyDetails[anomaly].grid.currentSortColumns = sortColumns;
+          });
+        };
+
         console.debug("anomaly details for", anomaly, $scope.anomalyDetails);
       });
     };

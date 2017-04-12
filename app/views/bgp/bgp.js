@@ -179,25 +179,63 @@ angular.module('bmpUiApp').controller('BGPController',
           type: 'number', cellClass: 'align-right', headerCellClass: 'header-align-right'
         }
       ],
+      preferredSortOrder: {
+        origins: "desc",
+        routes: "desc",
+        changes: "desc"
+      },
+      currentSortColumns: [
+        { field: "routes", sort: { priority: 0, direction: "desc" } }
+      ],
       onRegisterApi: function (gridApi) {
+        // disable the 'no sorting' option and prioritise 'desc' over 'asc'
         gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
           console.log("grid sort changed", sortColumns);
           if (sortColumns.length > 0) {
             var c = sortColumns[0];
-            console.log("sort ", c.field, c.sort);
+//            console.log("sort ", c.field, c.sort);
+
+            if ($scope.asListGridOptions.preferredSortOrder[c.field] !== undefined) {
+              // was this column sorted previously?
+              var previouslySorted = false;
+              for (var i = 0 ; i < $scope.asListGridOptions.currentSortColumns.length ; i++) {
+                var col = $scope.asListGridOptions.currentSortColumns[i];
+                if (col.field === c.field) {
+                  previouslySorted = true;
+                  break;
+                }
+              }
+              // if it wasn't sorted previously, apply the preferred sorting order
+              if (!previouslySorted) {
+                c.sort.direction = $scope.asListGridOptions.preferredSortOrder[c.field];
+              }
+            }
 
             // instead of simply sorting the current data, request new data from the BGP data service
             orderBy = c.field;
             orderDir = c.sort.direction;
             $scope.offset = 0;
             getASListData();
-
-//            sortASList(c.field, c.sort.direction==="desc");
           }
           else {
-            // disable sorting
-            sortASList();
+            // always sort by one column
+            if ($scope.asListGridOptions.currentSortColumns.length === 1) {
+              var col = $scope.asListGridOptions.currentSortColumns[0];
+              col.sort.direction = col.sort.direction === "asc" ? "desc" : "asc";
+//            console.debug("new sort direction for", col.field, col.sort.direction);
+              sortColumns.push(col);
+
+              orderBy = col.field;
+              orderDir = col.sort.direction;
+              $scope.offset = 0;
+              getASListData();
+            }
+            else {
+              // disable sorting
+              sortASList();
+            }
           }
+          $scope.asListGridOptions.currentSortColumns = sortColumns;
         });
       }
     };
@@ -612,20 +650,28 @@ angular.module('bmpUiApp').controller('BGPController',
       enableVerticalScrollbar: 1,
       columnDefs: [
         {
-          name: "prefix", displayName: 'Prefix', width: '150',
+          name: "prefix", displayName: 'Prefix', width: '130',
           cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>'
         },
         {
           name: "as_path", displayName: 'AS Path', width: '*'
         },
         {
-          name: "length", displayName: 'Length', width: '70', cellClass: 'align-center', type: 'number'
+          name: "length", displayName: 'Length', width: '90', cellClass: 'align-center', type: 'number'//, suppressRemoveSort: true
         },
         {
           name: "created_on", displayName: 'Timestamp', width: '140',
           sort: { direction: uiGridConstants.DESC },
           cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>'
         }
+      ],
+      preferredSortOrder: {
+        "length": "desc",
+        "created_on": "desc",
+        "as_path": "asc"
+      },
+      currentSortColumns: [
+        { field: "created_on", sort: { priority: 0, direction: "desc" } }
       ],
       onRegisterApi: function (gridApi) {
         gridApi.core.on.rowsRendered($scope, function(a) {
@@ -640,6 +686,38 @@ angular.module('bmpUiApp').controller('BGPController',
             var entity = a.grid.renderContainers.body.visibleRowCache[i].entity;
             $scope.asPathGraph.paths[entity.initial_index].rendering_index = i;
           }
+        });
+
+        // disable the 'no sorting' option and prioritise 'desc' over 'asc'
+        gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
+          if (sortColumns.length === 1) {
+            // if there is a preferred sort order for this column, apply it
+            if ($scope.prefixViewGridOptions.preferredSortOrder[sortColumns[0].field] !== undefined) {
+              // was this column sorted previously?
+              var previouslySorted = false;
+              for (var i = 0 ; i < $scope.prefixViewGridOptions.currentSortColumns.length ; i++) {
+                var col = $scope.prefixViewGridOptions.currentSortColumns[i];
+                if (col.field === sortColumns[0].field) {
+                  previouslySorted = true;
+                  break;
+                }
+              }
+              // if it wasn't sorted previously, apply the preferred sorting order
+              if (!previouslySorted) {
+                sortColumns[0].sort.direction = $scope.prefixViewGridOptions.preferredSortOrder[sortColumns[0].field];
+              }
+            }
+          }
+          // instead of removing sorting, invert the last sort direction
+          else if (sortColumns.length === 0) {
+            if ($scope.prefixViewGridOptions.currentSortColumns.length === 1) {
+              var col = $scope.prefixViewGridOptions.currentSortColumns[0];
+              col.sort.direction = col.sort.direction === "asc" ? "desc" : "asc";
+//            console.debug("new sort direction for", col.field, col.sort.direction);
+              sortColumns.push(col);
+            }
+          }
+          $scope.prefixViewGridOptions.currentSortColumns = sortColumns;
         });
       }
     };
