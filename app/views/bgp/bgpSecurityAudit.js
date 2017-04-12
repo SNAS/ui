@@ -70,6 +70,17 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             start: getTimestamp("start"),
             end: getTimestamp("end")
           };
+
+          var newGraphLine = {
+            id: anomaly,
+            key: viewNames[anomaly] !== undefined ? viewNames[anomaly] : anomaly,
+            occurrences: "No data",
+            trend: 0,
+            values: [],
+            loading: true
+          };
+          $scope.previewGraphData.push(newGraphLine);
+
           var request = bgpDataService.getAnomalyOverview(parameters);
           request.promise.then(function(result) {
             // find the graph lines in the data
@@ -84,12 +95,12 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
               key: viewNames[anomaly] !== undefined ? viewNames[anomaly] : anomaly,
               values: gData,
               occurrences: "No data",
-              trend: 0
+              trend: 0,
+              loading: false
             };
             computeValuesAtSelectedTime(newGraphLine);
 
             var index = findIndexOfAnomaly(anomaly, $scope.previewGraphData, "id");
-            console.debug("newGraphLine", newGraphLine);
             if (index === -1) {
               $scope.previewGraphData.push(newGraphLine);
             } else {
@@ -263,10 +274,13 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
     }
 
     $scope.toggleAnomalyDetails = function(anomaly) {
-      if ($scope.anomalyDetails[anomaly] !== undefined) {
-        $scope.anomalyDetails[anomaly].show = !$scope.anomalyDetails[anomaly].show;
+      // don't do anything if it's still loading
+      if (anomaly.loading) return;
+
+      if ($scope.anomalyDetails[anomaly.id] !== undefined) {
+        $scope.anomalyDetails[anomaly.id].show = !$scope.anomalyDetails[anomaly.id].show;
       } else {
-        $scope.loadAnomalyDetails(anomaly);
+        $scope.loadAnomalyDetails(anomaly.id);
       }
     };
 

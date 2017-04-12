@@ -429,12 +429,13 @@
   .anomaly-box {
     padding-bottom: 50px;
     cursor: pointer;
+    min-height: 100px;
     .name {
 
     }
     .occurrencesAndTrend {
       position: absolute;
-      line-height: 5rem;
+      line-height: 7rem;
       .occurrences, .trend {
         display: inline-block;
       }
