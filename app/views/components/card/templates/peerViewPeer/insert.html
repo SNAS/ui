@@ -22,11 +22,11 @@
            expand="true">
       </div>
     </tab>
-    <tab heading="Downstream ASes of Peer" select="loadDownStream()">
+    <tab heading="Downstream ASes of Peer" select="loadDownStream()" tooltip="This represents the ASN's that are immediately to the right of the peering ASN">
       <div class="loading-section">
         <div ng-show="summaryPeerOptions.summaryGridIsLoad" bmp-loading
              loading-var="summaryPeerOptions.summaryGridIsLoad" font-width="80"></div>
-        <div ui-grid="summaryPeerOptions" ui-grid-selection ui-grid-auto-resize
+        <div ui-grid="summaryPeerOptions" ui-grid-auto-resize
              ng-style="{'height':summaryPeerOptions.height}"
              style="margin-top: 27px;" ui-grid-resize-columns>
           <div class="watermark" ng-if="!summaryPeerOptions.data.length">{{data.PeerASN==data.LocalASN?"Peer is in same AS as router":"No data available"}}</div>
@@ -68,13 +68,13 @@
                 <div style="display: table-cell;">
 
                   <!--<span ng-if="path.noTopText">-->
-                    <!--<div style="text-align: center">&nbsp;</div>-->
+                  <!--<div style="text-align: center">&nbsp;</div>-->
                   <!--</span>-->
 
                   <!--<span ng-if="!path.noTopText">-->
-                    <!--<div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{-->
-                      <!--wordCheck(path.topVal) }}-->
-                    <!--</div>-->
+                  <!--<div style="text-align: center" tooltip="{{path.topVal}}" tooltip-append-to-body="true">{{-->
+                  <!--wordCheck(path.topVal) }}-->
+                  <!--</div>-->
                   <!--</span>-->
 
                   <!--This is the actual AS icon-->
@@ -168,29 +168,29 @@
             <div ng-if="values.geo">
               <map name="peer-view-peer-card" location="'peerCard'" plot-marker="latLong"
                    style="top:0; bottom:0; width:100%; height: 300px"/>
-            <div style="width:49%;display: inline-block;">
-              <p><span class="bold">Country:</span> {{values.geo.country}}</p>
+              <div style="width:49%;display: inline-block;">
+                <p><span class="bold">Country:</span> {{values.geo.country}}</p>
 
-              <p><span class="bold">State:</span> {{values.geo.stateprov}}</p>
+                <p><span class="bold">State:</span> {{values.geo.stateprov}}</p>
 
-              <p><span class="bold">City:</span> {{values.geo.city}}</p>
+                <p><span class="bold">City:</span> {{values.geo.city}}</p>
 
-              <p><span class="bold">Lat:</span> {{values.geo.latitude}}</p>
+                <p><span class="bold">Lat:</span> {{values.geo.latitude}}</p>
 
-              <p><span class="bold">Long:</span> {{values.geo.longitude}}</p>
-            </div>
+                <p><span class="bold">Long:</span> {{values.geo.longitude}}</p>
+              </div>
 
-            <div style="width:49%;display: inline-block;">
-              <p><span class="bold">Timezone:</span> {{values.geo.timezone_offset}}</p>
+              <div style="width:49%;display: inline-block;">
+                <p><span class="bold">Timezone:</span> {{values.geo.timezone_offset}}</p>
 
-              <p><span class="bold">Time name:</span> {{values.geo.timzone_name}}</p>
+                <p><span class="bold">Time name:</span> {{values.geo.timzone_name}}</p>
 
-              <p><span class="bold">ISP name:</span> {{values.geo.isp_name}}</p>
+                <p><span class="bold">ISP name:</span> {{values.geo.isp_name}}</p>
 
-              <p><span class="bold">Connection type:</span> {{values.geo.connection_type}}</p>
+                <p><span class="bold">Connection type:</span> {{values.geo.connection_type}}</p>
 
-              <p><span class="bold">Org name:</span> {{values.geo.organization_name}}</p>
-            </div>
+                <p><span class="bold">Org name:</span> {{values.geo.organization_name}}</p>
+              </div>
             </div>
 
           </div>

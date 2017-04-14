@@ -17,6 +17,41 @@ angular.module('bmpUiApp')
 
       $scope.tab = 'map';
 
+      function updateLookingGlassModal(ip) {
+
+        $scope.modalContent = "";
+
+        // *** Set API call modal dialog for looking glass ***
+
+        // *
+        var linkUpdatesOverTime = "rib/lookup/" + ip;
+        var textUpdatesOverTime = "Rib Lookup - " + ip;
+        $scope.modalContent += apiFactory.createApiCallHtml(linkUpdatesOverTime, textUpdatesOverTime);
+
+        // *
+        var linkUpdatesPeers = "peer?where=routerip like '%'&withgeo";
+        var textUpdatesPeers = "Peer List - " + ip;
+        $scope.modalContent += apiFactory.createApiCallHtml(linkUpdatesPeers, textUpdatesPeers);
+
+        // *
+        if ($scope.values !== undefined) {
+
+          var linkUpdatesPeerDetails = "peer/" + $scope.values["peer_hash_id"];
+          var textUpdatesPeerDetails = "Peer - " + $scope.values["PeerName"];
+          $scope.modalContent += apiFactory.createApiCallHtml(linkUpdatesPeerDetails, textUpdatesPeerDetails);
+
+          var linkUpdatesPeerOriginAs = "whois/asn/" + $scope.values["Origin_AS"];
+          var textUpdatesPeerOriginAs = $scope.values["PeerName"] + " - AS " + $scope.values["Origin_AS"];
+          $scope.modalContent += apiFactory.createApiCallHtml(linkUpdatesPeerOriginAs, textUpdatesPeerOriginAs);
+
+          var linkUpdatesAsPath = "whois/asn?where=w.asn in (" + $scope.norepeat.toString() + ")"
+          var textUpdatesAsPath = "As Path - " + $scope.norepeat.toString();
+          $scope.modalContent += apiFactory.createApiCallHtml(linkUpdatesAsPath, textUpdatesAsPath);
+        }
+
+
+      };
+
       var accessToken =
         'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
       var mapID = 'pickledbadger.mbkpbek5';
@@ -95,8 +130,10 @@ angular.module('bmpUiApp')
 
         $scope.values = rib;
         createASpath($scope.values.AS_Path);
-
+        //alert(JSON.stringify($scope.values));
+        updateLookingGlassModal("");
         scrollToDetail();
+
 
       };
 
@@ -313,6 +350,8 @@ angular.module('bmpUiApp')
           $scope.glassGridOptions.showGridFooter = false;
         }
         $scope.glassGridOptions.glassGridIsLoad = false; //stop loading
+
+        updateLookingGlassModal('190.0.103.0');
       }).error(function(error) {
         console.log(error.message);
       });
@@ -656,9 +695,11 @@ angular.module('bmpUiApp')
             }
             value = value.substring(0, value.length - 1);
           }
+
           apiFactory.getPrefix(value).success(function(result) {
             if (!$.isEmptyObject(result)) {
               var resultData = result.v_all_routes.data;
+
               for (var i = 0; i < resultData.length; i++) {
                 resultData[i].wholePrefix = resultData[i].Prefix + "/" +
                   resultData[i].PrefixLen;
@@ -696,7 +737,10 @@ angular.module('bmpUiApp')
           }
           apiFactory.getPeerRibLookupIp(value).success(function(result) {
             if (!$.isEmptyObject(result)) {
+
+              //alert(JSON.stringify(result));
               var resultData = result.v_all_routes.data;
+
               for (var i = 0; i < resultData.length; i++) {
                 resultData[i].wholePrefix = resultData[i].Prefix + "/" +
                   resultData[i].PrefixLen;

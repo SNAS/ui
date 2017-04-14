@@ -8,7 +8,7 @@
  *
  * Main module of the application.
  */
-angular
+var bmpUiApp = angular
   .module('bmpUiApp', [
     'ngAnimate',
     'ngCookies',
@@ -37,6 +37,20 @@ angular
     'angular-loading-bar',
     'bmp.components.table'
   ])
+  .provider('ConfigService', function () {
+    var options = {};
+    this.config = function (opt) {
+      angular.extend(options, opt);
+    };
+
+    this.$get = [function () {
+      if (!options) {
+        throw new Error('Config options must be configured');
+      }
+
+      return options;
+    }];
+  })
   .config(function ($stateProvider, $urlRouterProvider, $logProvider) {
     $urlRouterProvider.otherwise("/login");
     $logProvider.debugEnabled(false);
@@ -119,7 +133,11 @@ angular
         params: {
           'p': 'defaultPrefix',
           'type': 'defaultType',
-          'peer': 'defaultPeer'
+          'peer': 'defaultPeer',
+          'startTime': 'defaultStartTimestamp',
+          'endTime': 'defaultEndTimestamp',
+          'limitForUpdates': 'defaultLimitForUpdates',
+          'limitForWithdraws': 'defaultLimitForWithdraws'
         },
         templateUrl: 'views/prefixanalysis/prefixanalysis.html'
       })
@@ -143,7 +161,6 @@ angular
         url: '/admin',
         templateUrl: 'views/adminView/adminView.html'
       })
-
       //DUAL WINDOW MODE ENAGAAAGE
       .state('app.dualWindow', {
         templateUrl: 'views/dual/dual.html'
@@ -175,3 +192,28 @@ angular
       }
     });
   });
+
+
+// manually bootstrap the app when the document is ready and both config files have been loaded
+function bootstrapApplication() {
+  angular.element(document).ready(function() {
+    angular.bootstrap(document, ["bmpUiApp"]);
+  });
+}
+
+// load config files in a specific order before bootstrapping the web app
+(function loadConfigFilesAndBootstrapTheApp() {
+  var initInjector = angular.injector(["ng"]);
+  var $http = initInjector.get("$http");
+  $http.get('conf/config.json')
+    .then(function(json) {
+
+      bmpUiApp.config(['ConfigServiceProvider', function (ConfigServiceProvider) {
+        ConfigServiceProvider.config(json.data);
+
+//        console.log("conf/config.json loaded successfully", json.data);
+      }]);
+
+      bootstrapApplication();
+    });
+}());

@@ -101,6 +101,18 @@ angular.module('bmp.components.card')
             $scope.summaryPeerOptions.data = result.downstreamASN.data;
             uiGridFactory.calGridHeight($scope.summaryPeerOptions, $scope.summaryPeerOptionsApi);
             $scope.summaryPeerOptions.showGridFooter = true;
+
+            // Replace empty organization names with '-'
+            for (var i = 0; i < $scope.summaryPeerOptions.data.length; i++) {
+                if ($scope.summaryPeerOptions.data[i]['org_name'] === "" || $scope.summaryPeerOptions.data[i]['org_name'] === null) {
+                  $scope.summaryPeerOptions.data[i]['org_name'] = "-"
+                }
+
+                if ($scope.summaryPeerOptions.data[i]['as_name'] === "" || $scope.summaryPeerOptions.data[i]['as_name'] === null) {
+                  $scope.summaryPeerOptions.data[i]['as_name'] = "-"
+                }
+            }
+
           }
           $scope.summaryPeerOptions.summaryGridIsLoad = false; //stop loading
 
@@ -148,5 +160,28 @@ angular.module('bmp.components.card')
       country: countryConversionFactory.getName($scope.data.country),
       type: $scope.data.type
     });
+
+    $scope.modalContent = "";
+
+    // Set API call modal dialog for corresponding peer.
+    var linkPeer = 'peer?where=peer_hash_id="' + $scope.data.peer_hash_id + '"';
+    var textPeer = $scope.data.PeerName;
+    $scope.modalContent += apiFactory.createApiCallHtml(linkPeer, textPeer);
+
+    var linkPeerWithGeo = 'peer?where=peer_hash_id="' + $scope.data.peer_hash_id + '"&withgeo';
+    var textPeerWithGeo = $scope.data.PeerName + " - Geo";
+    $scope.modalContent += apiFactory.createApiCallHtml(linkPeerWithGeo, textPeerWithGeo);
+
+    var linkPeerPolicyRibCounts = 'peer/prefix/' + $scope.data.peer_hash_id;
+    var textPeerPolicyRibCounts = $scope.data.PeerName + " - Pre-Policy and Post-Policy RIB Counts";
+    $scope.modalContent += apiFactory.createApiCallHtml(linkPeerPolicyRibCounts, textPeerPolicyRibCounts);
+
+    var linkPeerDownstreamAS = 'downstream/peer/' + $scope.data.peer_hash_id;
+    var textPeerDownstreamAS  = $scope.data.PeerName + " - Downstream ASes";
+    $scope.modalContent += apiFactory.createApiCallHtml(linkPeerDownstreamAS, textPeerDownstreamAS);
+
+    var linkPeerRoutingTable = 'rib/peer/' + $scope.data.peer_hash_id;
+    var textPeerRoutingTable = $scope.data.PeerName + " - Routing Table";
+    $scope.modalContent += apiFactory.createApiCallHtml(linkPeerRoutingTable, textPeerRoutingTable);
 
   }]);

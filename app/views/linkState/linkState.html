@@ -14,6 +14,11 @@
     </select>
     <p class="btn btn-xs btn-info" ng-click="selectChange()" style="margin-left:20px"><span
       class="glyphicon glyphicon-refresh"></span> Refresh Map</p>
+
+    <button type="submit" class="btn btn-sm btn-primary ng-click-active" data-toggle="modal" data-target="#linkStateModal">
+          <span class="glyphicon glyphicon-globe" aria-hidden="true">
+          </span>
+    </button>
   </div>
 
   <tabset>
@@ -145,6 +150,25 @@
 
       </div>
 
+    </div>
+  </div>
+
+  <!-- Link State Modal -->
+  <div class="modal fade" id="linkStateModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" ng-class="{'modal-sm': size == 'sm', 'modal-lg': size == 'lg'}">
+      <div class="modal-content" modal-transclude="">
+        <div class="modal-header ng-scope">
+          <h3 class="modal-title">Link State - API SERVICE</h3>
+        </div>
+
+        <div ng-bind-html="modalContent" class="modal-body ng-scope">
+
+        </div>
+
+        <div class="modal-footer ng-scope">
+          <button class="btn btn-warning modal-button" data-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -453,12 +453,19 @@ angular.module('bmp.components.card')
           peer.Post_RIB = (prefix == null ) ? 0 : prefix.Post_RIB;
 
           var detailsPanel = '<table class="tableStyle"><thead><tr><th>Parameter</th><th class="text-left">Status</th></tr></thead>';
-          var noShow = ["$$hashKey", "Status", "IPv"];
+          var noShow = ["$$hashKey", "Status", "IPv", "peer_hash_id", "router_hash_id", "geo_ip_start"];
 
           $scope.PeerStatus = ((peer.isUp === 1) && (peer.isBMPConnected === 1)) ? "uptext" : "downtext";
+          console.log(peer)
 
           angular.forEach(peer, function (value, key) {
             if (noShow.indexOf(key) == -1) { //doesn't show certain fields
+
+              // Null or empty values are shown with "-"
+              if (value == null || value === "") {
+                value = "-"
+              }
+
               detailsPanel += (
                 '<tr>' +
                 '<td>' +

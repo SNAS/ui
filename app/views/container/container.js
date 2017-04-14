@@ -123,7 +123,14 @@ angular.module('bmpUiApp')
     // });
 
     $scope.location = $location;
-    $scope.$watch('location.path()', function(newPath) {
+    $scope.$watch('location.path()', function(newPath, oldPath) {
+
+      console.log(oldPath)
+      console.log(newPath)
+
+      if (newPath == "/global-view" && oldPath == "/global-view") {
+        console.log("SAME AGAIN !!!")
+      }
 
       switch ($state.current.name) {
         case "app.globalView":
@@ -135,6 +142,7 @@ angular.module('bmpUiApp')
         case "app.whoIs":
         case "app.adminView":
         case "app.lookingGlass":
+        case "app.bgp":
           $scope.category = "Dashboards";
           $scope.atlas = false;
           break;

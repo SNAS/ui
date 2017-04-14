@@ -8,7 +8,7 @@
  * Controller of the Whois page
  */
 angular.module('bmpUiApp')
-  .controller('WhoIsController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$stateParams', 'uiGridFactory', 
+  .controller('WhoIsController', ['$scope', 'apiFactory', '$http', '$timeout', '$interval', '$stateParams', 'uiGridFactory',
     function ($scope, apiFactory, $http, $timeout, $interval, $stateParams, uiGridFactory) {
 
     //DEBUG
@@ -16,6 +16,43 @@ angular.module('bmpUiApp')
 
     var whoIsGridInitHeight = 300;
     $scope.nodata = false;
+    $scope.modalContent = "";
+
+    function updateWhoisModal(asn) {
+
+      $scope.modalContent = "";
+
+      // *** Set API call modal dialog for whois ***
+
+      // *
+      var linkWhoisAsnWhois = "whois/asn/" + asn;
+
+      var textWhoisAsnWhois = "Whois Info - AS " + asn;
+      $scope.modalContent += apiFactory.createApiCallHtml(linkWhoisAsnWhois, textWhoisAsnWhois);
+
+      // *
+      var numberRegex = /^\d+$/;
+
+      if (numberRegex.exec($scope.searchValue) == null) {
+
+        var linkWhoisSearchResult = "whois/asn?where=w.as_name like '%" + $scope.searchValue +
+                                            "%' or w.org_name like '%" + $scope.searchValue + "%'&limit=1000";
+
+        var textWhoisSearchResult = "Search Result - '" + $scope.searchValue + "'";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkWhoisSearchResult, textWhoisSearchResult);
+      }
+
+      else {
+
+        var linkWhoisSearchResult = "whois/asn/" + $scope.searchValue;
+
+        var textWhoisSearchResult = "Search Result - '" + $scope.searchValue + "'";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkWhoisSearchResult, textWhoisSearchResult);
+      }
+
+
+
+    };
 
     $scope.whoIsGridOptions = {
       enableRowSelection: true,
@@ -124,6 +161,9 @@ angular.module('bmpUiApp')
       }
       else{
         $scope.nodata = true;
+
+        // Show whois modal as black modal.
+        $scope.modalContent = 'No API service is available for <b>"' + $scope.searchValue + '"</b>';
       }
     }
 
@@ -146,6 +186,10 @@ angular.module('bmpUiApp')
     function changeSelected () {
       var noShow = ["$$hashKey", "symbOrigin", "symbTransit"];
       var values = $scope.whoIsGridApi.selection.getSelectedRows()[0];
+
+      // Show whois modal with corresponding asn data.
+      updateWhoisModal(values['asn']);
+
       var showValues = '<table class="tableStyle">';
 
       angular.forEach(values, function (value, key) {
@@ -208,9 +252,11 @@ angular.module('bmpUiApp')
 
     //Init table data
     if($stateParams.as){
+      $scope.searchValue = $stateParams.as
       searchValue($stateParams.as);
     }
     else{
+      $scope.searchValue = "Cisco"
       searchValue("Cisco");
     }
   }]);

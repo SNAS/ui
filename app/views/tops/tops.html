@@ -21,7 +21,7 @@
       <div class="col-lg-5">
         <span>Start: <input type='text' class="form-control" id="startDatetimePicker"/></span>
       </div>
-      <div class="col-lg-2" style="height:34px;padding:27px 0px 0px 0px;">
+      <div class="col-lg-2" style="height:34px; padding:27px 0px 0px 0px;">
         <span type='text' class='label label-info' style="font-size:14px;">
           Duration: <span id="duration"></span>
         </span>
@@ -37,6 +37,14 @@
          </span>
       </div>
     </div>
+
+    <div class="row" style="padding:0px 25px 0px 25px; margin-top:10px">
+      <button style="display: block; margin: 0 auto;" type="submit" class="btn btn-sm btn-primary ng-click-active" data-toggle="modal" data-target="#topsModal">
+          <span class="glyphicon glyphicon-globe" aria-hidden="true">
+          </span>
+      </button>
+    </div>
+
     <div class="row" style="padding:0px 25px 0px 25px;margin-bottom:20px">
       <div class="col-lg-10" style="margin-top:30px">
         <div ng-show="filterPeerText||filterPrefixText">
@@ -157,7 +165,8 @@
           <h4 class="modal-title">Attention</h4>
         </div>
         <div class="modal-body">
-          <p>You are about to jump to Prefix Analysis with prefix: {{filterPrefixText}}.</p>
+          <p>You are about to jump to Prefix Analysis with prefix: {{filterPrefixText}} {{filterPeerText ? 'and peer: '+filterPeerText :''}}
+            between timestamps {{startTimestamp}} and {{endTimestamp}}.</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -167,7 +176,23 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 
+  <!-- Tops Modal -->
+  <div class="modal fade" id="topsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" ng-class="{'modal-sm': size == 'sm', 'modal-lg': size == 'lg'}">
+      <div class="modal-content" modal-transclude="">
+        <div class="modal-header ng-scope">
+          <h3 class="modal-title">Tops - API SERVICE</h3>
+        </div>
+
+        <div ng-bind-html="modalContent" class="modal-body ng-scope">
+
+        </div>
+
+        <div class="modal-footer ng-scope">
+          <button class="btn btn-warning modal-button" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
-
-
-

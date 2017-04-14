@@ -6,7 +6,7 @@
       <h4>BGP Peer</h4>
     </span>
 
-    <span class="col-xs-4">
+    <span class="col-xs-3">
       <h5>{{data.PeerName}} {{data.pseudoPeer ? '(Local RIB)' : ''}}</h5>
     </span>
 
@@ -16,6 +16,13 @@
 
     <span class="col-xs-1">
         <h5>{{data.PeerASN}}</h5>
+    </span>
+
+    <span class="col-xs-1">
+      <button type="submit" class="btn btn-sm btn-primary ng-click-active" data-toggle="modal" data-target="#peerModel">
+        <span class="glyphicon glyphicon-globe" aria-hidden="true">
+        </span>
+      </button>
     </span>
 
     <span class="col-xs-3">
@@ -92,4 +99,24 @@
       </div>
     </div>
   </div>
+
+  <!-- Peer Modal -->
+  <div class="modal fade" id="peerModel" tabindex="-1" role="dialog">
+    <div class="modal-dialog" ng-class="{'modal-sm': size == 'sm', 'modal-lg': size == 'lg'}">
+      <div class="modal-content" modal-transclude="">
+        <div class="modal-header ng-scope">
+          <h3 class="modal-title">{{ data.PeerName }} - API SERVICE</h3>
+        </div>
+
+        <div ng-bind-html="modalContent" class="modal-body ng-scope">
+
+        </div>
+
+        <div class="modal-footer ng-scope">
+          <button class="btn btn-warning modal-button" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

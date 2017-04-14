@@ -21,8 +21,11 @@ svg.title {
   .top-val {
     &.ng-binding {
     color: #AFAFAF;
-    width: 135px;
-    text-align: center;
+    //width: auto;
+    display: inline-block;
+    width: 200px;
+    margin-left: 20px;
+    //text-align: left;
     }
   }
 }

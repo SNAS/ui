@@ -13,8 +13,9 @@
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 
   <!-- bower:css -->
-  <link rel="stylesheet" href="bower_components/nvd3/src/nv.d3.css" />
+  <link rel="stylesheet" href="bower_components/nvd3/build/nv.d3.css" />
   <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css" />
+  <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.min.css" />
   <link rel="stylesheet" href="bower_components/bg-splitter/css/style.css" />
   <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
@@ -34,7 +35,8 @@
 
 </head>
 
-<body ng-app="bmpUiApp">
+<!--<body ng-app="bmpUiApp">-->
+<body>
 <!--[if lt IE 7]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
   your browser</a> to improve your experience.</p>
@@ -91,9 +93,10 @@
 <script src="bower_components/lodash/lodash.js"></script>
 <script src="bower_components/angular-google-maps/dist/angular-google-maps.js"></script>
 <script src="bower_components/d3/d3.js"></script>
-<script src="bower_components/nvd3/nv.d3.js"></script>
-<script src="bower_components/angular-nvd3/dist/angular-nvd3.min.js"></script>
+<script src="bower_components/nvd3/build/nv.d3.js"></script>
+<script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
 <script src="bower_components/angular-ui-grid/ui-grid.js"></script>
+<script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
 <script src="bower_components/bg-splitter/js/splitter.js"></script>
 <script src="bower_components/jquery-ui/jquery-ui.js"></script>
 <script src="bower_components/moment/moment.js"></script>
@@ -116,6 +119,8 @@
 <!-- endbuild -->
 
 <script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
+
+<script src="bower_components/socket.io-client/dist/socket.io.min.js"></script>
 
 <!-- mapbox - load before min script items -->
 <script src="https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js"></script>

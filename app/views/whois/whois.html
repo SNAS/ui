@@ -5,6 +5,11 @@
     AS Number or AS Name:
     <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Cisco"/>
     <span class="help-block">Example: 109/Cisco</span>
+
+    <button type="submit" class="btn btn-sm btn-primary ng-click-active" data-toggle="modal" data-target="#whoisModal">
+        <span class="glyphicon glyphicon-globe" aria-hidden="true">
+        </span>
+    </button>
   </div>
 
   <h3 ng-show="nodata">No AS matches this search</h3>
@@ -35,4 +40,24 @@
     </div>
   </div>
     </div>
+
+  <!-- Whois Modal -->
+  <div class="modal fade" id="whoisModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" ng-class="{'modal-sm': size == 'sm', 'modal-lg': size == 'lg'}">
+      <div class="modal-content" modal-transclude="">
+        <div class="modal-header ng-scope">
+          <h3 class="modal-title">Whois - API SERVICE</h3>
+        </div>
+
+        <div ng-bind-html="modalContent" class="modal-body ng-scope">
+
+        </div>
+
+        <div class="modal-footer ng-scope">
+          <button class="btn btn-warning modal-button" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
