@@ -9,8 +9,12 @@
  */
 angular.module('bmpUiApp')
   .factory('apiFactory', function($http, $q, $location, $cookies, ConfigService) {
-    var host = ConfigService.openbmp.host;
-    var port = ConfigService.openbmp.port;
+
+    //http://demo.openbmp.org:8001/db_rest/v1/
+    //If other host and port for db_rest is desired, change below.
+    var host = $location.host();
+    var port = $location.port();
+
     var urlBase = 'http://' + host + ':' + port + '/db_rest/v1/';
     var limit = 1000;
     var apiFactory = {};
