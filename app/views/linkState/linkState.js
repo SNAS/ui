@@ -369,19 +369,26 @@ angular.module('bmpUiApp')
               angular.forEach(links, function (link) {
 
                 var sourceNode, targetNode;
+                console.log("NODES LENGTH: " + nodes.length)
                 angular.forEach(nodes, function (node) {
-                  if (node.id == link.source)
+
+                  if (node.id == link.source) {
                     sourceNode = node;
-                  if (node.id == link.target)
+                    //targetNode = nodes[0];
+                  }
+
+                  if (node.id == link.target) {
                     targetNode = node;
+                    //sourceNode = nodes[1];
+                  }
+
+                  console.log(node);
+                  console.log(link);
+                  console.log("-------------")
                 });
 
-                console.log(sourceNode)
-                console.log(targetNode)
-                console.log("---------------------------------")
-
                 if (sourceNode && targetNode) {
-                  console.log("IF IN")
+
                   var polyline = new L.Polyline([L.latLng(sourceNode.latitude, sourceNode.longitude), L.latLng(targetNode.latitude, targetNode.longitude)], {
                     color: '#484848',
                     weight: 4,
@@ -401,7 +408,7 @@ angular.module('bmpUiApp')
                   $scope.markers[targetNode.id].options.connectedPolylines.push(polyline);
                 }
 
-
+                console.log("*******************")
               });
 
               console.log("ABC");
