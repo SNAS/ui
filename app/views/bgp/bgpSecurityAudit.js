@@ -9,6 +9,7 @@
  */
 angular.module('bmpUiApp').controller('BGPSecurityAuditController',
   function($scope, $stateParams, bgpDataService, ConfigService, socket, uiGridConstants, $timeout) {
+    $scope.api_errors = [];
 
     const viewNames = {
       martians: "Martian anomalies",
@@ -60,6 +61,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
 
     function loadAnomalies() {
       $scope.loadingAnomalies = true;
+      $scope.api_errors = [];
       bgpDataService.getAnomaliesTypes().promise.then(function(result) {
 //        console.debug("anomalies types", result);
 
@@ -113,11 +115,13 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
           }, function(error) {
             console.warn(error);
             $scope.loadingAnomalies = false;
+            $scope.api_errors.push(error);
           });
         });
       }, function(error) {
         console.warn(error);
         $scope.loadingAnomalies = false;
+        $scope.api_errors.push(error);
       });
     }
 

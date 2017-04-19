@@ -68,9 +68,19 @@
     </div>
   </div>
 
+  <!-- THIS SECTION DISPLAYS ERRORS -->
+  <div class="main-area" ng-show="api_errors.length > 0">
+    <div class="col-lg-12 alert alert-danger">
+      <div ng-repeat="api_error in api_errors">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        {{api_error}}
+      </div>
+    </div>
+  </div>
+
   <!-- THIS SECTION IS FOR DISPLAYING INFORMATION ABOUT ALL AS NODES -->
 
-  <div class="main-area row" ng-show="displayAllNodes" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
+  <div class="main-area row" ng-show="displayAllNodes && api_errors.length === 0" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
     <div class="table-container col-lg-12 merge-columns">
       <div class="col-lg-8">
         <h3>Prefixes originated and transitted per AS</h3>
@@ -139,7 +149,7 @@
 
   <!-- THIS SECTION DISPLAYS A D3 GRAPH FOR A SPECIFIC AS NODE -->
 
-  <div class="main-area row" ng-show="displayASNInfo">
+  <div class="main-area row" ng-show="displayASNInfo && api_errors.length === 0">
     <!-- force directed graph -->
     <div class="col-lg-12">
       <div class="table-container" id="forceDirectedGraph" data-ng-show="showDirectedGraph">
@@ -200,7 +210,7 @@
   <!-- THIS SECTION DISPLAYS INFORMATION FOR A SPECIFIC PREFIX -->
 
   <!--<div class="main-area row" ng-show="displayASNInfo">-->
-  <div class="main-area row" ng-show="!nodata && !obj.maximiseForceDirectedGraph && displayPrefixInfo">
+  <div class="main-area row" ng-show="!nodata && api_errors.length === 0 && !obj.maximiseForceDirectedGraph && displayPrefixInfo">
     <!-- prefixes -->
     <div class="col-lg-12">
       <div class="table-container">
@@ -216,7 +226,7 @@
 
   <!-- THIS SECTION DISPLAYS A D3 GRAPH FOR A SPECIFIC PREFIX -->
 
-  <div class="main-area row" ng-show="displayPrefixInfo">
+  <div class="main-area row" ng-show="displayPrefixInfo && api_errors.length === 0">
     <!-- AS paths graph -->
     <div class="col-lg-12">
       <div class="table-container" id="asPathsGraph">

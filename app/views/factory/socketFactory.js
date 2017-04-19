@@ -14,6 +14,10 @@ angular.module('bmpUiApp').factory('socket', ['$rootScope', 'ConfigService',
       // pass a socket ID and an object containing fields named 'host' and 'port'
       connect: function(id, conf) {
         socket[id] = io.connect('http://' + conf.host + ':' + conf.port);
+        socket[id].on('connect_error', function(err) {
+          // handle server error here
+          console.error('Error connecting to socket.io server');
+        });
       },
       on: function (id, eventName, callback) {
         socket[id].on(eventName, function () {

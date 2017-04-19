@@ -92,6 +92,7 @@ angular.module('bmpUiApp').controller('BGPController',
     }
 
     $scope.showASGraph = false;
+    $scope.api_errors = [];
     $scope.loadASGraph = function() {
       $scope.showASGraph = true;
       getASNodeAndLinks($scope.searchValue);
@@ -102,7 +103,7 @@ angular.module('bmpUiApp').controller('BGPController',
       $scope.cancelAllHttpRequests();
       $scope.forceDirectedGraph.data = {nodes: [], links: []};
       $scope.showASGraph = false;
-
+      $scope.api_errors = [];
       $scope.asInfo = {};
       $scope.displayASNInfo = false;
       $scope.showDirectedGraph = false;
@@ -451,9 +452,11 @@ angular.module('bmpUiApp').controller('BGPController',
           clearRequest(asInfoRequest);
         }, function(error) {
           console.warn(error);
+          $scope.api_errors.push(error);
         });
       }, function(error) {
         console.warn(error);
+        $scope.api_errors.push(error);
       });
     }
 
@@ -483,7 +486,9 @@ angular.module('bmpUiApp').controller('BGPController',
           $scope.loadingPrefixes = false; // stop loading
           clearRequest(request);
         }, function(error) {
+          $scope.loadingPrefixes = false; // stop loading
           console.warn(error);
+          $scope.api_errors.push(error);
         }
       );
     }
@@ -509,6 +514,7 @@ angular.module('bmpUiApp').controller('BGPController',
           }, function(error) {
             console.warn(error);
             $scope.loadingPreview = false;
+            $scope.api_errors.push(error);
           }
         );
       }
@@ -536,6 +542,7 @@ angular.module('bmpUiApp').controller('BGPController',
         }, function(error) {
           console.warn(error);
           $scope.loadingPrefixes = false; // stop loading
+          $scope.api_errors.push(error);
         }
       );
     }
@@ -566,6 +573,8 @@ angular.module('bmpUiApp').controller('BGPController',
           clearRequest(request);
         }, function(error) {
           console.warn(error);
+          $scope.loadingASList = false;
+          $scope.api_errors.push(error);
         }
       );
     }    
@@ -880,6 +889,7 @@ angular.module('bmpUiApp').controller('BGPController',
 
       },
       changedDates: function() {
+        $scope.api_errors = [];
         $timeout(function() {
           if ($scope.searchValue === "") {
             displayAllASNodes();
@@ -1011,11 +1021,16 @@ angular.module('bmpUiApp').controller('BGPController',
 
     var uiServer = ConfigService.bgpDataService;
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";
-    socket.connect(SOCKET_IO_SERVER, uiServer);
-    socket.on(SOCKET_IO_SERVER, 'dataUpdate', function(data) {
-      console.log("dataUpdate", data);
-      updateNodeData(data);
-    });
+    try {
+      socket.connect(SOCKET_IO_SERVER, uiServer);
+      socket.on(SOCKET_IO_SERVER, 'dataUpdate', function(data) {
+        console.log("dataUpdate", data);
+        updateNodeData(data);
+      });
+    }
+    catch(e) {
+      console.error("socket.io error", e);
+    }
 
     // initialisation
     $(function () {
