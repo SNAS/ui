@@ -87,7 +87,7 @@
 
   .nv-container {
     position: relative;
-    #nodeTooltips {
+    #nodeTooltips, #linkTooltips {
       position: absolute;
       top: 0;
       border: 1px solid #ccc;

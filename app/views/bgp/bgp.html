@@ -180,8 +180,16 @@
           <nvd3 options="forceDirectedGraph.options" data="forceDirectedGraph.data" class="with-3d-shadow with-transitions"></nvd3>
           <div id="nodeTooltips" class="hideTooltip">
             <table>
-              <tr ng-repeat="field in tooltipFields" id="field-{{field}}">
-                <td class="field">{{field}}</td>
+              <tr ng-repeat="field in nodeTooltipFields" id="node-field-{{field}}">
+                <td class="field">{{nodeTooltipDisplayField(field)}}</td>
+                <td class="value">-</td>
+              </tr>
+            </table>
+          </div>
+          <div id="linkTooltips" class="hideTooltip">
+            <table>
+              <tr ng-repeat="field in linkTooltipFields" id="link-field-{{field.name}}">
+                <td class="field">{{field.displayName}}</td>
                 <td class="value">-</td>
               </tr>
             </table>

@@ -254,12 +254,12 @@ angular.module('bmpUiApp').controller('BGPController',
     var minLinkWidth = 1;
     var maxLinkWidth = 4;
     var linkWidthLinearScale = d3.scale.linear()
-      .domain([0,10000])
+      .domain([0,1])
       .range([minLinkWidth, maxLinkWidth]);
     var minLinkLength = 3 * maxRadius;
     var maxLinkLength = 4 * minLinkLength;
     var linkLengthLinearScale = d3.scale.linear()
-      .domain([0,10000])
+      .domain([0,1])
       .range([minLinkLength, maxLinkLength]);
 
     function getDataFromArray(result, index, key) {
@@ -329,15 +329,15 @@ angular.module('bmpUiApp').controller('BGPController',
         node.weight = node.origins;
       });
       $scope.forceDirectedGraph.data = data;
-      console.log("forceDirectedGraph data", $scope.forceDirectedGraph.data);
-      console.debug("links", JSON.stringify($scope.forceDirectedGraph.data.links));
-      console.debug("nodes", JSON.stringify($scope.forceDirectedGraph.data.nodes));
-      var linkWeight = function(link) { return link.sum_changes; };
+//      console.log("forceDirectedGraph data", $scope.forceDirectedGraph.data);
+//      console.debug("links", JSON.stringify($scope.forceDirectedGraph.data.links));
+//      console.debug("nodes", JSON.stringify($scope.forceDirectedGraph.data.nodes));
+      var linkWeight = function(link) { return link.change_frequency; };
       var minWeight = d3.min(data.links.map(linkWeight));
       var maxWeight = d3.max(data.links.map(linkWeight));
       linkWidthLinearScale.domain([0, maxWeight]);
       linkLengthLinearScale.domain([minWeight, maxWeight]);
-      console.log("minWeight %d maxWeight %d", minWeight, maxWeight);
+//      console.log("minWeight %d maxWeight %d", minWeight, maxWeight);
     }
 
 
@@ -755,19 +755,16 @@ angular.module('bmpUiApp').controller('BGPController',
         color: "#84ca50"
       }
     ];
+    // thresholds corresponding to the following colours: green, yellow, orange
+    var changesPerHourThresholds = [0.000278, 0.000556, 0.001389];
+    // change_frequency indicates the number of changes divided by an hour (3600 seconds)
     function linkStabilityIndex(stability) {
       var index = 0;
-      // green
-      if (stability <= 25) {
-        index = 3;
-      }
-      // yellow
-      else if (stability <= 50) {
-        index = 2;
-      }
-      // orange
-      else if (stability <= 100) {
-        index = 1;
+      for (var i = 0 ; i < changesPerHourThresholds.length ; i++) {
+        if (stability <= changesPerHourThresholds[i]) {
+          index = 3-i;
+          break;
+        }
       }
       // else red
       return index;
@@ -786,7 +783,22 @@ angular.module('bmpUiApp').controller('BGPController',
       var defaultScrollbarWidth = 15;
       return parentDiv.width() - defaultScrollbarWidth;
     }
-    $scope.tooltipFields = [ "asn", "asName", "routes", "origins", "changes" ];
+    $scope.nodeTooltipFields = [ "asn", "asName", "routes", "origins", "changes" ];
+    const nodeTooltipDisplayFields = { changes: "change count" };
+    $scope.nodeTooltipDisplayField = function(field) {
+      return nodeTooltipDisplayFields[field] !== undefined ? nodeTooltipDisplayFields[field] : field;
+    };
+    function linkFieldValue(tooltipData, field) {
+      return tooltipData[field];
+    }
+    $scope.linkTooltipFields = [
+      { name: "sourceASN", displayName: "source", value: function(tooltipData) { return linkFieldValue(tooltipData, "sourceASN"); } },
+      { name: "targetASN", displayName: "target", value: function(tooltipData) { return linkFieldValue(tooltipData, "targetASN"); } },
+      { name: "change_frequency", displayName: "change frequency", value: function(tooltipData) { return linkFieldValue(tooltipData, "change_frequency"); } },
+      { name: "changeCountPerHour", displayName: "change count per hour", value: function(tooltipData) {
+        return Math.round(tooltipData["change_frequency"] * 3600);
+      } }
+    ];
     $scope.forceDirectedGraph = {
       options: {
         chart: {
@@ -804,19 +816,19 @@ angular.module('bmpUiApp').controller('BGPController',
           },
           linkExtras: function(link) {
             link && link
-              .style("stroke-width", function(d) { return linkWidthLinearScale(d.sum_changes); })
-              .style("stroke", function(d) { return linkStabilityColor(d.sum_changes); })
+              .style("stroke-width", function(d) { return linkWidthLinearScale(d.change_frequency); })
+              .style("stroke", function(d) { return linkStabilityColor(d.change_frequency); })
               .attr("marker-end", function(d) {
-                var stabilityLabel = linkStabilityLabel(d.sum_changes);
+                var stabilityLabel = linkStabilityLabel(d.change_frequency);
                 return "url(#arrow-"+stabilityLabel+")";
               });
           },
           linkColorSet: $scope.stabilityColors,
           linkColor: function(d) {
-            return linkStabilityColor(d.sum_changes);
+            return linkStabilityColor(d.change_frequency);
           },
           linkDist: function(link) {
-            return linkLengthLinearScale(link.sum_changes);
+            return linkLengthLinearScale(link.change_frequency);
           },
           linkStrength: 0.5,
           charge: -300,
@@ -837,31 +849,51 @@ angular.module('bmpUiApp').controller('BGPController',
               displayNode: function(d) { return d.origins > 0; }
             }
           ],
-          nvTooltipFields: $scope.tooltipFields,
+          nvNodeTooltipFields: $scope.nodeTooltipFields,
           useNVTooltip: false,
-          tooltipCallback: function(hideTooltip, tooltipData) {
+          nodeTooltipCallback: function(hideTooltip, tooltipData) {
 //            console.debug("tooltipData", tooltipData);
             var nodeTooltip = $("#nodeTooltips");
             if (!hideTooltip) {
+              // make sure the link tooltips are hidden
+              $("#linkTooltips").addClass("hideTooltip");
+
               // get the AS name if we don't already know it
               if (tooltipData.asName === undefined) {
+                tooltipData.asName = "loading...";
                 apiFactory.getWhoIsASN(tooltipData.asn).success(function(result) {
                   $scope.loadingWhoIs = false;
                   var data = result.gen_whois_asn.data;
-                  tooltipData.asName = data[0].as_name;
+                  tooltipData.asName = data.length > 0 ? data[0].as_name : "unknown";
                 }).error(function (error) {
                   console.log(error.message);
                   tooltipData.asName = "unknown";
                 });
               }
 
-              for (var i = 0 ; i < $scope.tooltipFields.length ; i++) {
-                var field = $scope.tooltipFields[i];
-                $("#field-"+field+" .value").text(tooltipData[field]);
+              for (var i = 0 ; i < $scope.nodeTooltipFields.length ; i++) {
+                var field = $scope.nodeTooltipFields[i];
+                $("#node-field-"+field+" .value").text(tooltipData[field]);
                 nodeTooltip.removeClass("hideTooltip");
               }
             } else {
-              nodeTooltip.addClass("hideTooltip")
+              nodeTooltip.addClass("hideTooltip");
+            }
+          },
+          linkTooltipCallback: function(hideTooltip, tooltipData) {
+//            console.debug("linkTooltipData", tooltipData);
+            var linkTooltip = $("#linkTooltips");
+            if (!hideTooltip) {
+              // make sure the node tooltips are hidden
+              $("#nodeTooltips").addClass("hideTooltip");
+
+              for (var i = 0 ; i < $scope.linkTooltipFields.length ; i++) {
+                var field = $scope.linkTooltipFields[i].name;
+                $("#link-field-"+field+" .value").text($scope.linkTooltipFields[i].value(tooltipData));
+                linkTooltip.removeClass("hideTooltip");
+              }
+            } else {
+              linkTooltip.addClass("hideTooltip");
             }
           },
           nodeIdField: "asn",

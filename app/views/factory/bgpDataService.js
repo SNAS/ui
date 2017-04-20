@@ -64,13 +64,12 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         });
       return { promise: promise, cancel: cancel(canceller) };
     },
-//    getASStats: function(asn, end) {
-//      return $http.get(bgpAPI + "/as/stats/"+asn+(end !== undefined ? "?end="+end : ""));
-//    },
-//    // unfinished
-//    getLinkStats: function(asn, end) {
-//      return $http.get(bgpAPI + "/link/stats/"+asn+(end !== undefined ? "?end="+end : ""));
-//    },
+    getASStats: function(asn, start, end) {
+      return $http.get(bgpAPI + "/as/stats/"+asn+"?start="+start+"&end="+end);
+    },
+    getLinkStats: function(source, target, end) {
+      return $http.get(bgpAPI + "/link/stats/"+source+"/"+target+(end !== undefined ? "?end="+end : ""));
+    },
     getASPaths: function(asn, start, end) {
       var parameters = "";
       if (start !== undefined) {

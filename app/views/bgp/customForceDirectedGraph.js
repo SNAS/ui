@@ -27,9 +27,10 @@ nv.models.customForceDirectedGraph = function() {
     , linkColor = "#ccc"
     , initCallback = function(svgContainer) { /* Do nothing */}
   // you can specify the list of fields you want to show when hovering a node e.g. ["name", "value"]
-    , nvTooltipFields = null
+    , nvNodeTooltipFields = null
     , useNVTooltip = true
-    , tooltipCallback = function(hide, tooltipData) { /* Do nothing */}
+    , nodeTooltipCallback = function(hide, tooltipData) { /* Do nothing */}
+    , linkTooltipCallback = function(hide, tooltipData) { /* Do nothing */}
     , nodeCircles = null
     , linkColorSet = []// used for the arrows' colors to match the link colors, should the user decide to use marker-end to display an arrow
     , nodeIdField = "id"
@@ -146,7 +147,7 @@ nv.models.customForceDirectedGraph = function() {
       data.nodes.forEach(function(node) {
         var keys = Object.keys(node);
         keys.forEach(function(key) {
-          if (nvTooltipFields === null || nvTooltipFields.indexOf(key) !== -1) {
+          if (nvNodeTooltipFields === null || nvNodeTooltipFields.indexOf(key) !== -1) {
             nodeFieldSet.add(key);
           }
         });
@@ -204,6 +205,14 @@ nv.models.customForceDirectedGraph = function() {
         .attr("id", linkId)
         .attr("class", "nv-force-link")
         .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+      link
+        .on("mouseover", function(l) {
+          linkTooltipCallback(false, l);
+        })
+        .on("mouseout", function(d) {
+          linkTooltipCallback(true);
+        });
 
       function nodeId(node) {
         return "node-" + node.asn;
@@ -274,13 +283,13 @@ nv.models.customForceDirectedGraph = function() {
           if (useNVTooltip) {
             tooltip.data(evt).hidden(false);
           }
-          tooltipCallback(false, evt);
+          nodeTooltipCallback(false, evt);
         })
         .on("mouseout", function(d) {
           if (useNVTooltip) {
             tooltip.hidden(true);
           }
-          tooltipCallback(true);
+          nodeTooltipCallback(true);
         });
 
 
@@ -560,14 +569,17 @@ nv.models.customForceDirectedGraph = function() {
       console.log("setting initCallback");
       initCallback = _;
     }},
-    nvTooltipFields: {get: function() { return nvTooltipFields; }, set: function(_) {
-      nvTooltipFields = _;
-    }},
     useNVTooltip: {get: function() { return useNVTooltip; }, set: function(_) {
       useNVTooltip = _;
     }},
-    tooltipCallback: {get: function() { return tooltipCallback; }, set: function(_) {
-      tooltipCallback = _;
+    nvNodeTooltipFields: {get: function() { return nvNodeTooltipFields; }, set: function(_) {
+      nvNodeTooltipFields = _;
+    }},
+    nodeTooltipCallback: {get: function() { return nodeTooltipCallback; }, set: function(_) {
+      nodeTooltipCallback = _;
+    }},
+    linkTooltipCallback: {get: function() { return linkTooltipCallback; }, set: function(_) {
+      linkTooltipCallback = _;
     }},
     nodeCircles: { get: function() { return nodeCircles;}, set: function(_) { nodeCircles = _; }},
     linkColorSet: { get: function() { return linkColorSet;}, set: function(_) { linkColorSet = _; }},
