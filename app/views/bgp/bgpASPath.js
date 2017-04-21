@@ -8,7 +8,7 @@
  * Controller for the BGP AS Path page
  */
 angular.module('bmpUiApp').controller('BGPASPathController',
-  function($scope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout) {
+  function($scope, $rootScope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout) {
 
     var uiServer = ConfigService.bgpDataService;
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";
@@ -16,6 +16,8 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     socket.on(SOCKET_IO_SERVER, 'dataUpdate', function(data) {
       console.log("dataUpdate", data);
     });
+
+    $rootScope.dualWindow.noTitleBar = true;
 
     // initialisation
     $(function () {

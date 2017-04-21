@@ -15,6 +15,9 @@
           <li active-item><a ui-sref="app.bgpSecurityAudit" ui-sref-opts="{reload: true}">BGP Security Audit</a>
             <dual-control d="dualWindow" l="bgpSecurityAudit"></dual-control>
           </li>
+          <li active-item><a ui-sref="app.bgpASPath" ui-sref-opts="{reload: true}">BGP AS Path</a>
+            <dual-control d="dualWindow" l="bgpASPath"></dual-control>
+          </li>
         </ul>
       </div>
       <div class="nav-section">
@@ -104,7 +107,7 @@
   <div class="main">
 
     <!-- HEADER -->
-    <nav class="navbar" ng-class="{hidden: dualWindow.active}">
+    <nav class="navbar" ng-class="{hidden: dualWindow.active || dualWindow.noTitleBar}">
       <div class="container-fluid">
         <!--<div class="navbar-header">-->
         <!--<button type="button" ng-click="toggleMenu()" id="menu-toggle" class="navbar-toggle">-->
@@ -133,7 +136,7 @@
     <!-- END HEADER -->
 
     <!-- MAIN -->
-    <div class="main-container {{page}}" ng-class="{'no-padding': dualWindow.active || atlas}">
+    <div class="main-container {{page}}" ng-class="{'no-padding': dualWindow.active || dualWindow.noTitleBar || atlas}">
       <div ui-view></div>
       <!-- FOOTER -->
       <div class="footer">

@@ -1,3 +1,90 @@
+// Oswald font
+$oswald-font-path: "../../fonts/Oswald";
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 200;
+  src: local('Oswald ExtraLight'), local('Oswald-ExtraLight'), url('#{$oswald-font-path}/Oswald-Light.ttf'); /* IE9 Compat Modes */
+  src: local('Oswald ExtraLight'), local('Oswald-ExtraLight'),
+  url('#{$oswald-font-path}/Oswald-ExtraLight.ttf') format('embedded-opentype'), /* IE6-IE8 */
+  url('#{$oswald-font-path}/Oswald-ExtraLight.ttf') format('woff2'), /* Super Modern Browsers */
+  url('#{$oswald-font-path}/Oswald-ExtraLight.ttf') format('woff'), /* Pretty Modern Browsers */
+  url('#{$oswald-font-path}/Oswald-ExtraLight.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('#{$oswald-font-path}/Oswald-ExtraLight.ttf') format('svg'); /* Legacy iOS */
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Oswald Light'), local('Oswald-Light'), url('#{$oswald-font-path}/Oswald-Light.ttf'); /* IE9 Compat Modes */
+  src: local('Oswald Light'), local('Oswald-Light'),
+  url('#{$oswald-font-path}/Oswald-Light.ttf') format('embedded-opentype'), /* IE6-IE8 */
+  url('#{$oswald-font-path}/Oswald-Light.ttf') format('woff2'), /* Super Modern Browsers */
+  url('#{$oswald-font-path}/Oswald-Light.ttf') format('woff'), /* Pretty Modern Browsers */
+  url('#{$oswald-font-path}/Oswald-Light.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('#{$oswald-font-path}/Oswald-Light.ttf') format('svg'); /* Legacy iOS */
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Oswald Regular'), local('Oswald-Regular'), url('#{$oswald-font-path}/Oswald-Regular.ttf'); /* IE9 Compat Modes */
+  src: local('Oswald Regular'), local('Oswald-Regular'),
+  url('#{$oswald-font-path}/Oswald-Regular.ttf') format('embedded-opentype'), /* IE6-IE8 */
+  url('#{$oswald-font-path}/Oswald-Regular.ttf') format('woff2'), /* Super Modern Browsers */
+  url('#{$oswald-font-path}/Oswald-Regular.ttf') format('woff'), /* Pretty Modern Browsers */
+  url('#{$oswald-font-path}/Oswald-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('#{$oswald-font-path}/Oswald-Regular.ttf') format('svg'); /* Legacy iOS */
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Oswald Medium'), local('Oswald-Medium'), url('#{$oswald-font-path}/Oswald-Light.ttf'); /* IE9 Compat Modes */
+  src: local('Oswald Medium'), local('Oswald-Medium'),
+  url('#{$oswald-font-path}/Oswald-Medium.ttf') format('embedded-opentype'), /* IE6-IE8 */
+  url('#{$oswald-font-path}/Oswald-Medium.ttf') format('woff2'), /* Super Modern Browsers */
+  url('#{$oswald-font-path}/Oswald-Medium.ttf') format('woff'), /* Pretty Modern Browsers */
+  url('#{$oswald-font-path}/Oswald-Medium.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('#{$oswald-font-path}/Oswald-Medium.ttf') format('svg'); /* Legacy iOS */
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Oswald SemiBold'), local('Oswald-SemiBold'), url('#{$oswald-font-path}/Oswald-Light.ttf'); /* IE9 Compat Modes */
+  src: local('Oswald SemiBold'), local('Oswald-SemiBold'),
+  url('#{$oswald-font-path}/Oswald-SemiBold.ttf') format('embedded-opentype'), /* IE6-IE8 */
+  url('#{$oswald-font-path}/Oswald-SemiBold.ttf') format('woff2'), /* Super Modern Browsers */
+  url('#{$oswald-font-path}/Oswald-SemiBold.ttf') format('woff'), /* Pretty Modern Browsers */
+  url('#{$oswald-font-path}/Oswald-SemiBold.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('#{$oswald-font-path}/Oswald-SemiBold.ttf') format('svg'); /* Legacy iOS */
+}
+
+/* mixins */
+@mixin optional-at-root($sel) {
+@at-root #{if(not &, $sel, selector-append(&, $sel))} {
+    @content;
+  }
+}
+@mixin placeholder {
+  @include optional-at-root('::-webkit-input-placeholder') {
+    @content;
+  }
+
+  @include optional-at-root(':-moz-placeholder') {
+    @content;
+  }
+
+  @include optional-at-root('::-moz-placeholder') {
+    @content;
+  }
+
+  @include optional-at-root(':-ms-input-placeholder') {
+    @content;
+  }
+}
+
 .pnda-logo {
   width: 20px;
   margin-right: 6px;
@@ -474,6 +561,136 @@
 
   .anomaly-details+.anomaly-details {
     margin-top: 20px;
+  }
+
+  &.ASPathView {
+    font-family: 'Oswald';
+
+    $top-bar-height: 143px;
+    $space-below-title: 50px;
+    $title-font-size: 53px;
+    $title-font-size-augmented: 65px;
+    $top-bar-bottom-order-height: 5px;
+    $search-bar-height: 79px;
+    $margin-below-search: 7px;
+    $search-tip-height: 12px;
+    $search-tip-font-size: 15px;
+    $grey-text: #a2a2a2;
+
+    input {
+      height: $search-bar-height;
+      font-size: $title-font-size-augmented;
+      text-transform: uppercase;
+      margin-bottom: $margin-below-search;
+      padding: 6px 12px 10px;
+      border: 1px solid #d7d7d7;
+      border-radius: 2px;
+      color: #000;
+      @include placeholder {
+        color: #ddd;
+      }
+    }
+
+    .top-bar {
+      height: $top-bar-height + $top-bar-bottom-order-height;
+      margin-bottom: 32px;
+      //border-bottom: 5px solid black;
+      .title-container {
+        &:before {
+          content: '';
+          display: inline-block;
+          height: $top-bar-height - $space-below-title;
+        }
+        height: $top-bar-height;
+        font-size: $title-font-size;
+        line-height: $title-font-size;
+        text-transform: uppercase;
+
+        .title {
+          &:before {
+            content: '';
+            display: inline-block;
+          }
+          display: inline-block;
+          font-size: $title-font-size-augmented;
+        }
+      }
+      .search {
+        float: right;
+        width: 355px;
+        position: absolute;
+        top: $top-bar-height - $search-bar-height - $margin-below-search - 27px;
+        right: 15px;
+        .search-tip-container {
+          &:before {
+            content: '';
+            display: inline-block;
+            height: 16px;
+          }
+          display: inline-block;
+          height: 27px;
+          .search-tip {
+            display: inline-block;
+            font-size: $search-tip-font-size;
+            height: $search-tip-height + 1px;
+            line-height: $search-tip-height;
+            letter-spacing: 0.1px;
+            text-transform: uppercase;
+            position: absolute;
+            bottom: 15px;
+            .search-tip-example {
+              color: $grey-text;
+              display: inline-block;
+            }
+          }
+        }
+      }
+      .line {
+        height: $top-bar-bottom-order-height;
+        background-color: #000;
+      }
+    }
+    .split-view {
+      position: relative;
+      div.split-two {
+        &:first-of-type {
+          padding-right: 0;
+          border-right: 1px dashed black;
+        }
+        &:last-of-type {
+          padding-left: 0;
+        }
+        .input-container {
+          padding: 300px 0;
+          border: none;
+
+          input.form-control {
+            text-transform: none;
+            border: none;
+            display: block;
+            width: 100%;
+            line-height: 1.428571429;
+            background-color: transparent;
+            background-image: none;
+            box-shadow: none;
+            padding: 0 50px;
+            text-align: center;
+          }
+        }
+      }
+      $btn-search-connections-width: 300px;
+      .btn-search-connections {
+        position: absolute;
+        bottom: 150px;
+        left: 50%;
+        background-color: #000;
+        color: #fff;
+        text-transform: uppercase;
+        font-size: 25px;
+        width: $btn-search-connections-width;
+        margin-left: -$btn-search-connections-width/2;
+      }
+    }
   }
 }
 
