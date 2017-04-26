@@ -6,7 +6,12 @@
       <div class="title">BGP</div>
     </div>
     <div class="search">
-      <input type='text' class="form-control" id="searchValue" ng-model="searchValue" placeholder="search"/>
+      <input type='text' class="form-control" id="searchValue" ng-model="searchValue" placeholder="search"
+             typeahead="as_name for as_name in getSuggestions($viewValue)"
+             typeahead-loading="loadingLocations"
+             typeahead-no-results="noResults"
+             typeahead-wait-ms="300"
+             typeahead-on-select="onSelectSearch($label)"/>
       <div class="search-tip-container">
         <div class="search-tip">
           Type AS number or prefix
@@ -17,19 +22,46 @@
     <div class='line'></div>
   </div>
 
+  <!--<button ng-click="toggleMiddleColumn()">test</button>-->
+
   <div class="split-view">
-    <div class="col-lg-6 split-two">
+    <div class="col-lg-5 split-two left-column">
       <div class="input-container">
-        <input type='text' class="form-control" id="as1" ng-model="asn1Value" placeholder="Enter Network 1"/>
+        <input type='text' class="form-control" id="as1" ng-model="as1_name"
+               ng-keypress="onKeyPress('as1', $event)" ng-keydown="handleBackspace('as1', $event)"
+               placeholder="Enter Network 1"
+               typeahead="as_name for as_name in getSuggestions($viewValue)"
+               typeahead-loading="loadingLocations"
+               typeahead-no-results="noResults"
+               typeahead-wait-ms="300"
+               typeahead-on-select="onSelect('as1', $label)"/>
+        <input type='text' class="form-control readonly" ng-model="as1_number" readonly />
       </div>
     </div>
-    <div class="col-lg-6 split-two">
+    <div class="col-lg-2 middle-column">
+      <div class="buttons">
+        <button class="btn btn-default" ng-repeat="(key, buttonActive) in buttons" ng-class="{'btn-active': buttonActive}" ng-click="onButtonClick(key)">{{key}}</button>
+      </div>
+      <div class="as-path" ng-repeat="path in asPathGraph.paths">
+        <div class="dashed-line"></div>
+        <div ng-repeat="(index, asn) in path.as_path" class="circle" ng-style="{left: path.positions[index]}">{{asn}}</div>
+      </div>
+    </div>
+    <div class="col-lg-5 split-two right-column">
       <div class="input-container">
-        <input type='text' class="form-control" id="as2" ng-model="asn2Value" placeholder="Enter Network 2"/>
+        <input type='text' class="form-control" id="as2" ng-model="as2_name"
+               ng-keypress="onKeyPress('as2', $event)" ng-keydown="handleBackspace('as2', $event)"
+               placeholder="Enter Network 2"
+               typeahead="as_name for as_name in getSuggestions($viewValue)"
+               typeahead-loading="loadingLocations"
+               typeahead-no-results="noResults"
+               typeahead-wait-ms="300"
+               typeahead-on-select="onSelect('as2', $label)"/>
+        <input type='text' class="form-control readonly" ng-model="as2_number" readonly />
       </div>
     </div>
     <div class="col-lg-12">
-      <button class="btn btn-default btn-search-connections">Search connections</button>
+      <button class="btn btn-default btn-search-connections" ng-disabled="!readyToSearchConnections" ng-click="toggleMiddleColumn()">Search connections</button>
     </div>
   </div>
 

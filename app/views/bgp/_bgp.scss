@@ -653,12 +653,18 @@ $oswald-font-path: "../../fonts/Oswald";
     .split-view {
       position: relative;
       div.split-two {
-        &:first-of-type {
+        width: 50%;
+        &.left-column {
           padding-right: 0;
           border-right: 1px dashed black;
         }
-        &:last-of-type {
+        &.right-column {
           padding-left: 0;
+          border-left: 1px dashed black;
+          position: absolute;
+          //top: 0;
+          top: 180px;
+          right: 1px;
         }
         .input-container {
           padding: 300px 0;
@@ -673,12 +679,16 @@ $oswald-font-path: "../../fonts/Oswald";
             background-color: transparent;
             background-image: none;
             box-shadow: none;
-            padding: 0 50px;
+            padding: 0 10px;
             text-align: center;
+            &.readonly {
+              color: #ddd;
+              cursor: text;
+            }
           }
         }
       }
-      $btn-search-connections-width: 300px;
+      $btn-search-connections-width: 260px;
       .btn-search-connections {
         position: absolute;
         bottom: 150px;
@@ -689,6 +699,69 @@ $oswald-font-path: "../../fonts/Oswald";
         font-size: 25px;
         width: $btn-search-connections-width;
         margin-left: -$btn-search-connections-width/2;
+        font-weight: 300;
+        border-radius: 9px;
+        line-height: 44px;
+        border: none;
+        &.disabled, &.disabled:hover, &.disabled:focus, &.disabled:active, &.disabled.active,
+        &[disabled], &[disabled]:hover, &[disabled]:focus, &[disabled]:active, &[disabled].active,
+        fieldset[disabled] &, fieldset[disabled] &:hover, fieldset[disabled] &:focus, fieldset[disabled] &:active, fieldset[disabled] &.active {
+          opacity: 1;
+          background-color: #bfbfbf;
+        }
+      }
+
+      .middle-column {
+        width: 0%;
+        padding: 0;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .buttons {
+        text-align: center;
+        .btn {
+          border: none;
+          text-transform: uppercase;
+          background-color: transparent;
+          border-radius: 8px;
+        }
+        .btn-active {
+          background-color: #000;
+          color: #fff;
+          //line-height: 44px;
+        }
+      }
+
+      .as-path {
+        $as-path-row-height: 128px;
+        position: relative;
+        padding: 0;
+        background-color: transparent;
+        & + .as-path {
+          border-top: none;
+        }
+        .dashed-line {
+          position: absolute;
+          top: $as-path-row-height/2;
+          border-top: 1px dashed black;
+          width: 100%;
+        }
+        .circle {
+          $diameter: 60px;
+          border-radius: 50%;
+          width: $diameter;
+          height: $diameter;
+          border: 2px solid black;
+          display: inline-block;
+          padding-top: $diameter/3;
+          text-align: center;
+          position: absolute;
+          top: ($as-path-row-height - $diameter)/2;
+          background-color: white;
+          font-size: 14px;
+          line-height: 15px;
+        }
       }
     }
   }
