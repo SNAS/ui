@@ -27,7 +27,7 @@
   <div class="split-view">
     <div class="col-lg-5 split-two left-column">
       <div class="input-container">
-        <input type='text' class="form-control" id="as1" ng-model="as1_name"
+        <input type='text' class="form-control as-input" id="as1" ng-model="as1_name"
                ng-keypress="onKeyPress('as1', $event)" ng-keydown="handleBackspace('as1', $event)"
                placeholder="Enter Network 1"
                typeahead="as_name for as_name in getSuggestions($viewValue)"
@@ -49,7 +49,7 @@
     </div>
     <div class="col-lg-5 split-two right-column">
       <div class="input-container">
-        <input type='text' class="form-control" id="as2" ng-model="as2_name"
+        <input type='text' class="form-control as-input" id="as2" ng-model="as2_name"
                ng-keypress="onKeyPress('as2', $event)" ng-keydown="handleBackspace('as2', $event)"
                placeholder="Enter Network 2"
                typeahead="as_name for as_name in getSuggestions($viewValue)"

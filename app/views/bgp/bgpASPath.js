@@ -20,27 +20,31 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     $rootScope.dualWindow.noTitleBar = true;
 
     $scope.middleColumnClosed = false;
+
+    // states:
+    // - open: connections between AS #1 and AS #2 are being shown
+    // - close: connections are not being shown
+    var elementsByState = {
+      open: {
+        '.left-column': {width: '20%'},
+        '.right-column': {width: '20%'},
+        '.middle-column': {width: '60%'},
+        '.as-input': {'font-size': '20px'}
+      },
+      close: {
+        '.left-column': {width: '50%'},
+        '.right-column': {width: '50%'},
+        '.middle-column': {width: 0},
+        '.as-input': {'font-size': '65px'}
+      }
+    };
     $scope.toggleMiddleColumn = function() {
       // the names of the fields in columns need to match the names of the classes for selection
-      var columns = {
-        'left-column': {},
-        'right-column': {},
-        'middle-column': {}
-      };
-      if ($scope.middleColumnClosed) {
-        columns['left-column'].newWidth = '25%';
-        columns['right-column'].newWidth = '25%';
-        columns['middle-column'].newWidth = '50%';
-      }
-      else {
-        columns['left-column'].newWidth = '50%';
-        columns['right-column'].newWidth = '50%';
-        columns['middle-column'].newWidth = 0;
-      }
+      var elements = $scope.middleColumnClosed ? elementsByState.open : elementsByState.close;
       var animationDuration = 0.5;
-      for (var c in columns) {
-        if (columns.hasOwnProperty(c)) {
-          TweenLite.to($("."+c), animationDuration, {width:columns[c].newWidth, onComplete: columns[c].onComplete});
+      for (var c in elements) {
+        if (elements.hasOwnProperty(c)) {
+          TweenLite.to($(c), animationDuration, elements[c]);
         }
       }
       $scope.middleColumnClosed = !$scope.middleColumnClosed;
@@ -97,7 +101,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
 
     function checkInputs() {
       $scope.readyToSearchConnections = !isNaN($scope.as1_number) && !isNaN($scope.as2_number);
-      console.log("checkInputs()", $scope.as1_number, $scope.as2_number);
+//      console.log("checkInputs()", $scope.as1_number, $scope.as2_number);
     }
 
     //get all the information of this AS
