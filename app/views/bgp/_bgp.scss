@@ -617,7 +617,7 @@ $oswald-font-path: "../../fonts/Oswald";
       }
       .search {
         float: right;
-        width: 355px;
+        width: 450px;
         position: absolute;
         top: $top-bar-height - $search-bar-height - $margin-below-search - 27px;
         right: 15px;
@@ -641,6 +641,8 @@ $oswald-font-path: "../../fonts/Oswald";
             .search-tip-example {
               color: $grey-text;
               display: inline-block;
+              font-weight: 300;
+              margin-left: 3px;
             }
           }
         }

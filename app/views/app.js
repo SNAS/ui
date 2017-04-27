@@ -171,7 +171,7 @@ var bmpUiApp = angular
         templateUrl: 'views/bgp/bgpSecurityAudit.html'
       })
       .state('app.bgpASPath',{
-        url: '/bgpASPath?:search?',
+        url: '/bgpASPath?:as1?:as2?',
         templateUrl: 'views/bgp/bgpASPath.html'
       })
 

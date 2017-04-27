@@ -250,6 +250,55 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
           return $q.reject("Failed to get anomalies' ground truth hash "+parameters.anomaliesType+" data");
         });
       return { promise: promise, cancel: cancel(canceller) };
+    },
+    // parameters is a json object with the following optional fields: orderBy, orderDir
+    getASPathsBetweenASNumbers: function(asn1, asn2, parameters) {
+      var options = "";
+      if (parameters.orderBy !== undefined) {
+        options = "?orderBy=" + parameters.orderBy;
+
+        if (parameters.orderDir !== undefined) {
+          options += "&orderDir=" + parameters.orderDir;
+        }
+      }
+      // get the types of anomalies and perform parallel requests
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/aspaths/"+asn1+"/"+asn2 + options, { cache: true }, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get AS paths between AS "+asn1+" and AS "+asn2);
+        });
+      return { promise: promise, cancel: cancel(canceller) };
+    },
+    // parameters is a json object with the following optional fields: orderBy, orderDir, limit, offset
+    getASPathsHistoryBetweenASNumbers: function(asn1, asn2, parameters) {
+      var options = [];
+      if (parameters.orderBy !== undefined) {
+        options.push("orderBy=" + parameters.orderBy);
+
+        if (parameters.orderDir !== undefined) {
+          options.push("orderDir=" + parameters.orderDir);
+        }
+      }
+      if (parameters.limit !== undefined) {
+        options.push("limit=" + parameters.limit);
+
+        if (parameters.offset !== undefined) {
+          options.push("offset=" + parameters.offset);
+        }
+      }
+
+      options = options.length === 0 ? "" : "?"+options.join("&");
+      // get the types of anomalies and perform parallel requests
+      var canceller = $q.defer();
+      var promise = $http.get(bgpAPI + "/aspaths/hist/"+asn1+"/"+asn2 + options, { cache: true }, { timeout: canceller.promise })
+        .then(function(response) {
+          return response.data;
+        }, function(response) {
+          return $q.reject("Failed to get AS paths history between AS "+asn1+" and AS "+asn2);
+        });
+      return { promise: promise, cancel: cancel(canceller) };
     }
   };
 }]);
