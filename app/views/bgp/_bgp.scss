@@ -764,6 +764,13 @@ $oswald-font-path: "../../fonts/Oswald";
           font-size: 14px;
           line-height: 15px;
         }
+        .as-node-count {
+          top: -2px;
+          right: -2px;
+          border-radius: 4px;
+          background-color: black;
+          font-size: 12px;
+        }
       }
     }
   }

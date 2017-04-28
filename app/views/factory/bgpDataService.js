@@ -251,17 +251,25 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         });
       return { promise: promise, cancel: cancel(canceller) };
     },
-    // parameters is a json object with the following optional fields: orderBy, orderDir
+    // parameters is a json object with the following optional fields: orderBy, orderDir, limit, offset
     getASPathsBetweenASNumbers: function(asn1, asn2, parameters) {
-      var options = "";
+      var options = [];
       if (parameters.orderBy !== undefined) {
-        options = "?orderBy=" + parameters.orderBy;
+        options.push("orderBy=" + parameters.orderBy);
 
         if (parameters.orderDir !== undefined) {
-          options += "&orderDir=" + parameters.orderDir;
+          options.push("orderDir=" + parameters.orderDir);
         }
       }
-      // get the types of anomalies and perform parallel requests
+      if (parameters.limit !== undefined) {
+        options.push("limit=" + parameters.limit);
+
+        if (parameters.offset !== undefined) {
+          options.push("offset=" + parameters.offset);
+        }
+      }
+
+      options = options.length === 0 ? "" : "?"+options.join("&");
       var canceller = $q.defer();
       var promise = $http.get(bgpAPI + "/aspaths/"+asn1+"/"+asn2 + options, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
@@ -290,7 +298,6 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       }
 
       options = options.length === 0 ? "" : "?"+options.join("&");
-      // get the types of anomalies and perform parallel requests
       var canceller = $q.defer();
       var promise = $http.get(bgpAPI + "/aspaths/hist/"+asn1+"/"+asn2 + options, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {

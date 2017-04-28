@@ -23,7 +23,7 @@
   </div>
 
   <!--<button ng-click="toggleMiddleColumn()">test</button>-->
-  <div ng-show="loadingASPaths">loading...</div>
+  <!--<div ng-show="loadingASPaths">loading...</div>-->
 
   <div class="split-view">
     <div class="col-lg-5 split-two left-column">
@@ -41,7 +41,7 @@
     </div>
     <div class="col-lg-2 middle-column">
       <div class="buttons">
-        <button class="btn btn-default" ng-repeat="(key, buttonActive) in buttons" ng-class="{'btn-active': buttonActive}" ng-click="onButtonClick(key)">{{key}}</button>
+        <button class="btn btn-default" ng-repeat="(key, button) in buttons" ng-class="{'btn-active': button.active}" ng-click="onButtonClick(key)">{{key}}</button>
       </div>
       <div id="asPaths">
         <div class="as-path" ng-repeat="path in asPaths">
@@ -54,8 +54,8 @@
           -->
           <div ng-repeat="(index, asInfo) in path.as_path" class="circle" ng-style="{left: asInfo.position}">
             {{asInfo.asn}}
-            <!--<div class="as-node-count bg-{{ path.icon }}" ng-if="asInfo.count > 1">{{asInfo.count}}</div>-->
-            <div class="as-node-count bg-{{ path.icon }}">{{asInfo.count}}</div>
+            <div class="as-node-count bg-{{ path.icon }}" ng-if="asInfo.count > 1">{{asInfo.count}}</div>
+            <!--<div class="as-node-count bg-{{ path.icon }}">{{asInfo.count}}</div>-->
           </div>
         </div>
       </div>
@@ -73,7 +73,7 @@
         <input type='text' class="form-control readonly" ng-model="as2_number" readonly />
       </div>
     </div>
-    <div class="col-lg-12">
+    <div class="col-lg-12" id="btn-search-container">
       <button class="btn btn-default btn-search-connections" id="btnSearchConnections" ng-disabled="!readyToSearchConnections" ng-click="startSearch()">Search connections</button>
     </div>
   </div>
