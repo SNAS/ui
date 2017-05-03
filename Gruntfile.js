@@ -367,7 +367,7 @@ module.exports = function(grunt) {
             'views/**/*.html',
             'images/{,*/}*.{webp}',
             'views/components/leaflet-*/**',
-            'fonts/*',
+            'fonts/**',
             'conf/*.json'
           ]
         }, {

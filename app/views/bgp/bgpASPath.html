@@ -22,15 +22,16 @@
     <div class='line'></div>
   </div>
 
-  <!--<button ng-click="toggleMiddleColumn()">test</button>-->
-  <!--<div ng-show="loadingASPaths">loading...</div>-->
-
   <div class="split-view">
     <div class="col-lg-5 split-two left-column">
       <div class="input-container">
+        <button class="btn btn-default btn-reset" id="btnReset" ng-click="reset()">
+          <span class="glyphicon glyphicon-remove"></span>
+          Reset
+        </button>
         <input type='text' class="form-control as-input" id="as1" ng-model="as1_name"
                ng-keydown="onKeyDown('as1', $event)"
-               placeholder="Enter Network 1"
+               placeholder="Source AS"
                typeahead="as_name for as_name in getSuggestions($viewValue)"
                typeahead-loading="loadingLocations"
                typeahead-no-results="noResults"
@@ -44,18 +45,14 @@
         <button class="btn btn-default" ng-repeat="(key, button) in buttons" ng-class="{'btn-active': button.active}" ng-click="onButtonClick(key)">{{key}}</button>
       </div>
       <div id="asPaths">
+        <div class="no-data" ng-if="asPaths.length === 0">
+          No data
+        </div>
         <div class="as-path" ng-repeat="path in asPaths">
           <div class="dashed-line"></div>
-          <!--
-          <div ng-repeat="(index, asInfo) in path.as_path" class="circle" ng-style="{left: asInfo.position}">
-            {{asInfo.asn}}
-          <div class="as-node-count bg-{{ path.icon }}">{{asInfo.count}}</div>
-        </div>
-          -->
           <div ng-repeat="(index, asInfo) in path.as_path" class="circle" ng-style="{left: asInfo.position}">
             {{asInfo.asn}}
             <div class="as-node-count bg-{{ path.icon }}" ng-if="asInfo.count > 1">{{asInfo.count}}</div>
-            <!--<div class="as-node-count bg-{{ path.icon }}">{{asInfo.count}}</div>-->
           </div>
         </div>
       </div>
@@ -64,7 +61,7 @@
       <div class="input-container">
         <input type='text' class="form-control as-input" id="as2" ng-model="as2_name"
                ng-keydown="onKeyDown('as2', $event)"
-               placeholder="Enter Network 2"
+               placeholder="Destination AS"
                typeahead="as_name for as_name in getSuggestions($viewValue)"
                typeahead-loading="loadingLocations"
                typeahead-no-results="noResults"

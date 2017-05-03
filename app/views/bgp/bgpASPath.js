@@ -96,11 +96,6 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       });
     }
 
-//    //for testing: click the window to toggle open/close the preloader
-//    document.onclick = document.ontouchstart = function() {
-//      preloader.active( !preloader.active() );
-//    };
-
     function openSearchButton(initialDelay) {
       var searchButton = $("#btnSearchConnections");
 
@@ -119,7 +114,6 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     })();
 //    openSearchButton(1);
 
-
     function closeSearchButtonAndStartAnimation(onComplete) {
       var searchButton = $("#btnSearchConnections");
 
@@ -128,9 +122,53 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       TweenLite.to(searchButton, 0.2*timelineMultiplier, {color: 'black'}); // 0 - 0.2s
       TweenLite.to(searchButton, 0.1*timelineMultiplier, {'font-size': 0, delay: 0.1*timelineMultiplier}); // 0.1 - 0.2s
       // then reduce the size of the search button
-      TweenLite.to(searchButton, 0.4*timelineMultiplier, {height: '14px', padding: 0, bottom: '174px', delay: 0.2*timelineMultiplier}); // 0.2 - 0.6s
-      TweenLite.to(searchButton, 0.4*timelineMultiplier, {width: '14px', 'margin-left': '-7px', delay: 0.4*timelineMultiplier}); // 0.4 - 0.8s
+      if (searchButton.width() > 0 && searchButton.height() > 0) {
+        TweenLite.to(searchButton, 0.4*timelineMultiplier, {height: '14px', padding: 0, bottom: '174px', delay: 0.2*timelineMultiplier}); // 0.2 - 0.6s
+        TweenLite.to(searchButton, 0.4*timelineMultiplier, {width: '14px', 'margin-left': '-7px', delay: 0.4*timelineMultiplier}); // 0.4 - 0.8s
+      }
       TweenLite.to(searchButton, 0.2*timelineMultiplier, {width: 0, height: 0, 'margin-left': 0, bottom: '181px', delay: 0.8*timelineMultiplier, onStart: function() { preloader.active(true); }, onComplete: onComplete});
+    }
+
+    function openResetButton(initialDelay) {
+      var button = $("#btnReset");
+      var cross = $("#btnReset span");
+
+      var timelineMultiplier = 0.9;
+      // start with the button invisible, and make it appear after a second to become a dot with a radius of 14px
+      TweenLite.fromTo(button, 0.2*timelineMultiplier,
+        {color: 'white', 'font-size': 0, padding: 0, width: 0, height: 0},
+        {width: '14px', height: '14px', delay: initialDelay});
+      // then expand the button and make the text appear
+      TweenLite.to(button, 0.2*timelineMultiplier, {'width': '100px', delay: initialDelay+0.2*timelineMultiplier}); // 0.2 - 0.4s
+      TweenLite.to(button, 0.2*timelineMultiplier, {'height': '39px', 'padding': '6px 16px 6px 12px', delay: initialDelay+0.4*timelineMultiplier}); // 0.4 - 0.6s
+      TweenLite.to(button, 0.4*timelineMultiplier, {'color': 'white', 'font-size': '18px', ease:Back.easeOut, delay: initialDelay+0.6*timelineMultiplier}); // 0.6 - 0.7s
+
+      TweenLite.fromTo(cross, 0.2*timelineMultiplier,
+        {color: 'white', 'font-size': 0},
+        {delay: initialDelay});
+      TweenLite.to(cross, 0.4*timelineMultiplier, {'font-size': '18px', ease:Back.easeOut, delay: initialDelay+0.6*timelineMultiplier}); // 0.6 - 0.7s
+    }
+    (function initialiseResetButton() {
+      TweenLite.set($("#btnReset"), {color: 'white', 'font-size': 0, padding: 0, width: 0, height: 0});
+      TweenLite.set($("#btnReset span"), {color: 'white', 'font-size': 0});
+    })();
+
+    function closeResetButton() {
+      var button = $("#btnReset");
+      var cross = $("#btnReset span");
+
+      // first make the search button text transparent
+      var timelineMultiplier = 0.9;
+      TweenLite.to(button, 0.2*timelineMultiplier, {color: 'black'}); // 0 - 0.2s
+      TweenLite.to(button, 0.1*timelineMultiplier, {'font-size': 0, delay: 0.1*timelineMultiplier}); // 0.1 - 0.2s
+      // then reduce the size of the search button
+      if (button.width() > 0 && button.height() > 0) {
+        TweenLite.to(button, 0.4*timelineMultiplier, {height: '14px', padding: 0, delay: 0.2*timelineMultiplier}); // 0.2 - 0.6s
+        TweenLite.to(button, 0.4*timelineMultiplier, {width: '14px', delay: 0.4*timelineMultiplier}); // 0.4 - 0.8s
+      }
+      TweenLite.to(button, 0.2*timelineMultiplier, {width: 0, height: 0, delay: 0.8*timelineMultiplier});
+
+      TweenLite.to(cross, 0.4*timelineMultiplier, {'font-size': 0});
     }
 
     $scope.asPaths = [];
@@ -217,7 +255,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
         $scope.asPaths = $scope.asPaths.concat(newPaths);
 //        console.debug("asPaths transformed", $scope.asPaths);
 
-        preloader.active(false, function() { $scope.setMiddleColumnState(true); });
+        preloader.active(false, function() { $scope.setMiddleColumnState(true); openResetButton(1); });
       }, function(error) {
         console.warn(error);
         $scope.api_errors.push(error);
@@ -341,6 +379,11 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     }
 
     $scope.readyToSearchConnections = false;
+    $scope.reset = function() {
+      closeResetButton();
+      $scope.setMiddleColumnState(false);
+      openSearchButton(1);
+    };
     $scope.onKeyDown = function(input, keyEvent) {
       // if the user presses the delete key
 //      if (keyEvent.keyCode === 8) {
@@ -351,6 +394,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       if (keyEvent.keyCode === 37 || keyEvent.keyCode === 39) return;
 
       if (!$scope.middleColumnClosed) {
+        closeResetButton();
         $scope.setMiddleColumnState(false);
         openSearchButton(1);
       }
