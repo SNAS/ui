@@ -806,6 +806,12 @@ $oswald-font-path: "../../fonts/Oswald";
         }
       }
     }
+
+    .error-list {
+      top: -32px;
+      margin-bottom: -1px;
+      height: 0;
+    }
   }
 }
 

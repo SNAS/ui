@@ -18,6 +18,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     });
 
     $rootScope.dualWindow.noTitleBar = true;
+    $scope.api_errors = [];
 
 
     // states:
@@ -38,6 +39,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       }
     };
     var buttonsShown = false;
+    var resetButtonShown = false;
     $scope.setMiddleColumnState = function(open) {
       // the names of the fields in columns need to match the names of the classes for selection
       var elements = elementsByState[open ? 'open' : 'close'];
@@ -50,6 +52,9 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       }
       if (open) {
 //        TweenMax.staggerTo("#btnSearchConnections", 0.5, {opacity:0, y:-100, ease:Back.easeIn}, 0.1);
+        if (!resetButtonShown) {
+          openResetButton(1);
+        }
         if (!buttonsShown) {
           TweenMax.staggerFrom(".middle-column .btn", 2, {scale:0.5, opacity:0, delay:0.5, ease:Power4.easeOut, force3D:true}, 0.2);
           buttonsShown = true;
@@ -119,14 +124,16 @@ angular.module('bmpUiApp').controller('BGPASPathController',
 
       // first make the search button text transparent
       var timelineMultiplier = 0.9;
-      TweenLite.to(searchButton, 0.2*timelineMultiplier, {color: 'black'}); // 0 - 0.2s
-      TweenLite.to(searchButton, 0.1*timelineMultiplier, {'font-size': 0, delay: 0.1*timelineMultiplier}); // 0.1 - 0.2s
-      // then reduce the size of the search button
+      var closeButtonDelay = 0;
       if (searchButton.width() > 0 && searchButton.height() > 0) {
+        TweenLite.to(searchButton, 0.2*timelineMultiplier, {color: 'black'}); // 0 - 0.2s
+        TweenLite.to(searchButton, 0.1*timelineMultiplier, {'font-size': 0, delay: 0.1*timelineMultiplier}); // 0.1 - 0.2s
+        // then reduce the size of the search button
         TweenLite.to(searchButton, 0.4*timelineMultiplier, {height: '14px', padding: 0, bottom: '174px', delay: 0.2*timelineMultiplier}); // 0.2 - 0.6s
         TweenLite.to(searchButton, 0.4*timelineMultiplier, {width: '14px', 'margin-left': '-7px', delay: 0.4*timelineMultiplier}); // 0.4 - 0.8s
+        closeButtonDelay = 0.8;
       }
-      TweenLite.to(searchButton, 0.2*timelineMultiplier, {width: 0, height: 0, 'margin-left': 0, bottom: '181px', delay: 0.8*timelineMultiplier, onStart: function() { preloader.active(true); }, onComplete: onComplete});
+      TweenLite.to(searchButton, 0.2*timelineMultiplier, {width: 0, height: 0, 'margin-left': 0, bottom: '181px', delay: closeButtonDelay*timelineMultiplier, onStart: function() { preloader.active(true); }, onComplete: onComplete});
     }
 
     function openResetButton(initialDelay) {
@@ -147,6 +154,8 @@ angular.module('bmpUiApp').controller('BGPASPathController',
         {color: 'white', 'font-size': 0},
         {delay: initialDelay});
       TweenLite.to(cross, 0.4*timelineMultiplier, {'font-size': '18px', ease:Back.easeOut, delay: initialDelay+0.6*timelineMultiplier}); // 0.6 - 0.7s
+
+      resetButtonShown = true;
     }
     (function initialiseResetButton() {
       TweenLite.set($("#btnReset"), {color: 'white', 'font-size': 0, padding: 0, width: 0, height: 0});
@@ -169,6 +178,8 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       TweenLite.to(button, 0.2*timelineMultiplier, {width: 0, height: 0, delay: 0.8*timelineMultiplier});
 
       TweenLite.to(cross, 0.4*timelineMultiplier, {'font-size': 0});
+
+      resetButtonShown = false;
     }
 
     $scope.asPaths = [];
@@ -177,9 +188,18 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     $scope.thereIsMoreData = false;
     $scope.startSearch = function() {
       currentOffset = 0;
-      $scope.asPaths = [];
-
-      closeSearchButtonAndStartAnimation($scope.continueSearch);
+      var duration = 0.2; // seconds
+      var staggerDelay = 0.05; // seconds
+      var l = $scope.asPaths.length;
+      var delay = 1000 * (l * staggerDelay + (l > 0 ? duration : 0));
+      console.log("asPaths length", $scope.asPaths.length, delay, l * 1000 * staggerDelay);
+      TweenMax.staggerTo($(".as-path"), duration, {opacity: 0, y: -100}, staggerDelay);
+      console.log("before timeout (ms)...", delay);
+      $timeout(function() {
+        console.log("GO!");
+        $scope.asPaths = [];
+        closeSearchButtonAndStartAnimation($scope.continueSearch);
+      }, delay);
     };
     $scope.continueSearch = function() {
       $scope.loadingASPaths = true;
@@ -255,10 +275,11 @@ angular.module('bmpUiApp').controller('BGPASPathController',
         $scope.asPaths = $scope.asPaths.concat(newPaths);
 //        console.debug("asPaths transformed", $scope.asPaths);
 
-        preloader.active(false, function() { $scope.setMiddleColumnState(true); openResetButton(1); });
+        preloader.active(false, function() { $scope.setMiddleColumnState(true); });
       }, function(error) {
         console.warn(error);
         $scope.api_errors.push(error);
+        preloader.active(false);
       });
     };
 
@@ -289,7 +310,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       // don't do anything if this button is already the active one
       if ($scope.buttons[key].active) return;
 
-      console.debug("click active", key);
+//      console.debug("click active", key);
 //      angular.forEach($scope.buttons, function(btn) { btn = false; });
       for (var b in $scope.buttons) {
         if ($scope.buttons.hasOwnProperty(b)) {
@@ -358,7 +379,8 @@ angular.module('bmpUiApp').controller('BGPASPathController',
           }
           checkInputs();
         }).error(function(error) {
-            console.log(error.message);
+            console.log(error);
+            $scope.api_errors.push("Couldn't retrieve AS " + searchValue + " info");
           });
       }
     }

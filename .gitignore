@@ -10,3 +10,4 @@ bower_components
 apache-tomcat*
 startTomcat.sh
 stopTomcat.sh
+tmp/

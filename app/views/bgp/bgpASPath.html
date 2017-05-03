@@ -22,6 +22,16 @@
     <div class='line'></div>
   </div>
 
+  <!-- THIS SECTION DISPLAYS ERRORS -->
+  <div class="error-list col-lg-12" ng-show="api_errors.length > 0">
+    <div class="alert alert-danger">
+      <div ng-repeat="api_error in api_errors">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        {{api_error}}
+      </div>
+    </div>
+  </div>
+
   <div class="split-view">
     <div class="col-lg-5 split-two left-column">
       <div class="input-container">
@@ -45,7 +55,10 @@
         <button class="btn btn-default" ng-repeat="(key, button) in buttons" ng-class="{'btn-active': button.active}" ng-click="onButtonClick(key)">{{key}}</button>
       </div>
       <div id="asPaths">
-        <div class="no-data" ng-if="asPaths.length === 0">
+        <div class="no-data" ng-if="asPaths.length === 0 && loadingASPaths">
+          Loading...
+        </div>
+        <div class="no-data" ng-if="asPaths.length === 0 && !loadingASPaths">
           No data
         </div>
         <div class="as-path" ng-repeat="path in asPaths">
