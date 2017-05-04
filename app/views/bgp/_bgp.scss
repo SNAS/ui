@@ -90,6 +90,97 @@ $oswald-font-path: "../../fonts/Oswald";
   margin-right: 6px;
 }
 
+#bgpView, #dualWindowHeader {
+  $top-bar-height: 143px;
+  $space-below-title: 50px;
+  $title-font-size: 53px;
+  $title-font-size-augmented: 65px;
+  $top-bar-bottom-order-height: 5px;
+  $search-bar-height: 79px;
+  $margin-below-search: 7px;
+  $search-tip-height: 12px;
+  $search-tip-font-size: 15px;
+  $grey-text: #a2a2a2;
+
+  font-family: 'Oswald';
+
+  input {
+    height: $search-bar-height;
+    font-size: $title-font-size-augmented;
+    text-transform: uppercase;
+    margin-bottom: $margin-below-search;
+    padding: 6px 12px 10px;
+    border: 1px solid #d7d7d7;
+    border-radius: 2px;
+    color: #000;
+    @include placeholder {
+      color: #ddd;
+    }
+  }
+
+  .top-bar {
+    height: $top-bar-height + $top-bar-bottom-order-height;
+    margin-bottom: 32px;
+    //border-bottom: 5px solid black;
+    .title-container {
+      &:before {
+        content: '';
+        display: inline-block;
+        height: $top-bar-height - $space-below-title;
+      }
+      height: $top-bar-height;
+      font-size: $title-font-size;
+      line-height: $title-font-size;
+      text-transform: uppercase;
+
+      .title {
+        &:before {
+          content: '';
+          display: inline-block;
+        }
+        display: inline-block;
+        font-size: $title-font-size-augmented;
+      }
+    }
+    .search {
+      float: right;
+      width: 450px;
+      position: absolute;
+      top: $top-bar-height - $search-bar-height - $margin-below-search - 27px;
+      right: 15px;
+      .search-tip-container {
+        &:before {
+          content: '';
+          display: inline-block;
+          height: 16px;
+        }
+        display: inline-block;
+        height: 27px;
+        .search-tip {
+          display: inline-block;
+          font-size: $search-tip-font-size;
+          height: $search-tip-height + 1px;
+          line-height: $search-tip-height;
+          letter-spacing: 0.1px;
+          text-transform: uppercase;
+          position: absolute;
+          bottom: 15px;
+          .search-tip-example {
+            color: $grey-text;
+            display: inline-block;
+            font-weight: 300;
+            margin-left: 3px;
+          }
+        }
+      }
+    }
+    .line {
+      height: $top-bar-bottom-order-height;
+      background-color: #000;
+    }
+  }
+}
+
 #bgpView {
   $margin: 10px;
   h3 {
@@ -564,94 +655,94 @@ $oswald-font-path: "../../fonts/Oswald";
   }
 
   &.ASPathView {
-    font-family: 'Oswald';
+    //font-family: 'Oswald';
 
-    $top-bar-height: 143px;
-    $space-below-title: 50px;
-    $title-font-size: 53px;
-    $title-font-size-augmented: 65px;
-    $top-bar-bottom-order-height: 5px;
-    $search-bar-height: 79px;
-    $margin-below-search: 7px;
-    $search-tip-height: 12px;
-    $search-tip-font-size: 15px;
-    $grey-text: #a2a2a2;
+    //$top-bar-height: 143px;
+    //$space-below-title: 50px;
+    //$title-font-size: 53px;
+    //$title-font-size-augmented: 65px;
+    //$top-bar-bottom-order-height: 5px;
+    //$search-bar-height: 79px;
+    //$margin-below-search: 7px;
+    //$search-tip-height: 12px;
+    //$search-tip-font-size: 15px;
+    //$grey-text: #a2a2a2;
+    //
+    //input {
+    //  height: $search-bar-height;
+    //  font-size: $title-font-size-augmented;
+    //  text-transform: uppercase;
+    //  margin-bottom: $margin-below-search;
+    //  padding: 6px 12px 10px;
+    //  border: 1px solid #d7d7d7;
+    //  border-radius: 2px;
+    //  color: #000;
+    //  @include placeholder {
+    //    color: #ddd;
+    //  }
+    //}
 
-    input {
-      height: $search-bar-height;
-      font-size: $title-font-size-augmented;
-      text-transform: uppercase;
-      margin-bottom: $margin-below-search;
-      padding: 6px 12px 10px;
-      border: 1px solid #d7d7d7;
-      border-radius: 2px;
-      color: #000;
-      @include placeholder {
-        color: #ddd;
-      }
-    }
-
-    .top-bar {
-      height: $top-bar-height + $top-bar-bottom-order-height;
-      margin-bottom: 32px;
-      //border-bottom: 5px solid black;
-      .title-container {
-        &:before {
-          content: '';
-          display: inline-block;
-          height: $top-bar-height - $space-below-title;
-        }
-        height: $top-bar-height;
-        font-size: $title-font-size;
-        line-height: $title-font-size;
-        text-transform: uppercase;
-
-        .title {
-          &:before {
-            content: '';
-            display: inline-block;
-          }
-          display: inline-block;
-          font-size: $title-font-size-augmented;
-        }
-      }
-      .search {
-        float: right;
-        width: 450px;
-        position: absolute;
-        top: $top-bar-height - $search-bar-height - $margin-below-search - 27px;
-        right: 15px;
-        .search-tip-container {
-          &:before {
-            content: '';
-            display: inline-block;
-            height: 16px;
-          }
-          display: inline-block;
-          height: 27px;
-          .search-tip {
-            display: inline-block;
-            font-size: $search-tip-font-size;
-            height: $search-tip-height + 1px;
-            line-height: $search-tip-height;
-            letter-spacing: 0.1px;
-            text-transform: uppercase;
-            position: absolute;
-            bottom: 15px;
-            .search-tip-example {
-              color: $grey-text;
-              display: inline-block;
-              font-weight: 300;
-              margin-left: 3px;
-            }
-          }
-        }
-      }
-      .line {
-        height: $top-bar-bottom-order-height;
-        background-color: #000;
-      }
-    }
+    //.top-bar {
+    //  height: $top-bar-height + $top-bar-bottom-order-height;
+    //  margin-bottom: 32px;
+    //  //border-bottom: 5px solid black;
+    //  .title-container {
+    //    &:before {
+    //      content: '';
+    //      display: inline-block;
+    //      height: $top-bar-height - $space-below-title;
+    //    }
+    //    height: $top-bar-height;
+    //    font-size: $title-font-size;
+    //    line-height: $title-font-size;
+    //    text-transform: uppercase;
+    //
+    //    .title {
+    //      &:before {
+    //        content: '';
+    //        display: inline-block;
+    //      }
+    //      display: inline-block;
+    //      font-size: $title-font-size-augmented;
+    //    }
+    //  }
+    //  .search {
+    //    float: right;
+    //    width: 450px;
+    //    position: absolute;
+    //    top: $top-bar-height - $search-bar-height - $margin-below-search - 27px;
+    //    right: 15px;
+    //    .search-tip-container {
+    //      &:before {
+    //        content: '';
+    //        display: inline-block;
+    //        height: 16px;
+    //      }
+    //      display: inline-block;
+    //      height: 27px;
+    //      .search-tip {
+    //        display: inline-block;
+    //        font-size: $search-tip-font-size;
+    //        height: $search-tip-height + 1px;
+    //        line-height: $search-tip-height;
+    //        letter-spacing: 0.1px;
+    //        text-transform: uppercase;
+    //        position: absolute;
+    //        bottom: 15px;
+    //        .search-tip-example {
+    //          color: $grey-text;
+    //          display: inline-block;
+    //          font-weight: 300;
+    //          margin-left: 3px;
+    //        }
+    //      }
+    //    }
+    //  }
+    //  .line {
+    //    height: $top-bar-bottom-order-height;
+    //    background-color: #000;
+    //  }
+    //}
     .split-view {
       position: relative;
       div.split-two {

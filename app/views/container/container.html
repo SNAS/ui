@@ -133,6 +133,11 @@
         </div>
       </div>
     </nav>
+    <div ng-if="dualWindow.header" id="dualWindowHeader">
+      <div ng-controller-controller="dualWindow.header.controller">
+        <div ng-include="dualWindow.header.html"></div>
+      </div>
+    </div>
     <!-- END HEADER -->
 
     <!-- MAIN -->

@@ -1,0 +1,20 @@
+<div class="col-lg-12 top-bar">
+  <div class="title-container">
+    <div class="title">BGP</div>
+  </div>
+  <div class="search">
+    <input type='text' class="form-control" id="searchValue" ng-model="searchValue" placeholder="search"
+           typeahead="as_name for as_name in getSuggestions($viewValue)"
+           typeahead-loading="loadingLocations"
+           typeahead-no-results="noResults"
+           typeahead-wait-ms="300"
+           typeahead-on-select="onSelectSearch($label)"/>
+    <div class="search-tip-container">
+      <div class="search-tip">
+        Type AS name or AS number or prefix
+        <div class="search-tip-example">ex: Cisco, 109, 1.0.128.0/17, 1.0*</div>
+      </div>
+    </div>
+  </div>
+  <div class='line'></div>
+</div>

@@ -8,7 +8,7 @@
  * Controller for the BGP AS Path page
  */
 angular.module('bmpUiApp').controller('BGPASPathController',
-  function($scope, $rootScope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout) {
+  function($scope, $rootScope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout, $controller) {
 
     var uiServer = ConfigService.bgpDataService;
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";
@@ -18,6 +18,10 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     });
 
     $rootScope.dualWindow.noTitleBar = true;
+    $rootScope.dualWindow.header = {
+      controller: $controller('BGPHeaderCtrl', {$scope: $scope}),
+      html: 'views/bgp/bgp-header.html'
+    };
     $scope.api_errors = [];
 
 
@@ -192,11 +196,9 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       var staggerDelay = 0.05; // seconds
       var l = $scope.asPaths.length;
       var delay = 1000 * (l * staggerDelay + (l > 0 ? duration : 0));
-      console.log("asPaths length", $scope.asPaths.length, delay, l * 1000 * staggerDelay);
       TweenMax.staggerTo($(".as-path"), duration, {opacity: 0, y: -100}, staggerDelay);
-      console.log("before timeout (ms)...", delay);
       $timeout(function() {
-        console.log("GO!");
+        $scope.loadingASPaths = true; // even though this will be set by continueSearch, we're setting it here so that we don't see 'No data' for a very short amount of time before "Loading..."
         $scope.asPaths = [];
         closeSearchButtonAndStartAnimation($scope.continueSearch);
       }, delay);
