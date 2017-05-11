@@ -8,10 +8,19 @@
  * Controller of the BGP page
  */
 angular.module('bmpUiApp').controller('BGPController',
-  function($scope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout) {
+  function($scope, $rootScope, $controller, $stateParams, $location, $filter, bgpDataService, ConfigService, socket,
+           uiGridConstants, apiFactory, $timeout, DateTimeRangeService) {
+    $rootScope.dualWindow.noTitleBar = true;
+    $rootScope.dualWindow.header = {
+      controller: $controller('BGPHeaderCtrl', {$scope: $scope}),
+      html: 'views/bgp/bgp-header.html'
+    };
+
     $scope.httpRequests = [];
 
     $scope.dateFilterOn = true;
+    $scope.dateTimeRange = DateTimeRangeService.getDefaultRange();
+    console.log("dateTimeRange", $rootScope.dateTimeRange);
 
     $scope.newPathLocation = function(parameter) {
       var path = $location.path();
@@ -20,8 +29,8 @@ angular.module('bmpUiApp').controller('BGPController',
         urlParameters.push("search="+parameter);
       }
       if ($scope.dateFilterOn) {
-        urlParameters.push("start=" + getTimestamp("start"));
-        urlParameters.push("end=" + getTimestamp("end"));
+        urlParameters.push("start=" + $scope.dateTimeRange.start/*getTimestamp("start")*/);
+        urlParameters.push("end=" + $scope.dateTimeRange.end/*getTimestamp("end")*/);
       }
       return path + "?" + urlParameters.join("&");
     };
@@ -63,6 +72,71 @@ angular.module('bmpUiApp').controller('BGPController',
       $scope.showDirectedGraph = false;
       $scope.displayASNInfo = false;
     }
+
+
+    $scope.changedDates = function(dates) {
+      console.log("changed dates", dates, Object.keys(dates).map(function(key, index) { return moment(dates[key]).format('MM/DD/YYYY h:mm a')}));
+      $scope.dateTimeRange = dates;
+      $scope.api_errors = [];
+      $timeout(function() {
+        if ($scope.searchValue === "") {
+          displayAllASNodes();
+        }
+        else if (isASN($scope.searchValue)) {
+          refreshASInfo();
+        }
+        // if it's not a number, assume it's a prefix
+        else {
+          getPrefixInfo($scope.searchValue);
+        }
+      });
+    };
+
+    $scope.asChangesGraph = {
+      chart: {
+        type: "lineChartWithSelectionEnabled",
+        height: 200,
+        margin: {
+          top: 20,
+          right: 26,
+          bottom: 67,
+          left: 26
+        },
+        color: function(d) {
+          return "#EAA546";
+        },
+        x: function (d) {
+          return d !== undefined ? d[0] : 0;
+        },
+        y: function (d) {
+          return d !== undefined ? d[1] : 0;
+        },
+        useVoronoi: true,
+        clipEdge: true,
+        transitionDuration: 500,
+        useInteractiveGuideline: true,
+        showLegend: false,
+        showControls: false,
+        showXAxis: false,
+        showYAxis: false,
+        forceY: [-1.5,1.5],
+        xDomain: $scope.minMaxTimestamps,
+        xAxis: {
+          tickFormat: function (d) {
+            return moment(d).format("MM/DD/YYYY HH:mm");
+          }
+        },
+        onTimeSelectedCallback: function(selectedTimestamp) {
+          $timeout(function() {
+            $scope.selectedTime = selectedTimestamp;
+//            for (var i = 0 ; i < $scope.previewGraphData.length ; i++) {
+//              computeValuesAtSelectedTime($scope.previewGraphData[i]);
+//            }
+//            reloadAnomalyDetails();
+          });
+        }
+      }
+    };
 
     function loadPreviewASHist(result) {
       $scope.previewGraphData = [];
@@ -464,8 +538,8 @@ angular.module('bmpUiApp').controller('BGPController',
     function getPrefixInfo(prefix) {
       var start, end;
       if ($scope.dateFilterOn) {
-        start = getTimestamp("start");
-        end = getTimestamp("end");
+        start = $scope.dateTimeRange.start,//getTimestamp("start");
+        end = $scope.dateTimeRange.end//getTimestamp("end");
       }
       $scope.loadingPrefixes = true; // begin loading
       var request = bgpDataService.getPrefixInfo(prefix, start, end);
@@ -500,8 +574,8 @@ angular.module('bmpUiApp').controller('BGPController',
       $scope.loadingPreview = true;
 
       if ($scope.dateFilterOn) {
-        start = getTimestamp("start");
-        end = getTimestamp("end");
+        start = $scope.dateTimeRange.start,//getTimestamp("start");
+        end = $scope.dateTimeRange.end//getTimestamp("end");
 
        // $scope.loadingPrefixes = true; // begin loading
         var request = bgpDataService.getASHistInfo($scope.asn, start, end);
@@ -524,8 +598,8 @@ angular.module('bmpUiApp').controller('BGPController',
     function getPrefixes() {
       var start, end; // show the last hour by default
       if ($scope.dateFilterOn) {
-        start = getTimestamp("start");
-        end = getTimestamp("end");
+        start = $scope.dateTimeRange.start,//getTimestamp("start");
+        end = $scope.dateTimeRange.end//getTimestamp("end");
       } else {
         end = new Date().getTime();
         start = end - 3600000;
@@ -1077,7 +1151,7 @@ angular.module('bmpUiApp').controller('BGPController',
 //        setTimestamp("end", $stateParams.end);
         timeSliderParameters.endTimestamp = parseInt($stateParams.end, 10);
       }
-      setUpTimeSlider($scope, $timeout, timeSliderCallbacks, timeSliderParameters);
+//      setUpTimeSlider($scope, $timeout, timeSliderCallbacks, timeSliderParameters);
       if ($stateParams.search) {
         $scope.searchValue = $stateParams.search;
         searchValueFn();

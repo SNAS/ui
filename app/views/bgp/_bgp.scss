@@ -104,7 +104,7 @@ $oswald-font-path: "../../fonts/Oswald";
 
   font-family: 'Oswald';
 
-  input {
+  input:not(.ui-grid-filter-input) {
     height: $search-bar-height;
     font-size: $title-font-size-augmented;
     text-transform: uppercase;
@@ -116,12 +116,24 @@ $oswald-font-path: "../../fonts/Oswald";
     @include placeholder {
       color: #ddd;
     }
+    &#dateRangePicker {
+      background-color: transparent;
+      font-size: 15px;
+      height: 13px;
+      line-height: 12px;
+      width: 300px;
+      border: none;
+      padding-left: 15px;
+      //position: relative;
+      //top: -36px;
+      //float: left;
+      //margin-top: -33px;
+    }
   }
 
   .top-bar {
     height: $top-bar-height + $top-bar-bottom-order-height;
-    margin-bottom: 32px;
-    //border-bottom: 5px solid black;
+    //margin-bottom: 32px;
     .title-container {
       &:before {
         content: '';
@@ -179,6 +191,15 @@ $oswald-font-path: "../../fonts/Oswald";
       background-color: #000;
     }
   }
+
+  .error-list {
+    top: -32px;
+    margin-bottom: -1px;
+    height: 0;
+  }
+}
+#bgpView.securityAuditView .error-list {
+  top: 0px;
 }
 
 #bgpView {
@@ -750,6 +771,7 @@ $oswald-font-path: "../../fonts/Oswald";
         &.left-column {
           padding-right: 0;
           border-right: 1px dashed black;
+          margin-top: 32px;
         }
         &.right-column {
           padding-left: 0;
@@ -835,6 +857,7 @@ $oswald-font-path: "../../fonts/Oswald";
         padding: 0;
         white-space: nowrap;
         overflow: hidden;
+        margin-top: 32px;
       }
 
       .buttons {
@@ -897,12 +920,6 @@ $oswald-font-path: "../../fonts/Oswald";
         }
       }
     }
-
-    .error-list {
-      top: -32px;
-      margin-bottom: -1px;
-      height: 0;
-    }
   }
 }
 
@@ -910,4 +927,119 @@ line.nv-selectionline {
   stroke: #333;
   stroke-opacity: 0.5;
   stroke-width: 2px;
+}
+
+.timeline-background {
+  height: 57px;
+  padding: 13px 0;
+  background-color: #000;
+  color: #fff;
+  margin-top: -57px;
+}
+.timeline-arrows {
+  height: 57px;
+  margin-top: -58px;
+  //.timeline-left-arrow, .timeline-right-arrow {
+  //  width: 15px;
+  //  height: 57px;
+  //  background-color: #000;
+  //  float: left;
+  //
+  //  // we want the height H to be 57px. As we rotate a square by 45 degrees (each face F has the same length), we can calculate F
+  //  // so that H^2 = F^2 + F^2 => H^2 = 2 * F^2 => F = sqrt(H^2 / 2) = 40.3
+  //  //$square-face-length: 40.3px;
+  //  $square-face-length: 39px;
+  //  transform: scaleX(0.5) rotate(-45deg);
+  //  width: $square-face-length;
+  //  height: $square-face-length;
+  //  top: 9px;
+  //  position: relative;
+  //}
+
+  $arrow-color: #000;
+  $arrow-hover-color: #777;
+  .timeline-left-arrow, .timeline-right-arrow {
+    width: 15px;
+    height: 57px;
+    border-top: 28px solid transparent;
+    border-bottom: 29px solid transparent;
+    float: left;
+    transition: border-color 0.2s;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .timeline-left-arrow {
+  //  left: -4px;
+    border-right: 10px solid $arrow-color;
+    &:hover {
+      border-right-color: $arrow-hover-color;
+    }
+  }
+  .timeline-right-arrow {
+    right: -15px;
+    position: absolute;
+    border-left: 10px solid $arrow-color;
+    &:hover {
+      border-left-color: $arrow-hover-color;
+    }
+  }
+}
+.timeline-display-container {
+  $timeline-display-diameter: 46px;
+  width: calc(100% - 52px);
+  margin: 0 26px;
+  .timeline-display {
+    color: #000;
+    margin-top: -52px;
+    line-height: 28px;
+    font-size: 20px;
+    background-color: white;
+    border-radius: 50%;
+    width: $timeline-display-diameter;
+    height: $timeline-display-diameter;
+    position: relative;
+    float: left;
+    left: 0px;
+    margin-left: -$timeline-display-diameter / 2;
+    text-align: center;
+    .am-pm {
+      font-size: 12px;
+      line-height: 10px;
+    }
+    .days {
+      line-height: 46px;
+      font-size: 16px;
+    }
+  }
+}
+.timeline-ticks {
+  width: calc(100% - 52px);
+  margin: 0 26px;
+  .timeline-tick {
+    position: relative;
+    left: 0;
+    top: -49px;
+    width: 1px;
+    $dash-length: 5px;
+    $dash-space-length: 1px;
+    $dash-color: #b7b7b7;
+    .vertical-line {
+      width: 1px;
+      height: 257px;
+      //background-color: green;
+      background: repeating-linear-gradient(transparent, transparent $dash-space-length, $dash-color $dash-space-length, $dash-color $dash-space-length + $dash-length);
+      position: absolute;
+      bottom: 11px;
+    }
+    .triangle {
+      height: 17px;
+      width: 17px;
+      margin-left: -8px;
+      background-color: black;
+      position: absolute;
+      bottom: -2px;
+      transform: scaleX(0.55) rotate(45deg);
+    }
+  }
 }

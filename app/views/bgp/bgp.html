@@ -1,7 +1,7 @@
 <div ng-controller="BGPController" id="bgpView" ng-init="obj={maximiseForceDirectedGraph:false}">
 
   <div class="main-page-search" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
-    <!--<button class="btn btn-danger" ng-click="cancelAllHttpRequests()">Cancel http requests</button>-->
+    <!--
     AS Number or prefix:
     <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-model="searchValue"
            placeholder="Search ..."
@@ -19,12 +19,12 @@
       <span class="glyphicon" ng-class="{'glyphicon-plus': !dateFilterOn, 'glyphicon-minus': dateFilterOn}"></span>
       Date/time filter
     </button>
-    <!--<i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>-->
-
+    -->
+<!--
     <div ng-class="{hidden: !dateFilterOn}" style="min-height: 190px">
       <div class="separator"></div>
 
-      <!-- date/time selector -->
+      <!- - date/time selector - ->
       <div class="row">
         <div class="col-lg-2">
           <table class="table start-end">
@@ -67,6 +67,7 @@
       </div>
     </div>
   </div>
+  -->
 
   <!-- THIS SECTION DISPLAYS ERRORS -->
   <div class="main-area" ng-show="api_errors.length > 0">
@@ -111,6 +112,10 @@
   <!-- THIS SECTION DISPLAYS INFORMATION FOR A SPECIFIC AS NODE -->
   <!--<div class="main-area row" ng-show="displayASNInfo">-->
   <div class="main-area row" ng-show="!obj.maximiseForceDirectedGraph && displayASNInfo">
+
+    <!--datetimerange: [{{$root.dateTimeRange}}]-->
+    <line-graph-time-selector graph="asChangesGraph" graph-data="previewGraphData" changed-dates-callback="changedDates(newDates)"></line-graph-time-selector>
+
     <!-- WhoIs info and prefixes -->
     
     <div class="col-lg-6">
@@ -150,6 +155,7 @@
   <!-- THIS SECTION DISPLAYS A D3 GRAPH FOR A SPECIFIC AS NODE -->
 
   <div class="main-area row" ng-show="displayASNInfo && api_errors.length === 0">
+
     <!-- force directed graph -->
     <div class="col-lg-12">
       <div class="table-container" id="forceDirectedGraph" data-ng-show="showDirectedGraph">
@@ -219,6 +225,9 @@
 
   <!--<div class="main-area row" ng-show="displayASNInfo">-->
   <div class="main-area row" ng-show="!nodata && api_errors.length === 0 && !obj.maximiseForceDirectedGraph && displayPrefixInfo">
+
+    <line-graph-time-selector graph="asChangesGraph" graph-data="previewGraphData" changed-dates-callback="changedDates(newDates)"></line-graph-time-selector>
+
     <!-- prefixes -->
     <div class="col-lg-12">
       <div class="table-container">

@@ -191,6 +191,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     var currentOffset = 0;
     $scope.thereIsMoreData = false;
     $scope.startSearch = function() {
+      $scope.api_errors = [];
       currentOffset = 0;
       var duration = 0.2; // seconds
       var staggerDelay = 0.05; // seconds

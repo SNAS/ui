@@ -1,22 +1,5 @@
 //Pure JS, completely customizable preloader from GreenSock.
 //Once you create an instance like var preloader = new GSPreloader(), call preloader.active(true) to open it, preloader.active(false) to close it, and preloader.active() to get the current status. Only requires TweenLite and CSSPlugin (http://www.greensock.com/gsap/)
-//var preloader = new GSPreloader({
-//  radius:42,
-//  dotSize:15,
-//  dotCount:10,
-//  colors:["#61AC27","#555","purple","#FF6600"], //have as many or as few colors as you want.
-//  boxOpacity:0.2,
-//  boxBorder:"1px solid #AAA",
-//  animationOffset: 1.8 //jump 1.8 seconds into the animation for a more active part of the spinning initially (just looks a bit better in my opinion)
-//});
-//
-////open the preloader
-//preloader.active(true);
-//
-////for testing: click the window to toggle open/close the preloader
-//document.onclick = document.ontouchstart = function() {
-//  preloader.active( !preloader.active() );
-//};
 
 //this is the whole preloader class/function
 function GSPreloader(options) {

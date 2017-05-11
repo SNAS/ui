@@ -3,7 +3,8 @@
     <div class="title">BGP</div>
   </div>
   <div class="search">
-    <input type='text' class="form-control" id="searchValue" ng-model="searchValue" placeholder="search"
+    <input type='text' class="form-control" id="headerSearchValue" ng-model="$root.headerSearchValue" placeholder="search"
+           ng-keydown="onSearchKeyDown('headerSearchValue', $event)"
            typeahead="as_name for as_name in getSuggestions($viewValue)"
            typeahead-loading="loadingLocations"
            typeahead-no-results="noResults"

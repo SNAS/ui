@@ -1,0 +1,40 @@
+<input id="dateRangePicker" type="text" name="daterange" value="01/01/2015 1:30 PM - 01/01/2015 2:00 PM" />
+<!--
+<div style="position: absolute; bottom: 0; left: 220px">
+  <input type='text' class="form-control" id="startDatetimePicker"/>
+  <input type='text' class="form-control" id="endDatetimePicker"/>
+</div>
+-->
+<!--datetimerange: [{{$root.dateTimeRange}}]-->
+<div class="clearfix">
+  <div class="line-graph col-sm-12 col-md-12 col-lg-12" style="min-height: 100px">
+    <div class="loading-section">
+      <div ng-show="loadingAnomalies" bmp-loading font-width="50"></div>
+      <nvd3 options="previewGraph" data="previewGraphData"></nvd3>
+      <div id="timeSelector" style="display: none"></div>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-12 timeline-ticks">
+    <div class="timeline-tick" ng-repeat="tl in timeLines" style="left: {{tl.left}}%">
+      <div class="vertical-line"></div>
+      <div class="triangle"></div>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="timeline-background"></div>
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-12 timeline-arrows row">
+    <div class="timeline-left-arrow" ng-click="leftArrow()"></div>
+    <div class="timeline-right-arrow" ng-click="rightArrow()"></div>
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-12 timeline-display-container">
+    <div class="timeline-display" ng-repeat="tl in timeLines" style="left: {{tl.left}}%">
+      <div class="hours" ng-if="timelineTicksGapType === 'hours'">
+        {{tl.timestamp | date: "h"}}<div class="am-pm">{{tl.timestamp | date: "a"}}</div>
+      </div>
+      <div class="days" ng-if="timelineTicksGapType === 'days'">
+        {{tl.timestamp | date: "MM/dd"}}
+      </div>
+    </div>
+  </div>
+</div>

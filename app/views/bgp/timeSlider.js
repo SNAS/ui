@@ -54,12 +54,12 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
     start: [parameters.startTimestamp, parameters.endTimestamp], // Handle start position
     step: 60 * 1000, // Slider moves in increments of a minute
     margin: 60 * 1000, // Handles must be more than 1 minute apart
-    limit: 3600 * 60 * 1000 * 4, // Maximum 2 hours
+    limit: 3600 * 60 * 1000 * nbHoursToDisplayByDefault, // Maximum 2 hours
     connect: true, // Display a colored bar between the handles
     orientation: 'horizontal', // Orient the slider vertically
     behaviour: 'tap-drag', // Move handle on tap, bar is draggable
     range: {
-      'min': parameters.endTimestamp - 12*3600000,//moment().subtract(12, 'hours').toDate().getTime(), // minus 12 hours
+      'min': parameters.endTimestamp - nbHoursToDisplayByDefault*3600000,//moment().subtract(12, 'hours').toDate().getTime(), // minus 12 hours
       'max': parameters.endTimestamp//moment().toDate().getTime()
     },
     format: {
@@ -101,7 +101,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
       timeSelector.noUiSlider.destroy();
       sliderSettings.range = {
         'min': moment(setDate).toDate().getTime(),
-        'max': moment(setDate).add(12, 'hours').toDate().getTime()
+        'max': moment(setDate).add(nbHoursToDisplayByDefault, 'hours').toDate().getTime()
       };
       sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
       noUiSlider.create(timeSelector, sliderSettings);
@@ -111,7 +111,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
       timeSelector.noUiSlider.destroy();
       sliderSettings.range = {
         'min': moment(setDate).toDate().getTime(),
-        'max': moment(setDate).add(12, 'hours').toDate().getTime()
+        'max': moment(setDate).add(nbHoursToDisplayByDefault, 'hours').toDate().getTime()
       };
       sliderSettings.start = [moment(setDate).toDate().getTime(), moment(setDate).toDate().getTime() + (originalValues[1] - originalValues[0])];
       noUiSlider.create(timeSelector, sliderSettings);
@@ -136,24 +136,24 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
     if (setDate <= moment(sliderSettings.range['min'])) {
       timeSelector.noUiSlider.destroy();
       sliderSettings.range = {
-        'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
+        'min': moment(setDate).subtract(nbHoursToDisplayByDefault, 'hours').toDate().getTime(),
         'max': moment(setDate).toDate().getTime()
       };
       sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
       noUiSlider.create(timeSelector, sliderSettings);
       bindEvents();
     }
-    else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(12, 'hours') <= moment()) {
+    else if (setDate > moment(sliderSettings.range['max']) && moment(setDate).subtract(nbHoursToDisplayByDefault, 'hours') <= moment()) {
       timeSelector.noUiSlider.destroy();
       sliderSettings.range = {
-        'min': moment(setDate).subtract(12, 'hours').toDate().getTime(),
+        'min': moment(setDate).subtract(nbHoursToDisplayByDefault, 'hours').toDate().getTime(),
         'max': moment(setDate).toDate().getTime()
       };
       sliderSettings.start = [moment(setDate).toDate().getTime() - (originalValues[1] - originalValues[0]), moment(setDate).toDate().getTime()];
       noUiSlider.create(timeSelector, sliderSettings);
       bindEvents();
     }
-    else if (moment(setDate).subtract(12, 'hours') > moment()) {
+    else if (moment(setDate).subtract(nbHoursToDisplayByDefault, 'hours') > moment()) {
       alert("You can't go to the future! But you can try to go to your past :)");
 
     }
@@ -219,7 +219,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
     var originalValues = timeSelector.noUiSlider.get();
     timeSelector.noUiSlider.destroy();
     sliderSettings.range = {
-      'min': moment().subtract(12, 'hours').toDate().getTime(),
+      'min': moment().subtract(nbHoursToDisplayByDefault, 'hours').toDate().getTime(),
       'max': moment().toDate().getTime()
     };
     sliderSettings.start = [moment().toDate().getTime() - (originalValues[1] - originalValues[0]), moment().toDate().getTime()];
@@ -234,21 +234,21 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
   $scope.previewGraph = {
     chart: {
       type: "lineChartWithSelectionEnabled",
-      height: 100,
+      height: parameters.svgHeight !== undefined ? parameters.svgHeight : 100,
       margin: {
         top: 20,
-        right: 0,
-        bottom: 10,
-        left: 0
+        right: 26,
+        bottom: 57,
+        left: 26
       },
       color: function(d) {
         return callback("lineColor", d);
       },
       x: function (d) {
-        return d[0];
+        return d !== undefined ? d[0] : 0;
       },
       y: function (d) {
-        return d[1];
+        return d !== undefined ? d[1] : 0;
       },
       useVoronoi: parameters.useVoronoi !== undefined ? parameters.useVoronoi : true,
       clipEdge: parameters.clipEdge !== undefined ? parameters.clipEdge : true,
@@ -259,6 +259,7 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
       showXAxis: parameters.showXAxis !== undefined ? parameters.showXAxis : false,
       showYAxis: parameters.showYAxis !== undefined ? parameters.showYAxis : false,
       forceY : parameters.forceY !== undefined ? parameters.forceY : undefined,
+      xDomain: parameters.xDomain !== undefined ? parameters.xDomain : undefined,
       xAxis: {
         tickFormat: function (d) {
           return moment(d).format("MM/DD/YYYY HH:mm");
@@ -275,5 +276,31 @@ function setUpTimeSlider($scope, $timeout, callbacks, parameters) {
 
   bindEvents();
 
+//  $scope.previewGraph.chart.setXScaleRange([1493989200000, 1493989200000]);
+//  console.log("chart", $scope.previewGraph.chart.forceX);
+
   /* end of time slider */
+
+  return $scope.previewGraph;
+}
+//function loadGraphData($scope, data) {
+//  $scope.previewGraphData = data;
+//  console.log("previewGraphData", data, JSON.stringify(data));
+//  // get the earliest and latest timestamps
+////  d3.min
+//}
+function extractTimestamp(timestampValue) {
+  return timestampValue[0];
+}
+function getMinOrMax(fn, data) {
+  return fn(data.map(function(row) { return fn(row.values.map(extractTimestamp))}));
+}
+function computeMinMaxTimestamps(data) {
+//  d3.max(data[0].values.map(getTimestamp))
+  return [ d3.min, d3.max ].map(function(fn) { return getMinOrMax(fn, data); });
+
+//  var minTimestamp = getMinOrMax(d3.min, data);
+//  var maxTimestamp = getMinOrMax(d3.max, data);
+////  var maxTimestamp = d3.max(data.map(function(row) { return d3.max(row.values.map(extractTimestamp))}));
+//  console.log("min", minTimestamp, "max", maxTimestamp);
 }

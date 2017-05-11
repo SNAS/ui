@@ -8,7 +8,12 @@
  * Controller for the BGP Security Audit page
  */
 angular.module('bmpUiApp').controller('BGPSecurityAuditController',
-  function($scope, $stateParams, bgpDataService, ConfigService, socket, uiGridConstants, $timeout) {
+  function($scope, $rootScope, $controller, $stateParams, bgpDataService, ConfigService, socket, uiGridConstants, $timeout) {
+    $rootScope.dualWindow.noTitleBar = true;
+    $rootScope.dualWindow.header = {
+      controller: $controller('BGPHeaderCtrl', {$scope: $scope}),
+      html: 'views/bgp/bgp-header.html'
+    };
     $scope.api_errors = [];
 
     const viewNames = {
@@ -19,6 +24,9 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       martians: "red",
       prefix_length: "blue"
     };
+
+    console.log("(root)dateTimeRange", $rootScope.dateTimeRange);
+    console.log("(scope)dateTimeRange", $scope.dateTimeRange);
 
     function findIndexOfAnomaly(anomaly, array, field) {
       return array.findIndex(function(el) {
@@ -58,19 +66,47 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         }
       }
     }
-
-    function loadAnomalies() {
+/*
+    $scope.minMaxTimestamps = [1493298000000,1493308800000];
+    $scope.timeLines = [];
+    const hourInMs = 3600000;
+    function stripMinutesAndSeconds(timestamp) {
+      return timestamp - (timestamp%hourInMs);
+    }
+    function computeTimeLines(minMaxTimestamps) {
+      var fullHours = [];
+      console.log("computeTimeLines", minMaxTimestamps, minMaxTimestamps.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
+      var start = stripMinutesAndSeconds(minMaxTimestamps[0]);
+      if (minMaxTimestamps[0] > start) {
+        start += hourInMs;
+      }
+//      console.log("start", start, moment(start).format("MM/DD/YYYY HH:mm"));
+      fullHours = d3.range(start, minMaxTimestamps[1]+1, hourInMs); // +1 to include the last hour
+//      console.log("fullHours", fullHours, fullHours.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
+      var x = d3.time.scale().range([0, 100]); // percentages of the container width
+      // edge case: when there's only one timestamp, we need it to be centered
+      if (fullHours.length === 1) {
+        x = d3.time.scale().range([50, 50]);
+      }
+      x.domain(minMaxTimestamps);
+      return fullHours.map(function(h) {
+        return { timestamp: h, left: x(h) };
+      });
+    }
+    */
+    function loadAnomalies(start, end) {
       $scope.loadingAnomalies = true;
       $scope.api_errors = [];
       bgpDataService.getAnomaliesTypes().promise.then(function(result) {
 //        console.debug("anomalies types", result);
 
         $scope.previewGraphData = [];
+//        var graphData = [];
         angular.forEach(result, function(anomaly) {
           var parameters = {
             anomaliesType: anomaly,
-            start: getTimestamp("start"),
-            end: getTimestamp("end")
+            start: start,//getTimestamp("start"),
+            end: end//getTimestamp("end")
           };
 
           var newGraphLine = {
@@ -82,6 +118,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             loading: true
           };
           $scope.previewGraphData.push(newGraphLine);
+//          graphData.push(newGraphLine);
 
           var request = bgpDataService.getAnomalyOverview(parameters);
           request.promise.then(function(result) {
@@ -103,21 +140,56 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             computeValuesAtSelectedTime(newGraphLine);
 
             var index = findIndexOfAnomaly(anomaly, $scope.previewGraphData, "id");
+//            var index = findIndexOfAnomaly(anomaly, graphData, "id");
             if (index === -1) {
               $scope.previewGraphData.push(newGraphLine);
+//              graphData.push(newGraphLine);
             } else {
               $scope.previewGraphData[index] = newGraphLine;
+//              graphData[index] = newGraphLine;
             }
 
-//            console.log("previewGraphData", $scope.previewGraphData);
+            // TODO Oli: uncomment lines below for the graph's x axis to start and end on timestamps from the data
+//            console.log("previewGraphData", $scope.previewGraphData, JSON.stringify($scope.previewGraphData));
+//            $scope.minMaxTimestamps = computeMinMaxTimestamps($scope.previewGraphData);
+//            if ($scope.minMaxTimestamps[0] === undefined || $scope.minMaxTimestamps[1] === undefined) {
+//              $scope.minMaxTimestamps = [parameters.start, parameters.end];
+//            }
+
+            // TODO Oli: NO NEED TO DO THIS SO OFTEN if we just use the start and end parameters, just do it when changing these parameters
+//            break here
+            // otherwise use the start and end parameters based on now() - a few hours
+//            $scope.minMaxTimestamps = [parameters.start, parameters.end];
+
+//            $scope.timeLines = computeTimeLines($scope.minMaxTimestamps);
+//            console.log("timelines", $scope.timeLines);
+//            timeSlider.graph.setXScaleRange(minMaxTimestamps);
 
             $scope.loadingAnomalies = false;
           }, function(error) {
             console.warn(error);
             $scope.loadingAnomalies = false;
             $scope.api_errors.push(error);
+
+            var newGraphLine = {
+              id: anomaly,
+              key: viewNames[anomaly] !== undefined ? viewNames[anomaly] : anomaly,
+              values: [],
+              occurrences: "Error",
+              trend: 0,
+              loading: false
+            };
+
+            var index = findIndexOfAnomaly(anomaly, $scope.previewGraphData, "id");
+            if (index === -1) {
+              $scope.previewGraphData.push(newGraphLine);
+            } else {
+              $scope.previewGraphData[index] = newGraphLine;
+            }
           });
         });
+
+//        $timeout(function() { loadGraphData($scope, graphData); }, 500);
       }, function(error) {
         console.warn(error);
         $scope.loadingAnomalies = false;
@@ -267,6 +339,9 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         };
 
         console.debug("anomaly details for", anomaly, $scope.anomalyDetails);
+      }, function(error) {
+        console.error("failed to load anomaly details for", anomaly);
+        $scope.anomalyDetails[anomaly].loadingAnomalyDetails = false;
       });
     };
 
@@ -302,25 +377,62 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       }
     }
 
-    // init, changedDates, lineColor
-    var timeSliderCallbacks = {
-      changedDates: function() {
-        $timeout(function() {
-          loadAnomalies();
-          reloadAnomalyDetails();
-        });
-      },
-      lineColor: function (d) {
-        if (lineColors[d.id] !== undefined) {
-          return lineColors[d.id];
-        }
-        return "#777";
-      },
-      changedSelectedTime: function() {
-        for (var i = 0 ; i < $scope.previewGraphData.length ; i++) {
-          computeValuesAtSelectedTime($scope.previewGraphData[i]);
-        }
+    $scope.changedDates = function(dates) {
+      console.log("changed dates", dates, Object.keys(dates).map(function(key, index) { return moment(dates[key]).format('MM/DD/YYYY h:mm a')}));
+      $timeout(function() {
+        loadAnomalies(dates.start, dates.end);
         reloadAnomalyDetails();
+
+//        $scope.minMaxTimestamps = [getTimestamp("start"), getTimestamp("end")];
+        $scope.minMaxTimestamps=[dates.start, dates.end];
+      });
+    };
+
+    $scope.overviewGraph = {
+      chart: {
+        type: "lineChartWithSelectionEnabled",
+        height: 314,
+        margin: {
+          top: 20,
+          right: 26,
+          bottom: 67,
+          left: 26
+        },
+        color: function(d) {
+          if (lineColors[d.id] !== undefined) {
+            return lineColors[d.id];
+          }
+          return "#777";
+        },
+        x: function (d) {
+          return d !== undefined ? d[0] : 0;
+        },
+        y: function (d) {
+          return d !== undefined ? d[1] : 0;
+        },
+        useVoronoi: true,
+        clipEdge: true,
+        transitionDuration: 500,
+        useInteractiveGuideline: true,
+        showLegend: true,
+        showControls: false,
+        showXAxis: false,
+        showYAxis: true,
+        xDomain: $scope.minMaxTimestamps,
+        xAxis: {
+          tickFormat: function (d) {
+            return moment(d).format("MM/DD/YYYY HH:mm");
+          }
+        },
+        onTimeSelectedCallback: function(selectedTimestamp) {
+          $timeout(function() {
+            $scope.selectedTime = selectedTimestamp;
+            for (var i = 0 ; i < $scope.previewGraphData.length ; i++) {
+              computeValuesAtSelectedTime($scope.previewGraphData[i]);
+            }
+            reloadAnomalyDetails();
+          });
+        }
       }
     };
 
@@ -332,15 +444,50 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
     });
 
     // initialisation
-    $(function () {
-      var timeSliderParameters = { showLegend: true };
-      if ($stateParams.start) {
-        timeSliderParameters.startTimestamp = parseInt($stateParams.start, 10);
-      }
-      if ($stateParams.end) {
-        timeSliderParameters.endTimestamp = parseInt($stateParams.end, 10);
-      }
-      setUpTimeSlider($scope, $timeout, timeSliderCallbacks, timeSliderParameters);
+    $scope.$watch('minMaxTimestamps', refreshChart);
+
+    function refreshChart() {
+      if ($scope.minMaxTimestamps === undefined) return;
+      console.log("refreshing chart", $scope.minMaxTimestamps, $scope.minMaxTimestamps.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
+      $scope.overviewGraph.chart.xDomain = $scope.minMaxTimestamps;//[$scope.xminvalue,$scope.xmaxvalue];
+    }
+    $scope.refreshGraph = function() {
+      refreshChart();
+    }
+
+    // initialisation
+//    $(function() {
+//      var timeSliderParameters = { showLegend: true, svgHeight: 314, xDomain: $scope.minMaxTimestamps/*[$scope.xminvalue,$scope.xmaxvalue]*/ };
+//      if ($stateParams.start) {
+//        timeSliderParameters.startTimestamp = parseInt($stateParams.start, 10);
+//      }
+//      if ($stateParams.end) {
+//        timeSliderParameters.endTimestamp = parseInt($stateParams.end, 10);
+//      }
+////      timeSlider = setUpTimeSlider($scope, $timeout, timeSliderCallbacks, timeSliderParameters);
+//    });
+
+    // initialisation
+    $(function() {
+      // initialise the scroll bar for the middle column
+      var scrollbarParameters = {
+        setHeight: 740,
+        theme: "minimal-dark",
+        callbacks: {
+          // if the content is long enough and the vertical scrollbar is added
+          onOverflowY: function() {
+//            $scope.thereIsMoreData = true;
+          },
+          // if the content is short enough and the vertical scrollbar is removed
+          onOverflowYNone: function() {
+//            $scope.thereIsMoreData = false;
+          },
+          alwaysTriggerOffsets: false
+        }
+      };
+      $timeout(function() {
+//        $(".scrollable").mCustomScrollbar(scrollbarParameters);
+      }, 0);
     });
   }
 );
