@@ -71,10 +71,30 @@ angular.module('bmpUiApp').controller('BGPHeaderCtrl',
       // and focus on the other input if it hasn't been filled in, or on the search button
       if (keyEvent.which === 13 || keyEvent.keyCode === 9) {
         console.log("Enter or Tab", $rootScope.headerSearchValue);
-        if (!isASN($rootScope.headerSearchValue) && !isPrefix($rootScope.headerSearchValue)) {
-          $rootScope.headerSearchValue = extractASNumberFromASName($rootScope.headerSearchValue);
+        if ($rootScope.headerSearchValue === "") {
+          changeLocation($rootScope.headerSearchValue);
         }
-        changeLocation($rootScope.headerSearchValue);
+        else if (!isASN($rootScope.headerSearchValue) && !isPrefix($rootScope.headerSearchValue)) {
+          $rootScope.headerSearchValue = extractASNumberFromASName($rootScope.headerSearchValue);
+          // if no AS number could be identified, assume it's just an AS name and select the first matching element
+          if (!isASN($rootScope.headerSearchValue)) {
+            apiFactory.getWhoIsASName($rootScope.headerSearchValue).success(function (result) {
+              var data = result.w.data;
+              if (data.length === 0) {
+                console.error("Cannot find info for AS name", $rootScope.headerSearchValue);
+              }
+              else {
+                $rootScope.headerSearchValue = data[0].asn;
+                changeLocation($rootScope.headerSearchValue);
+              }
+            }).error(function (error) {
+              console.error(error.message);
+            });
+          }
+          else {
+            changeLocation($rootScope.headerSearchValue);
+          }
+        }
       }
     };
   }

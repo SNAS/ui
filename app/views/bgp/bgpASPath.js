@@ -24,6 +24,8 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     };
     $scope.api_errors = [];
 
+    $rootScope.headerSearchValue = '';
+
 
     // states:
     // - open: connections between AS #1 and AS #2 are being shown
