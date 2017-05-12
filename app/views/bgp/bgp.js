@@ -20,7 +20,7 @@ angular.module('bmpUiApp').controller('BGPController',
 
     $scope.dateFilterOn = true;
     $scope.dateTimeRange = DateTimeRangeService.getDefaultRange();
-    console.log("dateTimeRange", $rootScope.dateTimeRange);
+    console.log("dateTimeRange", $scope.dateTimeRange);
 
     $scope.newPathLocation = function(parameter) {
       var path = $location.path();
@@ -73,7 +73,6 @@ angular.module('bmpUiApp').controller('BGPController',
       $scope.displayASNInfo = false;
     }
 
-
     $scope.changedDates = function(dates) {
       console.log("changed dates", dates, Object.keys(dates).map(function(key, index) { return moment(dates[key]).format('MM/DD/YYYY h:mm a')}));
       $scope.dateTimeRange = dates;
@@ -82,20 +81,22 @@ angular.module('bmpUiApp').controller('BGPController',
         if ($scope.searchValue === "") {
           displayAllASNodes();
         }
-        else if (isASN($scope.searchValue)) {
-          refreshASInfo();
-        }
-        // if it's not a number, assume it's a prefix
-        else {
+        else if (isPrefix($scope.searchValue)) {
           getPrefixInfo($scope.searchValue);
+        }
+        // if it's not a prefix, it must be an AS number or an AS name
+        else {//if (isASN($scope.searchValue) || isASName) {
+          refreshASInfo();
         }
       });
     };
 
+    $scope.graphHeight = 200;
+    $scope.previewGraphData = [];
     $scope.asChangesGraph = {
       chart: {
         type: "lineChartWithSelectionEnabled",
-        height: 200,
+        height: $scope.graphHeight,
         margin: {
           top: 20,
           right: 26,
@@ -157,8 +158,16 @@ angular.module('bmpUiApp').controller('BGPController',
     function isASN(s) {
       return s.match(/^[0-9]+$/) !== null;
     }
+    // returns true is string s is a partial or full prefix
+    function isPrefix(s) {
+      return s.match(/^[0-9]+\.[0-9*]*\.?[0-9]*\.?[0-9*]*\/?[0-9*]*$/) !== null;
+    }
+    function extractASNumberFromASName(s) {
+      return s.replace(/^.*ASN:\s([0-9]+).*/, '$1');
+    }
 
     function refreshASInfo() {
+      console.trace();
       // retrieve information from the BGP data service even if there's no response from the WhoIs API
       getPrefixes();
       getASHistInfo();
@@ -173,6 +182,7 @@ angular.module('bmpUiApp').controller('BGPController',
     };
 
     //get all the information of this AS
+    $scope.displayTimeRangeSelector = false;
     function searchValueFn() {
       $scope.cancelAllHttpRequests();
       $scope.forceDirectedGraph.data = {nodes: [], links: []};
@@ -183,7 +193,9 @@ angular.module('bmpUiApp').controller('BGPController',
       $scope.showDirectedGraph = false;
       $scope.displayAllNodes = false;
       $scope.displayPrefixInfo = false;
+      $scope.displayTimeRangeSelector = true;
       if ($scope.searchValue === "") {
+        $scope.displayTimeRangeSelector = false;
         $scope.displayAllNodes = true;
         $scope.dateFilterOn = false;
         displayAllASNodes();
@@ -200,6 +212,7 @@ angular.module('bmpUiApp').controller('BGPController',
           if (getASWhoIsInfo(data)) {
             // if this is a known ASN, get other information
           }
+          $scope.loadingWhoIs = false;
         }).error(function (error) {
             console.log(error.message);
             $scope.loadingWhoIs = false;
@@ -209,12 +222,60 @@ angular.module('bmpUiApp').controller('BGPController',
         $scope.displayASNInfo = true;
         $scope.showDirectedGraph = true;
       }
-      // if it's not a number, assume it's a prefix
-      else {
+      else if (isPrefix($scope.searchValue)) {
         $scope.dateFilterOn = true;
         $scope.displayPrefixInfo = true;
         $scope.prefix = $scope.searchValue;
         getPrefixInfo($scope.searchValue);
+      }
+      // if it's not a number or a prefix, it could be an AS name
+      else {
+        $scope.asn = extractASNumberFromASName($scope.searchValue);
+        $rootScope.headerSearchValue = $scope.asn;
+        $scope.searchValue = $scope.asn;
+        // it might be an AS name
+        // otherwise it must be a prefix
+        $scope.dateFilterOn = true;
+        $scope.displayASNInfo = false;
+        $scope.loadingWhoIs = true;
+
+        apiFactory.getWhoIsASN($scope.asn).success(function(result) {
+          $scope.loadingWhoIs = false;
+          var data = result.gen_whois_asn.data;
+          $scope.asnDetails = [];
+          if (getASWhoIsInfo(data)) {
+            // if this is a known ASN, get other information
+          }
+          $scope.loadingWhoIs = false;
+        })
+        .error(function (error) {
+          console.log(error.message);
+          $scope.loadingWhoIs = false;
+        });
+
+//        apiFactory.getWhoIsASName($scope.searchValue).success(function(result) {
+//          $scope.loadingWhoIs = false;
+//          var data = result.w.data;
+//          if (data.length === 0) {
+//            console.warn("No information found for AS name", $scope.searchValue);
+//            $scope.asn = undefined;
+//          }
+//          else {
+//            $scope.asn = data[0].asn;
+//          }
+//          console.log("AS name data", data, $scope.asn);
+//          $scope.asnDetails = [];
+//          if (getASWhoIsInfo(data)) {
+//            // if this is a known ASN, get other information
+//          }
+//          // retrieve information from the BGP data service even if there's no response from the WhoIs API
+//          refreshASInfo();
+//          $scope.displayASNInfo = true;
+//          $scope.showDirectedGraph = true;
+//        }).error(function(error) {
+//          $scope.loadingWhoIs = false;
+//          console.log(error.message);
+//        });
       }
     }
 
@@ -986,35 +1047,6 @@ angular.module('bmpUiApp').controller('BGPController',
     };
 
     /* end of force-directed graph */
-
-    /* time slider */
-
-    // init, changedDates, lineColor
-    var timeSliderCallbacks = {
-      init: function() {
-
-      },
-      changedDates: function() {
-        $scope.api_errors = [];
-        $timeout(function() {
-          if ($scope.searchValue === "") {
-            displayAllASNodes();
-          }
-          else if (isASN($scope.searchValue)) {
-            refreshASInfo();
-          }
-          // if it's not a number, assume it's a prefix
-          else {
-            getPrefixInfo($scope.searchValue);
-          }
-        });
-      },
-      lineColor: function(d) {
-        return "#EAA546";
-      }
-    }
-
-    /* end of time slider */
 
     /* prefix AS path graph */
 

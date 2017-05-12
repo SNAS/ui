@@ -9,14 +9,14 @@
 <div class="clearfix">
   <div class="line-graph col-sm-12 col-md-12 col-lg-12" style="min-height: 100px">
     <div class="loading-section">
-      <div ng-show="loadingAnomalies" bmp-loading font-width="50"></div>
+      <div ng-show="loadingGraph" bmp-loading font-width="50"></div>
       <nvd3 options="previewGraph" data="previewGraphData"></nvd3>
       <div id="timeSelector" style="display: none"></div>
     </div>
   </div>
   <div class="col-sm-12 col-md-12 col-lg-12 timeline-ticks">
     <div class="timeline-tick" ng-repeat="tl in timeLines" style="left: {{tl.left}}%">
-      <div class="vertical-line"></div>
+      <div class="vertical-line" style="height: {{verticalLineHeight}}px"></div>
       <div class="triangle"></div>
     </div>
   </div>

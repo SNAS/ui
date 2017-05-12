@@ -15,7 +15,7 @@ angular.module('bmp.components.timeSelector', [])
       getDefaultRange: function() {
         return {
           start: now() - nbHoursToDisplayByDefault * hourInMs,
-          end: now()
+          end: now().utc().valueOf()
         }
       }
     };
@@ -50,7 +50,7 @@ angular.module('bmp.components.timeSelector', [])
         start: dateRangePicker.startDate.utc().valueOf(),
         end: dateRangePicker.endDate.utc().valueOf()
       };
-      console.log("setTimestamps", start, end, newDates);
+//      console.log("setTimestamps", start, end, newDates);
       computeTimeLines(dateRangeLabel, start, end);
       $rootScope.dateTimeRange = newDates;
       $scope.changedDatesCallback({newDates: newDates});
@@ -235,6 +235,8 @@ angular.module('bmp.components.timeSelector', [])
     });
 //    console.log("dateRangePicker", dateRangePicker);
 
+    $scope.verticalLineHeight = $scope.graphHeight !== undefined ? $scope.graphHeight - 57 : 200;
+
     // initialise start & end times
 //    var nbHoursToDisplayByDefault = 6;
     var defaultRange = DateTimeRangeService.getDefaultRange();
@@ -250,7 +252,9 @@ angular.module('bmp.components.timeSelector', [])
       scope: {
         previewGraph: '=graph',
         previewGraphData: '=graphData',
-        changedDatesCallback: '&'
+        changedDatesCallback: '&',
+        graphHeight: '=',
+        loadingGraph: '='
       }
     }
   });

@@ -388,10 +388,11 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       });
     };
 
+    $scope.graphHeight = 250;
     $scope.overviewGraph = {
       chart: {
         type: "lineChartWithSelectionEnabled",
-        height: 314,
+        height: $scope.graphHeight,
         margin: {
           top: 20,
           right: 26,

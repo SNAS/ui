@@ -1,73 +1,6 @@
 <div ng-controller="BGPController" id="bgpView" ng-init="obj={maximiseForceDirectedGraph:false}">
 
-  <div class="main-page-search" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
-    <!--
-    AS Number or prefix:
-    <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-model="searchValue"
-           placeholder="Search ..."
-           typeahead="as_name for as_name in getSuggestions($viewValue)"
-           typeahead-loading="loadingLocations"
-           typeahead-no-results="noResults"
-           typeahead-wait-ms="300"
-           typeahead-on-select="onSelect($item, $model, $label)"/>
-    <span class="help-block">Examples: 109, 1.0.128.0/17, 1.0.*</span>
-    <button type="button" class="btn btn-xs btn-default" ng-show="displayASNInfo || displayPrefixInfo" ng-click="changeLocation()">
-      <span class="glyphicon glyphicon-remove"></span>
-      reset
-    </button>
-    <button type="button" class="btn btn-sm right time-slider-toggle-button" ng-class="{'btn-success': !dateFilterOn, 'btn-danger': dateFilterOn}" ng-click="dateFilterOn = !dateFilterOn">
-      <span class="glyphicon" ng-class="{'glyphicon-plus': !dateFilterOn, 'glyphicon-minus': dateFilterOn}"></span>
-      Date/time filter
-    </button>
-    -->
-<!--
-    <div ng-class="{hidden: !dateFilterOn}" style="min-height: 190px">
-      <div class="separator"></div>
-
-      <!- - date/time selector - ->
-      <div class="row">
-        <div class="col-lg-2">
-          <table class="table start-end">
-            <tr>
-              <th class="timestamp-label">Start:</th>
-              <td class="input"><input type='text' class="form-control" id="startDatetimePicker"/></td>
-            </tr>
-            <tr>
-              <th class="timestamp-label">End:</th>
-              <td class="input"><input type='text' class="form-control" id="endDatetimePicker"/></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td>
-                <button class="btn btn-primary btn-xs btn-now-no-margin" ng-click="setToNow()">now</button>
-              </td>
-            </tr>
-            <tr>
-              <th>Duration:</th>
-              <td id="duration"></td>
-            </tr>
-          </table>
-        </div>
-
-        <div class="col-lg-10 time-slider">
-          <div class="col-lg-1 btn-arrow">
-            <span class="btn btn-default btn-xs" ng-click="leftArrow()"><span class="glyphicon glyphicon-arrow-left"></span></span>
-          </div>
-          <div class="col-lg-10 slider">
-            <div class="loading-section">
-              <div ng-show="loadingPreview" bmp-loading font-width="50"></div>
-              <nvd3 options="previewGraph" data="previewGraphData"></nvd3>
-              <div id="timeSelector"></div>
-            </div>
-          </div>
-          <div class="col-lg-1 btn-arrow">
-            <span class="btn btn-default btn-xs" ng-click="rightArrow()"><span class="glyphicon glyphicon-arrow-right"></span></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  -->
+  <div class="main-area clearfix" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
 
   <!-- THIS SECTION DISPLAYS ERRORS -->
   <div class="main-area" ng-show="api_errors.length > 0">
@@ -81,7 +14,7 @@
 
   <!-- THIS SECTION IS FOR DISPLAYING INFORMATION ABOUT ALL AS NODES -->
 
-  <div class="main-area row" ng-show="displayAllNodes && api_errors.length === 0" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
+  <div class="main-area" ng-show="displayAllNodes && api_errors.length === 0" ng-class="{hidden: obj.maximiseForceDirectedGraph}">
     <div class="table-container col-lg-12 merge-columns">
       <div class="col-lg-8">
         <h3>Prefixes originated and transitted per AS</h3>
@@ -109,12 +42,15 @@
     </div>
   </div>
 
+  <!-- THIS SECTION DISPLAYS A DATE TIME RANGE SELECTOR -->
+  <div class="main-area" ng-show="displayTimeRangeSelector && !obj.maximiseForceDirectedGraph">
+    <line-graph-time-selector graph="asChangesGraph" graph-data="previewGraphData" changed-dates-callback="changedDates(newDates)"
+                              graph-height="graphHeight" loading-graph="loadingPreview"></line-graph-time-selector>
+  </div>
+
   <!-- THIS SECTION DISPLAYS INFORMATION FOR A SPECIFIC AS NODE -->
   <!--<div class="main-area row" ng-show="displayASNInfo">-->
-  <div class="main-area row" ng-show="!obj.maximiseForceDirectedGraph && displayASNInfo">
-
-    <!--datetimerange: [{{$root.dateTimeRange}}]-->
-    <line-graph-time-selector graph="asChangesGraph" graph-data="previewGraphData" changed-dates-callback="changedDates(newDates)"></line-graph-time-selector>
+  <div class="main-area" ng-show="!obj.maximiseForceDirectedGraph && displayASNInfo">
 
     <!-- WhoIs info and prefixes -->
     
@@ -154,7 +90,7 @@
 
   <!-- THIS SECTION DISPLAYS A D3 GRAPH FOR A SPECIFIC AS NODE -->
 
-  <div class="main-area row" ng-show="displayASNInfo && api_errors.length === 0">
+  <div class="main-area" ng-show="displayASNInfo && api_errors.length === 0">
 
     <!-- force directed graph -->
     <div class="col-lg-12">
@@ -224,9 +160,7 @@
   <!-- THIS SECTION DISPLAYS INFORMATION FOR A SPECIFIC PREFIX -->
 
   <!--<div class="main-area row" ng-show="displayASNInfo">-->
-  <div class="main-area row" ng-show="!nodata && api_errors.length === 0 && !obj.maximiseForceDirectedGraph && displayPrefixInfo">
-
-    <line-graph-time-selector graph="asChangesGraph" graph-data="previewGraphData" changed-dates-callback="changedDates(newDates)"></line-graph-time-selector>
+  <div class="main-area" ng-show="!nodata && api_errors.length === 0 && !obj.maximiseForceDirectedGraph && displayPrefixInfo">
 
     <!-- prefixes -->
     <div class="col-lg-12">
@@ -243,7 +177,7 @@
 
   <!-- THIS SECTION DISPLAYS A D3 GRAPH FOR A SPECIFIC PREFIX -->
 
-  <div class="main-area row" ng-show="displayPrefixInfo && api_errors.length === 0">
+  <div class="main-area" ng-show="displayPrefixInfo && api_errors.length === 0">
     <!-- AS paths graph -->
     <div class="col-lg-12">
       <div class="table-container" id="asPathsGraph">
@@ -289,6 +223,3 @@
   </div>
 
 </div>
-
-
-
