@@ -114,7 +114,7 @@
         " ("+selectedRouter.routerId+")":""}}
         <span class="btn btn-primary btn-xs pull-right" style="margin-right:2%"
               ng-show="pathTraces!=null"
-              ng-click="SPFgridApi.selection.clearSelectedRows();">Clear Selection</span>
+              ng-click="SPFgridApi.selection.clearSelectedRows(); insertVirtualLinks();">Clear Selection</span>
       </h3>
       <div class="loading-section">
         <div ui-grid="SPFtableOptions" ui-grid-selection ui-grid-auto-resize>
@@ -158,7 +158,7 @@
     <div class="modal-dialog" ng-class="{'modal-sm': size == 'sm', 'modal-lg': size == 'lg'}">
       <div class="modal-content" modal-transclude="">
         <div class="modal-header ng-scope">
-          <h3 class="modal-title">Link State - API SERVICE</h3>
+          <h3 class="modal-title">{{selectedPeer.PeerName}} & {{protocol}} & {{translateMT[selected_mt_id]}} - API SERVICE</h3>
         </div>
 
         <div ng-bind-html="modalContent" class="modal-body ng-scope">

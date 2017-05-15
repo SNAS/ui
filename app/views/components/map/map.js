@@ -48,14 +48,13 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
      Store map object when available
      *****************************************/
     leafletData.getMap($scope.id).then(function (map) {
-      console.log($scope.id)
+      console.log(map)
       $scope.map = map;
       //L.control.zoomslider().addTo(map);
       map.scrollWheelZoom.disable();
       $scope.init();
       L.control.zoomslider().addTo(map);
     });
-
 
     /****************************************
      Listen for menu toggle

@@ -299,6 +299,10 @@ angular.module('bmpUiApp')
         mt_id + "?withGeo");
     };
 
+    apiFactory.getPeerVirtualNodes = function(peerHashId, mt_id) {
+      return $http.get(urlBase + "linkstate/nodes/virtual_nodes/peer/" + peerHashId + "/" + mt_id);
+    };
+
     apiFactory.getPeerLinks = function(peerHashId, mt_id) {
       return $http.get(urlBase + "linkstate/links/peer/" + peerHashId + "/" +
         mt_id);

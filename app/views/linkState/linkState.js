@@ -20,26 +20,58 @@ angular.module('bmpUiApp')
 
         // *** Set API call modal dialog for tops ***
 
-        // *
-        var linkLinkStatePeers= "linkstate/peers";
-        var textLinkStatePeers = "Link State Peers";
-        $scope.modalContent += apiFactory.createApiCallHtml(linkLinkStatePeers, textLinkStatePeers);
+        if($scope.selectedPeer) {
+
+          var linkSelectedPeerNodes= "linkstate/nodes/peer/" + $scope.selectedPeer.peer_hash_id + "/0?withGeo";
+          var textSelectedPeerNodes = $scope.selectedPeer.PeerName + " Nodes - Geo";
+          $scope.modalContent += apiFactory.createApiCallHtml(linkSelectedPeerNodes, textSelectedPeerNodes);
+
+          var linkSelectedPeerLinks= "linkstate/links/peer/" + $scope.selectedPeer.peer_hash_id + "/0";
+          var textSelectedPeerLinks = $scope.selectedPeer.PeerName + " Links";
+          $scope.modalContent += apiFactory.createApiCallHtml(linkSelectedPeerLinks, textSelectedPeerLinks);
+
+          if($scope.selectedRouter) {
+            var linkSelectedNodeTopology= "linkstate/spf/peer/" + $scope.selectedPeer.peer_hash_id + "/ospf/" +  $scope.selectedRouter.routerId;;
+            var textSelectedNodeTopology = $scope.selectedRouter.NodeName + " Topology";
+            $scope.modalContent += apiFactory.createApiCallHtml(linkSelectedNodeTopology, textSelectedNodeTopology);
+          }
+
+          $scope.modalContent += "<hr>";
+        }
 
         // *
         var linkLinkStatePeersWithGeo= "linkstate/peers/?withGeo";
-        var textLinkStatePeersWithGeo = "Link State Peers - Geo";
+        var textLinkStatePeersWithGeo = "All Peers - Geo";
         $scope.modalContent += apiFactory.createApiCallHtml(linkLinkStatePeersWithGeo, textLinkStatePeersWithGeo);
 
         // *
         var linkLinkStateNodes= "linkstate/nodes";
-        var textLinkStateNodes = "Link State Nodes";
+        var textLinkStateNodes = "All Nodes";
         $scope.modalContent += apiFactory.createApiCallHtml(linkLinkStateNodes, textLinkStateNodes);
 
         // *
         var linkLinkStateLinks= "linkstate/links";
-        var textLinkStateLinks = "Link State Links";
+        var textLinkStateLinks = "All Links";
         $scope.modalContent += apiFactory.createApiCallHtml(linkLinkStateLinks, textLinkStateLinks);
 
+      };
+
+      var virtualLinkLayer, layerElements = [];
+
+      var virtualLineStyle = {
+          color: '#484848',
+          weight: 3,
+          opacity: 0.50,
+          smoothFactor: 0
+      };
+
+      var intersectionMarkerOptions = {
+          radius: 5,
+          fillColor: "#000",
+          color: "#000",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 1
       };
 
       var accessToken = 'pk.eyJ1IjoicGlja2xlZGJhZGdlciIsImEiOiJaTG1RUmxJIn0.HV-5_hj6_ggR32VZad4Xpg';
@@ -106,6 +138,7 @@ angular.module('bmpUiApp')
           $scope.SPFgridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
             if (row.isSelected) {
+              $scope.map.removeLayer(virtualLinkLayer);
               removeLayers(drawnPolylines);
               var path = row.entity.path_hash_ids;
               var neighbor_addr = row.entity.neighbor_addr;
@@ -120,6 +153,7 @@ angular.module('bmpUiApp')
               $scope.pathTraces = null;
               cluster.clearLayers();
               cluster.addLayer(markerLayer);
+
               angular.forEach(involvedMarkers, function (marker) {
                 marker.options.connectedPaths = [];
               });
@@ -131,6 +165,7 @@ angular.module('bmpUiApp')
             }
           });
           gridApi.selection.on.rowSelectionChangedBatch($scope, function () {
+
             removeLayers(circles.slice(1));
             removeLayers(paths);
             paths = [];
@@ -152,6 +187,11 @@ angular.module('bmpUiApp')
       var polylines, drawnPolylines, cluster, markerLayer, paths;
 
       $scope.selectNode = function (selectedRouter) {
+
+        if (!$scope.map.hasLayer(virtualLinkLayer)) {
+          $scope.insertVirtualLinks();
+        }
+
         removeLayers(circles);
         circles = [];
 
@@ -176,6 +216,8 @@ angular.module('bmpUiApp')
         paths = [];
 
         $scope.selectedRouter = selectedRouter;
+
+        updateLinkStateModal();
 
         $scope.pathTraces = null;
 
@@ -213,6 +255,8 @@ angular.module('bmpUiApp')
 
         $scope.selectedRouter = null;
 
+        updateLinkStateModal();
+
         if ($(".leaflet-popup-close-button")[0])
           $(".leaflet-popup-close-button")[0].click();
 
@@ -240,6 +284,7 @@ angular.module('bmpUiApp')
               circles = [];
 
               removeLayers(drawnPolylines);
+
               drawnPolylines = [];
               polylines = [];
 
@@ -349,13 +394,26 @@ angular.module('bmpUiApp')
                   }
                 });
 
-                var linksConnected = 0;
+                //var linksConnected = 0;
+                var linksToCount = {};
                 angular.forEach(links, function (link) {
                   if (link.source == node.id || link.target == node.id) {
-                    linksConnected++;
+
+                    var s = link.source;
+                    var t = link.target;
+
+                    if(s > t) {
+                      var temp = s;
+                      s = t;
+                      t = temp;
+                    }
+
+                    linksToCount[s + t] = null;
+
+                    //linksConnected++;
                   }
                 });
-                var popup = "Connected Links: " + linksConnected;
+                var popup = "Connected Links: " + Object.keys(linksToCount).length;
 
                 angular.forEach(node, function (value, key) {
                   if (['id', '$$hashKey', 'level', 'latitude', 'longitude'].indexOf(key) < 0)
@@ -369,7 +427,7 @@ angular.module('bmpUiApp')
               angular.forEach(links, function (link) {
 
                 var sourceNode, targetNode;
-                console.log("NODES LENGTH: " + nodes.length)
+//                console.log("NODES LENGTH: " + nodes.length)
                 angular.forEach(nodes, function (node) {
 
                   if (node.id == link.source) {
@@ -382,9 +440,9 @@ angular.module('bmpUiApp')
                     //sourceNode = nodes[1];
                   }
 
-                  console.log(node);
-                  console.log(link);
-                  console.log("-------------")
+//                console.log(node);
+//                console.log(link);
+//                console.log("-------------")
                 });
 
                 if (sourceNode && targetNode) {
@@ -408,11 +466,11 @@ angular.module('bmpUiApp')
                   $scope.markers[targetNode.id].options.connectedPolylines.push(polyline);
                 }
 
-                console.log("*******************")
+                //console.log("*******************")
               });
 
-              console.log("ABC");
-              console.log(polylines.length);
+              //console.log("ABC");
+              //console.log(polylines.length);
 
               angular.forEach(polylines, function (polyline) {
 
@@ -430,8 +488,7 @@ angular.module('bmpUiApp')
                 }
               });
               angular.forEach(drawnPolylines, function (drawnPolyline) {
-                console.log("Draw Polylines");
-                console.log(drawnPolylines.length)
+
                 var popup = "";
                 if (drawnPolyline.containedLines.length > 1) {
                   angular.forEach(drawnPolyline.containedLines, function (line) {
@@ -464,6 +521,10 @@ angular.module('bmpUiApp')
               if ($scope.tab == "map")
                 $scope.map.fitBounds(markerLayer.getBounds());
 
+              if (!$scope.map.hasLayer(virtualLinkLayer)) {
+                $scope.insertVirtualLinks();
+              }
+
               $scope.topologyIsLoad = false; //stop loading
 
               $scope.SPFtableOptions.data = [];
@@ -471,6 +532,161 @@ angular.module('bmpUiApp')
           });
         }
       };
+
+      $scope.insertVirtualLinks = function () {
+
+        if ($scope.protocol == 'OSPF') {
+
+          getVirtualNodes();
+          virtualNodesPromise.success(function () {
+
+            var virtualLinksBetweenNodes = {};
+            console.log(links);
+
+            angular.forEach(links, function (link) {
+
+              var rSource;
+              var rTarget;
+
+              if($scope.virtualNodes.hasOwnProperty(link.source)) {
+
+                //bgp_id = $scope.virtualNodes[link.source]['IGP_RouterId'].split('[')[0];
+                bgp_id = $scope.virtualNodes[link.source]['IGP_RouterId'];
+                //rSource = $scope.nodesBgpIdDict[bgp_id];
+                rSource = bgp_id;
+
+                if(!rTarget) {
+                  rTarget = $scope.nodes[link.target]['IGP_RouterId'];
+                  //console.log($scope.nodesBgpIdDict);
+                }
+
+              }
+
+              if($scope.virtualNodes.hasOwnProperty(link.target)) {
+
+                //bgp_id = $scope.virtualNodes[link.target]['IGP_RouterId'].split('[')[0];
+                bgp_id = $scope.virtualNodes[link.target]['IGP_RouterId'];
+                //rTarget = $scope.nodesBgpIdDict[bgp_id];
+                rTarget = bgp_id;
+
+                if(!rSource) {
+                  rSource = $scope.nodes[link.source]['IGP_RouterId'];
+                }
+              }
+
+              if(rSource && rTarget && (rSource != rTarget)) {
+
+                if(rSource.split('[').length == 1) {
+                  var tmp = rSource;
+
+                  rSource = rTarget;
+                  rTarget = tmp;
+                }
+
+                if(!virtualLinksBetweenNodes.hasOwnProperty(rSource)) {
+                  virtualLinksBetweenNodes[rSource] = {};
+                }
+                virtualLinksBetweenNodes[rSource][rTarget] = null;
+
+              }
+            });
+
+            console.log(virtualLinksBetweenNodes);
+
+            angular.forEach(virtualLinksBetweenNodes, function (nodes, node_hash_id) {
+
+              console.log("ABC: " + node_hash_id);
+              var bgp_ip_address = node_hash_id.split('[')[0];
+              var hash_of_node = $scope.nodesBgpIdDict[bgp_ip_address];
+
+              if (Object.keys(nodes).length > 0) {
+
+                var t_latitude = parseFloat($scope.nodes[hash_of_node].latitude);
+                var t_longitude = parseFloat($scope.nodes[hash_of_node].longitude);
+
+                var numberOfNodes = 0;
+
+                angular.forEach(nodes, function (_, neighbor_bgp_id) {
+
+                  var hash_of_neigh = $scope.nodesBgpIdDict[neighbor_bgp_id];
+
+                  if(bgp_ip_address != neighbor_bgp_id) {
+
+                    t_latitude += parseFloat($scope.nodes[hash_of_neigh].latitude);
+                    t_longitude += parseFloat($scope.nodes[hash_of_neigh].longitude);
+
+                    numberOfNodes += 1;
+                  }
+                });
+
+                var middlePointOfNeighbors = {"latitude": t_latitude/(numberOfNodes+1), "longitude": t_longitude/(numberOfNodes+1)};
+                var pointA = new L.LatLng(middlePointOfNeighbors.latitude, middlePointOfNeighbors.longitude);
+                var pointB, pointList, polyline;
+
+                var interCount = 0;
+
+                var tempLayerElements = [];
+
+                angular.forEach(nodes, function (_, neighbor_bgp_id) {
+
+                  var hash_of_neigh = $scope.nodesBgpIdDict[neighbor_bgp_id];
+
+                  if(bgp_ip_address != neighbor_bgp_id) {
+
+                    pointB = new L.LatLng($scope.nodes[hash_of_neigh].latitude, $scope.nodes[hash_of_neigh].longitude);
+                    pointList = [pointA, pointB];
+
+                    polyline = new L.Polyline(pointList, virtualLineStyle);
+
+                    interCount += 1;
+
+                    tempLayerElements.push(polyline);
+                  }
+                });
+
+                console.log(interCount);
+
+                // Draw from the node to the pair node.
+                if (interCount > 1) {
+                  var pointA = new L.LatLng(middlePointOfNeighbors.latitude, middlePointOfNeighbors.longitude);
+                  var pointB = new L.LatLng($scope.nodes[hash_of_node].latitude, $scope.nodes[hash_of_node].longitude);
+                  var pointList = [pointA, pointB];
+
+                  var firstPolyline = new L.Polyline(pointList, virtualLineStyle);
+                  var circle = new L.circleMarker(pointA, intersectionMarkerOptions);
+
+                  layerElements = layerElements.concat(tempLayerElements);
+                  layerElements.push(firstPolyline);
+                  layerElements.push(circle);
+                }
+
+                // Draw from the node to the middle point.
+                if (interCount == 1) {
+                  var pointA = new L.LatLng(middlePointOfNeighbors.latitude, middlePointOfNeighbors.longitude);
+                  var pointB = new L.LatLng($scope.nodes[hash_of_node].latitude, $scope.nodes[hash_of_node].longitude);
+                  console.log(pointA);
+                  console.log(pointB);
+                  var pointList = [pointA, pointB];
+
+                  var firstPolyline = new L.Polyline(pointList, virtualLineStyle);
+
+                  layerElements = layerElements.concat(tempLayerElements);
+                  layerElements.push(firstPolyline);
+                }
+
+              }
+
+            });
+
+            virtualLinkLayer = L.layerGroup(layerElements);
+
+            $scope.map.addLayer(virtualLinkLayer);
+
+            $scope.topologyIsLoad = false; //stop loading
+          });
+
+        }
+      }
 
       function getPeers() {
         apiFactory.getLinkStatePeers().success(
@@ -495,6 +711,10 @@ angular.module('bmpUiApp')
               $scope.selectedPeer = $scope.peerData[0];
               $scope.selected_mt_id = $scope.peerData[0].available_mt_ids[0];
               $scope.selectChange();
+
+              updateLinkStateModal();
+
+              console.log($scope.selectedPeer);
             }
           })
           .error(function (error) {
@@ -510,7 +730,6 @@ angular.module('bmpUiApp')
           $scope.map = map;
           L.control.zoomslider().addTo($scope.map);
           getPeers();
-          updateLinkStateModal();
 
         });
       }
@@ -557,13 +776,39 @@ angular.module('bmpUiApp')
 
       $scope.locations = {};  //used for card
 
+      function getVirtualNodes() {
+
+        virtualNodesPromise = apiFactory.getPeerVirtualNodes($scope.selectedPeer.peer_hash_id, $scope.selected_mt_id);
+
+        virtualNodesPromise.success(function (result) {
+
+          $scope.virtualNodes = {};
+
+          angular.forEach(result.virtual_nodes.data, function(node) {
+
+            $scope.virtualNodes[node.hash_id] = node;
+
+          });
+
+        }).error(function (error) {
+          console.log(error.message);
+        });
+
+      }
+
       function getNodes() {
         nodesPromise = apiFactory.getPeerNodes($scope.selectedPeer.peer_hash_id, $scope.selected_mt_id);
         nodesPromise.success(function (result) {
           nodes = [];
           $scope.locations = {};
+          $scope.nodes = {};
+          $scope.nodesBgpIdDict = {};
           var nodesData = result.v_ls_nodes.data;
           for (var i = 0; i < result.v_ls_nodes.size; i++) {
+            $scope.nodes[nodesData[i].hash_id] = nodesData[i];
+            //console.log($scope.nodes[nodesData[i].hash_id]);
+            $scope.nodesBgpIdDict[nodesData[i].IGP_RouterId] = nodesData[i].hash_id;
+
             toolsFactory.addDefaultInfo(nodesData[i]);
             var routerId;
             if (nodesData[i].protocol == "OSPFv2") {

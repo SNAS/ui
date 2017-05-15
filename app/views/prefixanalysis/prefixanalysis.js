@@ -23,6 +23,43 @@ angular.module('bmpUiApp')
 
     $scope.isFirstFromTopsWithPeer = false
 
+    function updateLinkStateModal() {
+
+      $scope.modalContent = "";
+      $scope.modalHeader = "";
+
+      // *** Set API call modal dialog for prefix analysis ***
+
+      if(!($scope.nodata)) {
+
+        $scope.modalHeader = $scope.currentValue;
+
+        var linkPrefixWhois = "whois/prefix/" + $scope.currentValue;
+        var textPrefixWhois = "Prefix - Whois Info";
+        $scope.modalContent += apiFactory.createApiCallHtml(linkPrefixWhois, textPrefixWhois);
+
+        var linkOriginAS = "whois/asn/" + $scope.origin_as_number;
+        var textOriginAS = "Origin AS - " + $scope.origin_as_number;
+        $scope.modalContent += apiFactory.createApiCallHtml(linkOriginAS, textOriginAS);
+
+        var linkAllEntriesOfPrefix = "rib/prefix/" + $scope.currentValue;
+        var textAllEntriesOfPrefix = "All Entries for " + $scope.currentValue;;
+        $scope.modalContent += apiFactory.createApiCallHtml(linkAllEntriesOfPrefix, textAllEntriesOfPrefix);
+
+        var linkHistoryOfPrefix = "rib/history/" + $scope.currentValue +"?ts=lastupdate";
+        var textHistoryOfPrefix = "History of " + $scope.currentValue;;
+        $scope.modalContent += apiFactory.createApiCallHtml(linkHistoryOfPrefix, textHistoryOfPrefix);
+
+        var linkWithdrawsOfPrefix = "rib/withdraws/" + $scope.currentValue +"?ts=lastupdate";
+        var textWithdrawsOfPrefix = "Withdraws of " + $scope.currentValue;;
+        $scope.modalContent += apiFactory.createApiCallHtml(linkWithdrawsOfPrefix, textWithdrawsOfPrefix);
+
+
+
+      }
+
+    };
+
     //DEBUG
     $scope.nodata = false;
     // resize the window
@@ -205,6 +242,8 @@ angular.module('bmpUiApp')
       $timeout(function () {
         if (value == $scope.currentValue) {
           // Reset the timeline and history prefix table.
+          checkInputPrefix(value);
+
           $scope.timelineData = [];
           $scope.HistoryPrefixOptions.data = [];
 
@@ -212,6 +251,26 @@ angular.module('bmpUiApp')
           getPrefixHistory(value);
         }
       }, 500);
+    };
+
+    $scope.notValidInput = false;
+
+    var checkInputPrefix = function(input) {
+
+      // IPv4
+      if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(input)) {
+        // Lookup the longest path prefix.
+
+      }
+
+      // IPv6
+      else if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(input)) {
+        // Lookup the longest path prefix.
+
+      }
+
+
+
     };
 
     var filterUnique = function (input, key) {
@@ -273,6 +332,7 @@ angular.module('bmpUiApp')
       //$scope.AllPrefixOptions.data = $scope.PrefixData;
       if ($scope.PrefixData.length > 0) {
         var prefix = $scope.value.trim();
+        $scope.nodata = false;
 
         apiFactory.getWhoisPrefix(prefix)
           .success(function (result) {
@@ -306,11 +366,14 @@ angular.module('bmpUiApp')
 
             });
             $scope.showPrefixInfo += '</table>';
+            updateLinkStateModal();
           }).error(function (error) {
           console.log(error);
         });
       }
       else {
+        $scope.nodata = true;
+        updateLinkStateModal();
         $scope.showPrefixInfo = '</table>There are not enough information</table>';
       }
     };
@@ -326,14 +389,14 @@ angular.module('bmpUiApp')
         var url = apiFactory.getWhoIsWhereASNSync(Origin_AS); // DEBUG !
 
         var flag = true;
-//        for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
-//          if (angular.equals($scope.PrefixData[i].Origin_AS, $scope.PrefixData[i + 1].Origin_AS)) {
-//          }
-//          else {
-//            flag = false;
-//            break;
-//          }
-//        }
+        for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
+          if (angular.equals($scope.PrefixData[i].Origin_AS, $scope.PrefixData[i + 1].Origin_AS)) {
+          }
+          else {
+            flag = false;
+            break;
+          }
+        }
 
         console.log("FLAG: " + flag)
         if (flag) {
@@ -387,9 +450,9 @@ angular.module('bmpUiApp')
           $('.long').removeClass('long');
           $('.down-arrow').remove();
         }
-        $scope.nodata = false;
+        //$scope.nodata = false;
       } else {
-        $scope.nodata = true;  // nodata
+        //scope.nodata = true;  // nodata
       }
     };
 
@@ -874,6 +937,7 @@ angular.module('bmpUiApp')
     var init = function () {
       $scope.showTip = "false";
       $scope.value = "93.181.192.0/19";
+      $scope.currentValue = "93.181.192.0/19";
       $scope.isCardExpand = false;
       $scope.isAllPeersExpanded = false;
       getPrefixDataGrid($scope.value);

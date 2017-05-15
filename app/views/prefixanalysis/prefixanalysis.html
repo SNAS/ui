@@ -4,9 +4,17 @@
     Prefix Number:
     <input type="text" ng-change="enterValue(value)" ng-model="value" placeholder="Search ..."/>
     <span class="help-block">Example: 93.181.192.0/19</span>
+
+    <button type="submit" class="btn btn-sm btn-primary ng-click-active" data-toggle="modal" data-target="#prefixAnalysisModal">
+        <span class="glyphicon glyphicon-globe" aria-hidden="true">
+        </span>
+    </button>
+
+
   </div>
 
   <h3 ng-show="nodata">No Prefix matches this search</h3>
+
 
   <div ng-show="!nodata">
     <div class="main-area row">
@@ -246,5 +254,24 @@
       <!--</div>-->
 
     <!--</div>-->
+  </div>
+
+  <!-- Link State Modal -->
+  <div class="modal fade" id="prefixAnalysisModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" ng-class="{'modal-sm': size == 'sm', 'modal-lg': size == 'lg'}">
+      <div class="modal-content" modal-transclude="">
+        <div class="modal-header ng-scope">
+          <h3 class="modal-title">{{modalHeader}} API SERVICE</h3>
+        </div>
+
+        <div ng-bind-html="modalContent" class="modal-body ng-scope">
+
+        </div>
+
+        <div class="modal-footer ng-scope">
+          <button class="btn btn-warning modal-button" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

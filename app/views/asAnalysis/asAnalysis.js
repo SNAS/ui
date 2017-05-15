@@ -98,6 +98,16 @@ angular.module('bmpUiApp')
 
     getData();
 
+
+    $scope.modalContent = "";
+
+    $scope.modalContent += apiFactory.createApiCallHtml("as_stats/ipv4?topTransit=5", "Top Transit ASes - IPv4");
+    $scope.modalContent += apiFactory.createApiCallHtml("as_stats/ipv6?topTransit=5", "Top Transit ASes - IPv6");
+    $scope.modalContent += "<hr>"
+    $scope.modalContent += apiFactory.createApiCallHtml("as_stats/ipv4?topOrigin=5", "Top Origin ASes - IPv4");
+    $scope.modalContent += apiFactory.createApiCallHtml("as_stats/ipv6?topOrigin=5", "Top Origin ASes - IPv6");
+
+
     /* Get the data of charts */
     function getData(){
       apiFactory.getTopTransitIpv4Data().success(
@@ -120,6 +130,7 @@ angular.module('bmpUiApp')
           var processedData = processData(results,"transit_v6_prefixes");
           if(processedData.maxPrefixes > ipv6yDomain){
             ipv6yDomain = processedData.maxPrefixes;
+            console.log(ipv6yDomain);
             $scope.ipv6Options.chart.yDomain = [0, ipv6yDomain];
           }
           $scope.top_transit_ipv6_data = processedData.chart_data;
