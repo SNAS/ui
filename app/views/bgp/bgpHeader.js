@@ -78,7 +78,7 @@ angular.module('bmpUiApp').controller('BGPHeaderCtrl',
           $rootScope.headerSearchValue = extractASNumberFromASName($rootScope.headerSearchValue);
           // if no AS number could be identified, assume it's just an AS name and select the first matching element
           if (!isASN($rootScope.headerSearchValue)) {
-            apiFactory.getWhoIsASName($rootScope.headerSearchValue).success(function (result) {
+            apiFactory.getWhoIsASName($rootScope.headerSearchValue).success(function(result) {
               var data = result.w.data;
               if (data.length === 0) {
                 console.error("Cannot find info for AS name", $rootScope.headerSearchValue);
@@ -87,13 +87,18 @@ angular.module('bmpUiApp').controller('BGPHeaderCtrl',
                 $rootScope.headerSearchValue = data[0].asn;
                 changeLocation($rootScope.headerSearchValue);
               }
-            }).error(function (error) {
+            }).error(function(error) {
               console.error(error.message);
             });
           }
+          // the updated search value is now an ASN
           else {
             changeLocation($rootScope.headerSearchValue);
           }
+        }
+        // it's an ASN or a prefix
+        else {
+          changeLocation($rootScope.headerSearchValue);
         }
       }
     };
