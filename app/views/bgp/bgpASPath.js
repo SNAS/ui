@@ -579,6 +579,12 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       $scope.searchValue = value;
     };
 
+    $scope.loadASView = function(asn) {
+      console.log("loadASView", asn);
+      $timeout(function() {
+        $location.url("/bgp?search=" + asn);
+      });
+    };
 
     // initialisation
     $(function() {
