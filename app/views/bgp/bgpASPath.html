@@ -1,29 +1,5 @@
 <div ng-controller="BGPASPathController" id="bgpView" class="ASPathView">
 
-  <!-- top bar -->
-<!--
-  <div class="col-lg-12 top-bar">
-    <div class="title-container">
-      <div class="title">BGP</div>
-    </div>
-    <div class="search">
-      <input type='text' class="form-control" id="searchValue" ng-model="searchValue" placeholder="search"
-             typeahead="as_name for as_name in getSuggestions($viewValue)"
-             typeahead-loading="loadingLocations"
-             typeahead-no-results="noResults"
-             typeahead-wait-ms="300"
-             typeahead-on-select="onSelectSearch($label)"/>
-      <div class="search-tip-container">
-        <div class="search-tip">
-          Type AS name or AS number or prefix
-          <div class="search-tip-example">ex: Cisco, 109, 1.0.128.0/17, 1.0*</div>
-        </div>
-      </div>
-    </div>
-    <div class='line'></div>
-  </div>
--->
-
   <!-- THIS SECTION DISPLAYS ERRORS -->
   <div class="error-list col-lg-12" ng-show="api_errors.length > 0">
     <div class="alert alert-danger">
@@ -65,6 +41,11 @@
         </div>
         <div class="as-path" ng-repeat="path in asPaths">
           <div class="dashed-line"></div>
+          <div class="timestamp">
+            <div class="date">{{path.date | date: "dd MMM yyyy"}}</div>
+            <div class="time">{{path.date | date: "hh:mm"}}</div>
+          </div>
+          <div class="length">{{path.length}}</div>
           <div ng-repeat="(index, asInfo) in path.as_path" class="circle" ng-style="{left: asInfo.position}">
             {{asInfo.asn}}
             <div class="as-node-count bg-{{ path.icon }}" ng-if="asInfo.count > 1">{{asInfo.count}}</div>
@@ -86,11 +67,9 @@
       </div>
     </div>
     <div class="col-lg-12" id="btn-search-container">
-      <button class="btn btn-default btn-search-connections" id="btnSearchConnections" ng-disabled="!readyToSearchConnections" ng-click="startSearch()">Search connections</button>
+      <button class="btn btn-default btn-search-connections" id="btnSearchConnections" ng-disabled="!readyToSearchConnections"
+        ng-click="startSearch()">Search connections</button>
     </div>
   </div>
 
 </div>
-
-
-

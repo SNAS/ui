@@ -851,15 +851,33 @@ $oswald-font-path: "../../fonts/Oswald";
           padding-right: 4px;
         }
       }
-
+      
       .middle-column {
         width: 0%;
         padding: 0;
         white-space: nowrap;
         overflow: hidden;
         margin-top: 32px;
+        .timestamp {
+          top: 44px;
+          position: absolute;
+          left: 3px;
+          font-weight: 300;
+        }
+        .length {
+          background-color: black;
+          width: 20px;
+          height: 20px;
+          line-height: 20px;
+          text-align: center;
+          border-radius: 50%;
+          color: white;
+          /* float: right; */
+          position: absolute; // right: -10px;
+          right: 1px;
+          top: 54px;
+        }
       }
-
       .buttons {
         text-align: center;
         .btn {

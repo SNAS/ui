@@ -9,9 +9,21 @@ angular.module('bmp.components.utcFilter', [])
       }
       // remove milliseconds from the input date
       var withoutMs = input.replace(/([0-9\-]+)\s([0-9\:]+).*/, "$1 $2");
-//      console.debug("formatUtcFilter", input, withoutMs);
+      //      console.debug("formatUtcFilter", input, withoutMs);
       var newDate = new Date(withoutMs + " UTC");
       return $filter('date')(newDate, 'yyyy-MM-dd HH:mm:ss');
     }
     return formatUtcFilter;
-  }]);
+  }])
+  .filter('utcToDateObject', function($filter) {
+    function formatUtcFilter(input) {
+      if (input === undefined) {
+        return input;
+      }
+      // remove milliseconds from the input date
+      var withoutMs = input.replace(/([0-9\-]+)\s([0-9\:]+).*/, "$1 $2");
+      //      console.debug("formatUtcFilter", input, withoutMs);
+      return new Date(withoutMs + " UTC");
+    }
+    return formatUtcFilter;
+  });

@@ -27,11 +27,11 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         .then(function(response) {
           return response.data;
         }, function(response) {
-//          console.error("Failed to get AS list", response);
+          //          console.error("Failed to get AS list", response);
           return $q.reject("Failed to get AS list");
         })
         .catch(function(e) {
-//          console.error("Failed to get AS list", e);
+          //          console.error("Failed to get AS list", e);
           return $q.reject("Failed to get AS list");
         });
       return { promise: promise, cancel: cancel(canceller) };
@@ -46,29 +46,29 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       }
 
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/as/"+asn+parameters, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/as/" + asn + parameters, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get AS info - as="+asn);
+          return $q.reject("Failed to get AS info - as=" + asn);
         });
       return { promise: promise, cancel: cancel(canceller) };
     },
     getASLinks: function(asn, end) {
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/links/"+asn+(end !== undefined ? "?end="+end : ""), { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/links/" + asn + (end !== undefined ? "?end=" + end : ""), { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get AS links - as="+asn);
+          return $q.reject("Failed to get AS links - as=" + asn);
         });
       return { promise: promise, cancel: cancel(canceller) };
     },
     getASStats: function(asn, start, end) {
-      return $http.get(bgpAPI + "/as/stats/"+asn+"?start="+start+"&end="+end);
+      return $http.get(bgpAPI + "/as/stats/" + asn + "?start=" + start + "&end=" + end);
     },
     getLinkStats: function(source, target, end) {
-      return $http.get(bgpAPI + "/link/stats/"+source+"/"+target+(end !== undefined ? "?end="+end : ""));
+      return $http.get(bgpAPI + "/link/stats/" + source + "/" + target + (end !== undefined ? "?end=" + end : ""));
     },
     getASPaths: function(asn, start, end) {
       var parameters = "";
@@ -80,11 +80,11 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       }
 
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/aspaths/"+asn+parameters, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/aspaths/" + asn + parameters, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get AS paths for as="+asn+" - ("+response.statusText+") "+response.data);
+          return $q.reject("Failed to get AS paths for as=" + asn + " - (" + response.statusText + ") " + response.data);
         });
 
       return { promise: promise, cancel: cancel(canceller) };
@@ -99,11 +99,11 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       }
 
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/aspaths/hist/"+asn+parameters, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/aspaths/hist/" + asn + parameters, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get AS paths history - as="+asn);
+          return $q.reject("Failed to get AS paths history - as=" + asn);
         });
 
       return { promise: promise, cancel: cancel(canceller) };
@@ -117,11 +117,11 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
       }
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/prefixes/"+prefix+parameters, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/prefixes/" + prefix + parameters, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get AS paths history - prefix="+prefix);
+          return $q.reject("Failed to get AS paths history - prefix=" + prefix);
         });
 
       return { promise: promise, cancel: cancel(canceller) };
@@ -139,7 +139,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get AS history - as="+as);
+          return $q.reject("Failed to get AS history - as=" + as);
         });
 
       return { promise: promise, cancel: cancel(canceller) };
@@ -157,7 +157,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get AS link history - startAS="+startAS + " - endAS=" + endAS);
+          return $q.reject("Failed to get AS link history - startAS=" + startAS + " - endAS=" + endAS);
         });
 
       return { promise: promise, cancel: cancel(canceller) };
@@ -188,7 +188,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get anomalies overview data for "+parameters.anomaliesType+"");
+          return $q.reject("Failed to get anomalies overview data for " + parameters.anomaliesType + "");
         });
       return { promise: promise, cancel: cancel(canceller) };
     },
@@ -214,7 +214,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get anomalies "+parameters.anomaliesType+" data");
+          return $q.reject("Failed to get anomalies " + parameters.anomaliesType + " data");
         });
       return { promise: promise, cancel: cancel(canceller) };
     },
@@ -243,11 +243,11 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
 
       var canceller = $q.defer();
       var query = bgpAPI + "/anomalies/ground_truth/" + timestamps;
-      var promise = $http.get(query, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(query, { cache: false }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get anomalies' ground truth hash "+parameters.anomaliesType+" data");
+          return $q.reject("Failed to get anomalies' ground truth hash " + parameters.anomaliesType + " data");
         });
       return { promise: promise, cancel: cancel(canceller) };
     },
@@ -269,13 +269,13 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         }
       }
 
-      options = options.length === 0 ? "" : "?"+options.join("&");
+      options = options.length === 0 ? "" : "?" + options.join("&");
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/aspaths/"+asn1+"/"+asn2 + options, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/aspaths/" + asn1 + "/" + asn2 + options, { cache: false }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get AS paths between AS "+asn1+" and AS "+asn2);
+          return $q.reject("Failed to get AS paths between AS " + asn1 + " and AS " + asn2);
         });
       return { promise: promise, cancel: cancel(canceller) };
     },
@@ -297,13 +297,13 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         }
       }
 
-      options = options.length === 0 ? "" : "?"+options.join("&");
+      options = options.length === 0 ? "" : "?" + options.join("&");
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/aspaths/hist/"+asn1+"/"+asn2 + options, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/aspaths/hist/" + asn1 + "/" + asn2 + options, { cache: false }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
-          return $q.reject("Failed to get AS paths history between AS "+asn1+" and AS "+asn2);
+          return $q.reject("Failed to get AS paths history between AS " + asn1 + " and AS " + asn2);
         });
       return { promise: promise, cancel: cancel(canceller) };
     }

@@ -26,7 +26,6 @@ angular.module('bmpUiApp').controller('BGPASPathController',
 
     $rootScope.headerSearchValue = '';
 
-
     // states:
     // - open: connections between AS #1 and AS #2 are being shown
     // - close: connections are not being shown
@@ -49,7 +48,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     $scope.setMiddleColumnState = function(open) {
       // the names of the fields in columns need to match the names of the classes for selection
       var elements = elementsByState[open ? 'open' : 'close'];
-//      var elements = $scope.middleColumnClosed ? elementsByState.open : elementsByState.close;
+      //      var elements = $scope.middleColumnClosed ? elementsByState.open : elementsByState.close;
       var animationDuration = 0.5;
       for (var c in elements) {
         if (elements.hasOwnProperty(c)) {
@@ -57,12 +56,18 @@ angular.module('bmpUiApp').controller('BGPASPathController',
         }
       }
       if (open) {
-//        TweenMax.staggerTo("#btnSearchConnections", 0.5, {opacity:0, y:-100, ease:Back.easeIn}, 0.1);
+        //        TweenMax.staggerTo("#btnSearchConnections", 0.5, {opacity:0, y:-100, ease:Back.easeIn}, 0.1);
         if (!resetButtonShown) {
           openResetButton(1);
         }
         if (!buttonsShown) {
-          TweenMax.staggerFrom(".middle-column .btn", 2, {scale:0.5, opacity:0, delay:0.5, ease:Power4.easeOut, force3D:true}, 0.2);
+          TweenMax.staggerFrom(".middle-column .btn", 2, {
+            scale: 0.5,
+            opacity: 0,
+            delay: 0.5,
+            ease: Power4.easeOut,
+            force3D: true
+          }, 0.2);
           buttonsShown = true;
         }
       }
@@ -70,6 +75,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     };
 
     $scope.httpRequests = [];
+
     function clearRequest(request) {
       $scope.httpRequests.splice($scope.httpRequests.indexOf(request), 1);
     }
@@ -86,17 +92,18 @@ angular.module('bmpUiApp').controller('BGPASPathController',
 
     $scope.loadingASPaths = false;
     var preloader;
+
     function addPreloader() {
       preloader = new GSPreloader({
-        radius:42,
-        dotSize:14,
-        dotCount:10,
-        colors:["#61AC27","#555","purple","#FF6600"], //have as many or as few colors as you want.
-        boxOpacity:0.2,
-        boxBorder:"none",
+        radius: 42,
+        dotSize: 14,
+        dotCount: 10,
+        colors: ["#61AC27", "#555", "purple", "#FF6600"], //have as many or as few colors as you want.
+        boxOpacity: 0.2,
+        boxBorder: "none",
         boxColor: "transparent",
-//        animationOffset: 0, //jump 1.8 seconds into the animation for a more active part of the spinning initially (just looks a bit better in my opinion)
-//        parent: $("#btn-search-container")[0],
+        //        animationOffset: 0, //jump 1.8 seconds into the animation for a more active part of the spinning initially (just looks a bit better in my opinion)
+        //        parent: $("#btn-search-container")[0],
         parent: document.getElementById("btnSearchConnections"),
         position: "relative",
         top: "-38px",
@@ -112,18 +119,51 @@ angular.module('bmpUiApp').controller('BGPASPathController',
 
       var timelineMultiplier = 0.9;
       // start with the button invisible, and make it appear after a second to become a dot with a radius of 14px
-      TweenLite.fromTo(searchButton, 0.2*timelineMultiplier,
-        {color: 'white', 'font-size': 0, padding: 0, width: 0, height: 0, 'margin-left': 0, bottom: '181px'},
-        {width: '14px', height: '14px', 'margin-left': '-7px', bottom: '174px', delay: initialDelay});
+      TweenLite.fromTo(searchButton, 0.2 * timelineMultiplier, {
+        color: 'white',
+        'font-size': 0,
+        padding: 0,
+        width: 0,
+        height: 0,
+        'margin-left': 0,
+        bottom: '181px'
+      }, {
+        width: '14px',
+        height: '14px',
+        'margin-left': '-7px',
+        bottom: '174px',
+        delay: initialDelay
+      });
       // then expand the button and make the text appear
-      TweenLite.to(searchButton, 0.2*timelineMultiplier, {'width': '260px', 'margin-left': '-130px', delay: initialDelay+0.2*timelineMultiplier}); // 0.2 - 0.4s
-      TweenLite.to(searchButton, 0.2*timelineMultiplier, {'height': '56px', 'padding': '6px 12px', delay: initialDelay+0.4*timelineMultiplier}); // 0.4 - 0.6s
-      TweenLite.to(searchButton, 0.4*timelineMultiplier, {'color': 'white', 'font-size': '25px', ease:Back.easeOut, delay: initialDelay+0.6*timelineMultiplier}); // 0.6 - 0.7s
+      TweenLite.to(searchButton, 0.2 * timelineMultiplier, {
+        'width': '260px',
+        'margin-left': '-130px',
+        delay: initialDelay + 0.2 * timelineMultiplier
+      }); // 0.2 - 0.4s
+      TweenLite.to(searchButton, 0.2 * timelineMultiplier, {
+        'height': '56px',
+        'padding': '6px 12px',
+        delay: initialDelay + 0.4 * timelineMultiplier
+      }); // 0.4 - 0.6s
+      TweenLite.to(searchButton, 0.4 * timelineMultiplier, {
+        'color': 'white',
+        'font-size': '25px',
+        ease: Back.easeOut,
+        delay: initialDelay + 0.6 * timelineMultiplier
+      }); // 0.6 - 0.7s
     }
     (function initialiseSearchButton() {
-      TweenLite.set($("#btnSearchConnections"), {color: 'white', 'font-size': 0, padding: 0, width: 0, height: 0, 'margin-left': 0, bottom: '181px'});
+      TweenLite.set($("#btnSearchConnections"), {
+        color: 'white',
+        'font-size': 0,
+        padding: 0,
+        width: 0,
+        height: 0,
+        'margin-left': 0,
+        bottom: '181px'
+      });
     })();
-//    openSearchButton(1);
+    //    openSearchButton(1);
 
     function closeSearchButtonAndStartAnimation(onComplete) {
       var searchButton = $("#btnSearchConnections");
@@ -132,14 +172,38 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       var timelineMultiplier = 0.9;
       var closeButtonDelay = 0;
       if (searchButton.width() > 0 && searchButton.height() > 0) {
-        TweenLite.to(searchButton, 0.2*timelineMultiplier, {color: 'black'}); // 0 - 0.2s
-        TweenLite.to(searchButton, 0.1*timelineMultiplier, {'font-size': 0, delay: 0.1*timelineMultiplier}); // 0.1 - 0.2s
+        TweenLite.to(searchButton, 0.2 * timelineMultiplier, {
+          color: 'black'
+        }); // 0 - 0.2s
+        TweenLite.to(searchButton, 0.1 * timelineMultiplier, {
+          'font-size': 0,
+          delay: 0.1 * timelineMultiplier
+        }); // 0.1 - 0.2s
         // then reduce the size of the search button
-        TweenLite.to(searchButton, 0.4*timelineMultiplier, {height: '14px', padding: 0, bottom: '174px', delay: 0.2*timelineMultiplier}); // 0.2 - 0.6s
-        TweenLite.to(searchButton, 0.4*timelineMultiplier, {width: '14px', 'margin-left': '-7px', delay: 0.4*timelineMultiplier}); // 0.4 - 0.8s
+        TweenLite.to(searchButton, 0.4 * timelineMultiplier, {
+          height: '14px',
+          padding: 0,
+          bottom: '174px',
+          delay: 0.2 * timelineMultiplier
+        }); // 0.2 - 0.6s
+        TweenLite.to(searchButton, 0.4 * timelineMultiplier, {
+          width: '14px',
+          'margin-left': '-7px',
+          delay: 0.4 * timelineMultiplier
+        }); // 0.4 - 0.8s
         closeButtonDelay = 0.8;
       }
-      TweenLite.to(searchButton, 0.2*timelineMultiplier, {width: 0, height: 0, 'margin-left': 0, bottom: '181px', delay: closeButtonDelay*timelineMultiplier, onStart: function() { preloader.active(true); }, onComplete: onComplete});
+      TweenLite.to(searchButton, 0.2 * timelineMultiplier, {
+        width: 0,
+        height: 0,
+        'margin-left': 0,
+        bottom: '181px',
+        delay: closeButtonDelay * timelineMultiplier,
+        onStart: function() {
+          preloader.active(true);
+        },
+        onComplete: onComplete
+      });
     }
 
     function openResetButton(initialDelay) {
@@ -148,24 +212,60 @@ angular.module('bmpUiApp').controller('BGPASPathController',
 
       var timelineMultiplier = 0.9;
       // start with the button invisible, and make it appear after a second to become a dot with a radius of 14px
-      TweenLite.fromTo(button, 0.2*timelineMultiplier,
-        {color: 'white', 'font-size': 0, padding: 0, width: 0, height: 0},
-        {width: '14px', height: '14px', delay: initialDelay});
+      TweenLite.fromTo(button, 0.2 * timelineMultiplier, {
+        color: 'white',
+        'font-size': 0,
+        padding: 0,
+        width: 0,
+        height: 0
+      }, {
+        width: '14px',
+        height: '14px',
+        delay: initialDelay
+      });
       // then expand the button and make the text appear
-      TweenLite.to(button, 0.2*timelineMultiplier, {'width': '100px', delay: initialDelay+0.2*timelineMultiplier}); // 0.2 - 0.4s
-      TweenLite.to(button, 0.2*timelineMultiplier, {'height': '39px', 'padding': '6px 16px 6px 12px', delay: initialDelay+0.4*timelineMultiplier}); // 0.4 - 0.6s
-      TweenLite.to(button, 0.4*timelineMultiplier, {'color': 'white', 'font-size': '18px', ease:Back.easeOut, delay: initialDelay+0.6*timelineMultiplier}); // 0.6 - 0.7s
+      TweenLite.to(button, 0.2 * timelineMultiplier, {
+        'width': '100px',
+        delay: initialDelay + 0.2 * timelineMultiplier
+      }); // 0.2 - 0.4s
+      TweenLite.to(button, 0.2 * timelineMultiplier, {
+        'height': '39px',
+        'padding': '6px 16px 6px 12px',
+        delay: initialDelay + 0.4 * timelineMultiplier
+      }); // 0.4 - 0.6s
+      TweenLite.to(button, 0.4 * timelineMultiplier, {
+        'color': 'white',
+        'font-size': '18px',
+        ease: Back.easeOut,
+        delay: initialDelay + 0.6 * timelineMultiplier
+      }); // 0.6 - 0.7s
 
-      TweenLite.fromTo(cross, 0.2*timelineMultiplier,
-        {color: 'white', 'font-size': 0},
-        {delay: initialDelay});
-      TweenLite.to(cross, 0.4*timelineMultiplier, {'font-size': '18px', ease:Back.easeOut, delay: initialDelay+0.6*timelineMultiplier}); // 0.6 - 0.7s
+      TweenLite.fromTo(cross, 0.2 * timelineMultiplier, {
+        color: 'white',
+        'font-size': 0
+      }, {
+        delay: initialDelay
+      });
+      TweenLite.to(cross, 0.4 * timelineMultiplier, {
+        'font-size': '18px',
+        ease: Back.easeOut,
+        delay: initialDelay + 0.6 * timelineMultiplier
+      }); // 0.6 - 0.7s
 
       resetButtonShown = true;
     }
     (function initialiseResetButton() {
-      TweenLite.set($("#btnReset"), {color: 'white', 'font-size': 0, padding: 0, width: 0, height: 0});
-      TweenLite.set($("#btnReset span"), {color: 'white', 'font-size': 0});
+      TweenLite.set($("#btnReset"), {
+        color: 'white',
+        'font-size': 0,
+        padding: 0,
+        width: 0,
+        height: 0
+      });
+      TweenLite.set($("#btnReset span"), {
+        color: 'white',
+        'font-size': 0
+      });
     })();
 
     function closeResetButton() {
@@ -174,16 +274,34 @@ angular.module('bmpUiApp').controller('BGPASPathController',
 
       // first make the search button text transparent
       var timelineMultiplier = 0.9;
-      TweenLite.to(button, 0.2*timelineMultiplier, {color: 'black'}); // 0 - 0.2s
-      TweenLite.to(button, 0.1*timelineMultiplier, {'font-size': 0, delay: 0.1*timelineMultiplier}); // 0.1 - 0.2s
+      TweenLite.to(button, 0.2 * timelineMultiplier, {
+        color: 'black'
+      }); // 0 - 0.2s
+      TweenLite.to(button, 0.1 * timelineMultiplier, {
+        'font-size': 0,
+        delay: 0.1 * timelineMultiplier
+      }); // 0.1 - 0.2s
       // then reduce the size of the search button
       if (button.width() > 0 && button.height() > 0) {
-        TweenLite.to(button, 0.4*timelineMultiplier, {height: '14px', padding: 0, delay: 0.2*timelineMultiplier}); // 0.2 - 0.6s
-        TweenLite.to(button, 0.4*timelineMultiplier, {width: '14px', delay: 0.4*timelineMultiplier}); // 0.4 - 0.8s
+        TweenLite.to(button, 0.4 * timelineMultiplier, {
+          height: '14px',
+          padding: 0,
+          delay: 0.2 * timelineMultiplier
+        }); // 0.2 - 0.6s
+        TweenLite.to(button, 0.4 * timelineMultiplier, {
+          width: '14px',
+          delay: 0.4 * timelineMultiplier
+        }); // 0.4 - 0.8s
       }
-      TweenLite.to(button, 0.2*timelineMultiplier, {width: 0, height: 0, delay: 0.8*timelineMultiplier});
+      TweenLite.to(button, 0.2 * timelineMultiplier, {
+        width: 0,
+        height: 0,
+        delay: 0.8 * timelineMultiplier
+      });
 
-      TweenLite.to(cross, 0.4*timelineMultiplier, {'font-size': 0});
+      TweenLite.to(cross, 0.4 * timelineMultiplier, {
+        'font-size': 0
+      });
 
       resetButtonShown = false;
     }
@@ -199,7 +317,10 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       var staggerDelay = 0.05; // seconds
       var l = $scope.asPaths.length;
       var delay = 1000 * (l * staggerDelay + (l > 0 ? duration : 0));
-      TweenMax.staggerTo($(".as-path"), duration, {opacity: 0, y: -100}, staggerDelay);
+      TweenMax.staggerTo($(".as-path"), duration, {
+        opacity: 0,
+        y: -100
+      }, staggerDelay);
       $timeout(function() {
         $scope.loadingASPaths = true; // even though this will be set by continueSearch, we're setting it here so that we don't see 'No data' for a very short amount of time before "Loading..."
         $scope.asPaths = [];
@@ -221,10 +342,19 @@ angular.module('bmpUiApp').controller('BGPASPathController',
 
       var request;
       if ($scope.buttons[activeButton].orderBy === 'length') {
-        request = bgpDataService.getASPathsBetweenASNumbers($scope.as1_number, $scope.as2_number, {orderBy: $scope.buttons[activeButton].orderBy, orderDir: $scope.buttons[activeButton].orderDir, limit: limit, offset: currentOffset});
-      }
-      else {
-        request = bgpDataService.getASPathsHistoryBetweenASNumbers($scope.as1_number, $scope.as2_number, {orderBy: $scope.buttons[activeButton].orderBy, orderDir: $scope.buttons[activeButton].orderDir, limit: limit, offset: currentOffset});
+        request = bgpDataService.getASPathsBetweenASNumbers($scope.as1_number, $scope.as2_number, {
+          orderBy: $scope.buttons[activeButton].orderBy,
+          orderDir: $scope.buttons[activeButton].orderDir,
+          limit: limit,
+          offset: currentOffset
+        });
+      } else {
+        request = bgpDataService.getASPathsHistoryBetweenASNumbers($scope.as1_number, $scope.as2_number, {
+          orderBy: $scope.buttons[activeButton].orderBy,
+          orderDir: $scope.buttons[activeButton].orderDir,
+          limit: limit,
+          offset: currentOffset
+        });
       }
       $scope.httpRequests.push(request);
       request.promise.then(function(asPaths) {
@@ -238,13 +368,15 @@ angular.module('bmpUiApp').controller('BGPASPathController',
             return parseInt(as, 10);
           });
 
-//          var pathArray = path.path.split(" ");
+          //          var pathArray = path.path.split(" ");
           var indexes = {};
 
-          for (var i = 0 ; i < pathArray.length ; i++) {
+          for (var i = 0; i < pathArray.length; i++) {
             var as = pathArray[i];
             if (indexes[as] === undefined) {
-              indexes[as] = {count: 0};
+              indexes[as] = {
+                count: 0
+              };
             } else {
               pathArray.splice(i, 1);
               i--;
@@ -253,34 +385,37 @@ angular.module('bmpUiApp').controller('BGPASPathController',
           }
 
           asPath.as_path = [];
-          var nbDivisions = pathArray.length+1;
+          var nbDivisions = pathArray.length + 1;
           var step = 100 / nbDivisions;
           for (var i = 0; i < pathArray.length; i++) {
             //AS nodes "bmp-as_router10-17"
             asPath.as_path.push({
               asn: pathArray[i],
               count: indexes[pathArray[i]].count,
-              position: "calc("+((i+1)*step)+"% - "+radius+"px)"
+              position: "calc(" + ((i + 1) * step) + "% - " + radius + "px)"
             });
           }
 
+          asPath.date = $filter('utcToDateObject')(asPath.created_on);
 
-//          asPath.positions = [];
-//          var length = asPath.as_path.length;
-////          var nbDivisions = length+1;
-////          var step = 100 / nbDivisions;
-//          for (var i = 0 ; i < length ; i++) {
-//            var offset = "calc("+((i+1)*step)+"% - "+radius+"px)";
-//            asPath.positions.push(offset);
-//          }
+          //          asPath.positions = [];
+          //          var length = asPath.as_path.length;
+          ////          var nbDivisions = length+1;
+          ////          var step = 100 / nbDivisions;
+          //          for (var i = 0 ; i < length ; i++) {
+          //            var offset = "calc("+((i+1)*step)+"% - "+radius+"px)";
+          //            asPath.positions.push(offset);
+          //          }
           return asPath;
         });
         // if the number of new paths is less than the limit we set, then we know there's no more data
         $scope.thereIsMoreData = newPaths.length >= limit;
         $scope.asPaths = $scope.asPaths.concat(newPaths);
-//        console.debug("asPaths transformed", $scope.asPaths);
+        //        console.debug("asPaths transformed", $scope.asPaths);
 
-        preloader.active(false, function() { $scope.setMiddleColumnState(true); });
+        preloader.active(false, function() {
+          $scope.setMiddleColumnState(true);
+        });
       }, function(error) {
         console.warn(error);
         $scope.api_errors.push(error);
@@ -289,19 +424,16 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     };
 
     $scope.asPathGraph = {
-      paths: [
-        { as_path: [6939, 27720, 262401] },
-        { as_path: [6939, 3356, 3549, 262401, 123456789] }
-      ]
+      paths: []
     };
     var radius = 30; //px -> set this to half the diameter chosen in _bgp.scss
     angular.forEach($scope.asPathGraph.paths, function(path) {
       path.positions = [];
       var length = path.as_path.length;
-      var nbDivisions = length+1;
+      var nbDivisions = length + 1;
       var step = 100 / nbDivisions;
-      for (var i = 0 ; i < length ; i++) {
-        var offset = "calc("+((i+1)*step)+"% - "+radius+"px)";
+      for (var i = 0; i < length; i++) {
+        var offset = "calc(" + ((i + 1) * step) + "% - " + radius + "px)";
         path.positions.push(offset);
       }
     });
@@ -315,8 +447,8 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       // don't do anything if this button is already the active one
       if ($scope.buttons[key].active) return;
 
-//      console.debug("click active", key);
-//      angular.forEach($scope.buttons, function(btn) { btn = false; });
+      //      console.debug("click active", key);
+      //      angular.forEach($scope.buttons, function(btn) { btn = false; });
       for (var b in $scope.buttons) {
         if ($scope.buttons.hasOwnProperty(b)) {
           $scope.buttons[b].active = false;
@@ -333,9 +465,9 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     $scope.getSuggestions = function(val) {
       if (isNaN(val)) {
         return apiFactory.getWhoIsASNameLike(val, 10).then(function(response) {
-//          console.debug(response.data.w.data);
+          //          console.debug(response.data.w.data);
           return response.data.w.data.map(function(item) {
-            return item.as_name;// + " (ASN: "+item.asn+")";
+            return item.as_name; // + " (ASN: "+item.asn+")";
           });
         });
       } else {
@@ -347,7 +479,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       $timeout(function() {
         $scope.readyToSearchConnections = !isNaN($scope.as1_number) && !isNaN($scope.as2_number);
       });
-//      console.log("checkInputs()", $scope.as1_number, $scope.as2_number);
+      //      console.log("checkInputs()", $scope.as1_number, $scope.as2_number);
       setFocusForNextStep();
     }
 
@@ -356,37 +488,34 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       if (isNaN(searchValue)) {
         apiFactory.getWhoIsASName(searchValue).success(function(result) {
           var data = result.w.data;
-//          getData(data);
-//          console.debug("info about AS "+searchValue, data);
-          $scope[input+"_number"] = '';
+          //          getData(data);
+          //          console.debug("info about AS "+searchValue, data);
+          $scope[input + "_number"] = '';
           if (data.length > 0) {
-            $scope[input+"_number"] = data[0].asn;
-          }
-          else {
-            $scope[input+"_number"] = 'Unknown';
+            $scope[input + "_number"] = data[0].asn;
+          } else {
+            $scope[input + "_number"] = 'Unknown';
           }
           checkInputs();
         }).error(function(error) {
-            console.log(error.message);
-          });
-      }
-      else {
+          console.log(error.message);
+        });
+      } else {
         apiFactory.getWhoIsASN(searchValue).success(function(result) {
           var data = result.gen_whois_asn.data;
-//          getData(data);
-//          console.debug("info about AS "+searchValue, result);
+          //          getData(data);
+          //          console.debug("info about AS "+searchValue, result);
           if (data.length > 0) {
-            $scope[input+"_name"] = data[0].as_name;
-            $scope[input+"_number"] = data[0].asn;
-          }
-          else {
-            $scope[input+"_number"] = 'Unknown';
+            $scope[input + "_name"] = data[0].as_name;
+            $scope[input + "_number"] = data[0].asn;
+          } else {
+            $scope[input + "_number"] = 'Unknown';
           }
           checkInputs();
         }).error(function(error) {
-            console.log(error);
-            $scope.api_errors.push("Couldn't retrieve AS " + searchValue + " info");
-          });
+          console.log(error);
+          $scope.api_errors.push("Couldn't retrieve AS " + searchValue + " info");
+        });
       }
     }
 
@@ -395,11 +524,9 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       console.debug("setFocusForeNextStep - AS1=[%s], AS2=[%s]", $scope.as1_number, $scope.as2_number);
       if ($scope.as1_number === undefined || $scope.as1_number === '') {
         elementToFocusOn = $("#as1");
-      }
-      else if ($scope.as2_number === undefined || $scope.as2_number === '') {
+      } else if ($scope.as2_number === undefined || $scope.as2_number === '') {
         elementToFocusOn = $("#as2");
-      }
-      else {
+      } else {
         elementToFocusOn = $("#btnSearchConnections");
       }
       elementToFocusOn.focus();
@@ -413,9 +540,9 @@ angular.module('bmpUiApp').controller('BGPASPathController',
     };
     $scope.onKeyDown = function(input, keyEvent) {
       // if the user presses the delete key
-//      if (keyEvent.keyCode === 8) {
-//        $scope[input+"_number"] = '';
-//      }
+      //      if (keyEvent.keyCode === 8) {
+      //        $scope[input+"_number"] = '';
+      //      }
 
       // don't do anything if the user presses the left or right arrow
       if (keyEvent.keyCode === 37 || keyEvent.keyCode === 39) return;
@@ -427,17 +554,16 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       }
 
       // otherwise clear the AS number and check if the user pressed Enter or Tab
-      $scope[input+"_number"] = '';
-      var inputValue = $scope[input+"_name"];
+      $scope[input + "_number"] = '';
+      var inputValue = $scope[input + "_name"];
       // if the user presses Enter or Tab, validate the entry
       // and focus on the other input if it hasn't been filled in, or on the search button
-//      console.debug("keyEvent", keyEvent);
+      //      console.debug("keyEvent", keyEvent);
       if (keyEvent.which === 13 || keyEvent.keyCode === 9) {
         if (inputValue && inputValue.length > 0) {
-          findInfoAboutASN(input, $scope[input+"_name"]);
+          findInfoAboutASN(input, $scope[input + "_name"]);
         }
-      }
-      else {
+      } else {
         $scope.readyToSearchConnections = false;
       }
     };
@@ -483,7 +609,7 @@ angular.module('bmpUiApp').controller('BGPASPathController',
           },
           alwaysTriggerOffsets: false,
           // when we scroll to the bottom, let's run the query again to get more data
-          onTotalScroll: function(){
+          onTotalScroll: function() {
             console.log("Scrolled back to the end of content. ",
               $scope.thereIsMoreData ? "There might be more data, so run the query again" : "There is no more data");
             if ($scope.thereIsMoreData) {
