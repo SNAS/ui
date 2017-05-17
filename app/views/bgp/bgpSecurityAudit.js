@@ -281,7 +281,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       };
 
       if (anomaly === "martians") {
-        getMartiansGroundTruth($scope.anomalyDetails[anomaly]);
+        getMartiansGroundTruth($scope.anomalyDetails[anomaly], $scope.selectedTime);
       }
 
       var request = bgpDataService.getAnomalies(parameters);
@@ -346,8 +346,8 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       });
     };
 
-    function getMartiansGroundTruth(dataObject) {
-      var request = bgpDataService.getGroundTruthHash();
+    function getMartiansGroundTruth(dataObject, timestamp) {
+      var request = bgpDataService.getGroundTruthHash(timestamp);
       request.promise.then(function(result) {
         dataObject.groundTruthLink = ConfigService.bogonListURL + result.hash;
       });
