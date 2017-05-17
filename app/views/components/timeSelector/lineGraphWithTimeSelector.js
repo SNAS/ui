@@ -22,30 +22,13 @@ angular.module('bmp.components.timeSelector', [])
   })
   .controller('LineGraphTimeSelectorCtrl', ['$rootScope', '$scope', '$timeout', 'DateTimeRangeService',
   function($rootScope, $scope, $timeout, DateTimeRangeService) {
-//    var startDatetimePicker, endDatetimePicker, dateRangePicker;
-//    startDatetimePicker = $('#startDatetimePicker');
-//    endDatetimePicker = $('#endDatetimePicker');
     var dateRangePicker;
 
-//    function getTimestamp(startOrEnd) {
-//      var dateTimePicker = startOrEnd === "start" ? startDatetimePicker : endDatetimePicker;
-//      return dateTimePicker.data('DateTimePicker').date();
-//    }
-//    function setTimestamp(startOrEnd, dateString) {
-//      var dateTimePicker = startOrEnd === "start" ? startDatetimePicker : endDatetimePicker;
-//      $scope[startOrEnd] = new Date(dateString);
-//      dateTimePicker.data('DateTimePicker').date($scope[startOrEnd]);
-//    }
     var dateRangeLabel = "Last 6 Hours";
     function setTimestamps(start, end) {
-//      setTimestamp("start", start);
-//      setTimestamp("end", end);
       if (dateRangePicker === undefined) return;
-//      dateRangePicker.setStartDate(moment(start).format("MM/DD/YYYY h:mm a"));
-//      dateRangePicker.setEndDate(moment(end).format("MM/DD/YYYY h:mm a"));
       dateRangePicker.setStartDate(moment(start));
       dateRangePicker.setEndDate(moment(end));
-//      console.log("setTimestamps dateRangePicker", dateRangePicker, $("#dateRangePicker"));
       var newDates = {
         start: dateRangePicker.startDate.utc().valueOf(),
         end: dateRangePicker.endDate.utc().valueOf()
@@ -54,6 +37,9 @@ angular.module('bmp.components.timeSelector', [])
       computeTimeLines(dateRangeLabel, start, end);
       $rootScope.dateTimeRange = newDates;
       $scope.changedDatesCallback({newDates: newDates});
+
+      var newText = dateRangeFormat(dateRangeLabel, dateRangePicker.startDate, dateRangePicker.endDate);
+      setDateRangeInTextField(newText);
     }
     // returns [start, end]
     function getTimestamps() {
@@ -62,26 +48,6 @@ angular.module('bmp.components.timeSelector', [])
         dateRangePicker.endDate.utc().valueOf()
       ];
     }
-
-//    function initialiseDateTimePicker(startOrEnd) {
-//      var datePickerParameters = {
-//        sideBySide: true,
-//        format: 'MM/DD/YYYY HH:mm'
-//      };
-//      var dateTimePicker = startOrEnd === "start" ? startDatetimePicker : endDatetimePicker;
-//      dateTimePicker.datetimepicker(datePickerParameters);
-//      // when the date time picker disappears,
-//      dateTimePicker.on('dp.hide', function() {
-//        // use $timeout with a 0 delay just to force the scope to be re-evaluated
-//        $timeout(function() {
-//          // when $scope.start or $scope.end changes, the time lines will be recomputed thanks to a watcher
-//          $scope[startOrEnd] = getTimestamp(startOrEnd);
-//        });
-//      });
-//    }
-//    ["start", "end"].map(function(startOrEnd) {
-//      initialiseDateTimePicker(startOrEnd);
-//    });
 
     $scope.timeLines = [];
     const hourInMs = 3600000;
@@ -139,33 +105,20 @@ angular.module('bmp.components.timeSelector', [])
 
 
     $scope.leftArrow = function() {
-//      var currentStart = getTimestamp("start");
-//      var currentEnd = getTimestamp("end");
       var currentTimestamps = getTimestamps();
       var currentStart = currentTimestamps[0];
       var currentEnd = currentTimestamps[1];
       setTimestamps(currentStart - (currentEnd-currentStart), currentStart);
-      console.log("rootScope", $rootScope);
-      console.log("scope", $scope);
+      // console.log("rootScope", $rootScope);
+      // console.log("scope", $scope);
     };
 
     $scope.rightArrow = function() {
-//      var currentStart = getTimestamp("start");
-//      var currentEnd = getTimestamp("end");
       var currentTimestamps = getTimestamps();
       var currentStart = currentTimestamps[0];
       var currentEnd = currentTimestamps[1];
       setTimestamps(currentEnd, currentEnd + (currentEnd-currentStart));
     };
-
-//    var ranges = {
-//      'Today': { range: [moment().subtract(12, 'hours'), moment()], tickGapInHours: 2 },
-//      'Yesterday': { range: [moment().subtract(1, 'days').subtract(4, 'hours'), moment().subtract(1, 'days')], tickGapInHours: 1 },
-//      'Last 7 Days': { range: [moment().subtract(6, 'days'), moment()], tickGapInHours: 6 },
-//      'Last 30 Days': { range: [moment().subtract(29, 'days'), moment()], tickGapInHours: 24 }//,
-////      'This Month': { range: [moment().startOf('month'), moment().endOf('month')], tickGapInHours: 2 },
-////      'Last Month': { range: [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')], tickGapInHours: 2 }
-//    };
 
     var tickGapsInHours = {
       'Last 6 Hours': 1,
@@ -175,7 +128,12 @@ angular.module('bmp.components.timeSelector', [])
       'Last 30 Days': 7*24
     }
     function dateRangeFormat(label, start, end) {
-      if (label === 'Last 4 Hours' || label === 'Last 12 Hours') {
+      var duration = end - start;
+      // if (duration <= 24 * hourInMs) {
+      //   return start.format('MM/DD/YYYY h:mma') + " - " + end.format('MM/DD/YYYY h:mma');
+      // }
+      
+      if (label === 'Last 6 Hours' || label === 'Last 12 Hours') {
         return start.format('MM/DD/YYYY');
       }
 //      if (label === 'Last 12 Hours') {
@@ -188,7 +146,6 @@ angular.module('bmp.components.timeSelector', [])
 //        return;
 //      }
       if (label === "Custom Range") {
-        var duration = end - start;
         var res = start.format('MM/DD/YYYY');
         res += duration > 24*hourInMs ? ' - ' + end.format('MM/DD/YYYY') : '';
         return res;
@@ -207,7 +164,13 @@ angular.module('bmp.components.timeSelector', [])
         'Last 30 Days': [now().subtract(29, 'days'), now()]
       };
     }
-    $('input[name="daterange"]').daterangepicker({
+    // const dateRangeWidgetSelector = 'input[name="daterange"]';
+    const dateRangeWidgetSelector = 'button[name="daterange"]';
+    function setDateRangeInTextField(value) {
+      // $(dateRangeWidgetSelector).val(value);
+      $(dateRangeWidgetSelector).html(value + " <span class='caret'></span>");
+    }
+    $(dateRangeWidgetSelector).daterangepicker({
       timePicker: true,
       timePicker24Hour: true,
       timePickerIncrement: 30,
@@ -216,8 +179,8 @@ angular.module('bmp.components.timeSelector', [])
       },
 //      showCustomRangeLabel: false,
       alwaysShowCalendars: false,
-      startDate: new Date(),//getTimestamp("start"),
-      endDate: new Date(),//getTimestamp("end"),
+      startDate: new Date(),
+      endDate: new Date(),
       ranges: getRanges()
     }, function(start, end, label) {
       console.log("New date range selected: " + start.format('YYYY-MM-DD') + " to " + end.format('YYYY-MM-DD') + " (predefined range: " + label + ")");
@@ -225,17 +188,20 @@ angular.module('bmp.components.timeSelector', [])
       setTimestamps(start, end);
     });
 
-//      dateRangePicker = $('input[name="daterange"]');
-//      console.log("dateRangePicker", dateRangePicker.data('daterangepicker'));
-    dateRangePicker = $('input[name="daterange"]').data('daterangepicker');
-    $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
-//      console.log("apply daterangepicker");
-//      if (dateRangeLabel )
-      $(this).val(dateRangeFormat(dateRangeLabel, picker.startDate, picker.endDate));
+    dateRangePicker = $(dateRangeWidgetSelector).data('daterangepicker');
+    $(dateRangeWidgetSelector).on('apply.daterangepicker', function(ev, picker) {
+      // $(this).val(dateRangeFormat(dateRangeLabel, picker.startDate, picker.endDate));
+      // var oldText = $(this).html();
+      var newText = dateRangeFormat(dateRangeLabel, picker.startDate, picker.endDate);
+      // console.log("oldText newText", oldText, typeof(oldText), newText, typeof(newText));
+      // var newHtml = oldText.replace(/^.*(<span.*)$/, newText + ' $1'); 
+      // console.log("should become", newHtml);
+      // $(this).html(newText + " <span class='caret'></span>");
+      setDateRangeInTextField(newText);
     });
 //    console.log("dateRangePicker", dateRangePicker);
 
-    $scope.verticalLineHeight = $scope.graphHeight !== undefined ? $scope.graphHeight - 57 : 200;
+    $scope.verticalLineHeight = $scope.graphHeight !== undefined ? $scope.graphHeight - 45 : 200;
 
     // initialise start & end times
 //    var nbHoursToDisplayByDefault = 6;

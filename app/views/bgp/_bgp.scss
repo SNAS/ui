@@ -116,19 +116,22 @@ $oswald-font-path: "../../fonts/Oswald";
     @include placeholder {
       color: #ddd;
     }
-    &#dateRangePicker {
-      background-color: transparent;
-      font-size: 15px;
-      height: 13px;
-      line-height: 12px;
-      width: 300px;
-      border: none;
-      padding-left: 15px;
-      //position: relative;
-      //top: -36px;
-      //float: left;
-      //margin-top: -33px;
-    }
+  }
+  #dateRangePicker {
+    // background-color: transparent;
+    border-radius: 0;
+    margin-left: 15px;
+    // font-size: 15px;
+    // height: 13px;
+    // line-height: 12px;
+    // width: 300px;
+    // border: none;
+    // padding-left: 15px;
+    position: relative;
+    top: 24px;
+    left: 32px;
+    background-color: white;
+    z-index: 10;
   }
 
   .top-bar {
@@ -676,94 +679,6 @@ $oswald-font-path: "../../fonts/Oswald";
   }
 
   &.ASPathView {
-    //font-family: 'Oswald';
-
-    //$top-bar-height: 143px;
-    //$space-below-title: 50px;
-    //$title-font-size: 53px;
-    //$title-font-size-augmented: 65px;
-    //$top-bar-bottom-order-height: 5px;
-    //$search-bar-height: 79px;
-    //$margin-below-search: 7px;
-    //$search-tip-height: 12px;
-    //$search-tip-font-size: 15px;
-    //$grey-text: #a2a2a2;
-    //
-    //input {
-    //  height: $search-bar-height;
-    //  font-size: $title-font-size-augmented;
-    //  text-transform: uppercase;
-    //  margin-bottom: $margin-below-search;
-    //  padding: 6px 12px 10px;
-    //  border: 1px solid #d7d7d7;
-    //  border-radius: 2px;
-    //  color: #000;
-    //  @include placeholder {
-    //    color: #ddd;
-    //  }
-    //}
-
-    //.top-bar {
-    //  height: $top-bar-height + $top-bar-bottom-order-height;
-    //  margin-bottom: 32px;
-    //  //border-bottom: 5px solid black;
-    //  .title-container {
-    //    &:before {
-    //      content: '';
-    //      display: inline-block;
-    //      height: $top-bar-height - $space-below-title;
-    //    }
-    //    height: $top-bar-height;
-    //    font-size: $title-font-size;
-    //    line-height: $title-font-size;
-    //    text-transform: uppercase;
-    //
-    //    .title {
-    //      &:before {
-    //        content: '';
-    //        display: inline-block;
-    //      }
-    //      display: inline-block;
-    //      font-size: $title-font-size-augmented;
-    //    }
-    //  }
-    //  .search {
-    //    float: right;
-    //    width: 450px;
-    //    position: absolute;
-    //    top: $top-bar-height - $search-bar-height - $margin-below-search - 27px;
-    //    right: 15px;
-    //    .search-tip-container {
-    //      &:before {
-    //        content: '';
-    //        display: inline-block;
-    //        height: 16px;
-    //      }
-    //      display: inline-block;
-    //      height: 27px;
-    //      .search-tip {
-    //        display: inline-block;
-    //        font-size: $search-tip-font-size;
-    //        height: $search-tip-height + 1px;
-    //        line-height: $search-tip-height;
-    //        letter-spacing: 0.1px;
-    //        text-transform: uppercase;
-    //        position: absolute;
-    //        bottom: 15px;
-    //        .search-tip-example {
-    //          color: $grey-text;
-    //          display: inline-block;
-    //          font-weight: 300;
-    //          margin-left: 3px;
-    //        }
-    //      }
-    //    }
-    //  }
-    //  .line {
-    //    height: $top-bar-bottom-order-height;
-    //    background-color: #000;
-    //  }
-    //}
     .split-view {
       position: relative;
       div.split-two {
@@ -947,6 +862,10 @@ line.nv-selectionline {
   stroke-width: 2px;
 }
 
+line-graph-time-selector {
+  position: relative;
+  top: -19px;
+}
 .timeline-background {
   height: 57px;
   padding: 13px 0;
@@ -1066,7 +985,7 @@ line.nv-selectionline {
 .ranges {
   $darkGrey: #666;
   font-family: 'Oswald';
-  letter-spacing: 0.1px;
+  letter-spacing: 0.4px;
   li {
     font-size: 13px;
     background-color: #f5f5f5;
@@ -1087,14 +1006,16 @@ line.nv-selectionline {
       color: #fff;
     }
   }
-  button.applyBtn {
-    letter-spacing: 0.2px;
-    background-color: #000;
-    border: 1px solid #000;
-    color: #fff;
-    &:hover {
-      background-color: $darkGrey !important;
-      border: 1px solid #555;
+  .range_inputs button {
+    letter-spacing: 0.8px;
+    &.applyBtn {
+      background-color: #000;
+      border: 1px solid #000;
+      color: #fff;
+      &:hover {
+        background-color: $darkGrey !important;
+        border: 1px solid #555;
+      }
     }
   }
 }

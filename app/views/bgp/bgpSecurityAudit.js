@@ -21,12 +21,12 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       prefix_length: "Prefix length anomalies"
     };
     const lineColors = {
-      martians: "red",
-      prefix_length: "blue"
+      martians: "#e46f7b",
+      prefix_length: "#85bccc"
     };
 
-    console.log("(root)dateTimeRange", $rootScope.dateTimeRange);
-    console.log("(scope)dateTimeRange", $scope.dateTimeRange);
+    // console.log("(root)dateTimeRange", $rootScope.dateTimeRange);
+    // console.log("(scope)dateTimeRange", $scope.dateTimeRange);
 
     function findIndexOfAnomaly(anomaly, array, field) {
       return array.findIndex(function(el) {
@@ -133,6 +133,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
               id: anomaly,
               key: viewNames[anomaly] !== undefined ? viewNames[anomaly] : anomaly,
               values: gData,
+              area: true,
               occurrences: "No data",
               trend: 0,
               loading: false
@@ -305,9 +306,9 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         $scope.anomalyDetails[anomaly].loadingAnomalyDetails = false;
         $scope.anomalyDetails[anomaly].json = bgpDataService.getAnomaliesAPI(parameters);
 
-        $scope.anomalyDetails[anomaly].grid.onRegisterApi = function (gridApi) {
+        $scope.anomalyDetails[anomaly].grid.onRegisterApi = function(gridApi) {
           // disable the 'no sorting' option and prioritise 'desc' over 'asc'
-          gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
+          gridApi.core.on.sortChanged($scope, function(grid, sortColumns) {
             if (sortColumns.length === 1) {
               // if there is a preferred sort order for this column, apply it
               if ($scope.anomalyDetails[anomaly].grid.preferredSortOrder[sortColumns[0].field] !== undefined) {
@@ -405,10 +406,10 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
           }
           return "#777";
         },
-        x: function (d) {
+        x: function(d) {
           return d !== undefined ? d[0] : 0;
         },
-        y: function (d) {
+        y: function(d) {
           return d !== undefined ? d[1] : 0;
         },
         useVoronoi: true,
@@ -421,7 +422,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         showYAxis: true,
         xDomain: $scope.minMaxTimestamps,
         xAxis: {
-          tickFormat: function (d) {
+          tickFormat: function(d) {
             return moment(d).format("MM/DD/YYYY HH:mm");
           }
         },
