@@ -8,7 +8,7 @@
  * Controller for the BGP AS Path page
  */
 angular.module('bmpUiApp').controller('BGPASPathController',
-  function($scope, $rootScope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout, $controller) {
+  function($scope, $rootScope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout, $controller, keyCodes) {
 
     var uiServer = ConfigService.bgpDataService;
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";
@@ -34,13 +34,13 @@ angular.module('bmpUiApp').controller('BGPASPathController',
         '.left-column': {width: '20%'},
         '.right-column': {width: '20%'},
         '.middle-column': {width: '60%'},
-        '.as-input': {'font-size': '20px'}
+        '.as-input': {'font-size': '20px', 'padding-top': '41px'}
       },
       close: {
         '.left-column': {width: '50%'},
         '.right-column': {width: '50%'},
         '.middle-column': {width: 0},
-        '.as-input': {'font-size': '65px'}
+        '.as-input': {'font-size': '65px', 'padding-top': '0px'}
       }
     };
     var buttonsShown = false;
@@ -539,13 +539,16 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       openSearchButton(1);
     };
     $scope.onKeyDown = function(input, keyEvent) {
-      // if the user presses the delete key
-      //      if (keyEvent.keyCode === 8) {
-      //        $scope[input+"_number"] = '';
-      //      }
-
-      // don't do anything if the user presses the left or right arrow
-      if (keyEvent.keyCode === 37 || keyEvent.keyCode === 39) return;
+      // console.log("onKeyDown", keyEvent.keyCode, keyEvent);
+      const keysToIgnore = [
+          keyCodes.LeftArrow,
+          keyCodes.RightArrow,
+          keyCodes.Meta,
+          keyCodes.Alt,
+          keyCodes.Ctrl,
+          keyCodes.Shift
+      ];
+      if (keysToIgnore.indexOf(keyEvent.keyCode) !== -1) return;
 
       if (!$scope.middleColumnClosed) {
         closeResetButton();
