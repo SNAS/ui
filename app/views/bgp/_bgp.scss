@@ -202,7 +202,9 @@ $oswald-font-path: "../../fonts/Oswald";
   }
 }
 #bgpView.securityAuditView .error-list {
-  top: 0px;
+  // top: 0px;
+  top: -39px;
+  z-index: 20;
 }
 
 #bgpView {

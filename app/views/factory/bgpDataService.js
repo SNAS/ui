@@ -164,7 +164,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
     },
     getAnomaliesTypes: function() {
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/anomalies/overview/list", { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/anomalies/overview/list", { cache: false }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {

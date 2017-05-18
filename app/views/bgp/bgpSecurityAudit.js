@@ -66,34 +66,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         }
       }
     }
-/*
-    $scope.minMaxTimestamps = [1493298000000,1493308800000];
-    $scope.timeLines = [];
-    const hourInMs = 3600000;
-    function stripMinutesAndSeconds(timestamp) {
-      return timestamp - (timestamp%hourInMs);
-    }
-    function computeTimeLines(minMaxTimestamps) {
-      var fullHours = [];
-      console.log("computeTimeLines", minMaxTimestamps, minMaxTimestamps.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
-      var start = stripMinutesAndSeconds(minMaxTimestamps[0]);
-      if (minMaxTimestamps[0] > start) {
-        start += hourInMs;
-      }
-//      console.log("start", start, moment(start).format("MM/DD/YYYY HH:mm"));
-      fullHours = d3.range(start, minMaxTimestamps[1]+1, hourInMs); // +1 to include the last hour
-//      console.log("fullHours", fullHours, fullHours.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
-      var x = d3.time.scale().range([0, 100]); // percentages of the container width
-      // edge case: when there's only one timestamp, we need it to be centered
-      if (fullHours.length === 1) {
-        x = d3.time.scale().range([50, 50]);
-      }
-      x.domain(minMaxTimestamps);
-      return fullHours.map(function(h) {
-        return { timestamp: h, left: x(h) };
-      });
-    }
-    */
+    
     function loadAnomalies(start, end) {
       $scope.loadingAnomalies = true;
       $scope.api_errors = [];
@@ -204,8 +177,8 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       if (parameter !== undefined) {
         urlParameters.push("search="+parameter);
       }
-      urlParameters.push("start=" + getTimestamp("start"));
-      urlParameters.push("end=" + getTimestamp("end"));
+      urlParameters.push("start=" + $scope.minMaxTimestamps[0]);
+      urlParameters.push("end=" + $scope.minMaxTimestamps[1]);
       return path + "?" + urlParameters.join("&");
     };
 
@@ -384,7 +357,6 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         loadAnomalies(dates.start, dates.end);
         reloadAnomalyDetails();
 
-//        $scope.minMaxTimestamps = [getTimestamp("start"), getTimestamp("end")];
         $scope.minMaxTimestamps=[dates.start, dates.end];
       });
     };
