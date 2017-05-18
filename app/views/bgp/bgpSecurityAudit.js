@@ -8,7 +8,7 @@
 * Controller for the BGP Security Audit page
  */
 angular.module('bmpUiApp').controller('BGPSecurityAuditController',
-  function($scope, $rootScope, $controller, $stateParams, bgpDataService, ConfigService, socket, uiGridConstants, $timeout) {
+  function($scope, $rootScope, $controller, $stateParams, bgpDataService, ConfigService, socket, uiGridConstants, $timeout, DateTimeRangeService) {
     $rootScope.dualWindow.noTitleBar = true;
     $rootScope.dualWindow.header = {
       controller: $controller('BGPHeaderCtrl', {$scope: $scope}),
@@ -378,6 +378,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         onTimeSelectedCallback: function(selectedTimestamp) {
           $timeout(function() {
             $scope.selectedTime = selectedTimestamp;
+            DateTimeRangeService.selectTimestamp(selectedTimestamp);
             for (var i = 0 ; i < $scope.previewGraphData.length ; i++) {
               computeValuesAtSelectedTime($scope.previewGraphData[i]);
             }

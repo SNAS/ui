@@ -3,12 +3,11 @@ angular.module('bmp.components.timeSelector', [])
     const nbHoursToDisplayByDefault = 6;
     const hourInMs = 3600000;
 
-//    $scope.timelineTicksGapType = 'hours';
-//    setTimestamps(now() - nbHoursToDisplayByDefault * hourInMs, now());
-
     function now() {
       return moment().minute(0).second(0).millisecond(0);
     }
+
+    var callbacks = [];
 
     return {
       now: now,
@@ -17,12 +16,32 @@ angular.module('bmp.components.timeSelector', [])
           start: now() - nbHoursToDisplayByDefault * hourInMs,
           end: now().utc().valueOf()
         }
+      },
+      selectedTimestamp: now(),
+      selectTimestamp: function(timestamp) {
+        this.selectedTimestamp = timestamp;
+        this.notifyListeners();
+      },
+      registerUpdateListener: function(callback) {
+        callbacks.push(callback);
+      },
+      notifyListeners: function() {
+        angular.forEach(callbacks, function(callback) {
+          callback();
+        })
       }
     };
   })
   .controller('LineGraphTimeSelectorCtrl', ['$rootScope', '$scope', '$timeout', 'DateTimeRangeService',
   function($rootScope, $scope, $timeout, DateTimeRangeService) {
     var dateRangePicker;
+
+    $scope.selectedTimestamp = DateTimeRangeService.selectedTimestamp;
+    DateTimeRangeService.registerUpdateListener(function() {
+      console.log("got selected timestamp update notification");
+      $scope.selectedTimestamp = DateTimeRangeService.selectedTimestamp;
+      $scope.selectedTimestampPosition = x($scope.selectedTimestamp);
+    });
 
     var dateRangeLabel = "Last 6 Hours";
     function setTimestamps(start, end) {
@@ -64,11 +83,13 @@ angular.module('bmp.components.timeSelector', [])
       // console.log("beginning of day", timestamp, moment(timestamp).format("MM/DD/YYYY HH:mm:ss"), beginningOfDayStringLocal, res, moment(res).format("MM/DD/YYYY HH:mm"), moment(res).utc().format("MM/DD/YYYY HH:mm"));
       return res;
     }
+
+    var fullHours = [];
+    var x = d3.time.scale().range([0, 100]); // percentages of the container width
     function computeTimeLines(label, start, end) {
 //      var minMaxTimestamps = [getTimestamp("start"), getTimestamp("end")];
       var minMaxTimestamps = getTimestamps();
       if (!minMaxTimestamps[0] || !minMaxTimestamps[1]) return;
-      var fullHours = [];
 //      console.log("computeTimeLines", minMaxTimestamps, minMaxTimestamps.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
 
       var gapInHours = tickGapsInHours[label];
@@ -95,7 +116,6 @@ angular.module('bmp.components.timeSelector', [])
     //  console.log("start", start, moment(start).format("MM/DD/YYYY HH:mm"));
       fullHours = d3.range(start, minMaxTimestamps[1]+1, gap); // +1 to include the last hour
 //      console.log("fullHours", fullHours, fullHours.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
-      var x = d3.time.scale().range([0, 100]); // percentages of the container width
       // edge case: when there's only one timestamp, we need it to be centered
       if (fullHours.length === 1) {
         x = d3.time.scale().range([50, 50]);
@@ -111,24 +131,13 @@ angular.module('bmp.components.timeSelector', [])
           return t.left >= 0 && t.left <= 100;
         });
       });
-//      console.log("timelines", $scope.timeLines);
     }
-
-//    $scope.$watchGroup(['start', 'end'], computeTimeLines);
-
-//    function refreshChart() {
-//      console.log("refreshing chart", $scope.minMaxTimestamps, $scope.minMaxTimestamps.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
-//      $scope.previewGraph.chart.xDomain = $scope.minMaxTimestamps;//[$scope.xminvalue,$scope.xmaxvalue];
-//    }
-
 
     $scope.leftArrow = function() {
       var currentTimestamps = getTimestamps();
       var currentStart = currentTimestamps[0];
       var currentEnd = currentTimestamps[1];
       setTimestamps(currentStart - (currentEnd-currentStart), currentStart);
-      // console.log("rootScope", $rootScope);
-      // console.log("scope", $scope);
     };
 
     $scope.rightArrow = function() {
@@ -222,7 +231,6 @@ angular.module('bmp.components.timeSelector', [])
     $scope.verticalLineHeight = $scope.graphHeight !== undefined ? $scope.graphHeight - 45 : 200;
 
     // initialise start & end times
-//    var nbHoursToDisplayByDefault = 6;
     var defaultRange = DateTimeRangeService.getDefaultRange();
     $scope.timelineTicksGapType = 'hours';
     setTimestamps(defaultRange.start, defaultRange.end);

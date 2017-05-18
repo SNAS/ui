@@ -966,10 +966,14 @@ line-graph-time-selector {
     .vertical-line {
       width: 1px;
       height: 257px;
-      //background-color: green;
       background: repeating-linear-gradient(transparent, transparent $dash-space-length, $dash-color $dash-space-length, $dash-color $dash-space-length + $dash-length);
       position: absolute;
       bottom: 11px;
+      &.selected-time {
+        width: 3px;
+        background: rgba(0, 0, 0, 0.4);
+        margin-left: -1px;
+      }
     }
     .triangle {
       height: 17px;

@@ -1,5 +1,3 @@
-<!--<input id="dateRangePicker" type="text" name="daterange" value="01/01/2015 1:30 PM - 01/01/2015 2:00 PM" />-->
-
 <button id="dateRangePicker" type="button" name="daterange" class="btn btn-default dropdown-toggle">
   01/01/2015 1:30 PM - 01/01/2015 2:00 PM <span class="caret"></span>
 </button>
@@ -16,6 +14,9 @@
     <div class="timeline-tick" ng-repeat="tl in timeLines" style="left: {{tl.left}}%">
       <div class="vertical-line" style="height: {{verticalLineHeight}}px"></div>
       <div class="triangle"></div>
+    </div>
+    <div class="timeline-tick" style="left: {{selectedTimestampPosition}}%">
+      <div class="vertical-line selected-time" style="height: {{verticalLineHeight}}px"></div>
     </div>
   </div>
   <div class="col-sm-12 col-md-12 col-lg-12">
