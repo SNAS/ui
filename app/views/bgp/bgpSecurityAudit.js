@@ -5,7 +5,7 @@
  * @name bmpUiApp.controller:BGPSecurityAuditController
  * @description
  * # BGPSecurityAuditController
- * Controller for the BGP Security Audit page
+* Controller for the BGP Security Audit page
  */
 angular.module('bmpUiApp').controller('BGPSecurityAuditController',
   function($scope, $rootScope, $controller, $stateParams, bgpDataService, ConfigService, socket, uiGridConstants, $timeout) {
@@ -74,12 +74,11 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
 //        console.debug("anomalies types", result);
 
         $scope.previewGraphData = [];
-//        var graphData = [];
         angular.forEach(result, function(anomaly) {
           var parameters = {
             anomaliesType: anomaly,
-            start: start,//getTimestamp("start"),
-            end: end//getTimestamp("end")
+            start: start,
+            end: end
           };
 
           var newGraphLine = {
@@ -91,7 +90,6 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             loading: true
           };
           $scope.previewGraphData.push(newGraphLine);
-//          graphData.push(newGraphLine);
 
           var request = bgpDataService.getAnomalyOverview(parameters);
           request.promise.then(function(result) {
@@ -114,30 +112,11 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             computeValuesAtSelectedTime(newGraphLine);
 
             var index = findIndexOfAnomaly(anomaly, $scope.previewGraphData, "id");
-//            var index = findIndexOfAnomaly(anomaly, graphData, "id");
             if (index === -1) {
               $scope.previewGraphData.push(newGraphLine);
-//              graphData.push(newGraphLine);
             } else {
               $scope.previewGraphData[index] = newGraphLine;
-//              graphData[index] = newGraphLine;
             }
-
-            // TODO Oli: uncomment lines below for the graph's x axis to start and end on timestamps from the data
-//            console.log("previewGraphData", $scope.previewGraphData, JSON.stringify($scope.previewGraphData));
-//            $scope.minMaxTimestamps = computeMinMaxTimestamps($scope.previewGraphData);
-//            if ($scope.minMaxTimestamps[0] === undefined || $scope.minMaxTimestamps[1] === undefined) {
-//              $scope.minMaxTimestamps = [parameters.start, parameters.end];
-//            }
-
-            // TODO Oli: NO NEED TO DO THIS SO OFTEN if we just use the start and end parameters, just do it when changing these parameters
-//            break here
-            // otherwise use the start and end parameters based on now() - a few hours
-//            $scope.minMaxTimestamps = [parameters.start, parameters.end];
-
-//            $scope.timeLines = computeTimeLines($scope.minMaxTimestamps);
-//            console.log("timelines", $scope.timeLines);
-//            timeSlider.graph.setXScaleRange(minMaxTimestamps);
 
             $scope.loadingAnomalies = false;
           }, function(error) {
@@ -162,8 +141,6 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             }
           });
         });
-
-//        $timeout(function() { loadGraphData($scope, graphData); }, 500);
       }, function(error) {
         console.warn(error);
         $scope.loadingAnomalies = false;
@@ -352,7 +329,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
     }
 
     $scope.changedDates = function(dates) {
-      console.log("changed dates", dates, Object.keys(dates).map(function(key, index) { return moment(dates[key]).format('MM/DD/YYYY h:mm a')}));
+      // console.log("changed dates", dates, Object.keys(dates).map(function(key, index) { return moment(dates[key]).format('MM/DD/YYYY h:mma')}));
       $timeout(function() {
         loadAnomalies(dates.start, dates.end);
         reloadAnomalyDetails();
@@ -422,24 +399,12 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
 
     function refreshChart() {
       if ($scope.minMaxTimestamps === undefined) return;
-      console.log("refreshing chart", $scope.minMaxTimestamps, $scope.minMaxTimestamps.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
-      $scope.overviewGraph.chart.xDomain = $scope.minMaxTimestamps;//[$scope.xminvalue,$scope.xmaxvalue];
+      // console.log("refreshing chart", $scope.minMaxTimestamps, $scope.minMaxTimestamps.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
+      $scope.overviewGraph.chart.xDomain = $scope.minMaxTimestamps;
     }
     $scope.refreshGraph = function() {
       refreshChart();
     }
-
-    // initialisation
-//    $(function() {
-//      var timeSliderParameters = { showLegend: true, svgHeight: 314, xDomain: $scope.minMaxTimestamps/*[$scope.xminvalue,$scope.xmaxvalue]*/ };
-//      if ($stateParams.start) {
-//        timeSliderParameters.startTimestamp = parseInt($stateParams.start, 10);
-//      }
-//      if ($stateParams.end) {
-//        timeSliderParameters.endTimestamp = parseInt($stateParams.end, 10);
-//      }
-////      timeSlider = setUpTimeSlider($scope, $timeout, timeSliderCallbacks, timeSliderParameters);
-//    });
 
     // initialisation
     $(function() {

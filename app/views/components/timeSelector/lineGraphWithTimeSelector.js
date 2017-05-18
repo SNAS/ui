@@ -55,7 +55,14 @@ angular.module('bmp.components.timeSelector', [])
     const weekInMs = 7*dayInMs;
     const monthInMs = 4*weekInMs;
     function stripMinutesAndSeconds(timestamp) {
+      // console.log("stripMinutesAndSeconds", timestamp, moment(timestamp).format('MM/DD/YYYY HH:mm:ss'), (timestamp%hourInMs)/hourInMs, moment(timestamp - (timestamp%hourInMs)).format('MM/DD/YYYY h:mma'));
       return timestamp - (timestamp%hourInMs);
+    }
+    function beginningOfTheDay(timestamp) {
+      var beginningOfDayStringLocal = moment(timestamp).format("YYYY-MM-DDT00:00:00");
+      var res = moment(beginningOfDayStringLocal).utc().valueOf();
+      // console.log("beginning of day", timestamp, moment(timestamp).format("MM/DD/YYYY HH:mm:ss"), beginningOfDayStringLocal, res, moment(res).format("MM/DD/YYYY HH:mm"), moment(res).utc().format("MM/DD/YYYY HH:mm"));
+      return res;
     }
     function computeTimeLines(label, start, end) {
 //      var minMaxTimestamps = [getTimestamp("start"), getTimestamp("end")];
@@ -76,10 +83,16 @@ angular.module('bmp.components.timeSelector', [])
       }
       var gap = gapInHours * hourInMs;
       var start = stripMinutesAndSeconds(minMaxTimestamps[0]);
-      if (minMaxTimestamps[0] > start) {
+      if ($scope.timelineTicksGapType === "days") {
+        start = beginningOfTheDay(start);
+        if (minMaxTimestamps[0] > start) {
+          start += dayInMs;
+        }
+      }
+      else if (minMaxTimestamps[0] > start) {
         start += hourInMs;
       }
-//      console.log("start", start, moment(start).format("MM/DD/YYYY HH:mm"));
+    //  console.log("start", start, moment(start).format("MM/DD/YYYY HH:mm"));
       fullHours = d3.range(start, minMaxTimestamps[1]+1, gap); // +1 to include the last hour
 //      console.log("fullHours", fullHours, fullHours.map(function(t) { return moment(t).format("MM/DD/YYYY HH:mm"); }));
       var x = d3.time.scale().range([0, 100]); // percentages of the container width
@@ -89,8 +102,13 @@ angular.module('bmp.components.timeSelector', [])
       }
       x.domain(minMaxTimestamps);
       $timeout(function() {
+        // first calculate the position (left, in percentage) for each timestamp
         $scope.timeLines = fullHours.map(function(h) {
           return { timestamp: h, left: x(h) };
+        })
+        // then filter out the values outside of the [0-100]% range
+        .filter(function(t) {
+          return t.left >= 0 && t.left <= 100;
         });
       });
 //      console.log("timelines", $scope.timeLines);
