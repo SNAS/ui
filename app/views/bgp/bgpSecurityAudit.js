@@ -351,7 +351,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       // or just remove the saved details if they're hidden
       for (var anomaly in $scope.anomalyDetails) {
         if ($scope.anomalyDetails.hasOwnProperty(anomaly)) {
-          var previouslyShown = $scope.anomalyDetails[anomaly].show;
+          var previouslyShown = ($scope.anomalyDetails[anomaly] === undefined ? false : $scope.anomalyDetails[anomaly].show);
           $scope.anomalyDetails[anomaly] = undefined;
           if (previouslyShown) {
             $scope.loadAnomalyDetails(anomaly);
