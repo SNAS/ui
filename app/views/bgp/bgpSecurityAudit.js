@@ -74,11 +74,13 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
 //        console.debug("anomalies types", result);
 
         $scope.previewGraphData = [];
+        const minuteInMs = 60000;
+        const endTimestampPlusAdditionalMinutes = end + 20 * minuteInMs;
         angular.forEach(result, function(anomaly) {
           var parameters = {
             anomaliesType: anomaly,
             start: start,
-            end: end
+            end: endTimestampPlusAdditionalMinutes
           };
 
           var newGraphLine = {
