@@ -287,6 +287,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         $scope.anomalyDetails[anomaly].gridReady = true;
         $scope.anomalyDetails[anomaly].loadingAnomalyDetails = false;
         $scope.anomalyDetails[anomaly].json = bgpDataService.getAnomaliesAPI(parameters);
+        $scope.anomalyDetails[anomaly].csv = bgpDataService.getAnomaliesAPI(parameters, "csv");
 
         $scope.anomalyDetails[anomaly].grid.onRegisterApi = function(gridApi) {
           // disable the 'no sorting' option and prioritise 'desc' over 'asc'

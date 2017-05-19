@@ -218,22 +218,22 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
         });
       return { promise: promise, cancel: cancel(canceller) };
     },
-    getAnomaliesAPI: function(parameters) {
+    getAnomaliesAPI: function(parameters, exportType) {
+      var options = [];
       // parameters is a json object with the following fields: anomaliesType, exportType, start, end
       // allowed anomaliesType: "martians", "prefixLength" (mandatory parameter: no default value)
-      // allowed exportType: "json" (default), "csv"
-      if (parameters.exportType === undefined || parameters.exportType === "json") {
-        parameters.exportType = "";
+      if (exportType !== undefined) {
+        options.push("export_type=" + exportType);
       }
-      var timestamps = "";
       if (parameters.start !== undefined) {
-        timestamps = "?start=" + parameters.start;
+        options.push("start=" + parameters.start);
       }
       if (parameters.end !== undefined) {
-        timestamps += (timestamps.length === 0 ? "?" : "&") + "end=" + parameters.end;
+        options.push("end=" + parameters.end);
       }
 
-      return bgpAPI + "/anomalies/" + parameters.anomaliesType + "/" + parameters.exportType + timestamps;
+      options = options.length === 0 ? "" : "?" + options.join("&");
+      return bgpAPI + "/anomalies/" + parameters.anomaliesType + "/" + options;
     },
     getGroundTruthHash: function(timestamp) {
       var timestamps = "";

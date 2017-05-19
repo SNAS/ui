@@ -42,7 +42,10 @@
       <div class="table-container">
         <h3>{{details.displayTitle}}</h3>
         <div class="download" ng-show="details.json !== undefined || details.groundTruthLink !== undefined">
-          Download data: <a ng-href="{{details.json}}" target="dataTab" ng-show="details.json !== undefined">JSON</a><a ng-href="{{details.groundTruthLink}}" target="groundTruthTab" ng-show="details.groundTruthLink !== undefined">ground truth</a>
+          Download data:
+          <a ng-href="{{details.json}}" target="dataTab" ng-show="details.json !== undefined">JSON</a>
+          <a ng-href="{{details.csv}}" target="dataTab" ng-show="details.csv !== undefined">CSV</a>
+          <a ng-href="{{details.groundTruthLink}}" target="groundTruthTab" ng-show="details.groundTruthLink !== undefined">ground truth</a>
         </div>
         <div class="loading-section">
           <div ng-show="details.loadingAnomalyDetails" bmp-loading font-width="50"></div>
