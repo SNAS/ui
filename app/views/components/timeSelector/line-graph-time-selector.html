@@ -11,12 +11,15 @@
     </div>
   </div>
   <div class="col-sm-12 col-md-12 col-lg-12 timeline-ticks">
+    <!-- display a vertical line for each calculated timeline tick -->
     <div class="timeline-tick" ng-repeat="tl in timeLines" style="left: {{tl.left}}%">
       <div class="vertical-line" style="height: {{verticalLineHeight}}px"></div>
       <div class="triangle"></div>
     </div>
+    <!-- display another vertical line for the selected timestamp -->
     <div class="timeline-tick" style="left: {{selectedTimestampPosition}}%">
       <div class="vertical-line selected-time" style="height: {{verticalLineHeight}}px"></div>
+      <div class="triangle"></div>
     </div>
   </div>
   <div class="col-sm-12 col-md-12 col-lg-12">
@@ -27,12 +30,27 @@
     <div class="timeline-right-arrow" ng-click="rightArrow()"></div>
   </div>
   <div class="col-sm-12 col-md-12 col-lg-12 timeline-display-container">
+    <!-- display the date or time for each calculated timeline tick -->
     <div class="timeline-display" ng-repeat="tl in timeLines" style="left: {{tl.left}}%">
       <div class="hours" ng-if="timelineTicksGapType === 'hours'">
         {{tl.timestamp | date: "h"}}<div class="am-pm">{{tl.timestamp | date: "a"}}</div>
       </div>
       <div class="days" ng-if="timelineTicksGapType === 'days'">
         {{tl.timestamp | date: "MM/dd"}}
+      </div>
+    </div>
+    <div class="timeline-background blur-selected-timestamp" ng-style="blurTimestampStyle"></div>
+    <!-- display the date & time for the selected timestamp -->
+    <div class="timeline-display selected" style="left: {{selectedTimestampPosition}}%">
+      <!--<div class="blur"></div>
+      <div class="white-circle"></div>-->
+      <div class="on-top">
+        <div class="hours" ng-if="timelineTicksGapType === 'hours'">
+          {{selectedTimestamp | date: "h"}}<div class="am-pm">{{selectedTimestamp | date: "a"}}</div>
+        </div>
+        <div class="days-hours" ng-if="timelineTicksGapType === 'days'">
+          {{selectedTimestamp | date: "MM/dd"}}<div class="am-pm">{{selectedTimestamp | date: "ha"}}</div>
+        </div>
       </div>
     </div>
   </div>

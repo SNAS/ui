@@ -46,10 +46,13 @@
             <div class="time">{{path.date | date: "hh:mm"}}</div>
           </div>
           <div class="length">{{path.length}}</div>
+          <!-- display the AS padding count on top (thanks to the z-index -->
+          <div ng-repeat="(index, asInfo) in path.as_path" class="circle-position" ng-style="{left: asInfo.position}">
+            <div class="as-node-count bg-{{ path.icon }}" ng-if="asInfo.count > 1">{{asInfo.count}}</div>
+          </div>
+          <!-- display the AS number -->
           <div ng-repeat="(index, asInfo) in path.as_path" class="circle" ng-style="{left: asInfo.position}"
                bmp-asn-model asn="{{asInfo.asn}}" change-url-on-click="loadASView(asInfo.asn)">
-            {{asInfo.asn}}
-            <div class="as-node-count bg-{{ path.icon }}" ng-if="asInfo.count > 1">{{asInfo.count}}</div>
           </div>
         </div>
       </div>

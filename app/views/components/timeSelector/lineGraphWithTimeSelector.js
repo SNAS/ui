@@ -17,7 +17,7 @@ angular.module('bmp.components.timeSelector', [])
           end: now().utc().valueOf()
         }
       },
-      selectedTimestamp: now(),
+      selectedTimestamp: undefined,
       selectTimestamp: function(timestamp) {
         this.selectedTimestamp = timestamp;
         this.notifyListeners();
@@ -37,10 +37,26 @@ angular.module('bmp.components.timeSelector', [])
     var dateRangePicker;
 
     $scope.selectedTimestamp = DateTimeRangeService.selectedTimestamp;
+    $scope.blurTimestampStyle = {
+      background: "transparent"//'linear-gradient(90deg, transparent, red 37%, red 63%, transparent)'
+    };
+    const circleRadius = 48;
+    const color = 'black';
     DateTimeRangeService.registerUpdateListener(function() {
       console.log("got selected timestamp update notification");
       $scope.selectedTimestamp = DateTimeRangeService.selectedTimestamp;
       $scope.selectedTimestampPosition = x($scope.selectedTimestamp);
+      var transparentLeft = 'calc(' + $scope.selectedTimestampPosition + '% - ' + circleRadius*1.5 + 'px)';
+      var transparentRight = 'calc(' + $scope.selectedTimestampPosition + '% + ' + circleRadius*1.5 + 'px)';
+      var left = 'calc(' + $scope.selectedTimestampPosition + '% - ' + circleRadius/2 + 'px)';
+      var right = 'calc(' + $scope.selectedTimestampPosition + '% + ' + circleRadius/2 + 'px)';
+      var linearGradient = 'linear-gradient(90deg, transparent 0%, transparent ' + transparentLeft + ',' + color + ' ' + left + ', ' + color + ' ' + right + ', transparent ' + transparentRight + ', transparent 100%)';
+      $scope.blurTimestampStyle = {
+        background: '-webkit-'+linearGradient, /* For Safari 5.1 to 6.0 */
+        background: '-o-'+linearGradient, /* For Opera 11.1 to 12.0 */
+        background: '-moz-'+linearGradient, /* For Firefox 3.6 to 15 */
+        background: linearGradient
+      };
     });
 
     var dateRangeLabel = "Last 6 Hours";
