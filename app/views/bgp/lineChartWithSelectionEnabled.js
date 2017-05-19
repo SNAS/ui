@@ -622,7 +622,6 @@ nv.models.lineChartWithSelectionEnabled = function() {
       interactiveLayer.dispatch.on('elementClick', function(e) {
         var pointXLocation, allData = [];
 
-
         var selectedTimestamp;
         data.filter(function(series, i) {
           series.seriesIndex = i;

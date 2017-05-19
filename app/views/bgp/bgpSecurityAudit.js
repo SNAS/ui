@@ -204,7 +204,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
               '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
           { name: "as_path", displayName: "AS Path" },
-          { name: "router_ip", displayName: "Advertising Router", width: '132' },
+          { name: "router_ip", displayName: "Advertising Router", width: '143' },
           { name: "type", width: '60' },
           { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140',
             cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>'
@@ -212,7 +212,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
           { name: "last_seen", width: '140',
             cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' },
           { name: "still_active", width: '50' },
-          { name: 'category', width: '100' }
+          { name: 'category', width: '112' }
         ],
         preferredSortOrder: {
           "timestamp": "desc",
@@ -233,7 +233,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
               '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
           { name: "as_path", displayName: "AS Path" },
-          { name: "router_ip", displayName: "Advertising Router", width: '132' },
+          { name: "router_ip", displayName: "Advertising Router", width: '143' },
           { name: "type", width: '60' },
           { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140',
             cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' }
