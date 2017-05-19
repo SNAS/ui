@@ -50,10 +50,11 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
       return -1;
     }
 
+    // returns the index of the selected time, or -1 if not found
     function computeValuesAtSelectedTime(dataObject) {
       var gData = dataObject.values;
       var index = findIndexOfSelectedTime(gData, $scope.selectedTime);
-        if (index !== -1) {
+      if (index !== -1) {
         dataObject.occurrences = gData[index][1];
         dataObject.difference = "";
         if (index === 0) {
@@ -65,8 +66,21 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
           dataObject.difference = Math.abs(gData[index-1][1]-gData[index][1]);
         }
       }
+      return index;
     }
     
+    function selectTimestampIfWeHaveAllTheData(lastTimestamp, gotData) {
+      $timeout(function() {
+        var gotAllData = true;
+        Object.keys(gotData).map(function(key) {
+          gotAllData = gotAllData && gotData[key];
+        });
+        if (gotAllData && lastTimestamp > -1) {
+          DateTimeRangeService.selectTimestamp(lastTimestamp);
+        }
+      });
+    }
+
     function loadAnomalies(start, end) {
       $scope.loadingAnomalies = true;
       $scope.api_errors = [];
@@ -76,6 +90,11 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         $scope.previewGraphData = [];
         const minuteInMs = 60000;
         const endTimestampPlusAdditionalMinutes = end + 20 * minuteInMs;
+        var gotData = {};
+        var lastTimestamp = -1;
+        result.map(function(anomaly) {
+          gotData[anomaly] = false;
+        });
         angular.forEach(result, function(anomaly) {
           var parameters = {
             anomaliesType: anomaly,
@@ -111,7 +130,13 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
               trend: 0,
               loading: false
             };
-            computeValuesAtSelectedTime(newGraphLine);
+            if (computeValuesAtSelectedTime(newGraphLine) === -1) {
+              // console.log("no data for selected time", $scope.selectedTime, gData);
+              if (gData.length > 0) {
+                // console.log("selected time should be", gData[gData.length-1][0]);
+                lastTimestamp = Math.max(lastTimestamp, gData[gData.length-1][0]);
+              }
+            }
 
             var index = findIndexOfAnomaly(anomaly, $scope.previewGraphData, "id");
             if (index === -1) {
@@ -121,9 +146,10 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             }
 
             $scope.loadingAnomalies = false;
+            gotData[anomaly] = true;
+            selectTimestampIfWeHaveAllTheData(lastTimestamp, gotData);
           }, function(error) {
             console.warn(error);
-            $scope.loadingAnomalies = false;
             $scope.api_errors.push(error);
 
             var newGraphLine = {
@@ -141,6 +167,10 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             } else {
               $scope.previewGraphData[index] = newGraphLine;
             }
+
+            $scope.loadingAnomalies = false;
+            gotData[anomaly] = true;
+            selectTimestampIfWeHaveAllTheData(lastTimestamp, gotData);
           });
         });
       }, function(error) {
@@ -377,7 +407,8 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             return moment(d).format("MM/DD/YYYY HH:mm");
           }
         },
-        onTimeSelectedCallback: function(selectedTimestamp) {
+        onTimeSelectedCallback: function timeSelectedChangedFromGraph(selectedTimestamp) {
+          // console.log("SELECTED TIME updated from graph", selectedTimestamp);
           $timeout(function() {
             $scope.selectedTime = selectedTimestamp;
             DateTimeRangeService.selectTimestamp(selectedTimestamp);
@@ -389,6 +420,18 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         }
       }
     };
+
+    DateTimeRangeService.registerUpdateListener(function timeSelectedChangedFromDateTimeRangeService() {
+      var selectedTimestamp = DateTimeRangeService.selectedTimestamp;
+      // console.log("SELECTED TIME updated from DateTimeRangeService", selectedTimestamp);
+      $timeout(function() {
+        $scope.selectedTime = selectedTimestamp;
+        for (var i = 0 ; i < $scope.previewGraphData.length ; i++) {
+          computeValuesAtSelectedTime($scope.previewGraphData[i]);
+        }
+        reloadAnomalyDetails();
+      });
+    });
 
     var uiServer = ConfigService.bgpDataService;
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";

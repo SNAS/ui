@@ -404,7 +404,7 @@ nv.models.lineChartWithSelectionEnabled = function() {
         container.selectAll('.nv-noData').remove();
       }
 
-    /* Update `main' graph on brush update. */
+      /* Update `main' graph on brush update. */
       focus.dispatch.on("onBrush", function(extent) {
         onBrush(extent);
       });
@@ -622,7 +622,6 @@ nv.models.lineChartWithSelectionEnabled = function() {
       interactiveLayer.dispatch.on('elementClick', function(e) {
         var pointXLocation, allData = [];
 
-//        console.log("lineChart interactiveLayer click", e);
 
         var selectedTimestamp;
         data.filter(function(series, i) {

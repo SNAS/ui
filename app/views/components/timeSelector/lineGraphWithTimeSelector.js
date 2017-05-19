@@ -17,7 +17,7 @@ angular.module('bmp.components.timeSelector', [])
           end: now().utc().valueOf()
         }
       },
-      selectedTimestamp: undefined,
+      selectedTimestamp: moment().utc().valueOf(),
       selectTimestamp: function(timestamp) {
         this.selectedTimestamp = timestamp;
         this.notifyListeners();
@@ -38,12 +38,12 @@ angular.module('bmp.components.timeSelector', [])
 
     $scope.selectedTimestamp = DateTimeRangeService.selectedTimestamp;
     $scope.blurTimestampStyle = {
-      background: "transparent"//'linear-gradient(90deg, transparent, red 37%, red 63%, transparent)'
+      background: "transparent"
     };
     const circleRadius = 48;
     const color = 'black';
     DateTimeRangeService.registerUpdateListener(function() {
-      console.log("got selected timestamp update notification");
+      // console.log("got selected timestamp update notification");
       $scope.selectedTimestamp = DateTimeRangeService.selectedTimestamp;
       $scope.selectedTimestampPosition = x($scope.selectedTimestamp);
       var transparentLeft = 'calc(' + $scope.selectedTimestampPosition + '% - ' + circleRadius*1.5 + 'px)';
@@ -226,7 +226,7 @@ angular.module('bmp.components.timeSelector', [])
       endDate: new Date(),
       ranges: getRanges()
     }, function(start, end, label) {
-      console.log("New date range selected: " + start.format('YYYY-MM-DD') + " to " + end.format('YYYY-MM-DD') + " (predefined range: " + label + ")");
+      // console.log("New date range selected: " + start.format('YYYY-MM-DD') + " to " + end.format('YYYY-MM-DD') + " (predefined range: " + label + ")");
       dateRangeLabel = label;
       setTimestamps(start, end);
     });
