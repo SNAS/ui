@@ -211,7 +211,7 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
           },
           { name: "last_seen", width: '140',
             cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' },
-          { name: "still_active", width: '50' },
+          { name: "still_active", displayName: "Active", width: '68' },
           { name: 'category', width: '112' }
         ],
         preferredSortOrder: {

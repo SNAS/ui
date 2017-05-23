@@ -17,7 +17,7 @@
       <div class="triangle"></div>
     </div>
     <!-- display another vertical line for the selected timestamp -->
-    <div class="timeline-tick" style="left: {{selectedTimestampPosition}}%">
+    <div ng-if="selectedTimestampPosition !== undefined" class="timeline-tick" style="left: {{selectedTimestampPosition}}%">
       <div class="vertical-line selected-time" style="height: {{verticalLineHeight}}px"></div>
       <div class="triangle"></div>
     </div>
@@ -39,9 +39,9 @@
         {{tl.timestamp | date: "MM/dd"}}
       </div>
     </div>
-    <div class="timeline-background blur-selected-timestamp" ng-style="blurTimestampStyle"></div>
+    <div ng-if="selectedTimestampPosition !== undefined" class="timeline-background blur-selected-timestamp" ng-style="blurTimestampStyle"></div>
     <!-- display the date & time for the selected timestamp -->
-    <div class="timeline-display selected" style="left: {{selectedTimestampPosition}}%">
+    <div ng-if="selectedTimestampPosition !== undefined" class="timeline-display selected" style="left: {{selectedTimestampPosition}}%">
       <!--<div class="blur"></div>
       <div class="white-circle"></div>-->
       <div class="on-top">

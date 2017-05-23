@@ -43,7 +43,7 @@ angular.module('bmp.components.timeSelector', [])
     const circleRadius = 48;
     const color = 'black';
     DateTimeRangeService.registerUpdateListener(function() {
-      // console.log("got selected timestamp update notification");
+      //console.log("got selected timestamp update notification");
       $scope.selectedTimestamp = DateTimeRangeService.selectedTimestamp;
       $scope.selectedTimestampPosition = x($scope.selectedTimestamp);
       var transparentLeft = 'calc(' + $scope.selectedTimestampPosition + '% - ' + circleRadius*1.5 + 'px)';
@@ -68,6 +68,9 @@ angular.module('bmp.components.timeSelector', [])
         start: dateRangePicker.startDate.utc().valueOf(),
         end: dateRangePicker.endDate.utc().valueOf()
       };
+
+      $scope.selectedTimestampPosition = undefined;
+
 //      console.log("setTimestamps", start, end, newDates);
       computeTimeLines(dateRangeLabel, start, end);
       $rootScope.dateTimeRange = newDates;
