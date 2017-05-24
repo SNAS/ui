@@ -20,7 +20,7 @@ angular.module('bmpUiApp').controller('BGPController',
 
     $scope.dateFilterOn = true;
     $scope.dateTimeRange = DateTimeRangeService.getDefaultRange();
-    console.log("dateTimeRange", $scope.dateTimeRange);
+    //console.log("dateTimeRange", $scope.dateTimeRange);
 
     $scope.newPathLocation = function(parameter) {
       var path = $location.path();
@@ -74,7 +74,7 @@ angular.module('bmpUiApp').controller('BGPController',
     }
 
     $scope.changedDates = function(dates) {
-      console.log("changed dates", dates, Object.keys(dates).map(function(key, index) { return moment(dates[key]).format('MM/DD/YYYY h:mm a')}));
+      //console.log("changed dates", dates, Object.keys(dates).map(function(key, index) { return moment(dates[key]).format('MM/DD/YYYY h:mm a')}));
       $scope.dateTimeRange = dates;
       $scope.api_errors = [];
 
@@ -133,10 +133,6 @@ angular.module('bmpUiApp').controller('BGPController',
         onTimeSelectedCallback: function(selectedTimestamp) {
           $timeout(function() {
             $scope.selectedTime = selectedTimestamp;
-//            for (var i = 0 ; i < $scope.previewGraphData.length ; i++) {
-//              computeValuesAtSelectedTime($scope.previewGraphData[i]);
-//            }
-//            reloadAnomalyDetails();
           });
         }
       }
@@ -157,7 +153,7 @@ angular.module('bmpUiApp').controller('BGPController',
       var gData = [];
 
       angular.forEach(result, function(record) {
-        gData.push([new Date(record.created_on).getTime(), parseInt(record.chg)]);
+        gData.push([parseInt(record.timestamp, 10), parseInt(record.chg, 10)]);
       });
 
       $scope.previewGraphData[0] = {
@@ -649,11 +645,11 @@ angular.module('bmpUiApp').controller('BGPController',
         start = $scope.dateTimeRange.start,
         end = $scope.dateTimeRange.end
 
-       // $scope.loadingPrefixes = true; // begin loading
+        //console.log("getting AS hist info", $scope.asn, start, moment(start).format("YYYY-MM-DD hh:mm"), end, moment(end).format("YYYY-MM-DD hh:mm"));
         var request = bgpDataService.getASHistInfo($scope.asn, start, end);
         $scope.httpRequests.push(request);
         request.promise.then(function(result) {
-           //console.debug("AS hist info", result);
+            //console.debug("AS hist info", result);
             loadPreviewASHist(result);
             $scope.loadingPreview = false;
             clearRequest(request);
