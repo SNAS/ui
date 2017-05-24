@@ -5,7 +5,7 @@
   <!-- THIS SECTION DISPLAYS ERRORS -->
   <div class="main-area" ng-show="api_errors.length > 0">
     <div class="col-lg-12 alert alert-danger">
-      <div ng-repeat="api_error in api_errors">
+      <div ng-repeat="api_error in api_errors track by $index">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
         {{api_error}}
       </div>

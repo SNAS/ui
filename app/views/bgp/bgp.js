@@ -653,14 +653,17 @@ angular.module('bmpUiApp').controller('BGPController',
         var request = bgpDataService.getASHistInfo($scope.asn, start, end);
         $scope.httpRequests.push(request);
         request.promise.then(function(result) {
-//            console.debug("AS hist info", result);
+           //console.debug("AS hist info", result);
             loadPreviewASHist(result);
             $scope.loadingPreview = false;
             clearRequest(request);
           }, function(error) {
-            console.warn(error);
+            console.warn("getASHistInfo:", error);
             $scope.loadingPreview = false;
-            $scope.api_errors.push(error);
+            if ($scope.api_errors.indexOf(error) === -1) {
+              $scope.api_errors.push(error);
+            }
+            console.log("api_errors", $scope.api_errors);
           }
         );
       }
@@ -686,9 +689,11 @@ angular.module('bmpUiApp').controller('BGPController',
           $scope.loadingPrefixes = false; // stop loading
           clearRequest(request);
         }, function(error) {
-          console.warn(error);
+          console.warn("getPrefixes:", error);
           $scope.loadingPrefixes = false; // stop loading
-          $scope.api_errors.push(error);
+          if ($scope.api_errors.indexOf(error) === -1) {
+            $scope.api_errors.push(error);
+          }
         }
       );
     }
