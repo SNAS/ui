@@ -106,9 +106,9 @@ angular.module('bmpUiApp').controller('BGPController',
           bottom: 67,
           left: 26
         },
-        color: function(d) {
-          return "#EAA546";
-        },
+        color: d3.category20c, //function(d) {
+        //   return "#EAA546";
+        // },
         x: function (d) {
           return d !== undefined ? d[0] : 0;
         },
@@ -259,30 +259,6 @@ angular.module('bmpUiApp').controller('BGPController',
           console.log(error.message);
           $scope.loadingWhoIs = false;
         });
-
-//        apiFactory.getWhoIsASName($scope.searchValue).success(function(result) {
-//          $scope.loadingWhoIs = false;
-//          var data = result.w.data;
-//          if (data.length === 0) {
-//            console.warn("No information found for AS name", $scope.searchValue);
-//            $scope.asn = undefined;
-//          }
-//          else {
-//            $scope.asn = data[0].asn;
-//          }
-//          console.log("AS name data", data, $scope.asn);
-//          $scope.asnDetails = [];
-//          if (getASWhoIsInfo(data)) {
-//            // if this is a known ASN, get other information
-//          }
-//          // retrieve information from the BGP data service even if there's no response from the WhoIs API
-//          refreshASInfo();
-//          $scope.displayASNInfo = true;
-//          $scope.showDirectedGraph = true;
-//        }).error(function(error) {
-//          $scope.loadingWhoIs = false;
-//          console.log(error.message);
-//        });
       }
     }
 
@@ -610,25 +586,52 @@ angular.module('bmpUiApp').controller('BGPController',
         end = $scope.dateTimeRange.end
       }
       $scope.loadingPrefixes = true; // begin loading
+      $scope.loadingPreview = true; // show that the graph is being loaded
       var request = bgpDataService.getPrefixInfo(prefix, start, end);
       $scope.httpRequests.push(request);
       request.promise.then(function(data) {
           $scope.prefixViewGridOptions.data = data;
           $scope.asPathGraph.paths = [];
+          // console.log("prefix info", data);
+          
+          var graphKeys = {};
+          $scope.previewGraphData = [];
+          
           for (var i = 0 ; i < data.length ; i++) {
+            // calculate the length
             $scope.prefixViewGridOptions.data[i].length = $scope.prefixViewGridOptions.data[i].as_path.split(' ').length;
 
             // initial_index is the link between asPathGraph.paths and prefixViewGridOptions.data
             $scope.prefixViewGridOptions.data[i].initial_index = i;
             $scope.asPathGraph.paths.push({initial_index: i, rendering_index: i, visible: true, path: data[i].as_path, as_path: [], prefix: data[i].prefix, timestamp: data[i].created_on});
+
+            // graph data
+            var key = data[i].prefix + " from " + data[i].peer_as;
+            if (graphKeys[key] === undefined) {
+              graphKeys[key] = [];
+            }
+            var timestamp = moment(data[i].created_on.replace(/\.?[0-9]*$/, " UTC")).valueOf();
+            graphKeys[key].push([timestamp, $scope.prefixViewGridOptions.data[i].length]);
+          }
+
+          // prepare graph data
+          for (var uniquePrefix in graphKeys) {
+            if (graphKeys.hasOwnProperty(uniquePrefix)) {
+              $scope.previewGraphData.push({
+                key: uniquePrefix,
+                values: graphKeys[uniquePrefix]
+              })
+            }
           }
 
           createASpaths($scope.asPathGraph.paths);
 
           $scope.loadingPrefixes = false; // stop loading
+          $scope.loadingPreview = false; // show that the graph has stopped loading
           clearRequest(request);
         }, function(error) {
           $scope.loadingPrefixes = false; // stop loading
+          $scope.loadingPreview = false; // show that the graph has stopped loading
           console.warn(error);
           $scope.api_errors.push(error);
         }
@@ -1185,17 +1188,6 @@ angular.module('bmpUiApp').controller('BGPController',
     // initialisation
     $(function () {
       //initial search
-//      console.debug("stateParams", $stateParams);
-      var timeSliderParameters = { forceY: [-2,2] };
-      if ($stateParams.start) {
-//        setTimestamp("start", $stateParams.start);
-        timeSliderParameters.startTimestamp = parseInt($stateParams.start, 10);
-      }
-      if ($stateParams.end) {
-//        setTimestamp("end", $stateParams.end);
-        timeSliderParameters.endTimestamp = parseInt($stateParams.end, 10);
-      }
-//      setUpTimeSlider($scope, $timeout, timeSliderCallbacks, timeSliderParameters);
       if ($stateParams.search) {
         $scope.searchValue = $stateParams.search;
         searchValueFn();

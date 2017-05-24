@@ -27,13 +27,13 @@ angular.module('bmp.components.timeSelector', [])
       },
       notifyListeners: function() {
         angular.forEach(callbacks, function(callback) {
-          callback();
+          callback(start, end);
         })
       }
     };
   })
-  .controller('LineGraphTimeSelectorCtrl', ['$rootScope', '$scope', '$timeout', 'DateTimeRangeService',
-  function($rootScope, $scope, $timeout, DateTimeRangeService) {
+  .controller('LineGraphTimeSelectorCtrl', ['$rootScope', '$scope', '$timeout', 'DateTimeRangeService', '$stateParams',
+  function($rootScope, $scope, $timeout, DateTimeRangeService, $stateParams) {
     var dateRangePicker;
 
     $scope.selectedTimestamp = DateTimeRangeService.selectedTimestamp;
@@ -250,9 +250,16 @@ angular.module('bmp.components.timeSelector', [])
     $scope.verticalLineHeight = $scope.graphHeight !== undefined ? $scope.graphHeight - 45 : 200;
 
     // initialise start & end times
-    var defaultRange = DateTimeRangeService.getDefaultRange();
-    $scope.timelineTicksGapType = 'hours';
-    setTimestamps(defaultRange.start, defaultRange.end);
+    if ($stateParams.start && $stateParams.end) {
+      var start = parseInt($stateParams.start, 10);
+      var end = parseInt($stateParams.end, 10);
+      setTimestamps(start, end);
+    }
+    else {
+      var defaultRange = DateTimeRangeService.getDefaultRange();
+      $scope.timelineTicksGapType = 'hours';
+      setTimestamps(defaultRange.start, defaultRange.end);
+    }
   }])
   .directive('lineGraphTimeSelector', function() {
     return {
