@@ -39,12 +39,23 @@
         {{tl.timestamp | date: "MM/dd"}}
       </div>
     </div>
+    <!-- show the timestamp being hovered on the graph: blurry circle + non blurry text on top -->
+    <div ng-if="hoverTimestampPosition !== undefined" class="timeline-display selected blurry hover-timestamp-zindex" style="left: {{hoverTimestampPosition}}%"></div>
+    <div ng-if="hoverTimestampPosition !== undefined" class="timeline-display selected hover-timestamp hover-timestamp-zindex" style="left: {{hoverTimestampPosition}}%">
+      <!--<div>-->
+        <div class="hours" ng-if="timelineTicksGapType === 'hours'">
+          {{hoverTimestamp | date: "h"}}<div class="am-pm">{{hoverTimestamp | date: "a"}}</div>
+        </div>
+        <div class="days-hours" ng-if="timelineTicksGapType === 'days'">
+          {{hoverTimestamp | date: "MM/dd"}}<div class="am-pm">{{hoverTimestamp | date: "ha"}}</div>
+        </div>
+      <!--</div>-->
+    </div>
+    <!-- gradient to partially hide any value underneath the selected timestamp -->
     <div ng-if="selectedTimestampPosition !== undefined" class="timeline-background blur-selected-timestamp" ng-style="blurTimestampStyle"></div>
     <!-- display the date & time for the selected timestamp -->
     <div ng-if="selectedTimestampPosition !== undefined" class="timeline-display selected" style="left: {{selectedTimestampPosition}}%">
-      <!--<div class="blur"></div>
-      <div class="white-circle"></div>-->
-      <div class="on-top">
+      <div class="selected-timestamp-zindex">
         <div class="hours" ng-if="timelineTicksGapType === 'hours'">
           {{selectedTimestamp | date: "h"}}<div class="am-pm">{{selectedTimestamp | date: "a"}}</div>
         </div>

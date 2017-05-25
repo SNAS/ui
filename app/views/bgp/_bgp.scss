@@ -976,17 +976,17 @@ line-graph-time-selector {
       font-size: 16px;
     }
     &.selected {
-      .white-circle {
-        position: absolute;
-        border-radius: 50%;
-        color: #000;
-        background-color: #fff;
-        height: $timeline-display-diameter-selected;
-        width: $timeline-display-diameter-selected;
+      &.blurry {
+        @include filter(blur(2px));
+        opacity: 0.8;
       }
-      .on-top {
+      .hover-timestamp-zindex {
         position: relative;
         z-index: 2;
+      }
+      .selected-timestamp-zindex {
+        position: relative;
+        z-index: 3;
       }
       color: #000;
       background-color: #fff;
@@ -994,6 +994,10 @@ line-graph-time-selector {
       height: $timeline-display-diameter-selected;
       margin-left: -$timeline-display-diameter-selected / 2;
       margin-top: -53px;
+      &.hover-timestamp {
+        background-color: transparent;
+        color: #333;
+      }
       .hours {
         padding-top: 1px;
       }

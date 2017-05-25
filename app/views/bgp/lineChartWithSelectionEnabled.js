@@ -312,6 +312,7 @@ nv.models.lineChartWithSelectionEnabled = function() {
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState', 'renderEnd')
     , duration = 250
     , onTimeSelectedCallback = undefined
+    , onHoverCallback = undefined
     ;
 
   // set options on sub-objects for this chart
@@ -617,6 +618,12 @@ nv.models.lineChartWithSelectionEnabled = function() {
           })();
 
         interactiveLayer.renderGuideLine(pointXLocation);
+
+        var timestamp = chart.x()(singlePoint,pointIndex);
+        // console.log("pointXLocation", pointXLocation, singlePoint, timestamp, moment(timestamp).format("YYYY-MM-DD HH:mm:ss"));
+        if (onHoverCallback !== undefined) {
+          onHoverCallback(timestamp);
+        }
       });
 
       interactiveLayer.dispatch.on('elementClick', function(e) {
@@ -653,6 +660,9 @@ nv.models.lineChartWithSelectionEnabled = function() {
 
       interactiveLayer.dispatch.on("elementMouseout",function(e) {
         lines.clearHighlights();
+        if (onHoverCallback !== undefined) {
+          onHoverCallback(undefined);
+        }
       });
 
       dispatch.on('changeState', function(e) {
@@ -840,7 +850,8 @@ nv.models.lineChartWithSelectionEnabled = function() {
         lines.useVoronoi(false);
       }
     }},
-    onTimeSelectedCallback: {get: function() { return onTimeSelectedCallback;}, set: function(_) { onTimeSelectedCallback = _; }}
+    onTimeSelectedCallback: {get: function() { return onTimeSelectedCallback;}, set: function(_) { onTimeSelectedCallback = _; }},
+    onHoverCallback: {get: function() { return onHoverCallback;}, set: function(_) { onHoverCallback = _; }}
   });
 
   nv.utils.inheritOptions(chart, lines);

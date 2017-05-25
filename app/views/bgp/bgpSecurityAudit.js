@@ -424,6 +424,9 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             }
             reloadAnomalyDetails();
           });
+        },
+        onHoverCallback: function(hoverTimestamp) {
+          DateTimeRangeService.previewTimestamp(hoverTimestamp);
         }
       }
     };

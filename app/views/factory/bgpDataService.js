@@ -191,6 +191,9 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       return { promise: promise, cancel: cancel(canceller) };
     },
     getAnomaliesAPI: function(parameters, exportType) {
+      if (exportType !== undefined) {
+        parameters.export_type = exportType;
+      }
       var options = stringifyParameters(parameters);
       return bgpAPI + "/anomalies/" + parameters.anomaliesType + "/" + options;
     },

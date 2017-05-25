@@ -8,6 +8,7 @@ angular.module('bmp.components.timeSelector', [])
     }
 
     var callbacks = [];
+    var hoverUpdateCallbacks = [];
 
     return {
       now: now,
@@ -18,15 +19,28 @@ angular.module('bmp.components.timeSelector', [])
         }
       },
       selectedTimestamp: moment().utc().valueOf(),
+      hoverTimestamp: undefined,
       selectTimestamp: function(timestamp) {
         this.selectedTimestamp = timestamp;
         this.notifyListeners();
       },
+      previewTimestamp: function(timestamp) {
+        this.hoverTimestamp = timestamp;
+        this.notifyHoverUpdateListeners();
+      },
       registerUpdateListener: function(callback) {
         callbacks.push(callback);
       },
+      registerHoverUpdateListener: function(callback) {
+        hoverUpdateCallbacks.push(callback);
+      },
       notifyListeners: function() {
         angular.forEach(callbacks, function(callback) {
+          callback();
+        })
+      },
+      notifyHoverUpdateListeners: function() {
+        angular.forEach(hoverUpdateCallbacks, function(callback) {
           callback();
         })
       }
@@ -57,6 +71,13 @@ angular.module('bmp.components.timeSelector', [])
         background: '-moz-'+linearGradient, /* For Firefox 3.6 to 15 */
         background: linearGradient
       };
+    });
+    DateTimeRangeService.registerHoverUpdateListener(function() {
+      $timeout(function() {
+        $scope.hoverTimestamp = DateTimeRangeService.hoverTimestamp;
+        $scope.hoverTimestampPosition = $scope.hoverTimestamp !== undefined ? x($scope.hoverTimestamp) : undefined;
+        // console.log("hover update", $scope.hoverTimestamp, moment($scope.hoverTimestamp).format("YYYY-MM-DD HH:mm"));
+      });
     });
 
     var dateRangeLabel = "Last 6 Hours";
