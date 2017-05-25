@@ -8,7 +8,7 @@
 * Controller for the BGP Security Audit page
  */
 angular.module('bmpUiApp').controller('BGPSecurityAuditController',
-  function($scope, $rootScope, $controller, $stateParams, bgpDataService, ConfigService, socket, uiGridConstants, $timeout, DateTimeRangeService) {
+  function($scope, $rootScope, $controller, $stateParams, bgpDataService, ConfigService, socket, uiGridConstants, $timeout, DateTimeRangeService, BGPHeaderService) {
     $rootScope.dualWindow.noTitleBar = true;
     $rootScope.dualWindow.header = {
       controller: $controller('BGPHeaderCtrl', {$scope: $scope}),
@@ -101,6 +101,9 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
             start: start,
             end: endTimestampPlusAdditionalMinutes
           };
+          if (BGPHeaderService.peerAS !== undefined) {
+            parameters.peer_as = BGPHeaderService.peerAS
+          }
 
           var newGraphLine = {
             id: anomaly,
@@ -254,6 +257,9 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
         anomaliesType: anomaly,
         start: $scope.selectedTime - 3600000, // select the last hour from the selected time
         end: $scope.selectedTime
+      }
+      if (BGPHeaderService.peerAS !== undefined) {
+        parameters.peer_as = BGPHeaderService.peerAS
       }
       $scope.anomalyDetails[anomaly] = {
         show: true,

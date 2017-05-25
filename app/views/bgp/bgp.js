@@ -9,7 +9,7 @@
  */
 angular.module('bmpUiApp').controller('BGPController',
   function($scope, $rootScope, $controller, $stateParams, $location, $filter, bgpDataService, ConfigService, socket,
-           uiGridConstants, apiFactory, $timeout, DateTimeRangeService) {
+           uiGridConstants, apiFactory, $timeout, DateTimeRangeService, BGPHeaderService) {
     $rootScope.dualWindow.noTitleBar = true;
     $rootScope.dualWindow.header = {
       controller: $controller('BGPHeaderCtrl', {$scope: $scope}),
@@ -462,7 +462,7 @@ angular.module('bmpUiApp').controller('BGPController',
     // Get detailed information of this AS
     function getASDetails(data) {
       var keysToFilterOut = ["raw_output", "remarks", "isTransit", "isOrigin",
-        "transit_v4_prefixes", "transit_v6_prefixes", "origin_v4_prefixes", "origin_v6_prefixes"];
+        "transit_v4_prefixes", "transit_v6_prefixes", "origin_v4_prefixes", "origin_v6_prefixes", "timestamp"];
 
       for (var key in data) {
         if (data.hasOwnProperty(key) && keysToFilterOut.indexOf(key) === -1) {
@@ -587,7 +587,14 @@ angular.module('bmpUiApp').controller('BGPController',
       }
       $scope.loadingPrefixes = true; // begin loading
       $scope.loadingPreview = true; // show that the graph is being loaded
-      var request = bgpDataService.getPrefixInfo(prefix, start, end);
+      var parameters = {
+        start: start,
+        end: end
+      }
+      if (BGPHeaderService.peerAS !== undefined) {
+        parameters.peer_as = BGPHeaderService.peerAS
+      }
+      var request = bgpDataService.getPrefixInfo(prefix, parameters);
       $scope.httpRequests.push(request);
       request.promise.then(function(data) {
           $scope.prefixViewGridOptions.data = data;
@@ -606,7 +613,7 @@ angular.module('bmpUiApp').controller('BGPController',
             $scope.asPathGraph.paths.push({initial_index: i, rendering_index: i, visible: true, path: data[i].as_path, as_path: [], prefix: data[i].prefix, timestamp: data[i].created_on});
 
             // graph data
-            var key = data[i].prefix + " from " + data[i].peer_as;
+            var key = data[i].prefix + (BGPHeaderService.peerAS === undefined ? " from " + data[i].peer_as : "");
             if (graphKeys[key] === undefined) {
               graphKeys[key] = [];
             }
@@ -640,16 +647,16 @@ angular.module('bmpUiApp').controller('BGPController',
 
     // Get information for a specific AS hist
     function getASHistInfo() {
-      var start, end;
-
       $scope.loadingPreview = true;
 
       if ($scope.dateFilterOn) {
-        start = $scope.dateTimeRange.start,
-        end = $scope.dateTimeRange.end
+        var parameters = {
+          start: $scope.dateTimeRange.start,
+          end: $scope.dateTimeRange.end
+        };
 
         //console.log("getting AS hist info", $scope.asn, start, moment(start).format("YYYY-MM-DD hh:mm"), end, moment(end).format("YYYY-MM-DD hh:mm"));
-        var request = bgpDataService.getASHistInfo($scope.asn, start, end);
+        var request = bgpDataService.getASHistInfo($scope.asn, parameters);
         $scope.httpRequests.push(request);
         request.promise.then(function(result) {
             //console.debug("AS hist info", result);
@@ -678,10 +685,17 @@ angular.module('bmpUiApp').controller('BGPController',
         end = new Date().getTime();
         start = end - 3600000;
       }
+      var parameters = {
+        start: start,
+        end: end
+      }
+      if (BGPHeaderService.peerAS !== undefined) {
+        parameters.peer_as = BGPHeaderService.peerAS
+      }
       $scope.prefixGridOptions.data = [];
       $scope.loadingPrefixes = true; // begin loading
 //      console.log("getting prefixes for AS", $scope.asn);
-      var request = bgpDataService.getASPaths($scope.asn, start, end);
+      var request = bgpDataService.getASPaths($scope.asn, parameters);
       $scope.httpRequests.push(request);
       request.promise.then(function(result) {
           $scope.prefixGridOptions.data = result;
@@ -769,13 +783,14 @@ angular.module('bmpUiApp').controller('BGPController',
 
 
 
-    $scope.prefixGridInitHeight = 250;
+    $scope.prefixGridInitHeight = 270;
+    var prefixGridHeight = $scope.prefixGridInitHeight-20;
     $scope.prefixGridOptions = {
       rowHeight: 32,
       gridFooterHeight: 0,
       showGridFooter: true,
       enableFiltering: true,
-      height: $scope.prefixGridInitHeight,
+      height: prefixGridHeight,
       enableHorizontalScrollbar: 0,
       enableVerticalScrollbar: 1,
       columnDefs: [

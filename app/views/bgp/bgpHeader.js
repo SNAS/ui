@@ -1,5 +1,12 @@
-angular.module('bmpUiApp').controller('BGPHeaderCtrl',
-  function($scope, $rootScope, $stateParams, $location, $timeout, apiFactory) {
+angular.module('bmpUiApp')
+  .factory('BGPHeaderService', function() {
+    var peerAS = 6939;
+
+    return {
+      peerAS: peerAS
+    };
+  })
+  .controller('BGPHeaderCtrl', function($scope, $rootScope, $stateParams, $location, $timeout, apiFactory) {
     //used for getting suggestions
     $rootScope.getSuggestions = function(val) {
       if (isNaN(val)) {

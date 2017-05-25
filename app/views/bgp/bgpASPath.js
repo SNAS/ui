@@ -8,7 +8,8 @@
  * Controller for the BGP AS Path page
  */
 angular.module('bmpUiApp').controller('BGPASPathController',
-  function($scope, $rootScope, $stateParams, $location, $filter, bgpDataService, ConfigService, socket, uiGridConstants, apiFactory, $timeout, $controller, keyCodes) {
+  function($scope, $rootScope, $stateParams, $location, $filter, bgpDataService, ConfigService, BGPHeaderService,
+   socket, uiGridConstants, apiFactory, $timeout, $controller, keyCodes) {
 
     var uiServer = ConfigService.bgpDataService;
     const SOCKET_IO_SERVER = "bgpDataServiceSocket";
@@ -592,8 +593,14 @@ angular.module('bmpUiApp').controller('BGPASPathController',
       var as1Provided = false, as2Provided = false;
       if ($stateParams.as1) {
         $scope.as1_name = $stateParams.as1;
-        findInfoAboutASN('as1', $scope.as1_name);
         as1Provided = true;
+      }
+      else if (BGPHeaderService.peerAS !== undefined) {
+        $scope.as1_name = BGPHeaderService.peerAS;
+        as1Provided = true;
+      }
+      if (as1Provided) {
+        findInfoAboutASN('as1', $scope.as1_name);
       }
       if ($stateParams.as2) {
         $scope.as2_name = $stateParams.as2;

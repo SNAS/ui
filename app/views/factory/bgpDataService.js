@@ -19,6 +19,16 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
     }
   };
 
+  function stringifyParameters(parameters) {
+    var options = [];
+    for (var key in parameters) {
+      if (parameters.hasOwnProperty(key)) {
+        options.push(key + "=" + parameters[key]);
+      }
+    }
+    return options.length === 0 ? "" : "?" + options.join("&");
+  }
+
   return {
     getASList: function(orderBy, orderDir, limit, offset) {
       var canceller = $q.defer();
@@ -70,17 +80,10 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
     getLinkStats: function(source, target, end) {
       return $http.get(bgpAPI + "/link/stats/" + source + "/" + target + (end !== undefined ? "?end=" + end : ""));
     },
-    getASPaths: function(asn, start, end) {
-      var parameters = "";
-      if (start !== undefined) {
-        parameters = "?start=" + start;
-      }
-      if (end !== undefined) {
-        parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
-      }
-
+    getASPaths: function(asn, parameters) {
+      var options = stringifyParameters(parameters);
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/aspaths/" + asn + parameters, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/aspaths/" + asn + options, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -89,17 +92,10 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
 
       return { promise: promise, cancel: cancel(canceller) };
     },
-    getASPathsHistory: function(asn, start, end) {
-      var parameters = "";
-      if (start !== undefined) {
-        parameters = "?start=" + start;
-      }
-      if (end !== undefined) {
-        parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
-      }
-
+    getASPathsHistory: function(asn, parameters) {
+      var options = stringifyParameters(parameters);
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/aspaths/hist/" + asn + parameters, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/aspaths/hist/" + asn + options, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -108,16 +104,10 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
 
       return { promise: promise, cancel: cancel(canceller) };
     },
-    getPrefixInfo: function(prefix, start, end) {
-      var parameters = "";
-      if (start !== undefined) {
-        parameters = "?start=" + start;
-      }
-      if (end !== undefined) {
-        parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
-      }
+    getPrefixInfo: function(prefix, parameters) {
+      var options = stringifyParameters(parameters);
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/prefixes/" + prefix + parameters, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/prefixes/" + prefix + options, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -126,16 +116,10 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
 
       return { promise: promise, cancel: cancel(canceller) };
     },
-    getASHistInfo: function(as, start, end) {
-      var parameters = "";
-      if (start !== undefined) {
-        parameters = "?start=" + start;
-      }
-      if (end !== undefined) {
-        parameters += (parameters.length === 0 ? "?" : "&") + "end=" + end;
-      }
+    getASHistInfo: function(as, parameters) {
+      var options = stringifyParameters(parameters);
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/as/hist/" + as + parameters, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/as/hist/" + as + options, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -173,18 +157,12 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
 
       return { promise: promise, cancel: cancel(canceller) };
     },
-    // parameters is a json object with the following fields: anomaliesType, exportType, start, end
+    // parameters is a json object with the following fields: anomaliesType, exportType, start, end, peer_as
     getAnomalyOverview: function(parameters) {
-      var timestamps = "";
-      if (parameters.start !== undefined) {
-        timestamps = "?start=" + parameters.start;
-      }
-      if (parameters.end !== undefined) {
-        timestamps += (timestamps.length === 0 ? "?" : "&") + "end=" + parameters.end;
-      }
+      var options = stringifyParameters(parameters);
       // get the types of anomalies and perform parallel requests
       var canceller = $q.defer();
-      var promise = $http.get(bgpAPI + "/anomalies/overview/" + parameters.anomaliesType + timestamps, { cache: true }, { timeout: canceller.promise })
+      var promise = $http.get(bgpAPI + "/anomalies/overview/" + parameters.anomaliesType + options, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
           return response.data;
         }, function(response) {
@@ -199,16 +177,10 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       if (parameters.exportType === undefined || parameters.exportType === "json") {
         parameters.exportType = "";
       }
-      var timestamps = "";
-      if (parameters.start !== undefined) {
-        timestamps = "?start=" + parameters.start;
-      }
-      if (parameters.end !== undefined) {
-        timestamps += (timestamps.length === 0 ? "?" : "&") + "end=" + parameters.end;
-      }
+      var options = stringifyParameters(parameters);
 
       var canceller = $q.defer();
-      var query = bgpAPI + "/anomalies/" + parameters.anomaliesType + "/" + parameters.exportType + timestamps;
+      var query = bgpAPI + "/anomalies/" + parameters.anomaliesType + "/" + options;//parameters.exportType + timestamps;
       console.debug("anomalies query", query);
       var promise = $http.get(query, { cache: true }, { timeout: canceller.promise })
         .then(function(response) {
@@ -219,20 +191,7 @@ angular.module('bmpUiApp').factory('bgpDataService', ['$http', '$q', 'ConfigServ
       return { promise: promise, cancel: cancel(canceller) };
     },
     getAnomaliesAPI: function(parameters, exportType) {
-      var options = [];
-      // parameters is a json object with the following fields: anomaliesType, exportType, start, end
-      // allowed anomaliesType: "martians", "prefixLength" (mandatory parameter: no default value)
-      if (exportType !== undefined) {
-        options.push("export_type=" + exportType);
-      }
-      if (parameters.start !== undefined) {
-        options.push("start=" + parameters.start);
-      }
-      if (parameters.end !== undefined) {
-        options.push("end=" + parameters.end);
-      }
-
-      options = options.length === 0 ? "" : "?" + options.join("&");
+      var options = stringifyParameters(parameters);
       return bgpAPI + "/anomalies/" + parameters.anomaliesType + "/" + options;
     },
     getGroundTruthHash: function(timestamp) {

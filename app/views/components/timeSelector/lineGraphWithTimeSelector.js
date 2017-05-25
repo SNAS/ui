@@ -27,7 +27,7 @@ angular.module('bmp.components.timeSelector', [])
       },
       notifyListeners: function() {
         angular.forEach(callbacks, function(callback) {
-          callback(start, end);
+          callback();
         })
       }
     };
