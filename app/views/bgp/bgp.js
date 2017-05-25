@@ -158,7 +158,8 @@ angular.module('bmpUiApp').controller('BGPController',
 
       $scope.previewGraphData[0] = {
         key: "Change",
-        values: gData
+        values: gData,
+        area: true
       };
     }
 

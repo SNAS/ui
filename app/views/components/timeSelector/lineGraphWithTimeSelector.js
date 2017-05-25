@@ -253,6 +253,7 @@ angular.module('bmp.components.timeSelector', [])
     if ($stateParams.start && $stateParams.end) {
       var start = parseInt($stateParams.start, 10);
       var end = parseInt($stateParams.end, 10);
+      dateRangeLabel = "Custom Range";
       setTimestamps(start, end);
     }
     else {
