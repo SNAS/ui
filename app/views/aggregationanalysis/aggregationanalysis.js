@@ -14,6 +14,7 @@ angular.module('bmpUiApp')
 
     $scope.showGraphTable = false;
     $scope.showGrid = false;
+    $scope.isInputValid = true;
 
     //populate prefix data into ShowPrefixesOptions Grid
     $scope.ShowPrefixesOptions = {
@@ -34,6 +35,19 @@ angular.module('bmpUiApp')
     ];
 
     $scope.getASNInfo = function () {
+
+      $scope.isInputValid = true;
+      $scope.showGraphTable = false;
+
+      if (isNaN($scope.searchASN)) {
+        $scope.ShowPrefixesOptions.data = [];
+        $scope.PrefixTableIsLoad = false; //stop loading
+        $scope.ShowPrefixesOptions.showGridFooter = false;
+        $scope.peerData = [];
+        $scope.isInputValid = false;
+        return;
+      }
+
       apiFactory.getAsnInfo($scope.searchASN)
         .success(function (result) {
           if (!$.isEmptyObject(result) && result.v_routes.data.length != 0) {
@@ -47,7 +61,13 @@ angular.module('bmpUiApp')
             $scope.ShowPrefixesOptions.data = [];
             $scope.PrefixTableIsLoad = false; //stop loading
             $scope.ShowPrefixesOptions.showGridFooter = false;
+            $scope.peerData = [];
           }
+        }).error(function (error) {
+          $scope.ShowPrefixesOptions.data = [];
+          $scope.PrefixTableIsLoad = false; //stop loading
+          $scope.ShowPrefixesOptions.showGridFooter = false;
+          $scope.peerData = [];
         });
     };
 
@@ -113,7 +133,7 @@ angular.module('bmpUiApp')
     function compare(a, b, j) {
       var element;
       if (ipToBinary(a.Prefix).substring(0, a.PrefixLen) == ipToBinary(b.Prefix).substring(0, a.PrefixLen)) {
-        if ((a.Origin == b.Origin) & (a.AS_Path == b.AS_Path) & (a.Communities == b.Communities) & (a.ExtCommunities == b.ExtCommunities) & (a.MED == b.MED)) {
+        if ((a.Origin == b.Origin) & (a.AS_Path == b.AS_Path) & (a.Communities == b.Communities) & (a.ExtCommunities == b.ExtCommunities) & (a.MED == b.MED) & (a.Prefix + '/' + a.PrefixLen != b.Prefix + '/' + b.PrefixLen) ) {
           $scope.reduced_prefix_amount++;
           var key = a.Prefix + '/' + a.PrefixLen;
           var value = b.Prefix + '/' + b.PrefixLen;
@@ -162,13 +182,19 @@ angular.module('bmpUiApp')
           //createChartOptions();
           if ("" != prefixes_of_as_and_peer) {
             createChartOptions();
-            $scope.efficiency = Math.round(($scope.reduced_prefix_amount / $scope.prefix_amount) * 10000) / 100 + "%"
+            $scope.efficiency = 100 - (Math.round(($scope.reduced_prefix_amount / $scope.prefix_amount) * 10000) / 100) + "%"
           }
           else {
             $scope.efficiency = "No data available"
           }
           $scope.showGraphTable = true;
           $scope.showGrid = true;
+
+           $scope.ShowSummaryOptions.data = [
+            {"Parameter": "Prefixes", "Count": $scope.prefix_amount},
+            {"Parameter": "Suppressable", "Count": $scope.reduced_prefix_amount},
+            {"Parameter": "Unsuppressable", "Count": $scope.prefix_amount - $scope.reduced_prefix_amount}
+           ]
         });
     };
 
@@ -184,9 +210,25 @@ angular.module('bmpUiApp')
       rowTemplate: '<div class="hover-row-highlight"><div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div></div>'
     };
     $scope.ShowRedundantOptions.columnDefs = [
-      {name: "Prefix", displayName: 'Prefix', width: '30%'},
-      {name: "Covers", displayName: 'Covered Prefix', width: '*'}
+      {name: "Prefix", displayName: 'Aggregate', width: '30%'},
+      {name: "Covers", displayName: 'Prefixes that can be suppressed', width: '*'}
     ];
+
+    // show summary table next to the efficiency chart
+   $scope.ShowSummaryOptions = {
+        showGridFooter: false,
+        enableRowSelection: false,
+        enableRowHeaderSelection: false,
+        enableHorizontalScrollbar: 0,
+        enableVerticalScrollbar: 0,
+        enableSorting: false,
+        rowHeight: 50,
+        rowTemplate: undefined
+      };
+      $scope.ShowSummaryOptions.columnDefs = [
+        {name: "Parameter", displayName: '', width: '55%', enableHiding: false},
+        {name: "Count", displayName: 'Count', width: '45%', enableHiding: false}
+      ];
 
     //get data for the efficiency chart
     var createChartOptions = function () {
