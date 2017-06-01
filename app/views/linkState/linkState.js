@@ -138,7 +138,11 @@ angular.module('bmpUiApp')
           $scope.SPFgridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function (row) {
             if (row.isSelected) {
-              $scope.map.removeLayer(virtualLinkLayer);
+
+              if ($scope.map.hasLayer(virtualLinkLayer)) {
+                $scope.map.removeLayer(virtualLinkLayer);
+              }
+
               removeLayers(drawnPolylines);
               var path = row.entity.path_hash_ids;
               var neighbor_addr = row.entity.neighbor_addr;
