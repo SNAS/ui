@@ -2,21 +2,29 @@
   <!------------------PREFIXANALYSIS---------------->
   <div class="main-page-search">
     Prefix Number:
-    <input type="text" ng-change="enterValue(value)" ng-model="value" placeholder="Search ..."/>
+    <input type="text" ng-model="value"  size="45" placeholder="Search ..."
+           typeahead="prefix for prefix in getSuggestions($viewValue)"
+           typeahead-loading="loadingLocations"
+           typeahead-no-results="noResults"
+           typeahead-wait-ms="300"
+           typeahead-on-select="onSelect($item, $model, $label)"
+           ng-change="enterValue(value)"/>
+    <!--<input type="text" ng-change="enterValue(value)" ng-model="value" placeholder="Search ..."/>-->
     <span class="help-block">Example: 93.181.192.0/19</span>
+    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
 
     <button type="submit" class="btn btn-sm btn-primary ng-click-active" data-toggle="modal" data-target="#prefixAnalysisModal">
         <span class="glyphicon glyphicon-globe" aria-hidden="true">
         </span>
     </button>
 
-
   </div>
 
   <h3 ng-show="nodata">No Prefix matches this search</h3>
+  <h3 ng-show="invalidInput">Invalid Prefix input</h3>
 
 
-  <div ng-show="!nodata">
+  <div ng-show="!nodata && !invalidInput">
     <div class="main-area row">
       <div class="col-lg-6 info-card">
         <div class="table-container" ng-class="{'expanded': isCardExpand}">
@@ -64,7 +72,7 @@
               </span>
             </div>
             <div class="col-xs-11">
-              <h3>{{ selectedPeerCaption ? selectedPeerCaption : "All entries for prefix " + value + " stored in DB, " + peerData.length + ' Peers in total' }}
+              <h3>{{ selectedPeerCaption ? selectedPeerCaption : "Peers advertising prefix " + value }}
                 <button class="btn filter-button" ng-click="toggleFiltering()">Filter</button>
               </h3>
               <!--Angular Grid added here-->
