@@ -146,7 +146,20 @@ angular.module('bmpUiApp')
         if (isNaN(val)) {
           return apiFactory.getWhoIsASNameLike(val, 10).then(function (response) {
             return response.data.w.data.map(function (item) {
-              return item.as_name; //+" (ASN: "+item.asn+")";
+              var rowText = item.asn;
+              if (item.as_name != "UNSPECIFIED")
+                rowText += " - " + item.as_name;
+
+              if (item.org_name != null) {
+                if (item.org_name.length >= 25)
+                  rowText += " - " + item.org_name.slice(0,25) + "...";
+
+                else
+                  rowText += " - " + item.org_name;
+              }
+
+
+              return {asn: item.asn, as_name: item.as_name, org_name: item.org_name, text: rowText};
             });
           });
         } else {
@@ -155,7 +168,7 @@ angular.module('bmpUiApp')
       };
 
       $scope.onSelect = function ($item, $model, $label) {
-        $scope.searchValue = $label;
+        $scope.searchValue = $item.asn;
         searchValueFn();
       };
 
@@ -243,13 +256,16 @@ angular.module('bmpUiApp')
               showValues += '<tr class="hoz-line"><td colspan="2"><hr></td></tr>';
 
             var value = data[key];
+            if (value == null || value == "UNSPECIFIED")
+              value = "-";
+
             showValues += (
               '<tr>' +
-              '<td>' +
-              key + ' ' +
+              '<td width="40%">' +
+              key +
               '</td>' +
 
-              '<td>' +
+              '<td width="60%">' +
               value +
               '</td>' +
               '</tr>'
@@ -371,7 +387,7 @@ angular.module('bmpUiApp')
         };
 
         upstreamData.forEach(function (e) {
-          e.name = e.as_name === null ? e.asn : e.as_name;
+          e.name = e.as_name == null ? e.asn : e.as_name;
           if (e.country != null) {
             e.countryCode = countryConversionFactory.getCode(e.country.toUpperCase());
             e.country = countryConversionFactory.getName(e.countryCode.toUpperCase());
@@ -396,7 +412,7 @@ angular.module('bmpUiApp')
           e.dataType = "AS";
         });
         downstreamData.forEach(function (e) {
-          e.name = e.as_name === null ? e.asn : e.as_name;
+          e.name = e.as_name == null ? e.asn : e.as_name;
           if (e.country != null) {
             e.countryCode = countryConversionFactory.getCode(e.country);
             e.country = countryConversionFactory.getName(e.countryCode);
@@ -433,7 +449,7 @@ angular.module('bmpUiApp')
 
         var d3Container = $('.d3-container');
 
-        d3Container.css('height', (height + 100));
+        d3Container.css('height', (height+30));
 
         var containerWidth = d3Container.width();
 
@@ -586,6 +602,8 @@ angular.module('bmpUiApp')
               update(d);
             })
             .on("mouseover", function (d) {
+              if(d.as_name == null)
+                d.as_name = "[UNKNOWN]";
               tipas = d;
               if (d.type === "UPSTREAM")
                 tipcolor = upColor;

@@ -91,6 +91,12 @@ angular.module('bmp.components.asnModel', [])
 
 .controller('ModalInstanceCtrl', function($scope, $modalInstance, items) {
 
+  for (var key in items) {
+    if (items[key] == null) {
+      items[key] = "-";
+    }
+  }
+
   $scope.items = items;
   $scope.noAsInfo = "";
 

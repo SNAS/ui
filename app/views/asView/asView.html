@@ -6,7 +6,7 @@
     AS Number or AS Name:
     <input id="suggestions" type="text" size="25" ng-keypress="keypress($event)" ng-model="searchValue"
            placeholder="Search ..."
-           typeahead="as_name for as_name in getSuggestions($viewValue)"
+           typeahead="as_row.text for as_row in getSuggestions($viewValue)"
            typeahead-loading="loadingLocations"
            typeahead-no-results="noResults"
            typeahead-wait-ms="300"
