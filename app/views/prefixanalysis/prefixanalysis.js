@@ -277,13 +277,11 @@ angular.module('bmpUiApp')
     var filterUnique = function (input, key) {
       var unique = {};
       var uniqueList = [];
-      //console.log("unique:" + unique);
 
       for (var i = 0; i < input.length; i++) {
         if (typeof unique[input[i][key]] == "undefined") {
           unique[input[i][key]] = "";
           uniqueList.push(input[i]);
-          //console.log("uniqueList:" + uniqueList);
         }
       }
       return uniqueList;
@@ -331,17 +329,20 @@ angular.module('bmpUiApp')
     // define the Prefix Data create function
     var createPrefixGridTable = function () {
       //$scope.AllPrefixOptions.data = $scope.PrefixData;
+      $scope.origin_as_number = null;
+
       if ($scope.PrefixData.length > 0) {
         var prefix = $scope.value.trim();
         $scope.nodata = false;
+
+        var as_path = $scope.PrefixData[0].AS_Path.split(" ");
+        $scope.origin_as_number = as_path[as_path.length-1];
 
         apiFactory.getWhoisPrefix(prefix)
           .success(function (result) {
             $scope.showPrefixInfo = '<table>';
             if (result.gen_whois_route.data.length > 0) {
               $scope.origin_as_number =  result.gen_whois_route.data[0].origin_as // Set Origin AS number to load in originating as information section.
-              console.log("ASN 1: " + $scope.origin_as_number)
-              createOriginASGridTable();
               $scope.values = result.gen_whois_route.data[0];
               $scope.values['prefix'] = $scope.values['prefix'] + '/' + $scope.values['prefix_len'];
               delete $scope.values['prefix_len'];
@@ -354,11 +355,11 @@ angular.module('bmpUiApp')
               if (key != "raw_output") {
                 $scope.showPrefixInfo += (
                   '<tr>' +
-                  '<td>' +
+                  '<td width="15%">' +
                   key + ': ' +
                   '</td>' +
 
-                  '<td>' +
+                  '<td width="85%">' +
                   value +
                   '</td>' +
                   '</tr>'
@@ -367,6 +368,7 @@ angular.module('bmpUiApp')
 
             });
             $scope.showPrefixInfo += '</table>';
+            createOriginASGridTable();
             updateLinkStateModal();
           }).error(function (error) {
           console.log(error);
@@ -382,9 +384,8 @@ angular.module('bmpUiApp')
     // define the Origin AS Data create function
     var createOriginASGridTable = function () {
       //$scope.AllPrefixOptions.data = $scope.PrefixData;
-      if ($scope.PrefixData.length > 0) {
+      if ($scope.origin_as_number != null) {
         var Origin_AS = $scope.origin_as_number;
-        console.log("ASN 2: " + Origin_AS)
 
         // create the table
         var url = apiFactory.getWhoIsWhereASNSync(Origin_AS); // DEBUG !
@@ -399,7 +400,6 @@ angular.module('bmpUiApp')
           }
         }
 
-        console.log("FLAG: " + flag)
         if (flag) {
 
           //notice : synchronization
@@ -411,7 +411,7 @@ angular.module('bmpUiApp')
           request.success(function (result) {
             $scope.showValues = '<table>';
             $scope.values = result['gen_whois_asn']['data'][0];
-            console.log("Origin AS #: " + $scope.origin_as_number);
+
             angular.forEach($scope.values, function (value, key) {
               if (!value) {
                 value = "-"
@@ -431,11 +431,11 @@ angular.module('bmpUiApp')
                 }
                 $scope.showValues += (
                   '<tr>' +
-                  '<td>' +
+                  '<td width="30%">' +
                   key + ': ' +
                   '</td>' +
 
-                  '<td>' +
+                  '<td width="70%">' +
                   value +
                   '</td>' +
                   '</tr>'
@@ -444,6 +444,10 @@ angular.module('bmpUiApp')
 
             });
             $scope.showValues += '</table>';
+
+            if($scope.values == null) {
+              $scope.showValues = '</table>there are not enough information</table>';
+            }
           });
         }
         else {
@@ -578,8 +582,14 @@ angular.module('bmpUiApp')
 
               // Load updates and changes in LAST circle.
               setTimeout(function() {
-                $scope.createPrefixHisGrid(NUMBER_OF_RECTS-1);
-                $scope.createTimeline(NUMBER_OF_RECTS-1);
+                var i = NUMBER_OF_RECTS-1;
+                while ($scope.HisData[i].length == 0 && i != 0) {
+                  i -= 1;
+                }
+
+                $scope.createPrefixHisGrid(i);
+                $scope.createTimeline(i);
+
               }, 100);
 
             })
