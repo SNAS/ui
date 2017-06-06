@@ -975,15 +975,25 @@ angular.module('bmpUiApp')
       $scope.invalidInput = false;
 
       // Prefix is IPv4.
-      if(val.indexOf('.') != -1 && val.indexOf(':') == -1 && val.split("/").length - 1 <= 1)
+      if(val.indexOf('.') != -1 && val.indexOf(':') == -1 && val.split("/").length - 1 <= 1) {
         isIPv4 = true;
+        while(val.indexOf("..") != -1) {
+          val = val.replace("..", ".0.");
+        }
+
+        console.log(val);
+      }
+
 
       // Prefix is IPv6.
       else if(val.indexOf(':') != -1 && val.indexOf('.') == -1 && val.split("/").length - 1 <= 1)
         isIPv4 = false;
 
+      else if(val.indexOf(':') == -1 && val.indexOf('.') == -1)
+        isIPv4 = null;
+
       else
-        $scope.invalidInput = false;
+        $scope.invalidInput = true;
 
       // Check if prefix has prefix length.
       var startOfPrefixLen = val.indexOf('/');
@@ -998,8 +1008,13 @@ angular.module('bmpUiApp')
         resultPrefix = val.substr(0, startOfPrefixLen);
       }
 
+      else if (startOfPrefixLen != -1 && val.substr(startOfPrefixLen+1, val.length) == "") {
+        resultPrefixLen = -1;
+        resultPrefix = val.substr(0, startOfPrefixLen);
+      }
+
       else
-        $scope.invalidInput = false;
+        $scope.invalidInput = true;
 
 
       if($scope.invalidInput)
