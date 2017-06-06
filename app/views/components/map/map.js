@@ -925,7 +925,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
               downRouterNames.push(routers[i].RouterName !== '' ? routers[i].RouterName : routers[i].RouterIP);
             }
             routers[i].$$treeLevel = 0;
-            $scope.routerDict[routers[i].RouterIP] = [routers[i]];
+            $scope.routerDict[routers[i].RouterHashId] = [routers[i]];
           }
 
           $scope.routerCount = result.routers.data.length;
@@ -1015,13 +1015,13 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
             //add item to correct total
             ips[whichIp][4]++;
             if ($rootScope.rp.hasOwnProperty(item.RouterIP)) {
-              $rootScope.rp[item.RouterIP].push(i);
+              $rootScope.rp[item.router_hash_id].push(i);
             } else {
-              $rootScope.rp[item.RouterIP] = [i];
+              $rootScope.rp[item.router_hash_id] = [i];
             }
             //console.log(item.peer_hash_id);
-            if ($scope.routerDict[item.RouterIP])
-              $scope.routerDict[item.RouterIP].push(item);
+            if ($scope.routerDict[item.router_hash_id])
+              $scope.routerDict[item.router_hash_id].push(item);
           }
           $scope.peerIpChartData = [
             {
@@ -1039,9 +1039,7 @@ angular.module('bmp.components.map', ['ui.bootstrap'])
           $rootScope.ips = ips;
           if ($rootScope.hasOwnProperty('routerTableOptions')) {
             for (var router in $scope.routerDict) {
-              //console.log("Parent Router: " + router);
               $rootScope.routerTableOptions.data = $rootScope.routerTableOptions.data.concat($scope.routerDict[router]);
-              //break;
             }
           }
 
