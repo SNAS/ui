@@ -589,6 +589,11 @@ angular.module('bmpUiApp')
       return '<a href="'+ encodeURI(apiFactory.getUrlBase() + link) +'" target="_blank">' + text + ' </a><br>';
     };
 
+    apiFactory.getPrefixSuggestions = function (prefix, prefixLen, limit) {
+
+      return $http.get(urlBase + "rib/prefix/suggestion/" + prefix + "/" + prefixLen + "?limit=" + limit);
+    };
+
     return apiFactory;
   })
   .filter('statusFilter', function() {

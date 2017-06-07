@@ -22,6 +22,7 @@ angular.module('bmpUiApp')
     var limitForWithdraws = parseInt($stateParams.limitForWithdraws)
 
     $scope.isFirstFromTopsWithPeer = false
+    $scope.invalidInput = false;
 
     function updateLinkStateModal() {
 
@@ -410,7 +411,7 @@ angular.module('bmpUiApp')
           request.success(function (result) {
             $scope.showValues = '<table>';
             $scope.values = result['gen_whois_asn']['data'][0];
-            console.log("ASN VALUES: " + JSON.stringify($scope.values))
+            console.log("Origin AS #: " + $scope.origin_as_number);
             angular.forEach($scope.values, function (value, key) {
               if (!value) {
                 value = "-"
@@ -962,6 +963,59 @@ angular.module('bmpUiApp')
         $scope.timelineHtml = "";
       }
       changeTimeRange();
+    };
+
+    //Used for getting prefix suggestions
+    $scope.getSuggestions = function (val) {
+
+      var resultPrefixLen = null;
+      var resultPrefix = null;
+      var isIPv4 = null;
+
+      $scope.invalidInput = false;
+
+      // Prefix is IPv4.
+      if(val.indexOf('.') != -1 && val.indexOf(':') == -1 && val.split("/").length - 1 <= 1)
+        isIPv4 = true;
+
+      // Prefix is IPv6.
+      else if(val.indexOf(':') != -1 && val.indexOf('.') == -1 && val.split("/").length - 1 <= 1)
+        isIPv4 = false;
+
+      else
+        $scope.invalidInput = false;
+
+      // Check if prefix has prefix length.
+      var startOfPrefixLen = val.indexOf('/');
+
+      if (startOfPrefixLen == -1) {
+        resultPrefixLen = -1;
+        resultPrefix = val;
+      }
+
+      else if (startOfPrefixLen != -1 && !isNaN(parseInt(val.substr(startOfPrefixLen+1, val.length)))) {
+        resultPrefixLen = parseInt(val.substr(startOfPrefixLen+1, val.length));
+        resultPrefix = val.substr(0, startOfPrefixLen);
+      }
+
+      else
+        $scope.invalidInput = false;
+
+
+      if($scope.invalidInput)
+        return [];
+
+      else
+        return apiFactory.getPrefixSuggestions(resultPrefix, resultPrefixLen, 10).then(function (response) {
+          return response.data.v_all_routes.data.map(function (item) {
+            return item.complete_prefix;
+          });
+        });
+    };
+
+    $scope.onSelect = function ($item, $model, $label) {
+
+      $scope.enterValue($label);
     };
 
     // following two select* methods are for two buttons
