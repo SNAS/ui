@@ -18,11 +18,15 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
 
     const viewNames = {
       martians: "Martian anomalies",
-      prefix_length: "Prefix length anomalies"
+      prefix_length: "Prefix length anomalies",
+      moas: "Multi Origin AS",
+      submoas: "Sub Multi Origin AS"
     };
     const lineColors = {
       martians: "#e46f7b",
-      prefix_length: "#85bccc"
+      prefix_length: "#85bccc",
+      moas: "#00FF00",
+      submoas: "#FF0000"
     };
 
     // console.log("(root)dateTimeRange", $rootScope.dateTimeRange);
@@ -238,6 +242,55 @@ angular.module('bmpUiApp').controller('BGPSecurityAuditController',
           { name: "as_path", displayName: "AS Path" },
           { name: "router_ip", displayName: "Advertising Router", width: '143' },
           { name: "type", width: '60' },
+          { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140',
+            cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' }
+        ],
+        preferredSortOrder: {
+          "timestamp": "desc"
+        },
+        currentSortColumns: [
+          { field: "timestamp", sort: { priority: 0, direction: "desc" } }
+        ]
+      },
+      moas: {
+        displayFields: [
+          { name: "prefix", displayName: "Prefix", sort: { direction: uiGridConstants.DESC }, width: '120',
+            cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>' },
+          { name: "origin_as", displayName: "Origin AS", type: 'number', width: '100',
+            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+              '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
+          { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
+            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+              '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
+          { name: "as_path", displayName: "AS Path" },
+          { name: "router_ip", displayName: "Advertising Router", width: '143' },
+          { name: "timestamp", width: '140',
+            cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' }
+        ],
+        preferredSortOrder: {
+          "prefix": "desc"
+        },
+        currentSortColumns: [
+          { field: "prefix", sort: { priority: 0, direction: "desc" } }
+        ]
+      },
+      submoas: {
+        displayFields: [
+          { name: "s_prefix", displayName: "Suspect Prefix", width: '120',
+            cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>' },
+          { name: "v_prefix", displayName: "Victim Prefix", width: '120',
+            cellTemplate: '<div class="ui-grid-cell-contents clickable" bmp-prefix-tooltip prefix="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div>' },
+          { name: "s_asn", displayName: "Suspect ASN", type: 'number', width: '100',
+            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+              '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
+          { name: "v_asn", displayName: "Victim ASN", type: 'number', width: '100',
+            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+              '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
+          { name: "peer_as", displayName: "Peer AS", type: 'number', width: '100',
+            cellTemplate: '<div class="ui-grid-cell-contents asn-clickable">' +
+              '<div bmp-asn-model asn="{{ COL_FIELD }}" change-url-on-click="grid.appScope.newPathLocation(COL_FIELD)"></div></div>' },
+          { name: "s_as_path", displayName: "Suspect AS Path" },
+          { name: "v_as_path", displayName: "Victim AS Path" },
           { name: "timestamp", sort: { direction: uiGridConstants.DESC }, width: '140',
             cellTemplate: '<div class="ui-grid-cell-contents" >{{grid.getCellValue(row, col) | utcToLocalTime }}</div>' }
         ],
