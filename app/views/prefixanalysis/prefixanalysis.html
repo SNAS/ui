@@ -2,15 +2,14 @@
   <!------------------PREFIXANALYSIS---------------->
   <div class="main-page-search">
     Prefix Number:
-    <input type="text" ng-model="value"  size="45" placeholder="Search ..."
+    <input type="text" ng-model="value"  size="45" placeholder="Search Prefix..."
            typeahead="prefix for prefix in getSuggestions($viewValue)"
            typeahead-loading="loadingLocations"
            typeahead-no-results="noResults"
            typeahead-wait-ms="300"
-           typeahead-on-select="onSelect($item, $model, $label)"/>
-    <!--<input type="text" ng-change="enterValue(value)" ng-model="value" placeholder="Search ..."/>-->
+           typeahead-on-select="onSelect($item, $model, $label)"
+           ng-keyup="$event.keyCode == 13 ? enterValue(value) : null" />
     <span class="help-block">Example: 93.181.192.0/19</span>
-    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
 
     <button type="submit" class="btn btn-sm btn-primary ng-click-active" data-toggle="modal" data-target="#prefixAnalysisModal">
         <span class="glyphicon glyphicon-globe" aria-hidden="true">
@@ -20,7 +19,7 @@
   </div>
 
   <h3 ng-show="nodata">No Prefix matches this search</h3>
-  <h3 ng-show="invalidInput">Invalid Prefix input</h3>
+  <h3 ng-show="invalidInput">Invalid Prefix search</h3>
 
 
   <div ng-show="!nodata && !invalidInput">
