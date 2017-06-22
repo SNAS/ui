@@ -4,6 +4,7 @@
     AS Number:
     <input type="text" ng-model="searchASN" placeholder="Search ..."/>
     <button ng-click="getASNInfo()" class="btn btn-sm btn-info">Search</button>
+    <p ng-show="!isInputValid" ng-style="{'padding-top': '20px'}"><b><sup>*</sup>Enter a valid ASN!</b></p>
   </div>
 
   <div class="main-area row">
@@ -38,13 +39,25 @@
 
         <div ng-if="showGraphTable">
           <span ng-style="{'padding-left': '20px'}">
-            Efficiency of aggregation: {{efficiency}}
+            Unsupressable prefixes: {{efficiency}}
           </span>
         </div>
 
         <div ng-if="showGraphTable">
           <!--show the efficiency chart-->
-          <nvd3 options="chartOptions" data="data"></nvd3>
+          <div class="main-area row">
+            <div class="col-lg-7">
+              <nvd3 options="chartOptions" data="data"></nvd3>
+            </div>
+            <div class="col-lg-4">
+              <!-- Table to show Prefixes, Aggregates, Possible to Suppress as a summary of the pie charts -->
+              <div ui-grid="ShowSummaryOptions" ng-style="{'height': '200px', 'margin-top': '130px'}"></div>
+              <br>
+              <p ng-show="efficiency === '100%'"><b><sup>*</sup> No prefixes for the given ASN can be suppressed by any of the received aggregates.</b></p>
+
+            </div>
+            <div class="col-lg-1"></div>
+          </div>
 
           <!--show redundant options-->
           <div ui-grid-selection ui-grid-auto-resize ui-grid="ShowRedundantOptions" ui-grid-resize-columns ng-if="showGrid" ng-style="{'height': ShowRedundantOptions.height}"></div>

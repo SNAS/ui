@@ -179,7 +179,7 @@ angular.module('bmpUiApp')
         if (value == $scope.searchValue) {
           searchValue(value);
         }
-      }, 500);
+      }, 300);
     };
 
     //Decided to put the data into a table in the pre to align it

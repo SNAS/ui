@@ -22,6 +22,7 @@ angular.module('bmpUiApp')
     var limitForWithdraws = parseInt($stateParams.limitForWithdraws)
 
     $scope.isFirstFromTopsWithPeer = false
+    $scope.invalidInput = false;
 
     function updateLinkStateModal() {
 
@@ -238,51 +239,170 @@ angular.module('bmpUiApp')
 
     //Waits a bit for user to continue typing.
     $scope.enterValue = function (value) {
-      $scope.currentValue = value;
       $timeout(function () {
-        if (value == $scope.currentValue) {
-          // Reset the timeline and history prefix table.
-          checkInputPrefix(value);
+        // Reset the timeline and history prefix table.
+        $scope.invalidInput = checkInputPrefix(value);
+        $scope.nodata = false;
 
-          $scope.timelineData = [];
-          $scope.HistoryPrefixOptions.data = [];
+        $scope.timelineData = [];
+        $scope.HistoryPrefixOptions.data = [];
 
-          getPrefixDataGrid(value);
-          getPrefixHistory(value);
+        if(!$scope.invalidInput) {
+          getPrefixDataGrid($scope.currentValue);
+          getPrefixHistory($scope.currentValue);
         }
-      }, 500);
+      }, 0);
     };
 
-    $scope.notValidInput = false;
 
-    var checkInputPrefix = function(input) {
+    function checkInputPrefix(input) {
 
-      // IPv4
-      if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(input)) {
-        // Lookup the longest path prefix.
+      var isV4 = null;
+      var slashPosition = -1;
+      var ipResult = null;
+      var ipLength = null;
+
+      if(input.split("/").length - 1 == 1 && input.substr(input.indexOf("/") + 1).trim() !== "") {
+
+        var pLength = input.substr(input.indexOf("/") + 1);
+
+        slashPosition = input.indexOf("/");
+        var ip = input.substring(0, slashPosition);
+
+        if(isIPv4(ip) && parseInt(pLength) < 32 && parseInt(pLength) > 0) {
+          isV4 = true;
+          ipResult = fixIPv4(ip, parseInt(pLength));
+          ipLength = parseInt(pLength);
+        }
+
+        else if(isIPv6(ip) && parseInt(pLength) < 128 && parseInt(pLength) > 0) {
+          isV4 = false;
+          ipResult = fixIPv6(ip, parseInt(pLength));
+          ipLength = parseInt(pLength);
+        }
+
+        if(ipResult == null) {
+          return true;
+        }
+
+        else {
+          $scope.currentValue = ipResult + "/" + ipLength;
+          return false;
+        }
 
       }
 
-      // IPv6
-      else if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(input)) {
-        // Lookup the longest path prefix.
+      else {
+        return true;
+      }
+
+    };
+
+     function isIPv6(ip) {
+
+       if(ip.split(":").length - 1 > 0 && ip.split(".").length - 1 == 0)
+       {
+         return true;
+       }
+
+       else {
+         return false;
+       }
+
+     }
+
+    function fixIPv6(ip, p_length) {
+
+      var blocks = ip.split(":");
+
+      for (var i = 0; i < blocks.length; i++) {
+
+        if(blocks[i].trim() == "0000" || blocks[i].trim() == "0") {
+          blocks[i] = "";
+        }
 
       }
 
+      var ipToReturn = blocks.join(":");
+      ipToReturn = ipToReturn.replace(/[:][:][:]*/g, '::');
+
+      return ipToReturn;
+
+    }
+
+    function isIPv4(ip) {
+
+      if(ip.split(".").length - 1 > 0 && ip.split(":").length - 1 == 0)
+      {
+        return true;
+      }
+
+      else {
+        return false;
+      }
+
+    }
+
+    function fixIPv4(ip, prefixLen) {
+
+      var blocks = ip.split(".");
+
+      if(blocks.length == 4) {
+
+        for (var i = 0; i < blocks.length; i++) {
+
+          if(blocks[i].trim() == "") {
+            blocks[i] = "0";
+          }
+
+          var r = parseInt(blocks[i]);
+
+          if(isNaN(r) || r < 0 || r > 255) {
+            return null;
+          }
+
+        }
+
+        return blocks.join(".");
+
+      }
+
+      else {
+
+          var blockLen = Math.ceil(prefixLen/8);
+
+          if(blockLen != blocks.length)
+            return null;
+
+         for (var i = 0; i < 4-blockLen; i++) {
+          blocks.push("0");
+         }
+
+         for (var i = 0; i < blocks.length; i++) {
+
+           var r = parseInt(blocks[i]);
+
+           if(isNaN(r) || r < 0 || r > 255) {
+             return null;
+           }
+
+         }
+
+         return blocks.join(".");
+      }
+
+    }
 
 
-    };
 
     var filterUnique = function (input, key) {
       var unique = {};
       var uniqueList = [];
-      //console.log("unique:" + unique);
 
       for (var i = 0; i < input.length; i++) {
         if (typeof unique[input[i][key]] == "undefined") {
           unique[input[i][key]] = "";
           uniqueList.push(input[i]);
-          //console.log("uniqueList:" + uniqueList);
         }
       }
       return uniqueList;
@@ -330,12 +450,17 @@ angular.module('bmpUiApp')
     // define the Prefix Data create function
     var createPrefixGridTable = function () {
       //$scope.AllPrefixOptions.data = $scope.PrefixData;
+      $scope.origin_as_number = null;
+
       if ($scope.PrefixData.length > 0) {
-        var prefix = $scope.value.trim();
+        var prefix = $scope.currentValue.trim();
         $scope.nodata = false;
         $scope.origin_as_number = null;
         $scope.infoCard = {};
         $scope.showValues = "<table><tr><td>Sorry:</td>	<td>Didn't find enough Information For This Prefix!</td></tr></table>";
+
+        var as_path = $scope.PrefixData[0].AS_Path.split(" ");
+        $scope.origin_as_number = as_path[as_path.length-1];
 
         apiFactory.getWhoisPrefix(prefix)
           .success(function (result) {
@@ -343,7 +468,6 @@ angular.module('bmpUiApp')
 
             if (result.gen_whois_route.data.length > 0) {
               $scope.origin_as_number =  result.gen_whois_route.data[0].origin_as // Set Origin AS number to load in originating as information section.
-
               createOriginASGridTable();
               $scope.values = result.gen_whois_route.data[0];
               $scope.values['prefix'] = $scope.values['prefix'] + '/' + $scope.values['prefix_len'];
@@ -371,6 +495,7 @@ angular.module('bmpUiApp')
 
             });
             $scope.showPrefixInfo += '</table>';
+            createOriginASGridTable();
             updateLinkStateModal();
           }).error(function (error) {
           console.log(error);
@@ -386,7 +511,7 @@ angular.module('bmpUiApp')
     // define the Origin AS Data create function
     var createOriginASGridTable = function () {
       //$scope.AllPrefixOptions.data = $scope.PrefixData;
-      if ($scope.PrefixData.length > 0) {
+      if ($scope.origin_as_number != null) {
         var Origin_AS = $scope.origin_as_number;
 
         var url = "";
@@ -427,6 +552,7 @@ angular.module('bmpUiApp')
           request.success(function (result) {
             $scope.showValues = '<table>';
             $scope.values = result['gen_whois_asn']['data'][0];
+
             angular.forEach($scope.values, function (value, key) {
               if (!value) {
                 value = "-"
@@ -459,6 +585,10 @@ angular.module('bmpUiApp')
 
             });
             $scope.showValues += '</table>';
+
+            if($scope.values == null) {
+              $scope.showValues = '</table>there are not enough information</table>';
+            }
           });
         }
         else {
@@ -593,8 +723,14 @@ angular.module('bmpUiApp')
 
               // Load updates and changes in LAST circle.
               setTimeout(function() {
-                $scope.createPrefixHisGrid(NUMBER_OF_RECTS-1);
-                $scope.createTimeline(NUMBER_OF_RECTS-1);
+                var i = NUMBER_OF_RECTS-1;
+                while ($scope.HisData[i].length == 0 && i != 0) {
+                  i -= 1;
+                }
+
+                $scope.createPrefixHisGrid(i);
+                $scope.createTimeline(i);
+
               }, 100);
 
             })
@@ -977,6 +1113,80 @@ angular.module('bmpUiApp')
         $scope.timelineHtml = "";
       }
       changeTimeRange();
+    };
+
+    //Gets prefix suggestions.
+    $scope.getSuggestions = function (val) {
+
+      var resultPrefixLen = null;
+      var resultPrefix = null;
+      var isInvalidSuggestion = false;
+
+      // Prefix is IPv4.
+      if(val.split("/").length - 1 <= 1 && isIPv4(val)) {
+
+        var blocks = val.split(".");
+
+        for (var i = 0; i < blocks.length; i++) {
+
+          if(blocks[i].trim() == "") {
+            blocks[i] = "0";
+          }
+
+        }
+
+        val = blocks.join(".");
+
+      }
+
+      // Prefix is IPv6.
+      else if(val.split("/").length - 1 <= 1 && isIPv6(val)) {
+
+        val = fixIPv6(val);
+
+      }
+
+      else if(val.indexOf(':') == -1 && val.indexOf('.') == -1) {}
+
+      else
+        isInvalidSuggestion = true;
+
+      // Check if prefix has prefix length.
+      var startOfPrefixLen = val.indexOf('/');
+
+      if (startOfPrefixLen == -1) {
+        resultPrefixLen = -1;
+        resultPrefix = val;
+      }
+
+      else if (startOfPrefixLen != -1 && !isNaN(parseInt(val.substr(startOfPrefixLen+1, val.length)))) {
+        resultPrefixLen = parseInt(val.substr(startOfPrefixLen+1, val.length));
+        resultPrefix = val.substr(0, startOfPrefixLen);
+      }
+
+      else if (startOfPrefixLen != -1 && val.substr(startOfPrefixLen+1, val.length) == "") {
+        resultPrefixLen = -1;
+        resultPrefix = val.substr(0, startOfPrefixLen);
+      }
+
+      else
+        isInvalidSuggestion = true;
+
+
+      if(isInvalidSuggestion)
+        return [];
+
+      else
+        return apiFactory.getPrefixSuggestions(resultPrefix, resultPrefixLen, 10).then(function (response) {
+          return response.data.v_all_routes.data.map(function (item) {
+            return item.complete_prefix;
+          });
+        });
+    };
+
+    $scope.onSelect = function ($item, $model, $label) {
+
+      $scope.enterValue($label);
     };
 
     // following two select* methods are for two buttons

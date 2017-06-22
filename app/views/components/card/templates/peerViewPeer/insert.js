@@ -151,7 +151,6 @@ angular.module('bmp.components.card')
 
       //this is example later on will be revieved from the table in peerviewpeer
       var path = path.split(" ");
-      path.shift();
 
       $scope.norepeat = [];
       for (var i = 0; i < path.length; i++) {
@@ -206,7 +205,7 @@ angular.module('bmp.components.card')
             $scope.as_path[index].noTopText = false;
             $scope.as_path[index].popOut = pcontent;//+1 cause starting router node
           }
-
+          
           if ($scope.data.PeerASN == $scope.norepeat[0]) {
             //EBGP
             $scope.as_path[0].icon = "bmp-ebgp_router10-17";
