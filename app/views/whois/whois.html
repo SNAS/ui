@@ -3,7 +3,7 @@
   <!--<h1 class="pgtitle">Whois</h1>-->
   <div class="main-page-search">
     AS Number or AS Name:
-    <input type="text" ng-change="enterValue(searchValue)" ng-model="searchValue" placeholder="Cisco"/>
+    <input type="text" ng-blur="enterValue(searchValue)" ng-model="searchValue" ng-keyup="$event.keyCode == 13 && enterValue(searchValue)" placeholder="Cisco"/>
     <span class="help-block">Example: 109/Cisco</span>
 
     <button type="submit" class="btn btn-sm btn-primary ng-click-active" data-toggle="modal" data-target="#whoisModal">
