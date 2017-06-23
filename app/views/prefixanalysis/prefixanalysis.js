@@ -460,6 +460,9 @@ angular.module('bmpUiApp')
       if ($scope.PrefixData.length > 0) {
         var prefix = $scope.currentValue.trim();
         $scope.nodata = false;
+        $scope.origin_as_number = null;
+        $scope.infoCard = {};
+        $scope.showValues = "<table><tr><td>Sorry:</td>	<td>Didn't find enough Information For This Prefix!</td></tr></table>";
 
         var as_path = $scope.PrefixData[0].AS_Path.split(" ");
         $scope.origin_as_number = as_path[as_path.length-1];
@@ -467,25 +470,28 @@ angular.module('bmpUiApp')
         apiFactory.getWhoisPrefix(prefix)
           .success(function (result) {
             $scope.showPrefixInfo = '<table>';
+
             if (result.gen_whois_route.data.length > 0) {
               $scope.origin_as_number =  result.gen_whois_route.data[0].origin_as // Set Origin AS number to load in originating as information section.
+              createOriginASGridTable();
               $scope.values = result.gen_whois_route.data[0];
               $scope.values['prefix'] = $scope.values['prefix'] + '/' + $scope.values['prefix_len'];
               delete $scope.values['prefix_len'];
             }
             else {
               $scope.values = {"Sorry": "Didn't find whois information for this prefix!"};
+              createOriginASGridTable();
             }
             angular.forEach($scope.values, function (value, key) {
 
               if (key != "raw_output") {
                 $scope.showPrefixInfo += (
                   '<tr>' +
-                  '<td width="15%">' +
+                  '<td width="20%">' +
                   key + ': ' +
                   '</td>' +
 
-                  '<td width="85%">' +
+                  '<td width="80%">' +
                   value +
                   '</td>' +
                   '</tr>'
@@ -513,27 +519,41 @@ angular.module('bmpUiApp')
       if ($scope.origin_as_number != null) {
         var Origin_AS = $scope.origin_as_number;
 
-        // create the table
-        var url = apiFactory.getWhoIsWhereASNSync(Origin_AS); // DEBUG !
+        var url = "";
 
-        var flag = true;
-        for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
-          if (angular.equals($scope.PrefixData[i].Origin_AS, $scope.PrefixData[i + 1].Origin_AS)) {
+        var flag = false;
+        if($scope.origin_as_number != null) {
+           // create the table
+           url = apiFactory.getWhoIsWhereASNSync(Origin_AS); // DEBUG !
+           flag = true;
+        }
+
+        else {
+          flag = true;
+
+          for (var i = 0; i < $scope.PrefixData.length - 1; i++) {
+            if (angular.equals($scope.PrefixData[i].Origin_AS, $scope.PrefixData[i + 1].Origin_AS)) {
+
+            }
+            else {
+              flag = false;
+              break;
+            }
           }
-          else {
-            flag = false;
-            break;
-          }
+
         }
 
         if (flag) {
+
+          $scope.origin_as_number = $scope.PrefixData[$scope.PrefixData.length-1].Origin_AS;
+          url = apiFactory.getWhoIsWhereASNSync($scope.origin_as_number); // DEBUG !
 
           //notice : synchronization
           var request = $http({
             method: "get",
             url: url
           });
-          $scope.infoCard = {};
+
           request.success(function (result) {
             $scope.showValues = '<table>';
             $scope.values = result['gen_whois_asn']['data'][0];
@@ -865,7 +885,6 @@ angular.module('bmpUiApp')
       }
 
       req.success(function (data) {
-      console.log(data)
         $scope.originHisData = data.v_routes_history.data;
         angular.forEach($scope.originHisData, function (item) {
           item['LastModified'] = moment.utc(item['LastModified'], 'YYYY-MM-DD HH:mm:ss.SSSSSS').local().format('YYYY-MM-DD HH:mm:ss.SSSSSS');

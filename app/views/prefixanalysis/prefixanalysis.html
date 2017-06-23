@@ -50,7 +50,7 @@
               </span>
             </div>
             <div class="col-xs-11">
-              <h3 ng-if="isCardExpand">Originating AS Information</h3>
+              <h3 ng-if="isCardExpand || !origin_as_number">Originating AS Information</h3>
               <h4 ng-if="!isCardExpand"><span ng-repeat="(key, value) in infoCard">{{key|uppercase}}: {{value}}  </span></h4>
             </div>
           </div>
