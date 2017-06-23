@@ -22,6 +22,10 @@ angular.module('bmpUiApp')
     var limitForWithdraws = parseInt($stateParams.limitForWithdraws)
 
     $scope.isFirstFromTopsWithPeer = false
+    $scope.timeLineLoad = false;
+    $scope.prefixHisGridLoad = false;
+    $scope.selectedTimeFrame = "";
+
 
     function updateLinkStateModal() {
 
@@ -574,12 +578,23 @@ angular.module('bmpUiApp')
               }
               getPrefixHisDataHour();
               $scope.loading = false;
+              $scope.prefixHisGridLoad = false;
+              $scope.timeLineLoad = false;
+              $scope.$apply;
 
               // Load updates and changes in LAST circle.
               setTimeout(function() {
-                $scope.createPrefixHisGrid(NUMBER_OF_RECTS-1);
-                $scope.createTimeline(NUMBER_OF_RECTS-1);
-              }, 100);
+
+                var i = NUMBER_OF_RECTS-1;
+                while ($scope.HisData[i].length == 0 && i != 0) {
+                  i -= 1;
+                }
+
+                $scope.createPrefixHisGrid(i);
+                $scope.createTimeline(i);
+
+              }, 0);
+
 
             })
             .error(function(error) {
@@ -654,11 +669,14 @@ angular.module('bmpUiApp')
 
     // the only Function is creating a history prefix gird , inject data should be $scope.HisData
     $scope.createPrefixHisGrid = function (i) {
+      var time = $scope.currentSetTime;
+      $scope.selectedTimeFrame = moment(time - (NUMBER_OF_RECTS - parseInt(i)) * $scope.timeRange.value * 60000).format("MM/DD/YY HH:mm")
+                               + " ~ " + moment(time - (NUMBER_OF_RECTS - 1 - parseInt(i)) * $scope.timeRange.value * 60000).format("MM/DD/YY HH:mm");
+
       if (typeof $scope.HisData != "undefined") {
         $scope.HistoryPrefixOptions.data = [];
         $scope.HistoryPrefixOptions.data = $scope.HisData[i];
         $scope.showGrid = true;
-        $scope.$apply();
       }
     };
 
@@ -1337,9 +1355,28 @@ angular.module('bmpUiApp')
             .style("opacity", .8)
             .call(tip)
             .on("click", function (d, i) {
-              $scope.createPrefixHisGrid(i);
-              $scope.createTimeline(i);
-              console.log("Circle clicked: " + i);
+
+              if(!$scope.timeLineLoad && !$scope.prefixHisGridLoad) {
+
+                $scope.timeLineLoad = true;
+                $scope.prefixHisGridLoad = true;
+                $scope.$apply();
+
+                setTimeout(function() {
+
+
+                  $scope.createTimeline(i);
+                  $scope.createPrefixHisGrid(i);
+
+                  $scope.prefixHisGridLoad = false;
+                  $scope.timeLineLoad = false;
+                  $scope.$apply();
+
+                }, 0);
+
+                console.log("Circle clicked: " + i);
+              }
+
             })
             .on("mouseout", function (d, i) {
               tip.destroy(d);

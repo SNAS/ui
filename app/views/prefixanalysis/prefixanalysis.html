@@ -142,13 +142,28 @@
                   </div>
                 </div>
 
-                <div ui-grid="HistoryPrefixOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns
-                     ng-style="{height:HistoryPrefixOptions.height}" ng-if="HistoryPrefixOptions.data.length">
-                  <div class="watermark" ng-if="!HistoryPrefixOptions.data.length">Please select BGP Peer</div>
+                <hr>
+
+                <div style="padding: 25px 25px 25px 40px">
+                  <p style="font-size:120%;">Selected Time Frame: <b>{{selectedTimeFrame}}</b></p>
                 </div>
+
+
+                <div class="loading-section">
+                  <div ng-show="prefixHisGridLoad" bmp-loading loading-var="prefixHisGridLoad"></div>
+                  <div ui-grid="HistoryPrefixOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns
+                       ng-style="{height:HistoryPrefixOptions.height}" ng-if="HistoryPrefixOptions.data.length">
+                    <div class="watermark" ng-if="!HistoryPrefixOptions.data.length">Please select BGP Peer</div>
+                  </div>
+                </div>
+
                 <br><br>
 
-                <div ng-bind-html="timelineHtml" ng-if="timelineData.length" class="timeline">
+                <div class="loading-section">
+                  <div ng-show="timeLineLoad" bmp-loading loading-var="timeLineLoad"></div>
+                  <div ng-bind-html="timelineHtml" ng-if="timelineData.length" class="timeline">
+                </div>
+
                 </div>
 
                 <!--<div ng-if="HistoryPrefixOptions.data.length && showGrid">-->
