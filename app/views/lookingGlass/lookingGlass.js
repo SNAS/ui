@@ -524,8 +524,8 @@ angular.module('bmpUiApp')
 
       $scope.searchOptions = [
         'Prefix/IP',
-        'Hostname',
-        'Community'
+        'Hostname'
+        // 'Community'
       ];
       $scope.searchOption = 'Prefix/IP';
       $scope.searchKeywords = {};

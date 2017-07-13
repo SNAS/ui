@@ -327,6 +327,7 @@ angular.module('bmpUiApp')
         .error(function (error) {
           console.log(error.message);
         });
+
     }
 
     $scope.clearFilter = function (type) {
@@ -433,8 +434,8 @@ angular.module('bmpUiApp')
 
       updateTopsModal();
 
-      $scope.startTimestamp = moment(startDatetimePicker.data("DateTimePicker").date()).format(timeFormat);
-      $scope.endTimestamp = moment(endDatetimePicker.data("DateTimePicker").date()).format(timeFormat);
+      $scope.startTimestamp = moment(startDatetimePicker.data("DateTimePicker").date()).tz('UTC').format(timeFormat);
+      $scope.endTimestamp = moment(endDatetimePicker.data("DateTimePicker").date()).tz('UTC').format(timeFormat);
 
       apiFactory.getTopUpdates($scope.searchPeer, $scope.searchPrefix, "peer", $scope.startTimestamp, $scope.endTimestamp)
         .success(function (result) {
@@ -1065,6 +1066,7 @@ angular.module('bmpUiApp')
         }
       }
     };
+
     $scope.previewGraph = {
       chart: {
         type: "lineChart",
